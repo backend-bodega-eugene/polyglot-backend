@@ -8,7 +8,6 @@ public class ArrayUtils {
 
     /**
      * 反转一个泛型的数组.
-     *
      * @param array 需要反转的数组
      * @param <T>   数组的类型
      */
