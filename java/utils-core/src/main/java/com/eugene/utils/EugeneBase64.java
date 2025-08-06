@@ -25,16 +25,17 @@ public class EugeneBase64 {
     //64个字符
     private static final char[] BASE64_TABLE = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".toCharArray();
 
-
     public static String myBase64Encode(String input) {
         return myBase64Encode(input, StandardCharsets.UTF_8);
     }
+
     public static String myBase64Encode(String input, Charset charset) {
         if (input == null || input.isEmpty()) {
             return "";
         }
         return myBase64Encode(input.getBytes(charset));
     }
+
     public static String myBase64DecodeToString(String base64) {
         return myBase64DecodeToString(base64, StandardCharsets.UTF_8);
     }
@@ -69,6 +70,7 @@ public class EugeneBase64 {
 
         return result.toString();
     }
+
     public static byte[] myBase64Decode(String base64) {
         if (base64 == null || base64.isEmpty()) {
             return new byte[0];
@@ -119,6 +121,7 @@ public class EugeneBase64 {
 
         return output;
     }
+
     public static void main(String[] args) {
         String encoded = myBase64Encode("hello,Eugene");
         String decoded = myBase64DecodeToString(encoded);

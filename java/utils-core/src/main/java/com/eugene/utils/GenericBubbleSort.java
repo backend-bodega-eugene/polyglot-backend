@@ -9,7 +9,6 @@ package com.eugene.utils;
  */
 public class GenericBubbleSort {
 
-
     /**
      * 对数组进行冒泡排序，默认升序。
      *

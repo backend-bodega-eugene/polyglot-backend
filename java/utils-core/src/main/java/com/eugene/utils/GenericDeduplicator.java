@@ -7,6 +7,7 @@ import java.util.Set;
 
 /**
  * 双指针去重 - 泛型版（适用于有序数组）
+ * 提供两种实现：原地双指针法（高效，适用于有序数组）与 Set 去重法（适用于无序数组，保留顺序）
  */
 public class GenericDeduplicator {
 
@@ -16,6 +17,7 @@ public class GenericDeduplicator {
      * @param array 有序数组
      * @param clazz 类型（用于创建新数组）
      * @return 去重后的新数组
+     * @param <T> 元素类型
      */
     @SuppressWarnings("unchecked")
     public static <T> T[] deduplicate(T[] array, Class<T> clazz) {
@@ -32,12 +34,15 @@ public class GenericDeduplicator {
         System.arraycopy(array, 0, result, 0, slow + 1);
         return result;
     }
+
     /**
      * 泛型数组去重（使用 LinkedHashSet 保证顺序）
+     * 适用于无序数组，保留原始顺序。
      *
      * @param array 输入数组
      * @param clazz 数组元素类型（用于构造新数组）
      * @return 去重后的新数组
+     * @param <T> 元素类型
      */
     @SuppressWarnings("unchecked")
     public static <T> T[] deduplicateWithSet(T[] array, Class<T> clazz) {

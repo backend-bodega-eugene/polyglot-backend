@@ -1,35 +1,45 @@
 package com.eugene.utils;
 
+/**
+ * UnEugeneAESUtils 是一个不依赖 JDK 标准加密库的 AES 解密工具类。
+ * 实现了 AES-128 的完整解密逻辑，包括 KeyExpansion、InvSubBytes、InvShiftRows、
+ * InvMixColumns、AddRoundKey 等步骤，支持 128 位密钥长度。
+ */
 public class UnEugeneAESUtils {
 
-
-
+    /**
+     * 执行 AES 解密操作
+     *
+     * @param input 被加密的 16 字节数据块
+     * @param key   128 位（16 字节）密钥
+     * @return 解密后的 16 字节明文数据
+     */
     public static byte[] aesDecrypt(byte[] input, byte[] key) {
-        byte[][] state = new byte[4][4];
-        byte[][] expandedKey = keyExpansion(key);
+        byte[][] state = new byte[4][4]; // 状态矩阵
+        byte[][] expandedKey = keyExpansion(key); // 扩展密钥，生成 11 轮轮密钥
 
-        // 1. 把输入填入 state（按列填充）
+        // Step 1: 将输入按列写入 4x4 状态矩阵
         for (int i = 0; i < input.length; i++) {
             state[i % 4][i / 4] = input[i];
         }
 
-        // 2. 先添加最后一轮的 round key
+        // Step 2: 添加第10轮轮密钥（先执行）
         addRoundKey(state, getRoundKey(expandedKey, 10));
 
-        // 3. 主循环，反向执行9轮
+        // Step 3: 反向执行 9 轮主循环
         for (int round = 9; round >= 1; round--) {
-            invShiftRows(state);
-            invSubBytes(state);
-            addRoundKey(state, getRoundKey(expandedKey, round));
-            invMixColumns(state);
+            invShiftRows(state);                        // 行移位（逆）
+            invSubBytes(state);                         // 字节替代（逆）
+            addRoundKey(state, getRoundKey(expandedKey, round)); // 添加轮密钥
+            invMixColumns(state);                       // 列混淆（逆）
         }
 
-        // 4. 最后一轮（无invMixColumns）
+        // Step 4: 最后一轮（无 invMixColumns）
         invShiftRows(state);
         invSubBytes(state);
         addRoundKey(state, getRoundKey(expandedKey, 0));
 
-        // 5. 拍平 state 成 byte[]
+        // Step 5: 状态矩阵转为 16 字节数组
         byte[] output = new byte[16];
         for (int i = 0; i < 16; i++) {
             output[i] = state[i % 4][i / 4];
@@ -38,9 +48,11 @@ public class UnEugeneAESUtils {
         return output;
     }
 
-
+    /**
+     * 执行列混淆的逆操作（InvMixColumns）
+     */
     public static void invMixColumns(byte[][] state) {
-        validateStateMatrix(state); // 你那边加了4x4验证就放上
+        validateStateMatrix(state);
         for (int c = 0; c < 4; c++) {
             byte s0 = state[0][c];
             byte s1 = state[1][c];
@@ -53,6 +65,9 @@ public class UnEugeneAESUtils {
         }
     }
 
+    /**
+     * Galois Field (2^8) 中的乘法实现，用于列混淆
+     */
     public static byte gmul(byte a, int b) {
         byte result = 0;
         byte aa = a;
@@ -63,15 +78,20 @@ public class UnEugeneAESUtils {
             boolean hiBitSet = (aa & 0x80) != 0;
             aa <<= 1;
             if (hiBitSet) {
-                aa ^= 0x1b;
+                aa ^= 0x1b; // 多项式约简
             }
             b >>= 1;
         }
         return result;
     }
-    private static byte[][] keyExpansion(byte[] key) {
-        byte[][] w = new byte[44][4]; // 44 列，每列4字节
 
+    /**
+     * 执行密钥扩展（Key Expansion），从 128 位密钥生成 44 个 4 字节字（11 轮密钥）
+     */
+    private static byte[][] keyExpansion(byte[] key) {
+        byte[][] w = new byte[44][4]; // 一共 44 个 Word，每个 Word 是 4 字节
+
+        // 初始化前 4 个 Word
         for (int i = 0; i < 4; i++) {
             w[i][0] = key[4 * i];
             w[i][1] = key[4 * i + 1];
@@ -79,13 +99,13 @@ public class UnEugeneAESUtils {
             w[i][3] = key[4 * i + 3];
         }
 
+        // 生成剩余的 Word
         for (int i = 4; i < 44; i++) {
             byte[] temp = w[i - 1].clone();
             if (i % 4 == 0) {
-                temp = subWord(rotWord(temp));
+                temp = subWord(rotWord(temp)); // 字轮转 + S-box 替换
                 temp[0] ^= (byte) RCON[(i / 4) - 1];
             }
-
             for (int j = 0; j < 4; j++) {
                 w[i][j] = (byte) (w[i - 4][j] ^ temp[j]);
             }
@@ -93,68 +113,10 @@ public class UnEugeneAESUtils {
 
         return w;
     }
-    public static void addRoundKey(byte[][] state, byte[][] roundKey) {
-        for (int r = 0; r < 4; r++) {
-            for (int c = 0; c < 4; c++) {
-                state[r][c] ^= roundKey[r][c];
-            }
-        }
-    }
-    public static void invShiftRows(byte[][] state) {
-        validateStateMatrix(state);
-        byte temp;
-        // 第1行，右移1位
-        temp = state[1][3];
-        state[1][3] = state[1][2];
-        state[1][2] = state[1][1];
-        state[1][1] = state[1][0];
-        state[1][0] = temp;
 
-        // 第2行，右移2位
-        temp = state[2][0];
-        state[2][0] = state[2][2];
-        state[2][2] = temp;
-        temp = state[2][1];
-        state[2][1] = state[2][3];
-        state[2][3] = temp;
-
-        // 第3行，右移3位（或左移1位）
-        temp = state[3][0];
-        state[3][0] = state[3][1];
-        state[3][1] = state[3][2];
-        state[3][2] = state[3][3];
-        state[3][3] = temp;
-    }
-
-    public static void invSubBytes(byte[][] state) {
-        validateStateMatrix(state);
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
-                state[i][j] = INV_S_BOX[state[i][j] & 0xFF];
-            }
-        }
-    }
-    private static byte[] rotWord(byte[] word) {
-        return new byte[]{word[1], word[2], word[3], word[0]};
-    }
-
-    private static void validateStateMatrix(byte[][] state) {
-        if (state == null || state.length != 4) {
-            throw new IllegalArgumentException("AES状态矩阵必须有4行");
-        }
-        for (int i = 0; i < 4; i++) {
-            if (state[i] == null || state[i].length != 4) {
-                throw new IllegalArgumentException("AES状态矩阵的每一行必须有4个字节");
-            }
-        }
-    }
-    private static byte[] subWord(byte[] word) {
-        byte[] result = new byte[4];
-        for (int i = 0; i < 4; i++) {
-            result[i] =(byte) S_BOX[word[i] & 0xFF]; // S_BOX 你之前已经有了
-        }
-        return result;
-    }
+    /**
+     * 将某一轮的 key 拆分成 4x4 轮密钥矩阵
+     */
     private static byte[][] getRoundKey(byte[][] expandedKey, int round) {
         byte[][] roundKey = new byte[4][4];
         for (int i = 0; i < 4; i++) {
@@ -165,11 +127,104 @@ public class UnEugeneAESUtils {
         }
         return roundKey;
     }
+
+    /**
+     * 添加轮密钥（AddRoundKey）
+     */
+    public static void addRoundKey(byte[][] state, byte[][] roundKey) {
+        for (int r = 0; r < 4; r++) {
+            for (int c = 0; c < 4; c++) {
+                state[r][c] ^= roundKey[r][c];
+            }
+        }
+    }
+
+    /**
+     * 行移位的逆操作（InvShiftRows）
+     */
+    public static void invShiftRows(byte[][] state) {
+        validateStateMatrix(state);
+        byte temp;
+        // 行1: 右移1位
+        temp = state[1][3];
+        state[1][3] = state[1][2];
+        state[1][2] = state[1][1];
+        state[1][1] = state[1][0];
+        state[1][0] = temp;
+
+        // 行2: 右移2位
+        temp = state[2][0];
+        state[2][0] = state[2][2];
+        state[2][2] = temp;
+        temp = state[2][1];
+        state[2][1] = state[2][3];
+        state[2][3] = temp;
+
+        // 行3: 右移3位（等效于左移1位）
+        temp = state[3][0];
+        state[3][0] = state[3][1];
+        state[3][1] = state[3][2];
+        state[3][2] = state[3][3];
+        state[3][3] = temp;
+    }
+
+    /**
+     * 字节替代的逆操作（InvSubBytes），使用 INV_S_BOX 替换
+     */
+    public static void invSubBytes(byte[][] state) {
+        validateStateMatrix(state);
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                state[i][j] = INV_S_BOX[state[i][j] & 0xFF];
+            }
+        }
+    }
+
+    /**
+     * 执行 RotWord 操作：将 word 左循环移位一位
+     * 输入：{0x1a, 0x2b, 0x3c, 0x4d}
+     * 输出：{0x2b, 0x3c, 0x4d, 0x1a}
+     */
+    private static byte[] rotWord(byte[] word) {
+        return new byte[]{word[1], word[2], word[3], word[0]};
+    }
+    /**
+     * 校验 state 是否是合法的 4x4 状态矩阵
+     * 若结构不合法会抛出 IllegalArgumentException
+     */
+    private static void validateStateMatrix(byte[][] state) {
+        if (state == null || state.length != 4) {
+            throw new IllegalArgumentException("AES状态矩阵必须有4行");
+        }
+        for (int i = 0; i < 4; i++) {
+            if (state[i] == null || state[i].length != 4) {
+                throw new IllegalArgumentException("AES状态矩阵的每一行必须有4个字节");
+            }
+        }
+    }
+    /**
+     * 执行 SubWord 操作：对 4 字节 word 中的每个字节使用 S-Box 替换
+     */
+    private static byte[] subWord(byte[] word) {
+        byte[] result = new byte[4];
+        for (int i = 0; i < 4; i++) {
+            result[i] = (byte) S_BOX[word[i] & 0xFF];
+        }
+        return result;
+    }
+    /**
+     * AES Rcon 常量表，用于 KeyExpansion 的轮常量
+     * 10轮，每轮一个字节（仅用于 RotWord 后的第一个字节）
+     */
     private static final int[] RCON = {
             0x01, 0x02, 0x04, 0x08,
             0x10, 0x20, 0x40, 0x80,
             0x1B, 0x36
     };
+    /**
+     * AES 的逆 S-Box，用于 InvSubBytes 步骤（解密专用）
+     * 每个元素表示 index 对应值的逆映射
+     */
     private static final byte[] INV_S_BOX = {
             (byte)0x52, (byte)0x09, (byte)0x6A, (byte)0xD5, (byte)0x30, (byte)0x36, (byte)0xA5, (byte)0x38,
             (byte)0xBF, (byte)0x40, (byte)0xA3, (byte)0x9E, (byte)0x81, (byte)0xF3, (byte)0xD7, (byte)0xFB,
@@ -204,7 +259,9 @@ public class UnEugeneAESUtils {
             (byte)0x17, (byte)0x2B, (byte)0x04, (byte)0x7E, (byte)0xBA, (byte)0x77, (byte)0xD6, (byte)0x26,
             (byte)0xE1, (byte)0x69, (byte)0x14, (byte)0x63, (byte)0x55, (byte)0x21, (byte)0x0C, (byte)0x7D
     };
-    // 固定的 S-Box 表（前面只展示部分）
+    /**
+     * AES 的 S-Box，用于 SubBytes 步骤（加密/密钥扩展时使用）
+     */
     private static final int[] S_BOX = {
             0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5,
             0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76,
