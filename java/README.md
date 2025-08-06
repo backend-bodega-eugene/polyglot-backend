@@ -463,6 +463,7 @@ SynchronizedStack<Integer> stack = new SynchronizedStack<>(2);
 stack.push(1);
 stack.push(2);
 System.out.println(stack.pop()); // 2
+```
 
 
 ### 🔓 UnEugeneAESUtils - 原生 AES-128 解密工具
@@ -513,3 +514,4 @@ byte[] key = {
 
 byte[] plainText = UnEugeneAESUtils.aesDecrypt(cipherText, key);
 System.out.println(Arrays.toString(plainText));
+```
