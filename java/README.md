@@ -4,7 +4,50 @@ Reusable Java classes, Spring-style utilities, annotations, and all the boring b
 
 🧩 For Spring Boot lovers, JDK warriors, and all JVM travelers.
 先从java开始吧,我们会找一些有用的东西,放进来,并且创建一个springboot的 web restful api
+| 类名                    | 功能简介                               | 特长说明                                               |
+| --------------------- | ---------------------------------- | -------------------------------------------------- |
+| `ArrayUtils`          | 原地反转各种 Java 数组（包含泛型和八大基本类型）        | 零额外空间，null 或长度≤1 自动跳过                              |
+| `BracketValidator`    | 括号合法性校验工具（支持 `()[]{}` 等嵌套）         | 基于线程安全的 `SynchronizedStack` 实现                     |
+| `BrowserHistory`      | 浏览器前进／后退模拟器                        | 后退栈 和 前进栈双结构，行为真实                                  |
+| `ChineseIDValidator`  | 校验大陆身份证号是否合法、提取生日 & 性别             | 使用模11 + 加权 + 日期校验，加密面向本地用户                         |
+| `EugeneAESUtils`      | 纯 Java 实现 AES-128 加密流程             | 手写 SubBytes → ShiftRows → MixColumns → AddRoundKey |
+| `UnEugeneAESUtils`    | 对称版本的 AES-128 解密实现                 | 完整还原密钥扩展与逆操作逻辑                                     |
+| `EugeneBase64`        | Base64 手写编码/解码工具类                  | 纯算法实现，无依赖，支持 `Charset` 可选                          |
+| `GenericBubbleSort`   | 泛型冒泡排序支持升/降序                       | `Comparable` 类型适配，自动检测提前结束                         |
+| `QuickSort`           | 泛型快速排序实现                           | Lomuto 分区实现，支持方向控制                                 |
+| `GenericDeduplicator` | 泛型数组去重：有序 → 双指针，无序 → LinkedHashSet | 保留元素顺序，兼容 `Class<T>` 新数组创建                         |
+| `SafeStack`           | 使用 `ReentrantLock` 实现的线程安全栈        | 动态扩容，操作在锁内完成                                       |
+| `SynchronizedStack`   | 基于 `synchronized` 的线程安全栈           | 清晰同步逻辑，适合教学示例                                      |
+| `EugeneThreadPool`    | 自制线程池 + 任务阻塞队列                     | 支持 submit & shutdownNow，用于学习线程池原理                  |
 
+🎯 项目亮点与目标
+100% 手写核心逻辑，不依赖第三方库或 JDK 加密框架。
+
+全面支持泛型、线程安全、排序、队列、加解密等基础模块。
+
+注释丰富、每步逻辑可读可追踪，适合教学与演示。
+
+结构统一、示例齐全，适合作为项目模板、简历加分项或开源展示。
+
+🚀 适用场景建议
+自建 Java 工具库，摆脱对 Hutool、Apache Commons、Guava 的依赖；
+
+学习基础算法、数据结构与设计模式；
+
+技术文章或面试分享的源码展示；
+
+GitHub 项目展示，用来 Build 你的“Java 兵工厂”印象 —— 🌟 Jar by Eugene 🌟
+
+🔮 未来扩展提案
+AES：支持 AES-192 / AES-256 与 CBC、GCM 等模式；
+
+工具增强：XOR 加密、日期时间工具类、正则校验器；
+
+框架集成：包装成一个 Spring Boot Web REST 示例服务，动态调用工具 Bean；
+
+单元测试覆盖：JUnit + 代码覆盖率报告；
+
+英文 README 增加国际受众友好度。
 
 ### 🔄 ArrayUtils - 通用数组反转工具类
 
