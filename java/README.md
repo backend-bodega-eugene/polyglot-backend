@@ -26,6 +26,7 @@ ArrayUtils.reverse(nums);
 String[] names = {"Alice", "Bob", "Charlie"};
 ArrayUtils.reverse(names); 
 // names => {"Charlie", "Bob", "Alice"}
+```
 
 
 ### 🧩 BracketValidator - 括号匹配校验器
@@ -45,6 +46,7 @@ ArrayUtils.reverse(names);
 BracketValidator.isValid("{[()]}"); // true
 BracketValidator.isValid("([)]");   // false
 BracketValidator.isValid("hello(world)[]"); // true
+```
 
 
 ### 🌐 BrowserHistory - 浏览器历史记录模拟器
