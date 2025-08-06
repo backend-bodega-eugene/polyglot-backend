@@ -48,15 +48,14 @@ public class EugeneBase64 {
 
         int i = 0;
         while (i < data.length) {
-            // 每3个字节为一组
-            int byte1 = data[i++] & 0xFF;
-            int byte2 = (i < data.length) ? data[i++] & 0xFF : 0;
-            int byte3 = (i < data.length) ? data[i++] & 0xFF : 0;
+            int remaining = data.length - i;
 
-            // 把三个字节拼成24位
+            int byte1 = data[i++] & 0xFF;
+            int byte2 = (remaining > 1) ? data[i++] & 0xFF : 0;
+            int byte3 = (remaining > 2) ? data[i++] & 0xFF : 0;
+
             int combined = (byte1 << 16) | (byte2 << 8) | byte3;
 
-            // 分成4个6位数字，查表输出
             int index1 = (combined >> 18) & 0x3F;
             int index2 = (combined >> 12) & 0x3F;
             int index3 = (combined >> 6) & 0x3F;
@@ -64,19 +63,8 @@ public class EugeneBase64 {
 
             result.append(BASE64_TABLE[index1]);
             result.append(BASE64_TABLE[index2]);
-
-            // 判断 padding（补=）情况
-            if (i - 1 < data.length) {
-                result.append(BASE64_TABLE[index3]);
-            } else {
-                result.append('=');
-            }
-
-            if (i < data.length) {
-                result.append(BASE64_TABLE[index4]);
-            } else {
-                result.append('=');
-            }
+            result.append(remaining > 1 ? BASE64_TABLE[index3] : '=');
+            result.append(remaining > 2 ? BASE64_TABLE[index4] : '=');
         }
 
         return result.toString();

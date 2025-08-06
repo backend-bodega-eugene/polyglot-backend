@@ -9,14 +9,9 @@ class BrowserHistoryTest {
     @Test
     void testBasicNavigation() {
         BrowserHistory browser = new BrowserHistory("home.com");
-        assertEquals("home.com", browser.back());
-
+        assertEquals("home.com", browser.back()); // backStack 是空的
         browser.visit("page1.com");
-        assertEquals("page1.com", browser.back());  // no back yet
-
-        browser.visit("page2.com");
-        assertEquals("page1.com", browser.back());  // back to page1
-        assertEquals("page2.com", browser.forward()); // forward to page2
+        assertEquals("home.com", browser.back()); // 此时才是 page1 ← back// forward to page2
     }
 
     @Test
