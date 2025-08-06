@@ -1,0 +1,41 @@
+version: '3.8'
+services:
+  vpn-api:
+    build:
+      context: ./com.app/target
+    image: vpn-api:1.0.0
+    container_name: vpn-api
+    restart: always
+    ports:
+      - 8001:8001
+    volumes:
+      - ./vpn-api/logs:/logs
+    environment:
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASS=${MYSQL_PASS}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - SNOWFLAKE_WORK_ID=1
+      - SWAGGER_ENABLE=${SWAGGER_ENABLE}
+      - LOG_LEVEL=${LOG_LEVEL}
+
+  vpn-main:
+    build:
+      context: ./com.main/target
+    image: vpn-main:1.0.0
+    container_name: vpn-main
+    restart: always
+    ports:
+      - 9001:9001
+    volumes:
+      - ./as-main/logs:/logs
+    environment:
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASS=${MYSQL_PASS}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - SNOWFLAKE_WORK_ID=2
+      - SWAGGER_ENABLE=${SWAGGER_ENABLE}
+      - LOG_LEVEL=${LOG_LEVEL}

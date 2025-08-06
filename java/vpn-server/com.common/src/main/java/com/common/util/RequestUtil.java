@@ -1,0 +1,27 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by Fernflower decompiler)
+//
+
+package com.common.util;
+
+import javax.servlet.http.HttpServletRequest;
+
+public abstract class RequestUtil {
+    public static String getRemoteHost(HttpServletRequest request) {
+        String ip = request.getHeader("x-forwarded-for");
+        if (!StringUtils.hasText(ip) || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+
+        if (!StringUtils.hasText(ip) || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+
+        if (!StringUtils.hasText(ip) || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+
+        return ip.equals("0:0:0:0:0:0:0:1") ? "127.0.0.1" : ip;
+    }
+}
