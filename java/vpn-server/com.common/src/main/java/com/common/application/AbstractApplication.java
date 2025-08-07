@@ -38,8 +38,6 @@ public abstract class AbstractApplication {
         public void onApplicationEvent(ApplicationFailedEvent applicationFailedEvent) {
             startFailed(applicationFailedEvent.getException());
         }
-
-
     }
 
     class ApplicationStartingEventListener implements ApplicationListener<ApplicationStartingEvent> {
