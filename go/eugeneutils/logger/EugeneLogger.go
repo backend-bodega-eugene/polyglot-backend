@@ -82,6 +82,8 @@ func SetLogFileBySelefPath(eugenefilepath string) error {
 
 // writeLog outputs the formatted log message to both the console and, if configured, to a file.
 func writeLog(level string, thread string, module string, message string) {
+		fileMutex.Lock()
+		defer fileMutex.Unlock()
 	timestamp := time.Now().Format("2006-01-02 15:04:05")
 	thread = padRight(thread, 10)
 	level = padRight(level, 5)
@@ -93,8 +95,7 @@ func writeLog(level string, thread string, module string, message string) {
 	fmt.Println(logLine)
 
 	if logFile != nil {
-		fileMutex.Lock()
-		defer fileMutex.Unlock()
+
 		log.SetOutput(logFile)
 		log.Println(logLine)
 	}
@@ -120,7 +121,7 @@ func InfoThreadnameAndModulename(message string) {
 // InfoWritefle writes the message to a specific log file if provided, and logs it as INFO level.
 func InfoWritefle(message string, logfileName string) {
 	defer getGID()
-	if "" != logfileName {
+	if logfileName != "" {
 		fopen, err := os.OpenFile(logfileName+".log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 		if err == nil {
 			defer fopen.Close()
