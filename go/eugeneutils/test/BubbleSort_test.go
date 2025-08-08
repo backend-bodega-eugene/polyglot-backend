@@ -1,8 +1,9 @@
-package stringutils
+package test
 
 import (
 	"reflect"
 	"testing"
+	"eugene-go/stringutils"
 )
 
 // TestBubbleSortFunctions tests both BubbleSortInt and EugeneBubbleSortInt functions.
@@ -31,7 +32,7 @@ func TestBubbleSortFunctions(t *testing.T) {
 			copy(input, tt.input)
 
 			// Run BubbleSortInt
-			BubbleSortInt(input)
+			stringutils.BubbleSortInt(input)
 
 			// Compare result with expected
 			if !reflect.DeepEqual(input, tt.expected) {
@@ -46,7 +47,7 @@ func TestBubbleSortFunctions(t *testing.T) {
 			copy(input, tt.input)
 
 			// Run EugeneBubbleSortInt
-			EugeneBubbleSortInt(input)
+			stringutils.EugeneBubbleSortInt(input)
 
 			// Compare result with expected
 			if !reflect.DeepEqual(input, tt.expected) {

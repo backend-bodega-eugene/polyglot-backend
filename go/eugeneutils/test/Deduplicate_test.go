@@ -1,7 +1,8 @@
-package stringutils
+package test
 
 import (
 	"testing"
+	"eugene-go/stringutils"
 )
 
 // TestDeduplicateString tests both DeduplicateString and EugeneDeduplicateString functions.
@@ -24,7 +25,7 @@ func TestDeduplicateString(t *testing.T) {
 	for _, tt := range tests {
 		// Subtest for the standard version
 		t.Run("DeduplicateString_"+tt.name, func(t *testing.T) {
-			result := DeduplicateString(tt.input)
+			result := stringutils.DeduplicateString(tt.input)
 			if result != tt.expected {
 				t.Errorf("DeduplicateString(%q) = %q; want %q", tt.input, result, tt.expected)
 			}
@@ -32,7 +33,7 @@ func TestDeduplicateString(t *testing.T) {
 
 		// Subtest for Eugene's version
 		t.Run("EugeneDeduplicateString_"+tt.name, func(t *testing.T) {
-			result := EugeneDeduplicateString(tt.input)
+			result := stringutils.EugeneDeduplicateString(tt.input)
 			if result != tt.expected {
 				t.Errorf("EugeneDeduplicateString(%q) = %q; want %q", tt.input, result, tt.expected)
 			}

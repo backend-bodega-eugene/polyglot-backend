@@ -1,15 +1,16 @@
-package logger
+package test
 
 import (
+	"eugene-go/logger"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
-	"path/filepath"
 )
 
 func TestSetLogFile(t *testing.T) {
-	err := SetLogFile()
+	err := logger.SetLogFile()
 	if err != nil {
 		t.Errorf("SetLogFile failed: %v", err)
 	}
@@ -17,7 +18,7 @@ func TestSetLogFile(t *testing.T) {
 
 func TestSetLogFileBySelefPath(t *testing.T) {
 	tempPath := filepath.Join("testlogs", "test.log")
-	err := SetLogFileBySelefPath(tempPath)
+	err := logger.SetLogFileBySelefPath(tempPath)
 	if err != nil {
 		t.Errorf("SetLogFileBySelefPath failed: %v", err)
 	}
@@ -25,21 +26,21 @@ func TestSetLogFileBySelefPath(t *testing.T) {
 }
 
 func TestInfoLog(t *testing.T) {
-	_ = SetLogFile()
-	Info("main", "TestInfoLog", "This is an info message")
+	_ = logger.SetLogFile()
+	logger.Info("main", "TestInfoLog", "This is an info message")
 }
 
 func TestInfoThreadname(t *testing.T) {
-	InfoThreadname("TestInfoThreadname", "Thread name auto fill")
+	logger.InfoThreadname("TestInfoThreadname", "Thread name auto fill")
 }
 
 func TestInfoThreadnameAndModulename(t *testing.T) {
-	InfoThreadnameAndModulename("Auto-filled module name test")
+	logger.InfoThreadnameAndModulename("Auto-filled module name test")
 }
 
 func TestInfoWritefle(t *testing.T) {
 	filename := "testlogfile"
-	InfoWritefle("This is a message written to file", filename)
+	logger.InfoWritefle("This is a message written to file", filename)
 	time.Sleep(100 * time.Millisecond) // Give time for writing
 
 	data, err := os.ReadFile(filename + ".log")
@@ -53,7 +54,7 @@ func TestInfoWritefle(t *testing.T) {
 }
 
 func TestWarnErrorDebug(t *testing.T) {
-	Warn("main", "TestWarn", "This is a warning")
-	Error("main", "TestError", "This is an error")
-	Debug("main", "TestDebug", "This is a debug message")
+	logger.Warn("main", "TestWarn", "This is a warning")
+	logger.Error("main", "TestError", "This is an error")
+	logger.Debug("main", "TestDebug", "This is a debug message")
 }
