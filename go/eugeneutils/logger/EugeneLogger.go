@@ -25,6 +25,10 @@ var (
 	fileMutex sync.Mutex
 )
 
+func init() {
+	SetLogFile()
+}
+
 // padRight pads a string to the specified length with spaces.
 func padRight(s string, length int) string {
 	if len(s) >= length {
@@ -82,18 +86,15 @@ func SetLogFileBySelefPath(eugenefilepath string) error {
 
 // writeLog outputs the formatted log message to both the console and, if configured, to a file.
 func writeLog(level string, thread string, module string, message string) {
-		fileMutex.Lock()
-		defer fileMutex.Unlock()
+	fileMutex.Lock()
+	defer fileMutex.Unlock()
 	timestamp := time.Now().Format("2006-01-02 15:04:05")
 	thread = padRight(thread, 10)
 	level = padRight(level, 5)
 	module = padRight(module, 30)
-
 	// Example: 2025-08-07 23:55:03 [main     ] INFO  com.eugene.utils.StringUtils - Message
 	logLine := fmt.Sprintf("%s [%s] %s %s - %s", timestamp, thread, level, module, message)
-
 	fmt.Println(logLine)
-
 	if logFile != nil {
 
 		log.SetOutput(logFile)
