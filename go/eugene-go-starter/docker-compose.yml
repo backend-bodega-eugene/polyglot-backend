@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+  api:
+    build: .
+    image: eugene-go-starter:latest
+    container_name: eugene-go-starter
+    ports:
+      - "8080:8080"
+    environment:
+      - APP_ENV=dev
+      - HTTP_ADDR=:8080
+      - APP_NAME=eugene-go-starter
