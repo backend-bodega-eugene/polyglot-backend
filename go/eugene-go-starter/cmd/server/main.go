@@ -17,11 +17,11 @@ func main() {
 	cfg := config.Load()
 	lg := logger.New(cfg)
 
-	r := router.New(cfg, lg)
-
+	reloadGin := router.New(cfg, lg)
+	// r.User(middleware.TraceIDMiddleware())
 	srv := &http.Server{
 		Addr:              cfg.HTTPAddr,
-		Handler:           r,
+		Handler:           reloadGin,
 		ReadHeaderTimeout: 10 * time.Second,
 	}
 

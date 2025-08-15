@@ -1,0 +1,272 @@
+// internal/response/result.go
+package response
+
+type Result[T any] struct {
+	Code    int    `json:"code"`              // 0=成功，非0=失败
+	Message string `json:"message"`           // 面向人类的提示
+	Data    T      `json:"data,omitempty"`    // 业务数据
+	TraceID string `json:"traceId,omitempty"` // 链路ID（可从中间件注入）
+}
+
+// 便捷构造
+func OK[T any](data T, msg ...string) Result[T] {
+	m := "success"
+	if len(msg) > 0 && msg[0] != "" {
+		m = msg[0]
+	}
+	return Result[T]{Code: 0, Message: m, Data: data}
+}
+
+func Fail(code int, msg string) Result[any] {
+	return Result[any]{Code: code, Message: msg}
+}
+
+
+// internal/response/codes.go
+package response
+
+// 通用错误码建议
+const (
+	CodeOK              = 0
+	CodeInvalidParam    = 10001
+	CodeUnauthorized    = 10002
+	CodeForbidden       = 10003
+	CodeNotFound        = 10004
+	CodeConflict        = 10005
+	CodeTooManyRequests = 10006
+	CodeInternalError   = 10007
+
+	// 业务域（示例）
+	CodeUserNotExist    = 20001
+	CodeUserFrozen      = 20002
+	CodeOrderNotPayable = 30001
+)
+
+
+
+// internal/response/ginwrap.go
+package response
+
+import (
+	"github.com/gin-gonic/gin"
+)
+
+const TraceKey = "traceId"
+
+// Write：统一写出（默认200）
+func Write[T any](c *gin.Context, res Result[T]) {
+	if res.TraceID == "" {
+		if v, ok := c.Get(TraceKey); ok {
+			if s, ok2 := v.(string); ok2 {
+				res.TraceID = s
+			}
+		}
+	}
+	c.JSON(200, res)
+	c.Abort()
+}
+
+// 语法糖
+func JSONOK[T any](c *gin.Context, data T, msg ...string) {
+	Write(c, OK[T](data, msg...))
+}
+
+func JSONFail(c *gin.Context, code int, msg string) {
+	Write(c, Fail(code, msg))
+}
+
+
+// internal/middleware/recovery.go
+package middleware
+
+import (
+	"log"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
+	"yourapp/internal/response"
+)
+
+// Recovery：兜底panic，注入traceId
+func Recovery() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		traceId := uuid.NewString()
+		c.Set(response.TraceKey, traceId)
+
+		defer func() {
+			if r := recover(); r != nil {
+				log.Printf("[PANIC] trace=%s err=%v", traceId, r)
+				response.Write(c, response.Result[any]{
+					Code:    response.CodeInternalError,
+					Message: "internal server error",
+					TraceID: traceId,
+				})
+			}
+		}()
+		c.Next()
+	}
+}
+
+
+
+// internal/response/paging.go
+package response
+
+type PageReq struct {
+	Page int `form:"page" json:"page"` // 1-based
+	Size int `form:"size" json:"size"` // 每页数量
+}
+
+func (p *PageReq) Normalize(maxSize int) {
+	if p.Page <= 0 {
+		p.Page = 1
+	}
+	if p.Size <= 0 || p.Size > maxSize {
+		p.Size = 10
+	}
+}
+
+type PageResult[T any] struct {
+	Total int64 `json:"total"`
+	List  []T   `json:"list"`
+}
+
+
+
+// internal/i18n/i18n.go
+package i18n
+
+var zhCN = map[int]string{
+	0:     "成功",
+	10001: "参数不合法",
+	10002: "未登录或登录已过期",
+	10007: "服务器开小差了",
+	20001: "用户不存在",
+}
+
+func Message(lang string, code int, fallback string) string {
+	if lang == "zh-CN" {
+		if s, ok := zhCN[code]; ok {
+			return s
+		}
+	}
+	return fallback
+}
+
+
+
+
+
+package response
+
+import (
+	"eugene-go-starter/internal/logger"
+	"net/http"
+	"os"
+
+	"github.com/gin-gonic/gin"
+)
+
+var (
+	lang = func() string {
+		if v := os.Getenv("language"); v != "" {
+			return v
+		}
+		return "en"
+	}()
+	lg = logger.NewLogger()
+)
+
+// 你已有的字典：map[string]map[int]string
+// var codeMessages = ...
+
+type Result struct {
+	Code    int         `json:"code"`
+	Msg     string      `json:"msg"`
+	Data    interface{} `json:"data,omitempty"`
+	TraceID string      `json:"traceId,omitempty"`
+}
+
+func getTraceID(c *gin.Context) string {
+	v, ok := c.Get("traceId")
+	if !ok {
+		return ""
+	}
+	if s, ok := v.(string); ok {
+		return s
+	}
+	return ""
+}
+
+func msgFor(l string, code int, fallback string) string {
+	if m1, ok := codeMessages[l]; ok {
+		if m2, ok := m1[code]; ok && m2 != "" {
+			return m2
+		}
+	}
+	// 回退默认语言
+	if m1, ok := codeMessages["en"]; ok {
+		if m2, ok := m1[code]; ok && m2 != "" {
+			return m2
+		}
+	}
+	if fallback != "" {
+		return fallback
+	}
+	return "unknown"
+}
+
+func writeJSON(c *gin.Context, httpStatus, bizCode int, msg string, data interface{}) {
+	tid := getTraceID(c)
+	if msg == "" {
+		msg = msgFor(lang, bizCode, "")
+	}
+	c.JSON(httpStatus, Result{
+		Code:    bizCode,
+		Msg:     msg,
+		Data:    data,
+		TraceID: tid,
+	})
+	// 日志建议别直接打 data，按需开启
+	lg.Info("response",
+		"httpStatus", httpStatus,
+		"code", bizCode,
+		"msg", msg,
+		"traceId", tid,
+		"path", c.FullPath(),
+	)
+}
+
+func OK(c *gin.Context, data interface{}) {
+	writeJSON(c, http.StatusOK, 0, "success", data)
+}
+
+func BadRequest(c *gin.Context, msg string) {
+	// 用 AbortWithStatusJSON 能阻断后续 handler
+	tid := getTraceID(c)
+	res := Result{Code: http.StatusBadRequest, Msg: msgFor(lang, http.StatusBadRequest, msg), TraceID: tid}
+	c.AbortWithStatusJSON(http.StatusBadRequest, res)
+	lg.Warn("response_bad_request", "traceId", tid, "msg", res.Msg, "path", c.FullPath())
+}
+
+func InternalError(c *gin.Context, msg string) {
+	tid := getTraceID(c)
+	res := Result{Code: http.StatusInternalServerError, Msg: msgFor(lang, http.StatusInternalServerError, msg), TraceID: tid}
+	c.AbortWithStatusJSON(http.StatusInternalServerError, res)
+	lg.Error("response_internal_error", "traceId", tid, "msg", res.Msg, "path", c.FullPath())
+}
+
+func SetResult(c *gin.Context, bizCode int, msg string, data interface{}) {
+	// 业务自定义但 HTTP 也应该可控；这里沿用 200
+	writeJSON(c, http.StatusOK, bizCode, msg, data)
+}
+
+func SetResultSuccess(c *gin.Context, data interface{}) {
+	writeJSON(c, http.StatusOK, 0, "success", data)
+}
+
+func SetResultFail(c *gin.Context, bizCode int) {
+	// 若你定义的 bizCode≠HTTP，HTTP 仍然建议用 400
+	writeJSON(c, http.StatusBadRequest, bizCode, "", nil)
+}
