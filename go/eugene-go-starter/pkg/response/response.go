@@ -3,7 +3,6 @@ package response
 import (
 	"eugene-go-starter/internal/logger"
 	"os"
-
 	"github.com/bwmarrin/snowflake"
 	"github.com/gin-gonic/gin"
 )
@@ -14,7 +13,8 @@ var lg *logger.Logger
 
 func init() {
 	snowNode, _ = snowflake.NewNode(1) // 可以加错误处理
-	val := os.Getenv("language")
+	
+	val := os.Getenv("LANGUAGE")
 	if val == "" {
 		lang = "en"
 	} else {
