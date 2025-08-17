@@ -2,46 +2,32 @@ package main
 
 import (
 	"context"
-	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
-	"time"
 
-	"eugene-go-starter/internal/config"
-	"eugene-go-starter/internal/logger"
+	"eugene-go-starter/internal/db"
+	"eugene-go-starter/internal/handler"
+	"eugene-go-starter/internal/repo"
 	"eugene-go-starter/internal/router"
+	"eugene-go-starter/internal/service"
+	"eugene-go-starter/pkg/config"
+	"eugene-go-starter/pkg/logger"
+	_ "eugene-go-starter/pkg/response"
 )
 
 func main() {
 	cfg := config.Load()
 	lg := logger.New(cfg)
 
-	reloadGin := router.New(cfg, lg)
-	// r.User(middleware.TraceIDMiddleware())
-	srv := &http.Server{
-		Addr:              cfg.HTTPAddr,
-		Handler:           reloadGin,
-		ReadHeaderTimeout: 10 * time.Second,
+	sqlxDB, cleanup, err := db.NewSQLXFromEnv()
+	if err != nil {
+		lg.Error("db init", "err", err)
 	}
+	defer cleanup(context.Background())
 
-	go func() {
-		lg.Info("server starting", "addr", cfg.HTTPAddr)
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			lg.Error("server error", "err", err)
-		}
-	}()
+	userRepo := repo.NewUserRepoSQLX(sqlxDB)
+	userSvc := service.NewUserService(userRepo)
+	userH := handler.NewUserHandler(userSvc)
 
-	// 等待退出信号
-	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
-	<-stop
-
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	if err := srv.Shutdown(ctx); err != nil {
-		lg.Error("graceful shutdown failed", "err", err)
-	} else {
-		lg.Info("server stopped")
-	}
+	r := router.New(cfg, userH) // 只用这一个引擎
+	lg.Info("server start", "addr", cfg.HTTPAddr)
+	_ = r.Run(cfg.HTTPAddr)
 }

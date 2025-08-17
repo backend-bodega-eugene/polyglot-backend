@@ -1,7 +1,7 @@
 package response
 
 import (
-	"eugene-go-starter/internal/logger"
+	"eugene-go-starter/pkg/logger"
 	"os"
 	"github.com/bwmarrin/snowflake"
 	"github.com/gin-gonic/gin"

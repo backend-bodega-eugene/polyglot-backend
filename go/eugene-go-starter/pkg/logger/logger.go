@@ -1,7 +1,7 @@
 package logger
 
 import (
-	"eugene-go-starter/internal/config"
+	"eugene-go-starter/pkg/config"
 	"fmt"
 	"io"
 	"log/slog"
