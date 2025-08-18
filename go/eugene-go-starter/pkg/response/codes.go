@@ -1,5 +1,9 @@
 package response
 
+import (
+	"fmt"
+)
+
 // Code 常量（为了业务可读性）
 const (
 	CodeOK              = 0
@@ -10,7 +14,7 @@ const (
 	CodeConflict        = 10005
 	CodeTooManyRequests = 10006
 	CodeInternalError   = 10007
-
+	WrongTocken         = 10008
 	CodeUserNotExist    = 20001
 	CodeUserFrozen      = 20002
 	CodeOrderNotPayable = 30001
@@ -30,6 +34,7 @@ var codeMessages = map[string]map[int]string{
 		CodeUserNotExist:    "user not exist",
 		CodeUserFrozen:      "user frozen",
 		CodeOrderNotPayable: "order not payable",
+		WrongTocken:         "wrong token",
 	},
 	"zh": {
 		CodeOK:              "成功",
@@ -43,16 +48,39 @@ var codeMessages = map[string]map[int]string{
 		CodeUserNotExist:    "用户不存在",
 		CodeUserFrozen:      "用户已冻结",
 		CodeOrderNotPayable: "订单不可支付",
+		WrongTocken:         "错误的令牌",
 	},
 }
 
 // 取消息
 func GetMsg(code int, lang string) string {
-	if m, ok := codeMessages[lang]; ok {
-		if msg, ok2 := m[code]; ok2 {
-			return msg
-		}
+	fmt.Printf("[GetMsg] lang=%q code=%v type=%T\n", lang, code, code)
+
+	m, ok := codeMessages[lang]
+	if !ok {
+		fmt.Printf("[GetMsg] lang not found. langs=%v\n", mapsOfLangs())
+		return "unknown error"
 	}
-	// 默认兜底
+	fmt.Printf("[GetMsg] zh-codes=%v\n", keysOf(m))
+
+	if msg, ok2 := m[code]; ok2 {
+		return msg
+	}
+	fmt.Printf("[GetMsg] code miss: %v (type=%T)\n", code, code)
 	return "unknown error"
+}
+
+func mapsOfLangs() []string {
+	out := make([]string, 0, len(codeMessages))
+	for k := range codeMessages {
+		out = append(out, k)
+	}
+	return out
+}
+func keysOf(m map[int]string) []int {
+	out := make([]int, 0, len(m))
+	for k := range m {
+		out = append(out, k)
+	}
+	return out
 }

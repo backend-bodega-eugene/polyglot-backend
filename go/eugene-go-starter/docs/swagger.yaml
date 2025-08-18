@@ -1,0 +1,113 @@
+basePath: /
+definitions:
+  eugene-go-starter_internal_handler_dto.LoginReq:
+    properties:
+      password:
+        type: string
+      siteId:
+        type: integer
+      username:
+        type: string
+    required:
+    - password
+    - siteId
+    - username
+    type: object
+  internal_handler.ErrResp:
+    properties:
+      code:
+        example: 10008
+        type: integer
+      msg:
+        example: wrong token
+        type: string
+    type: object
+  internal_handler.LoginOK:
+    properties:
+      expiresAt:
+        example: 1734567890
+        type: integer
+      jti:
+        description: 可选
+        example: 7a1f8d9c4e...
+        type: string
+      token:
+        example: eyJhbGciOiJIUzI1NiIs...
+        type: string
+    type: object
+  internal_handler.RefreshDTO:
+    properties:
+      token:
+        type: string
+    required:
+    - token
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: 登录鉴权最小可用文档
+  title: Eugene API
+  version: "1.0"
+paths:
+  /api/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 登录参数
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/eugene-go-starter_internal_handler_dto.LoginReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.LoginOK'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handler.ErrResp'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handler.ErrResp'
+      summary: 登录
+      tags:
+      - Auth
+  /api/refresh:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 刷新参数
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handler.RefreshDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handler.LoginOK'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handler.ErrResp'
+      summary: 刷新当前 token
+      tags:
+      - Auth
+schemes:
+- http
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

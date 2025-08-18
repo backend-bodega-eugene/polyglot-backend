@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"github.com/joho/godotenv"
+	"time"
 )
 
 type Config struct {
@@ -28,6 +29,37 @@ func Load() *Config {
 func getEnv(key, def string) string {
 	if v := os.Getenv(key); v != "" {
 		return v
+	}
+	return def
+}
+type JWT struct {
+	Secret        string        // HS256 密钥
+	Issuer        string        // 签发者
+	Audience      string        // 受众
+	AccessTTL     time.Duration // 访问令牌有效期
+	RefreshTTL    time.Duration // 刷新令牌有效期（可选）
+	AllowClockSkew time.Duration // 时钟偏差
+}
+func LoadJWT() JWT {
+	secret := os.Getenv("JWT_SECRET")
+	if secret == "" {
+		// 开发环境兜底，生产一定要用环境变量
+		secret = "CHANGE_ME_IN_PROD"
+	}
+	return JWT{
+		Secret:         secret,
+		Issuer:         getEnv("JWT_ISSUER", "eugene-go-starter"),
+		Audience:       getEnv("JWT_AUDIENCE", "eugene-users"),
+		AccessTTL:      parseDuration("JWT_ACCESS_TTL", 24*time.Hour),
+		RefreshTTL:     parseDuration("JWT_REFRESH_TTL", 7*24*time.Hour),
+		AllowClockSkew: parseDuration("JWT_CLOCK_SKEW", 2*time.Minute),
+	}
+}
+func parseDuration(k string, def time.Duration) time.Duration {
+	if v := os.Getenv(k); v != "" {
+		if d, err := time.ParseDuration(v); err == nil {
+			return d
+		}
 	}
 	return def
 }

@@ -3,6 +3,7 @@ package response
 import (
 	"eugene-go-starter/pkg/logger"
 	"os"
+
 	"github.com/bwmarrin/snowflake"
 	"github.com/gin-gonic/gin"
 )
@@ -13,7 +14,7 @@ var lg *logger.Logger
 
 func init() {
 	snowNode, _ = snowflake.NewNode(1) // 可以加错误处理
-	
+
 	val := os.Getenv("LANGUAGE")
 	if val == "" {
 		lang = "en"
@@ -70,12 +71,15 @@ func SetResultSuccess(c *gin.Context, data interface{}) {
 
 }
 func SetResultFail(c *gin.Context, code int) {
-
+	// codeMessages = make(map[string]map[int]string)
+	// codeMessages["ch"] = make(map[int]string)
 	c.JSON(200, Result{
 		Code:    code,
-		Msg:     codeMessages[lang][code],
+		Msg:     GetMsg(code, lang),
 		Data:    nil,
 		TraceID: getTraceID(c),
 	})
-	lg.Warn("Response fail", "data", nil, "traceId", getTraceID(c))
+	// fmt.Printf("code=%v type=%T\n", code, code)
+	// fmt.Printf("addr=%p len=%d\n", codeMessages, len(codeMessages["zh"]))
+	// lg.Warn("Response fail", "data", nil, "traceId", getTraceID(c))
 }
