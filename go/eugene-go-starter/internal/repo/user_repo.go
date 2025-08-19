@@ -6,7 +6,7 @@ import(
 )
 
 type UserRepo interface {
-    FindBySiteAndUsername(ctx context.Context, siteID uint64, username string) (*model.User, error)
+    FindBySiteAndUsername(ctx context.Context, username string) (*model.User, error)
     Create(ctx context.Context, u *model.User) error
     UpdateLoginAt(ctx context.Context, userID uint64) error
 }

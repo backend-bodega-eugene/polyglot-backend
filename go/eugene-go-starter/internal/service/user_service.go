@@ -24,7 +24,7 @@ func NewUserService(r repo.UserRepo) *UserService {
 
 func (s *UserService) Register(ctx context.Context, siteID uint64, username, password string) error {
 	// 1. 查重
-	exist, err := s.repo.FindBySiteAndUsername(ctx, siteID, username)
+	exist, err := s.repo.FindBySiteAndUsername(ctx, username)
 	if err != nil { return err }
 	if exist != nil { return ErrUserExists }
 
@@ -37,7 +37,7 @@ func (s *UserService) Register(ctx context.Context, siteID uint64, username, pas
 }
 
 func (s *UserService) Login(ctx context.Context, siteID uint64, username, password string) (*model.User, error) {
-	u, err := s.repo.FindBySiteAndUsername(ctx, siteID, username)
+	u, err := s.repo.FindBySiteAndUsername(ctx, username)
 	if err != nil || u == nil { return nil, ErrInvalidCredential }
 	if u.Status != model.UserStatusEnabled { return nil, ErrDisabledUser }
 	if !u.CheckPassword(password) { return nil, ErrInvalidCredential }

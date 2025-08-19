@@ -5,19 +5,20 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/jmoiron/sqlx"
 	"eugene-go-starter/internal/model"
+
+	"github.com/jmoiron/sqlx"
 )
 
 type userRepoSQLX struct{ db *sqlx.DB }
 
 func NewUserRepoSQLX(db *sqlx.DB) UserRepo { return &userRepoSQLX{db: db} }
 
-func (r *userRepoSQLX) FindBySiteAndUsername(ctx context.Context, siteID uint64, username string) (*model.User, error) {
+func (r *userRepoSQLX) FindBySiteAndUsername(ctx context.Context, username string) (*model.User, error) {
 	var u model.User
 	err := r.db.GetContext(ctx, &u,
 		`SELECT user_id, site_id, username, password_hash, status, last_login_at, updated_at
-		   FROM users WHERE site_id=? AND username=? LIMIT 1`, siteID, username)
+		   FROM users WHERE username=? LIMIT 1`, username)
 	if err == sql.ErrNoRows {
 		return nil, nil
 	}

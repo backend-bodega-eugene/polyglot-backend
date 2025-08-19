@@ -41,6 +41,7 @@ func main() {
 	lg.Info("server start", "addr", cfg.HTTPAddr)
 	//docs.SwaggerInfo.BasePath = "/"
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler)) // ✅ 真正使用
+	r.Static("/eugene", "./web")
 	_ = r.Run(cfg.HTTPAddr)
 
 }

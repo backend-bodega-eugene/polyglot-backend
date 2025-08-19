@@ -46,7 +46,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		response.BadRequest(c, "invalid body")
 		return
 	}
-	u, err := h.Users.FindBySiteAndUsername(c, in.SiteID, in.Username)
+	u, err := h.Users.FindBySiteAndUsername(c, in.Username)
 	if err != nil || u == nil || u.Status != 1 {
 		response.SetResultFail(c, 10008)
 		return
