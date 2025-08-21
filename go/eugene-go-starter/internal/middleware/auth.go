@@ -49,7 +49,7 @@ func AuthRequired(opt AuthOptions) gin.HandlerFunc {
 
 		// 注入上下文
 		c.Set("uid", claims.UserID)
-		c.Set("sid", claims.SiteID)
+		//c.Set("sid", claims.SiteID)
 		//c.Set("role", claims.Role)
 		c.Set("uname", claims.Username)
 		c.Next()

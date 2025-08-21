@@ -6,7 +6,6 @@ import (
 	"eugene-go-starter/internal/middleware"
 	"eugene-go-starter/internal/repo"
 	"eugene-go-starter/pkg/config"
-	"eugene-go-starter/pkg/response"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
@@ -32,6 +31,9 @@ func New(cfg *config.Config, db *sqlx.DB) *gin.Engine {
 		JWT:     jwtSvc,
 		Revoker: nil, // 有 Redis 再接
 	}
+	MenuHandler := &handler.MenuHandler{
+		Repo: repo.NewMenuRepoSQLX(db),
+	}
 	// user:=&handler.UserHandler{
 	// 	Svc: handler.NewUserService(repo.NewUserRepoSQLX(db))
 	// 	}
@@ -54,18 +56,19 @@ func New(cfg *config.Config, db *sqlx.DB) *gin.Engine {
 		Revoker: nil,
 	}))
 	{
-		rAuth.GET("/me", func(c *gin.Context) {
-			uid, _ := c.Get("uid")
-			uname, _ := c.Get("uname")
-			response.OK(c, gin.H{
-				"userId":   uid,
-				"username": uname,
-			})
-		})
-		// 需要管理员
-		rAuth.GET("/admin/only", middleware.RequireRole("admin"), func(c *gin.Context) {
-			response.OK(c, gin.H{"ok": true})
-		})
+		rAuth.GET("/menus", MenuHandler.GetMyMenus)
+		// rAuth.GET("/me", func(c *gin.Context) {
+		// 	uid, _ := c.Get("uid")
+		// 	uname, _ := c.Get("uname")
+		// 	response.OK(c, gin.H{
+		// 		"userId":   uid,
+		// 		"username": uname,
+		// 	})
+		// })
+		// // 需要管理员
+		// rAuth.GET("/admin/only", middleware.RequireRole("admin"), func(c *gin.Context) {
+		// 	response.OK(c, gin.H{"ok": true})
+		// })
 		// }
 		// 健康检查 & 基础信息
 		// r.GET("/health", handler.Health)

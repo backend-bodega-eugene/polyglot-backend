@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>AdminLTE v4 | Profile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#007bff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
+    <link rel="preload" href="./css/adminlte.css" as="style" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
+        crossorigin="anonymous" media="print" onload="this.media='all'" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css"
+        crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+        crossorigin="anonymous" />
+    <link rel="stylesheet" href="./css/adminlte.css" />
+
+    <!-- 仅为侧栏文字/图标对齐的小样式，和 index 保持一致 -->
+    <style>
+        .app-sidebar .sidebar-menu .nav-link {
+            display: flex;
+            align-items: center;
+        }
+
+        .app-sidebar .sidebar-menu .nav-link p {
+            margin: 0 0 0 .5rem;
+            white-space: nowrap;
+        }
+
+        .avatar-preview {
+            width: 84px;
+            height: 84px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+
+<body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
+    <div class="app-wrapper">
+        <!-- Header（和 index 保持同结构） -->
+        <nav class="app-header navbar navbar-expand bg-body">
+            <div class="container-fluid">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button">
+                            <i class="bi bi-list"></i>
+                        </a>
+                    </li>
+                </ul>
+
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-lte-toggle="fullscreen">
+                            <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
+                            <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i>
+                        </a>
+                    </li>
+
+                    <!-- User Menu Dropdown（与你 index 的一模一样） -->
+                    <li class="nav-item dropdown user-menu">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                            <img id="user-avatar" src="assets/img/eugene.jpg" class="user-image rounded-circle shadow"
+                                alt="User" />
+                            <span id="user-name" class="d-none d-md-inline">eugene</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
+                            <li class="user-header text-bg-primary">
+                                <img id="user-avatar-large" src="assets/img/eugene.jpg" class="rounded-circle shadow"
+                                    alt="User" />
+                                <p id="user-title">
+                                    eugene - Super Admin
+                                    <small id="user-since">Member since Today</small>
+                                </p>
+                            </li>
+                            <li class="user-footer d-flex gap-2">
+                                <a id="btn-profile" href="/eugene/profile.html"
+                                    class="btn btn-default btn-flat flex-fill">Profile</a>
+                                <button id="btn-signout" class="btn btn-default btn-flat flex-fill">Sign out</button>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Sidebar（和 index 保持同结构/同 id） -->
+        <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+            <div class="sidebar-brand">
+                <a href="/eugene/index.html" class="brand-link">
+                    <img src="assets/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image opacity-75 shadow" />
+                    <span class="brand-text fw-light">AdminLTE 4</span>
+                </a>
+            </div>
+            <div class="sidebar-wrapper">
+                <nav class="mt-2">
+                    <ul class="nav nav-pills nav-sidebar flex-column sidebar-menu" data-lte-toggle="treeview"
+                        role="menu" aria-label="Main navigation" data-accordion="false" id="navigation"></ul>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main -->
+        <main class="app-main">
+            <!-- 可选的标题区：此处我留空，直接进入内容 -->
+            <div class="app-content">
+                <div class="container-fluid">
+
+                    <!-- Profile 内容开始 -->
+                    <h3 class="mb-3">My Profile</h3>
+
+                    <!-- 基本资料 -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Basic Info</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="form-profile" class="row g-3">
+                                <div class="col-12 d-flex align-items-center gap-3">
+                                    <img id="avatarPreview" class="avatar-preview shadow" src="assets/img/eugene.jpg"
+                                        alt="avatar" />
+                                    <div>
+                                        <label for="avatar" class="btn btn-outline-secondary btn-sm">
+                                            <i class="bi bi-upload me-1"></i> Upload Avatar
+                                        </label>
+                                        <input id="avatar" type="file" accept="image/*" class="d-none" />
+                                        <div class="form-text">支持 jpg/png，&lt; 2MB</div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">Name</label>
+                                    <input id="name" type="text" class="form-control" placeholder="Your name" />
+                                    <div class="form-text" id="nameHelp"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Role</label>
+                                    <input id="role" type="text" class="form-control" disabled />
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label class="form-label">Email</label>
+                                    <input id="email" type="email" class="form-control" placeholder="you@example.com" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Phone</label>
+                                    <input id="phone" type="tel" class="form-control" placeholder="+86 138****8888" />
+                                </div>
+
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary" id="btnSaveProfile">
+                                        <i class="bi bi-save2 me-1"></i> Save Changes
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- 修改密码 -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Change Password</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="form-password" class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">Current Password</label>
+                                    <input id="oldPwd" type="password" class="form-control"
+                                        autocomplete="current-password" required />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">New Password</label>
+                                    <input id="newPwd" type="password" class="form-control" autocomplete="new-password"
+                                        required />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Confirm New Password</label>
+                                    <input id="newPwd2" type="password" class="form-control" autocomplete="new-password"
+                                        required />
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-warning" id="btnChangePwd">
+                                        <i class="bi bi-key-fill me-1"></i> Update Password
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- toasts -->
+                    <div class="toast align-items-center text-bg-success border-0 position-fixed bottom-0 end-0 m-3"
+                        id="okToast" role="alert">
+                        <div class="d-flex">
+                            <div class="toast-body" id="okToastText">Saved</div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                                data-bs-dismiss="toast"></button>
+                        </div>
+                    </div>
+                    <div class="toast align-items-center text-bg-danger border-0 position-fixed bottom-0 end-0 m-3"
+                        id="errToast" role="alert">
+                        <div class="d-flex">
+                            <div class="toast-body" id="errToastText">Error</div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                                data-bs-dismiss="toast"></button>
+                        </div>
+                    </div>
+                    <!-- Profile 内容结束 -->
+
+                </div>
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <div class="float-end d-none d-sm-inline">Anything you want</div>
+            <strong>
+                Copyright &copy; 2014-2025&nbsp;
+                <a href="https://adminlte.io" class="text-decoration-none">AdminLTE.io</a>.
+            </strong>
+            All rights reserved.
+        </footer>
+    </div>
+
+    <!-- 基础脚本（和 index 同步；不引入无用 demo 图表/地图） -->
+    <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js"
+        crossorigin="anonymous"></script>
+    <script src="./js/adminlte.js"></script>
+
+    <!-- 侧栏滚动条 -->
+    <script>
+        const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';
+        const Default = { scrollbarTheme: 'os-theme-light', scrollbarAutoHide: 'leave', scrollbarClickScroll: true };
+        document.addEventListener('DOMContentLoaded', function () {
+            const sidebarWrapper = document.querySelector(SELECTOR_SIDEBAR_WRAPPER);
+            if (sidebarWrapper && OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined) {
+                OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
+                    scrollbars: { theme: Default.scrollbarTheme, autoHide: Default.scrollbarAutoHide, clickScroll: Default.scrollbarClickScroll },
+                });
+            }
+        });
+    </script>
+
+    <!-- 菜单渲染（与你 index 相同） -->
+    <script>
+        (function () {
+            function getToken() { return localStorage.getItem('authToken') || sessionStorage.getItem('authToken'); }
+            const token = getToken();
+            if (!token) { location.href = '/eugene/login.html'; return; }
+
+            async function fetchMenus() {
+                const res = await fetch('/api/menus', { headers: { 'Authorization': 'Bearer ' + token } });
+                if (res.status === 401) { location.href = '/eugene/login.html'; return []; }
+                if (!res.ok) throw new Error('load menus failed');
+                return res.json();
+            }
+            function renderMenus(menus) {
+                const root = document.querySelector('aside.app-sidebar #navigation');
+                if (!root) return; root.innerHTML = '';
+                const createItem = (node) => {
+                    const hasChildren = Array.isArray(node.children) && node.children.length > 0;
+                    const li = document.createElement('li'); li.className = 'nav-item';
+                    if (!hasChildren) {
+                        li.innerHTML = `
+              <a href="${node.path || '#'}" class="nav-link${location.pathname === (node.path || '') ? ' active' : ''}">
+                <i class="nav-icon ${node.icon || 'bi bi-speedometer'}"></i>
+                <p>${node.name}</p>
+              </a>`; return li;
+                    }
+                    li.innerHTML = `
+            <a href="#" class="nav-link">
+              <i class="nav-icon ${node.icon || 'bi bi-folder'}"></i>
+              <p>${node.name} <i class="nav-arrow bi bi-chevron-right"></i></p>
+            </a>`;
+                    const ul = document.createElement('ul'); ul.className = 'nav nav-treeview';
+                    node.children.forEach(ch => ul.appendChild(createItem(ch))); li.appendChild(ul); return li;
+                };
+                menus.forEach(m => root.appendChild(createItem(m)));
+            }
+            fetchMenus().then(m => { if (!m || m.length === 0) return; renderMenus(m); }).catch(() => location.href = '/eugene/login.html');
+        })();
+    </script>
+
+    <!-- 顶部头像资料（与你 index 相同策略） -->
+    <script>
+        (function () {
+            const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+            const AUTH_HEADERS = token ? { 'Authorization': 'Bearer ' + token } : {};
+
+            const $name = document.getElementById('user-name');
+            const $title = document.getElementById('user-title');
+            const $since = document.getElementById('user-since');
+            const $av1 = document.getElementById('user-avatar');
+            const $av2 = document.getElementById('user-avatar-large');
+            const $out = document.getElementById('btn-signout');
+
+            function setProfile(p = {}) {
+                const n = p.nickname || p.fullName || p.realName || p.username || 'eugene';
+                const sinceTxt = p.memberSince ? `Member since ${new Date(p.memberSince).toLocaleDateString()}` : 'Member since Today';
+                if ($name) $name.textContent = n;
+                if ($title) $title.innerHTML = `${n} - Super Admin <small id="user-since">${sinceTxt}</small>`;
+                if ($since) $since.textContent = sinceTxt;
+                const avatar = p.avatarUrl || p.avatar || 'assets/img/eugene.jpg';
+                if ($av1) $av1.src = avatar;
+                if ($av2) $av2.src = avatar;
+            }
+
+            async function loadProfile() {
+                const endpoints = ['/api/me', '/api/user/info'];
+                for (const url of endpoints) {
+                    try {
+                        const res = await fetch(url, { headers: AUTH_HEADERS });
+                        if (!res.ok) continue;
+                        const data = await res.json().catch(() => ({}));
+                        const u = (data && (data.data?.user || data.data)) || data || {};
+                        setProfile(u); return;
+                    } catch (_) { }
+                }
+                setProfile({});
+            }
+
+            $out?.addEventListener('click', () => {
+                localStorage.removeItem('authToken');
+                sessionStorage.removeItem('authToken');
+                location.href = '/eugene/login.html';
+            });
+
+            loadProfile();
+        })();
+    </script>
+
+    <!-- Profile 页面逻辑 -->
+    <script>
+        (function () {
+            const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+            if (!token) { location.href = '/eugene/login.html'; return; }
+            const HEADERS = { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' };
+            const $ = (id) => document.getElementById(id);
+
+            const nameEl = $('name'), roleEl = $('role'), emailEl = $('email'), phoneEl = $('phone');
+            const avatarEl = $('avatar'), avatarPreview = $('avatarPreview'), nameHelp = $('nameHelp');
+
+            async function loadMe() {
+                try {
+                    const res = await fetch('/api/me', { headers: { 'Authorization': 'Bearer ' + token } });
+                    if (!res.ok) throw 0;
+                    const data = await res.json();
+                    const u = (data && (data.data?.user || data.data)) || data || {};
+                    const role = u.roleName || u.role || 'User';
+
+                    nameEl.value = u.nickname || u.fullName || u.realName || u.username || 'eugene';
+                    roleEl.value = role;
+                    emailEl.value = u.email || '';
+                    phoneEl.value = u.phone || u.mobile || '';
+                    avatarPreview.src = u.avatarUrl || u.avatar || 'assets/img/eugene.jpg';
+
+                    if (role === 'Super Admin') {
+                        nameEl.disabled = true;
+                        nameHelp.textContent = 'Super Admin cannot change name.';
+                    } else {
+                        nameEl.disabled = false;
+                        nameHelp.textContent = '';
+                    }
+                } catch (_) { }
+            }
+
+            // 头像预览
+            avatarEl?.addEventListener('change', (e) => {
+                const f = e.target.files?.[0]; if (!f) return;
+                if (f.size > 2 * 1024 * 1024) { alert('Image too large (>2MB)'); avatarEl.value = ''; return; }
+                avatarPreview.src = URL.createObjectURL(f);
+            });
+
+            // 保存资料
+            document.getElementById('form-profile')?.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                try {
+                    await fetch('/api/me', {
+                        method: 'PUT', headers: HEADERS, body: JSON.stringify({
+                            name: nameEl.value, email: emailEl.value, phone: phoneEl.value
+                        })
+                    });
+                    const f = avatarEl.files?.[0];
+                    if (f) {
+                        const fd = new FormData(); fd.append('file', f);
+                        await fetch('/api/me/avatar', { method: 'POST', headers: { 'Authorization': 'Bearer ' + token }, body: fd });
+                    }
+                    document.getElementById('okToastText').textContent = 'Profile saved';
+                    new bootstrap.Toast(document.getElementById('okToast')).show();
+                    loadMe();
+                } catch (_) {
+                    document.getElementById('errToastText').textContent = 'Save failed';
+                    new bootstrap.Toast(document.getElementById('errToast')).show();
+                }
+            });
+
+            // 改密码
+            document.getElementById('form-password')?.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const oldPwd = document.getElementById('oldPwd').value;
+                const newPwd = document.getElementById('newPwd').value;
+                const newPwd2 = document.getElementById('newPwd2').value;
+                if (newPwd !== newPwd2) { alert('New passwords not match'); return; }
+                try {
+                    const res = await fetch('/api/me/password', { method: 'PUT', headers: HEADERS, body: JSON.stringify({ oldPwd, newPwd }) });
+                    if (!res.ok) throw 0;
+                    document.getElementById('okToastText').textContent = 'Password changed';
+                    new bootstrap.Toast(document.getElementById('okToast')).show();
+                    e.target.reset();
+                } catch (_) {
+                    document.getElementById('errToastText').textContent = 'Password update failed';
+                    new bootstrap.Toast(document.getElementById('errToast')).show();
+                }
+            });
+            loadMe();
+        })();
+    </script>
+</body>
+
+</html>
