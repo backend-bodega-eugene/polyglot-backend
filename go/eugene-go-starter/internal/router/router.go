@@ -57,6 +57,7 @@ func New(cfg *config.Config, db *sqlx.DB) *gin.Engine {
 	}))
 	{
 		rAuth.GET("/menus", MenuHandler.GetMyMenus)
+		rAuth.PUT("/me/password",auth.UpdateUserPassword)
 		// rAuth.GET("/me", func(c *gin.Context) {
 		// 	uid, _ := c.Get("uid")
 		// 	uname, _ := c.Get("uname")

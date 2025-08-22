@@ -28,13 +28,6 @@
             margin: 0 0 0 .5rem;
             white-space: nowrap;
         }
-
-        .avatar-preview {
-            width: 84px;
-            height: 84px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
     </style>
 </head>
 
@@ -104,61 +97,12 @@
 
         <!-- Main -->
         <main class="app-main">
-            <!-- 可选的标题区：此处我留空，直接进入内容 -->
             <div class="app-content">
                 <div class="container-fluid">
 
-                    <!-- Profile 内容开始 -->
-                    <h3 class="mb-3">My Profile</h3>
+                    <!-- 只保留：修改密码 -->
+                    <h3 class="mb-3">Security Settings</h3>
 
-                    <!-- 基本资料 -->
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <h5 class="card-title mb-0">Basic Info</h5>
-                        </div>
-                        <div class="card-body">
-                            <form id="form-profile" class="row g-3">
-                                <div class="col-12 d-flex align-items-center gap-3">
-                                    <img id="avatarPreview" class="avatar-preview shadow" src="assets/img/eugene.jpg"
-                                        alt="avatar" />
-                                    <div>
-                                        <label for="avatar" class="btn btn-outline-secondary btn-sm">
-                                            <i class="bi bi-upload me-1"></i> Upload Avatar
-                                        </label>
-                                        <input id="avatar" type="file" accept="image/*" class="d-none" />
-                                        <div class="form-text">支持 jpg/png，&lt; 2MB</div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <label class="form-label">Name</label>
-                                    <input id="name" type="text" class="form-control" placeholder="Your name" />
-                                    <div class="form-text" id="nameHelp"></div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Role</label>
-                                    <input id="role" type="text" class="form-control" disabled />
-                                </div>
-
-                                <div class="col-md-6">
-                                    <label class="form-label">Email</label>
-                                    <input id="email" type="email" class="form-control" placeholder="you@example.com" />
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Phone</label>
-                                    <input id="phone" type="tel" class="form-control" placeholder="+86 138****8888" />
-                                </div>
-
-                                <div class="col-12">
-                                    <button type="submit" class="btn btn-primary" id="btnSaveProfile">
-                                        <i class="bi bi-save2 me-1"></i> Save Changes
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- 修改密码 -->
                     <div class="card">
                         <div class="card-header">
                             <h5 class="card-title mb-0">Change Password</h5>
@@ -206,7 +150,6 @@
                                 data-bs-dismiss="toast"></button>
                         </div>
                     </div>
-                    <!-- Profile 内容结束 -->
 
                 </div>
             </div>
@@ -333,72 +276,13 @@
         })();
     </script>
 
-    <!-- Profile 页面逻辑 -->
+    <!-- Profile 页面逻辑（仅保留修改密码） -->
     <script>
         (function () {
             const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
             if (!token) { location.href = '/eugene/login.html'; return; }
             const HEADERS = { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' };
-            const $ = (id) => document.getElementById(id);
 
-            const nameEl = $('name'), roleEl = $('role'), emailEl = $('email'), phoneEl = $('phone');
-            const avatarEl = $('avatar'), avatarPreview = $('avatarPreview'), nameHelp = $('nameHelp');
-
-            async function loadMe() {
-                try {
-                    const res = await fetch('/api/me', { headers: { 'Authorization': 'Bearer ' + token } });
-                    if (!res.ok) throw 0;
-                    const data = await res.json();
-                    const u = (data && (data.data?.user || data.data)) || data || {};
-                    const role = u.roleName || u.role || 'User';
-
-                    nameEl.value = u.nickname || u.fullName || u.realName || u.username || 'eugene';
-                    roleEl.value = role;
-                    emailEl.value = u.email || '';
-                    phoneEl.value = u.phone || u.mobile || '';
-                    avatarPreview.src = u.avatarUrl || u.avatar || 'assets/img/eugene.jpg';
-
-                    if (role === 'Super Admin') {
-                        nameEl.disabled = true;
-                        nameHelp.textContent = 'Super Admin cannot change name.';
-                    } else {
-                        nameEl.disabled = false;
-                        nameHelp.textContent = '';
-                    }
-                } catch (_) { }
-            }
-
-            // 头像预览
-            avatarEl?.addEventListener('change', (e) => {
-                const f = e.target.files?.[0]; if (!f) return;
-                if (f.size > 2 * 1024 * 1024) { alert('Image too large (>2MB)'); avatarEl.value = ''; return; }
-                avatarPreview.src = URL.createObjectURL(f);
-            });
-
-            // 保存资料
-            document.getElementById('form-profile')?.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                try {
-                    await fetch('/api/me', {
-                        method: 'PUT', headers: HEADERS, body: JSON.stringify({
-                            name: nameEl.value, email: emailEl.value, phone: phoneEl.value
-                        })
-                    });
-                    const f = avatarEl.files?.[0];
-                    if (f) {
-                        const fd = new FormData(); fd.append('file', f);
-                        await fetch('/api/me/avatar', { method: 'POST', headers: { 'Authorization': 'Bearer ' + token }, body: fd });
-                    }
-                    document.getElementById('okToastText').textContent = 'Profile saved';
-                    new bootstrap.Toast(document.getElementById('okToast')).show();
-                    loadMe();
-                } catch (_) {
-                    document.getElementById('errToastText').textContent = 'Save failed';
-                    new bootstrap.Toast(document.getElementById('errToast')).show();
-                }
-            });
-
-            // 改密码
             document.getElementById('form-password')?.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const oldPwd = document.getElementById('oldPwd').value;
@@ -416,7 +300,6 @@
                     new bootstrap.Toast(document.getElementById('errToast')).show();
                 }
             });
-            loadMe();
         })();
     </script>
 </body>

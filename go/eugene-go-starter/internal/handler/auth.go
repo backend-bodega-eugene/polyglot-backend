@@ -3,6 +3,7 @@ package handler
 
 import (
 	"net/http"
+	"strings"
 	"time"
 
 	"eugene-go-starter/internal/handler/dto"
@@ -46,7 +47,8 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		response.BadRequest(c, "invalid body")
 		return
 	}
-	u, err := h.Users.FindBySiteAndUsername(c, in.Username)
+	// ✅ 传入真正的 context.Context，避免把 *gin.Context 当 ctx 用
+	u, err := h.Users.FindBySiteAndUsername(c.Request.Context(), in.Username)
 	if err != nil || u == nil || u.Status != 1 {
 		response.SetResultFail(c, 10008)
 		return
@@ -98,19 +100,102 @@ func (h *AuthHandler) Refresh(c *gin.Context) {
 	})
 }
 
-// 简单登出：把 jti 加入黑名单（需要 Revoker 实现，如 Redis）
+// 简单登出：把 jti 加入黑名单（需要 Revoker 实现，如内存或 Redis）
 func (h *AuthHandler) Logout(c *gin.Context) {
-	jtiAny, ok := c.Get("jti") // 如果你在中间件里也想 Set("jti", claims.ID) 就能拿到
-	if !ok || h.Revoker == nil {
+	// 优先走中间件注入（如果该路由挂了 AuthRequired）
+	var jti string
+	var exp time.Time
+	if v, ok := c.Get("claims"); ok {
+		if cl, ok2 := v.(*jwtutil.Claims); ok2 && cl != nil {
+			jti = cl.ID
+			if cl.ExpiresAt != nil {
+				exp = cl.ExpiresAt.Time
+			}
+		}
+	}
+
+	// 兜底：没挂中间件时，从 Authorization 解析一次
+	if jti == "" {
+		if h.JWT == nil {
+			c.Status(http.StatusNoContent)
+			return
+		}
+		auth := strings.TrimSpace(c.GetHeader("Authorization"))
+		if !strings.HasPrefix(strings.ToLower(auth), "bearer ") {
+			c.Status(http.StatusNoContent)
+			return
+		}
+		token := strings.TrimSpace(auth[len("bearer "):])
+		claims, err := h.JWT.Parse(token)
+		if err != nil || claims == nil {
+			c.Status(http.StatusNoContent)
+			return
+		}
+		jti = claims.ID
+		if claims.ExpiresAt != nil {
+			exp = claims.ExpiresAt.Time
+		}
+	}
+
+	// 没有 revoker 或没有 jti，则直接幂等返回
+	if h.Revoker == nil || jti == "" {
 		c.Status(http.StatusNoContent)
 		return
 	}
-	// 黑名单 TTL 设为剩余有效期：这里简单给 AccessTTL
-	if err := h.Revoker.Revoke(jtiAny.(string), time.Hour*24); err != nil {
+
+	// TTL = 剩余有效期（小于0则置0）
+	ttl := time.Until(exp)
+	if ttl < 0 {
+		ttl = 0
+	}
+	// 加入黑名单；失败也按设计返回 500
+	if err := h.Revoker.Revoke(jti, ttl); err != nil {
 		response.InternalError(c, "logout failed")
 		return
 	}
+
 	c.Status(http.StatusNoContent)
+}
+
+func (h *AuthHandler) UpdateUserPassword(c *gin.Context) {
+	var in UpdatePasswordDTO
+	if err := c.ShouldBindJSON(&in); err != nil {
+		response.BadRequest(c, "invalid body")
+		return
+	}
+	if in.OldPwd == in.NewPwd {
+		response.BadRequest(c, "new password same as old")
+		return
+	}
+	uidAny, exists := c.Get("uid")
+	if !exists {
+		response.SetResultFail(c, 10008)
+		return
+	}
+	uid := uidAny.(uint64)
+
+	if err := h.Users.UpdatePassword(c.Request.Context(), uid, in.OldPwd, in.NewPwd); err != nil {
+		// 统一外部语义：用户不存在/旧密码错 -> 旧密码不正确
+		switch err {
+		case repo.ErrUserNotFound, repo.ErrOldPasswordIncorrect:
+			response.SetResultFail(c, 10008)
+			return
+		case repo.ErrUpdateFailed:
+			response.SetResultFail(c, 10007)
+		case repo.ErrHashWrong:
+			response.SetResultFail(c, 10006)
+			return
+		default:
+			response.SetResultFail(c, 10005)
+			return
+		}
+	}
+	response.OK(c, "password updated")
+}
+
+type UpdatePasswordDTO struct {
+	OldPwd string `json:"oldPwd" binding:"required"`
+	NewPwd string `json:"newPwd" binding:"required"`
 }
 
 // 定义返回体（Swagger 用）
