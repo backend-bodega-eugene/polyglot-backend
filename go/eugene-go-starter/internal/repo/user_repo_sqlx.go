@@ -5,12 +5,16 @@ import (
 	"database/sql"
 	"errors"
 	"eugene-go-starter/internal/model"
+	"fmt"
+	"strings"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/jmoiron/sqlx"
 )
+
+const userColumns = `user_id, site_id, username, password_hash, status, last_login_at, updated_at`
 
 type userRepoSQLX struct{ db *sqlx.DB }
 
@@ -72,20 +76,135 @@ func (r *userRepoSQLX) UpdatePassword(ctx context.Context, userID uint64, oldPas
 	return nil
 }
 
-var (
-	ErrUserNotFound         = errors.New("user not found")
-	ErrOldPasswordIncorrect = errors.New("old password incorrect")
-	ErrUpdateFailed         = errors.New("update failed")
-	ErrHashWrong            = errors.New("hash generate failed")
-	ErrUpdateStatusFailed   = errors.New("update status failed")
-)
-
 func (r *userRepoSQLX) UpdateStatus(ctx context.Context, userID uint64, status int) error {
 	_, err := r.db.ExecContext(ctx,
 		`UPDATE users SET status=? WHERE user_id=?`,
 		status, userID)
-	if (err != nil) {
+	if err != nil {
 		return ErrUpdateStatusFailed
+	}
+	return nil
+}
+
+// 统一的扫描函数
+func scanUser(row interface{ Scan(dest ...any) error }) (*model.User, error) {
+	var u model.User
+	var last sql.NullTime
+	if err := row.Scan(&u.UserID, &u.SiteID, &u.Username, &u.PasswordHash, &u.Status, &last, &u.UpdatedAt); err != nil {
+		return nil, err
+	}
+	if last.Valid {
+		t := last.Time
+		u.LastLoginAt = &t
+	}
+	return &u, nil
+}
+
+// ===== 下面是你“只需要生成”的 4 个实现 =====
+
+// ListAll: 基于分页与关键词（匹配 username），不返回 total（按你签名）
+func (r *userRepoSQLX) ListAll(ctx context.Context, page, size int, keywords string) ([]model.User, error) {
+	if page < 1 {
+		page = 1
+	}
+	if size <= 0 || size > 200 {
+		size = 10
+	}
+	offset := (page - 1) * size
+
+	where := make([]string, 0, 2)
+	args := make([]any, 0, 2)
+
+	kw := strings.TrimSpace(keywords)
+	if kw != "" {
+		where = append(where, "username LIKE ?")
+		args = append(args, "%"+kw+"%")
+	}
+	cond := ""
+	if len(where) > 0 {
+		cond = "WHERE " + strings.Join(where, " AND ")
+	}
+
+	q := fmt.Sprintf(`SELECT %s FROM users %s ORDER BY user_id DESC LIMIT ? OFFSET ?`, userColumns, cond)
+	args = append(args, size, offset)
+
+	rows, err := r.db.QueryContext(ctx, q, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	users := make([]model.User, 0, size)
+	for rows.Next() {
+		u, err := scanUser(rows)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, *u) // 用值切片，GC 友好
+	}
+	return users, rows.Err()
+}
+
+// GetByID: 按 user_id 查询
+func (r *userRepoSQLX) GetByID(ctx context.Context, userID uint64) (*model.User, error) {
+	const q = `SELECT ` + userColumns + ` FROM users WHERE user_id=? LIMIT 1`
+	row := r.db.QueryRowContext(ctx, q, userID)
+	u, err := scanUser(row)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrNotFound
+		}
+		return nil, err
+	}
+	return u, nil
+}
+
+// DdleteByID: 删除（保留你的方法名，建议后续改为 DeleteByID）
+func (r *userRepoSQLX) DdleteByID(ctx context.Context, userID uint64) error {
+	const q = `DELETE FROM users WHERE user_id=?`
+	res, err := r.db.ExecContext(ctx, q, userID)
+	if err != nil {
+		return err
+	}
+	if n, _ := res.RowsAffected(); n == 0 {
+		return ErrNotFound
+	}
+	return nil
+}
+
+// UpdateByID: 允许修改 username 与 status（password 请走 UpdatePassword）
+func (r *userRepoSQLX) UpdateByID(ctx context.Context, user *model.User) error {
+	// 这里不改 site_id / password_hash / last_login_at / updated_at 由库端维护 NOW()
+	const q = `UPDATE users SET username=?, status=?, updated_at=NOW() WHERE user_id=?`
+	res, err := r.db.ExecContext(ctx, q, user.Username, user.Status, user.UserID)
+	if err != nil {
+		// 唯一索引 uk_user_site（site_id, username）冲突时，MySQL 会抛 duplicate
+		if strings.Contains(strings.ToLower(err.Error()), "duplicate") {
+			return ErrConflict
+		}
+		return err
+	}
+	if n, _ := res.RowsAffected(); n == 0 {
+		return ErrNotFound
+	}
+	return nil
+}
+
+// internal/repo/mysql/user_mysql.go
+func (r *userRepoSQLX) AddUser(ctx context.Context, user *model.User) error {
+	const q = `INSERT INTO users (site_id, username, password_hash, status, updated_at)
+               VALUES (?, ?, ?, ?, NOW())`
+	_, err := r.db.ExecContext(ctx, q,
+		user.SiteID,
+		user.Username,
+		user.PasswordHash,
+		int(user.Status),
+	)
+	if err != nil {
+		if strings.Contains(strings.ToLower(err.Error()), "duplicate") {
+			return ErrConflict
+		}
+		return err
 	}
 	return nil
 }
