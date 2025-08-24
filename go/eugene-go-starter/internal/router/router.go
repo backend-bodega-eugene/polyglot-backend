@@ -5,7 +5,6 @@ import (
 	"eugene-go-starter/internal/jwtutil"
 	"eugene-go-starter/internal/middleware"
 	"eugene-go-starter/internal/repo"
-	"eugene-go-starter/internal/service"
 	"eugene-go-starter/pkg/config"
 
 	"github.com/gin-gonic/gin"
@@ -35,9 +34,6 @@ func New(cfg *config.Config, db *sqlx.DB) *gin.Engine {
 	MenuHandler := &handler.MenuHandler{
 		Repo: repo.NewMenuRepoSQLX(db),
 	}
-	userRepo := repo.NewUserRepoSQLX(db)
-	userService := service.NewUserService(userRepo)
-	userHandler := handler.NewUserHandler(userService)
 	// user:=&handler.UserHandler{
 	// 	Svc: handler.NewUserService(repo.NewUserRepoSQLX(db))
 	// 	}
@@ -53,7 +49,6 @@ func New(cfg *config.Config, db *sqlx.DB) *gin.Engine {
 	r.POST("/login", auth.Login)
 	//r.POST("/register", auth.Register) // 可选
 	r.POST("/api/refresh", auth.Refresh)
-	userHandler.RegisterRoutes(r)
 	//RegisterPublic(r, h)
 	rAuth := r.Group("/api")
 	rAuth.Use(middleware.AuthRequired(middleware.AuthOptions{
@@ -61,9 +56,15 @@ func New(cfg *config.Config, db *sqlx.DB) *gin.Engine {
 		Revoker: nil,
 	}))
 	{
-		rAuth.GET("/menus", MenuHandler.GetMyMenus)
+		//h := &handler.MenuHandler{Repo: menusRepo}
+		rAuth.GET("/menus", MenuHandler.GetMyMenus)    // 你原来的
+		rAuth.GET("/menus/tree", MenuHandler.GetTree)  // 新：管理页树
+		rAuth.GET("/menus/:id", MenuHandler.GetOne)    // 新：详情
+		rAuth.POST("/menus", MenuHandler.Create)       // 新：新增
+		rAuth.PUT("/menus/:id", MenuHandler.Update)    // 新：修改
+		rAuth.DELETE("/menus/:id", MenuHandler.Delete) // 新：删除
+		//rAuth.GET("/menus", MenuHandler.GetMyMenus)
 		rAuth.PUT("/me/password", auth.UpdateUserPassword)
-	
 		// rAuth.GET("/me", func(c *gin.Context) {
 		// 	uid, _ := c.Get("uid")
 		// 	uname, _ := c.Get("uname")

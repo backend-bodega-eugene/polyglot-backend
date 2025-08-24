@@ -9,6 +9,11 @@ type Menu struct {
 	Icon     *string `db:"icon" json:"icon,omitempty"`
 	Sort     int     `db:"sort" json:"sort"`
 	Status   int8    `db:"status" json:"status"`
+	Component *string `db:"component" json:"component,omitempty"`
+	Visible   int8    `db:"visible" json:"visible"`
 	Children []Menu  `json:"children,omitempty"`
 }
-
+type Node struct {
+    Menu
+    Children []*Node `json:"children,omitempty"`
+}
