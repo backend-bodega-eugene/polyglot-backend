@@ -26,7 +26,7 @@ func (s *Service) GetTree(ctx context.Context) ([]*model.Node, error) {
 }
 
 // ===== 读：树（按用户）=====
-func (s *Service) GetTreeByUser(ctx context.Context, userID int64) ([]*model.Node, error) {
+func (s *Service) GetTreeByUser(ctx context.Context, userID uint64) ([]*model.Node, error) {
 	list, err := s.repo.ListByUser(ctx, userID)
 	if err != nil {
 		return nil, err
@@ -35,7 +35,7 @@ func (s *Service) GetTreeByUser(ctx context.Context, userID int64) ([]*model.Nod
 }
 
 // ===== 读：单个（目前没有 GetByID，就从 ListAll 里找一下）=====
-func (s *Service) GetOne(ctx context.Context, id int64) (*model.Menu, error) {
+func (s *Service) GetOne(ctx context.Context, id uint64) (*model.Menu, error) {
 	list, err := s.repo.ListAll(ctx)
 	if err != nil {
 		return nil, err
@@ -52,7 +52,7 @@ func (s *Service) GetOne(ctx context.Context, id int64) (*model.Menu, error) {
 
 // ===== 写：增删改（规范一下入参再透传到 repo）=====
 
-func (s *Service) Create(ctx context.Context, m *model.Menu) (int64, error) {
+func (s *Service) Create(ctx context.Context, m *model.Menu) (uint64, error) {
 	normalize(m)
 	return s.repo.Create(ctx, m)
 }
@@ -62,14 +62,14 @@ func (s *Service) Update(ctx context.Context, m *model.Menu) error {
 	return s.repo.Update(ctx, m)
 }
 
-func (s *Service) Delete(ctx context.Context, id int64) error {
+func (s *Service) Delete(ctx context.Context, id uint64) error {
 	return s.repo.Delete(ctx, id)
 }
 
 // ===== 工具：把 []model.Menu 拍成树（*model.Node 指针树，任意层级都 OK）=====
 
 func buildTreeNodes(list []model.Menu) []*model.Node {
-	idx := make(map[int64]*model.Node, len(list))
+	idx := make(map[uint64]*model.Node, len(list))
 	for i := range list {
 		m := list[i] // 拷贝值，避免被外部修改
 		idx[m.MenuID] = &model.Node{Menu: m}

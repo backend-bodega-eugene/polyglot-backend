@@ -5,7 +5,9 @@ import (
 	"eugene-go-starter/internal/jwtutil"
 	"eugene-go-starter/internal/middleware"
 	"eugene-go-starter/internal/repo"
+	"eugene-go-starter/internal/service"
 	"eugene-go-starter/pkg/config"
+	"eugene-go-starter/pkg/response"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
@@ -34,11 +36,15 @@ func New(cfg *config.Config, db *sqlx.DB) *gin.Engine {
 	MenuHandler := &handler.MenuHandler{
 		Repo: repo.NewMenuRepoSQLX(db),
 	}
-	// user:=&handler.UserHandler{
-	// 	Svc: handler.NewUserService(repo.NewUserRepoSQLX(db))
-	// 	}
+	userService := service.NewUserService(repo.NewUserRepoSQLX(db))
+	user := &handler.UserHandler{
+		Svc: userService,
+	}
 	if cfg.Env == "prod" {
 		gin.SetMode(gin.ReleaseMode)
+	}
+	PermissionHandler := &handler.PermissionHandler{
+		PermRepo: repo.NewPermissionMySQL(db),
 	}
 	r := gin.New()
 
@@ -46,10 +52,22 @@ func New(cfg *config.Config, db *sqlx.DB) *gin.Engine {
 	r.Use(gin.Recovery())
 	r.Use(middleware.RequestID())
 	r.Use(middleware.TraceIDMiddleware())
-	r.POST("/login", auth.Login)
-	//r.POST("/register", auth.Register) // 可选
+	// permOpt := middleware.PermOptions{
+	// 	Repo:      MenuHandler.Repo, // 你已有的 ListByUser 实现
+	// 	TTL:       30 * time.Second, // 可选缓存
+	// 	Whitelist: nil,
+	// }
+	// r.Use(middleware.ACLGuard(permOpt))
+	r.POST("/api/login", auth.Login)
+	//r.POST("/api/register", auth.Register) // 可选
 	r.POST("/api/refresh", auth.Refresh)
-	//RegisterPublic(r, h)
+	user.RegisterRoutes(r)
+	perm := r.Group("/api/permissions")
+	{
+		perm.GET("/user-menus", PermissionHandler.ListUserMenuIDs) // 返回[]uint64
+		perm.POST("/user-menus", PermissionHandler.SaveUserMenus)  // { userId, menuIds }
+	}
+
 	rAuth := r.Group("/api")
 	rAuth.Use(middleware.AuthRequired(middleware.AuthOptions{
 		JWT:     jwtSvc,
@@ -65,14 +83,14 @@ func New(cfg *config.Config, db *sqlx.DB) *gin.Engine {
 		rAuth.DELETE("/menus/:id", MenuHandler.Delete) // 新：删除
 		//rAuth.GET("/menus", MenuHandler.GetMyMenus)
 		rAuth.PUT("/me/password", auth.UpdateUserPassword)
-		// rAuth.GET("/me", func(c *gin.Context) {
-		// 	uid, _ := c.Get("uid")
-		// 	uname, _ := c.Get("uname")
-		// 	response.OK(c, gin.H{
-		// 		"userId":   uid,
-		// 		"username": uname,
-		// 	})
-		// })
+		rAuth.GET("/me", func(c *gin.Context) {
+			uid, _ := c.Get("uid")
+			uname, _ := c.Get("uname")
+			response.OK(c, gin.H{
+				"userId":   uid,
+				"username": uname,
+			})
+		})
 		// // 需要管理员
 		// rAuth.GET("/admin/only", middleware.RequireRole("admin"), func(c *gin.Context) {
 		// 	response.OK(c, gin.H{"ok": true})

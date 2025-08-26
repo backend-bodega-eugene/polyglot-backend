@@ -137,7 +137,7 @@
     (function () {
       // 可在浏览器调试时改这三个配置
       const API_BASE = localStorage.getItem('API_BASE') || '';             // 同域就留空
-      const LOGIN_PATH = localStorage.getItem('LOGIN_PATH') || '/login';
+      const LOGIN_PATH = localStorage.getItem('LOGIN_PATH') || '/api/login';
       const NEXT_URL = localStorage.getItem('NEXT_URL') || '/eugene/index.html';
 
       const form = document.getElementById('loginForm');
@@ -155,7 +155,6 @@
       async function apiFetch(url, options = {}) {
         const headers = new Headers(options.headers || {});
         if (!headers.has('Content-Type')) headers.set('Content-Type', 'application/json');
-        debugger;
         return fetch(API_BASE + url, { ...options, headers });
       }
 
@@ -192,7 +191,7 @@
           if (!token) throw new Error('登录成功但未返回 token 字段');
 
           setToken(token, remember);
-          showMsg('登录成功，冲！', true);
+          // showMsg('登录成功，冲！', true);
           location.href = NEXT_URL; // 去首页
         } catch (err) {
           showMsg(err.message || '登录异常');

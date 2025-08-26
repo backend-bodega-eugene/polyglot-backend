@@ -8,6 +8,7 @@ import (
 	"eugene-go-starter/internal/model"
 	"eugene-go-starter/internal/repo"
 	"eugene-go-starter/internal/service"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -23,7 +24,7 @@ func (h *MenuHandler) GetMyMenus(c *gin.Context) {
 	if uname == "eugene" { // 超管
 		items, err = h.Repo.ListAll(c)
 	} else {
-		items, err = h.Repo.ListByUser(c, uid.(int64))
+		items, err = h.Repo.ListByUser(c, uid.(uint64))
 	}
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
@@ -43,8 +44,8 @@ type resp struct {
 
 // snake_case 的节点 DTO（适配前端：menu_id / parent_id）
 type nodeSnake struct {
-	MenuID    int64       `json:"menu_id"`
-	ParentID  int64       `json:"parent_id"`
+	MenuID    uint64      `json:"menu_id"`
+	ParentID  uint64      `json:"parent_id"`
 	Name      string      `json:"name"`
 	Path      *string     `json:"path,omitempty"`
 	Icon      *string     `json:"icon,omitempty"`
@@ -92,8 +93,8 @@ func (h *MenuHandler) GetTree(c *gin.Context) {
 
 // 输入也是 snake_case，方便直接接你前端 formJSON
 type menuInSnake struct {
-	MenuID    int64   `json:"menu_id"`   // POST 可不传 / 传 0
-	ParentID  int64   `json:"parent_id"`
+	MenuID    uint64  `json:"menu_id"` // POST 可不传 / 传 0
+	ParentID  uint64  `json:"parent_id"`
 	Name      string  `json:"name"`
 	Path      *string `json:"path"`
 	Icon      *string `json:"icon"`
@@ -133,7 +134,7 @@ func toSnakeOne(m *model.Menu) nodeSnake {
 
 // GET /api/menus/:id
 func (h *MenuHandler) GetOne(c *gin.Context) {
-	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil || id <= 0 {
 		c.JSON(http.StatusOK, resp{Code: 1, Msg: "invalid id"})
 		return
@@ -167,7 +168,7 @@ func (h *MenuHandler) Create(c *gin.Context) {
 
 // PUT /api/menus/:id
 func (h *MenuHandler) Update(c *gin.Context) {
-	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil || id <= 0 {
 		c.JSON(http.StatusOK, resp{Code: 1, Msg: "invalid id"})
 		return
@@ -189,7 +190,7 @@ func (h *MenuHandler) Update(c *gin.Context) {
 
 // DELETE /api/menus/:id
 func (h *MenuHandler) Delete(c *gin.Context) {
-	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	id, err := strconv.ParseUint(c.Param("id"), 10, 64)
 	if err != nil || id <= 0 {
 		c.JSON(http.StatusOK, resp{Code: 1, Msg: "invalid id"})
 		return

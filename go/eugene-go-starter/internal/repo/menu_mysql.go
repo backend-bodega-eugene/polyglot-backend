@@ -22,7 +22,7 @@ func (r *MenuMySQL) ListAll(ctx context.Context) ([]model.Menu, error) {
 	return out, r.DB.SelectContext(ctx, &out, q)
 }
 
-func (r *MenuMySQL) ListByUser(ctx context.Context, userID int64) ([]model.Menu, error) {
+func (r *MenuMySQL) ListByUser(ctx context.Context, userID uint64) ([]model.Menu, error) {
 	const q = `
 SELECT m.menu_id, m.parent_id, m.name, m.path, m.icon, m.sort, m.status
 FROM user_menu um
@@ -33,7 +33,7 @@ ORDER BY m.sort ASC, m.menu_id ASC`
 	return out, r.DB.SelectContext(ctx, &out, q, userID)
 }
 
-func (r *MenuMySQL) exists(ctx context.Context, id int64) (bool, error) {
+func (r *MenuMySQL) exists(ctx context.Context, id uint64) (bool, error) {
 	var ok int
 	if err := r.DB.QueryRowContext(ctx, `SELECT 1 FROM menus WHERE menu_id=?`, id).Scan(&ok); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -44,14 +44,14 @@ func (r *MenuMySQL) exists(ctx context.Context, id int64) (bool, error) {
 	return true, nil
 }
 
-func (r *MenuMySQL) parentExistsOrZero(ctx context.Context, pid int64) (bool, error) {
+func (r *MenuMySQL) parentExistsOrZero(ctx context.Context, pid uint64) (bool, error) {
 	if pid == 0 {
 		return true, nil
 	}
 	return r.exists(ctx, pid)
 }
 
-func (r *MenuMySQL) nameDupUnderParent(ctx context.Context, parentID int64, name string, excludeID int64) (bool, error) {
+func (r *MenuMySQL) nameDupUnderParent(ctx context.Context, parentID uint64, name string, excludeID uint64) (bool, error) {
 	q := `SELECT 1 FROM menus WHERE parent_id=? AND name=?`
 	var args any = nil
 	args = []any{parentID, name}
@@ -71,7 +71,7 @@ func (r *MenuMySQL) nameDupUnderParent(ctx context.Context, parentID int64, name
 }
 
 // 用递归 CTE 判断 newParent 是否在 curr 的后代里（MySQL 8+/9+ 支持）
-func (r *MenuMySQL) isDescendant(ctx context.Context, currID, newParentID int64) (bool, error) {
+func (r *MenuMySQL) isDescendant(ctx context.Context, currID, newParentID uint64) (bool, error) {
 	if newParentID == 0 {
 		return false, nil
 	}
@@ -101,7 +101,7 @@ SELECT 1 FROM subtree WHERE menu_id = ? LIMIT 1;
 // ---------- CRUD ----------
 
 // Create(ctx, m) -> (newID, error)
-func (r *MenuMySQL) Create(ctx context.Context, m *model.Menu) (int64, error) {
+func (r *MenuMySQL) Create(ctx context.Context, m *model.Menu) (uint64, error) {
 	if m == nil {
 		return 0, fmt.Errorf("nil menu")
 	}
@@ -134,7 +134,7 @@ VALUES (?,?,?,?,?,?,?,?)`,
 		return 0, err
 	}
 	id, _ := res.LastInsertId()
-	return id, nil
+	return uint64(id), nil
 }
 
 // Update(ctx, m) -> error
@@ -191,7 +191,7 @@ WHERE menu_id=?`,
 
 // Delete(ctx, id) -> error
 // 默认不级联：若有子节点则拒绝
-func (r *MenuMySQL) Delete(ctx context.Context, menuID int64) error {
+func (r *MenuMySQL) Delete(ctx context.Context, menuID uint64) error {
 	if menuID == 0 {
 		return fmt.Errorf("invalid menu_id")
 	}

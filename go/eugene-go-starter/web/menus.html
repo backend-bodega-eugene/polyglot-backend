@@ -152,125 +152,128 @@
       <div class="app-content-header">
         <!--begin::Container-->
         <div class="container-fluid">
-  
+
         </div>
         <!--end::Container-->
       </div>
       <!--end::App Content Header-->
-<!--begin::App Content-->
-<div class="app-content">
-  <!--begin::Container-->
-  <div class="container-fluid">
+      <!--begin::App Content-->
+      <div class="app-content">
+        <!--begin::Container-->
+        <div class="container-fluid">
 
-    <!-- ====== 菜单管理：左树右表单 ====== -->
-    <div class="content-header px-0">
-      <div class="d-flex justify-content-between align-items-center">
-        <h1 class="m-0">菜单管理</h1>
-        <div class="btn-group">
-          <button id="btnAddRoot" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i> 新增根菜单</button>
-          <button id="btnRefresh" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-clockwise"></i> 刷新</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="row g-3">
-      <!-- 左侧：菜单树 -->
-      <div class="col-12 col-lg-4">
-        <div class="card h-100">
-          <div class="card-header">
-            <div class="input-group input-group-sm">
-              <span class="input-group-text"><i class="bi bi-search"></i></span>
-              <input id="treeSearch" type="text" class="form-control" placeholder="搜索菜单名称...">
+          <!-- ====== 菜单管理：左树右表单 ====== -->
+          <div class="content-header px-0">
+            <div class="d-flex justify-content-between align-items-center">
+              <h1 class="m-0">菜单管理</h1>
+              <div class="btn-group">
+                <button id="btnAddRoot" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i> 新增根菜单</button>
+                <button id="btnRefresh" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-clockwise"></i>
+                  刷新</button>
+              </div>
             </div>
           </div>
-          <div class="card-body" style="max-height: 70vh; overflow:auto;">
-            <ul id="menuTree" class="list-unstyled mb-0"></ul>
-          </div>
-        </div>
-      </div>
 
-      <!-- 右侧：详情表单 -->
-      <div class="col-12 col-lg-8">
-        <div class="card h-100">
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <span>菜单详情</span>
-            <div>
-              <button id="btnAddChild" class="btn btn-outline-primary btn-sm" disabled><i class="bi bi-node-plus"></i> 新增子菜单</button>
-              <button id="btnDelete" class="btn btn-outline-danger btn-sm" disabled><i class="bi bi-trash"></i> 删除</button>
-            </div>
-          </div>
-          <div class="card-body">
-            <form id="menuForm" class="needs-validation" novalidate>
-              <input type="hidden" name="menu_id">
-              <input type="hidden" name="parent_id">
-            <!-- 父级菜单选择器（显示/选择 parent_id） -->
-            <div class="col-12">
-            <label class="form-label">父级菜单</label>
-            <div class="input-group">
-                <input id="parentLabel" class="form-control" placeholder="根节点（parent_id = 0）" readonly>
-                <button id="btnPickParent" type="button" class="btn btn-outline-secondary">选择</button>
-                <button id="btnClearParent" type="button" class="btn btn-outline-secondary">清空</button>
-            </div>
-            </div>
-              <div class="row g-3">
-                <div class="col-md-6">
-                  <label class="form-label">菜单名称 *</label>
-                  <input name="name" class="form-control" required>
-                  <div class="invalid-feedback">请输入菜单名称</div>
+          <div class="row g-3">
+            <!-- 左侧：菜单树 -->
+            <div class="col-12 col-lg-4">
+              <div class="card h-100">
+                <div class="card-header">
+                  <div class="input-group input-group-sm">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input id="treeSearch" type="text" class="form-control" placeholder="搜索菜单名称...">
+                  </div>
                 </div>
-                <div class="col-md-6">
-                  <label class="form-label">图标</label>
-                  <input name="icon" class="form-control" placeholder="如：bi bi-people / bi bi-lock">
-                </div>
-
-                <div class="col-md-6">
-                  <label class="form-label">路由路径</label>
-                  <input name="path" class="form-control" placeholder="/users">
-                </div>
-                <div class="col-md-6">
-                  <label class="form-label">前端组件</label>
-                  <input name="component" class="form-control" placeholder="views/user/index.vue">
-                </div>
-
-                <div class="col-md-4">
-                  <label class="form-label">显示</label>
-                  <select name="visible" class="form-select">
-                    <option value="1">显示</option>
-                    <option value="0">隐藏</option>
-                  </select>
-                </div>
-                <div class="col-md-4">
-                  <label class="form-label">状态</label>
-                  <select name="status" class="form-select">
-                    <option value="1">启用</option>
-                    <option value="0">禁用</option>
-                  </select>
-                </div>
-                <div class="col-md-4">
-                  <label class="form-label">排序</label>
-                  <input name="sort" type="number" class="form-control" value="0">
+                <div class="card-body" style="max-height: 70vh; overflow:auto;">
+                  <ul id="menuTree" class="list-unstyled mb-0"></ul>
                 </div>
               </div>
+            </div>
 
-              <div class="mt-4 d-flex gap-2">
-                <button id="btnSave" type="submit" class="btn btn-primary">
-                  <i class="bi bi-save"></i> 保存
-                </button>
-                <button type="button" id="btnReset" class="btn btn-secondary">重置</button>
+            <!-- 右侧：详情表单 -->
+            <div class="col-12 col-lg-8">
+              <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                  <span>菜单详情</span>
+                  <div>
+                    <button id="btnAddChild" class="btn btn-outline-primary btn-sm" disabled><i
+                        class="bi bi-node-plus"></i> 新增子菜单</button>
+                    <button id="btnDelete" class="btn btn-outline-danger btn-sm" disabled><i class="bi bi-trash"></i>
+                      删除</button>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <form id="menuForm" class="needs-validation" novalidate>
+                    <input type="hidden" name="menu_id">
+                    <input type="hidden" name="parent_id">
+                    <!-- 父级菜单选择器（显示/选择 parent_id） -->
+                    <div class="col-12">
+                      <label class="form-label">父级菜单</label>
+                      <div class="input-group">
+                        <input id="parentLabel" class="form-control" placeholder="根节点（parent_id = 0）" readonly>
+                        <button id="btnPickParent" type="button" class="btn btn-outline-secondary">选择</button>
+                        <button id="btnClearParent" type="button" class="btn btn-outline-secondary">清空</button>
+                      </div>
+                    </div>
+                    <div class="row g-3">
+                      <div class="col-md-6">
+                        <label class="form-label">菜单名称 *</label>
+                        <input name="name" class="form-control" required>
+                        <div class="invalid-feedback">请输入菜单名称</div>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label">图标</label>
+                        <input name="icon" class="form-control" placeholder="如：bi bi-people / bi bi-lock">
+                      </div>
+
+                      <div class="col-md-6">
+                        <label class="form-label">路由路径</label>
+                        <input name="path" class="form-control" placeholder="/users">
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label">前端组件</label>
+                        <input name="component" class="form-control" placeholder="views/user/index.vue">
+                      </div>
+
+                      <div class="col-md-4">
+                        <label class="form-label">显示</label>
+                        <select name="visible" class="form-select">
+                          <option value="1">显示</option>
+                          <option value="0">隐藏</option>
+                        </select>
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label">状态</label>
+                        <select name="status" class="form-select">
+                          <option value="1">启用</option>
+                          <option value="0">禁用</option>
+                        </select>
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label">排序</label>
+                        <input name="sort" type="number" class="form-control" value="0">
+                      </div>
+                    </div>
+
+                    <div class="mt-4 d-flex gap-2">
+                      <button id="btnSave" type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> 保存
+                      </button>
+                      <button type="button" id="btnReset" class="btn btn-secondary">重置</button>
+                    </div>
+                  </form>
+                </div>
               </div>
-            </form>
+            </div>
+            <!-- /右侧 -->
+
           </div>
+          <!-- /菜单管理 -->
+
         </div>
+        <!--end::Container-->
       </div>
-      <!-- /右侧 -->
-
-    </div>
-    <!-- /菜单管理 -->
-
-  </div>
-  <!--end::Container-->
-</div>
-<!--end::App Content-->
+      <!--end::App Content-->
 
     </main>
     <!--end::App Main-->
@@ -287,20 +290,22 @@
   </div>
   <!--end::App Wrapper-->
   <!-- 选择父级 Modal -->
-<div class="modal fade" id="parentPickerModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content">
-      <div class="modal-header"><h5 class="modal-title">选择父级菜单</h5></div>
-      <div class="modal-body" style="max-height: 60vh; overflow:auto;">
-        <ul id="parentPickerTree" class="list-unstyled mb-0"></ul>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-        <button id="btnParentPickConfirm" class="btn btn-primary" disabled>确定</button>
+  <div class="modal fade" id="parentPickerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">选择父级菜单</h5>
+        </div>
+        <div class="modal-body" style="max-height: 60vh; overflow:auto;">
+          <ul id="parentPickerTree" class="list-unstyled mb-0"></ul>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+          <button id="btnParentPickConfirm" class="btn btn-primary" disabled>确定</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
   <!--begin::Script-->
   <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js"
@@ -321,46 +326,6 @@
         });
       }
     });
-  </script>
-
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js" crossorigin="anonymous"></script>
-  <script>
-    new Sortable(document.querySelector('.connectedSortable'), { group: 'shared', handle: '.card-header' });
-    const cardHeaders = document.querySelectorAll('.connectedSortable .card-header');
-    cardHeaders.forEach((cardHeader) => { cardHeader.style.cursor = 'move'; });
-  </script>
-
-  <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.min.js"
-    integrity="sha256-+vh8GkaU7C9/wbSLIcwq82tQ2wTf44aOHA8HlBMwRI8=" crossorigin="anonymous"></script>
-  <script>
-    const sales_chart_options = {
-      series: [{ name: 'Digital Goods', data: [28, 48, 40, 19, 86, 27, 90] }, { name: 'Electronics', data: [65, 59, 80, 81, 56, 55, 40] }],
-      chart: { height: 300, type: 'area', toolbar: { show: false } },
-      legend: { show: false },
-      colors: ['#0d6efd', '#20c997'],
-      dataLabels: { enabled: false },
-      stroke: { curve: 'smooth' },
-      xaxis: { type: 'datetime', categories: ['2023-01-01', '2023-02-01', '2023-03-01', '2023-04-01', '2023-05-01', '2023-06-01', '2023-07-01'] },
-      tooltip: { x: { format: 'MMMM yyyy' } },
-    };
-    const sales_chart = new ApexCharts(document.querySelector('#revenue-chart'), sales_chart_options);
-    sales_chart.render();
-  </script>
-
-  <script src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/js/jsvectormap.min.js"
-    crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/maps/world.js" crossorigin="anonymous"></script>
-  <script>
-    new jsVectorMap({ selector: '#world-map', map: 'world' });
-
-    const option_sparkline1 = { series: [{ data: [1000, 1200, 920, 927, 931, 1027, 819, 930, 1021] }], chart: { type: 'area', height: 50, sparkline: { enabled: true } }, stroke: { curve: 'straight' }, fill: { opacity: 0.3 }, yaxis: { min: 0 }, colors: ['#DCE6EC'] };
-    new ApexCharts(document.querySelector('#sparkline-1'), option_sparkline1).render();
-
-    const option_sparkline2 = { series: [{ data: [515, 519, 520, 522, 652, 810, 370, 627, 319, 630, 921] }], chart: { type: 'area', height: 50, sparkline: { enabled: true } }, stroke: { curve: 'straight' }, fill: { opacity: 0.3 }, yaxis: { min: 0 }, colors: ['#DCE6EC'] };
-    new ApexCharts(document.querySelector('#sparkline-2'), option_sparkline2).render();
-
-    const option_sparkline3 = { series: [{ data: [15, 19, 20, 22, 33, 27, 31, 27, 19, 30, 21] }], chart: { type: 'area', height: 50, sparkline: { enabled: true } }, stroke: { curve: 'straight' }, fill: { opacity: 0.3 }, yaxis: { min: 0 }, colors: ['#DCE6EC'] };
-    new ApexCharts(document.querySelector('#sparkline-3'), option_sparkline3).render();
   </script>
 
   <script>
@@ -486,351 +451,351 @@
       loadProfile();
     })();
   </script>
-<script>
-  (function () {
-    // —— token/header
-    const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
-    if (!token) { location.href = '/eugene/login.html'; return; }
-    const AUTH_HEADERS = { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' };
+  <script>
+    (function () {
+      // —— token/header
+      const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+      if (!token) { location.href = '/eugene/login.html'; return; }
+      const AUTH_HEADERS = { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' };
 
-    // —— DOM refs
-    const $tree = document.getElementById('menuTree');
-    const $search = document.getElementById('treeSearch');
-    const $btnAddRoot = document.getElementById('btnAddRoot');
-    const $btnRefresh = document.getElementById('btnRefresh');
-    const $btnAddChild = document.getElementById('btnAddChild');
-    const $btnDelete = document.getElementById('btnDelete');
-    const $form = document.getElementById('menuForm');
-    const $btnReset = document.getElementById('btnReset');
+      // —— DOM refs
+      const $tree = document.getElementById('menuTree');
+      const $search = document.getElementById('treeSearch');
+      const $btnAddRoot = document.getElementById('btnAddRoot');
+      const $btnRefresh = document.getElementById('btnRefresh');
+      const $btnAddChild = document.getElementById('btnAddChild');
+      const $btnDelete = document.getElementById('btnDelete');
+      const $form = document.getElementById('menuForm');
+      const $btnReset = document.getElementById('btnReset');
 
-    let currentNodeId = null;
-    let treeData = [];
+      let currentNodeId = null;
+      let treeData = [];
 
-    // ===== API =====
-    async function apiGetTree() {
-      const r = await fetch('/api/menus/tree', { headers: AUTH_HEADERS });
-      if (r.status === 401) { location.href = '/eugene/login.html'; return []; }
-      const data = await r.json();
-      return data?.data || data || [];
-    }
-    async function apiGetOne(id) {
-      const r = await fetch(`/api/menus/${id}`, { headers: AUTH_HEADERS });
-      const data = await r.json();
-      return data?.data || data || {};
-    }
-    async function apiCreate(payload) {
-      const r = await fetch('/api/menus', { method: 'POST', headers: AUTH_HEADERS, body: JSON.stringify(payload) });
-      return r.json();
-    }
-    async function apiUpdate(id, payload) {
-      const r = await fetch(`/api/menus/${id}`, { method: 'PUT', headers: AUTH_HEADERS, body: JSON.stringify(payload) });
-      return r.json();
-    }
-    async function apiDelete(id) {
-      const r = await fetch(`/api/menus/${id}`, { method: 'DELETE', headers: AUTH_HEADERS });
-      return r.json();
-    }
+      // ===== API =====
+      async function apiGetTree() {
+        const r = await fetch('/api/menus/tree', { headers: AUTH_HEADERS });
+        if (r.status === 401) { location.href = '/eugene/login.html'; return []; }
+        const data = await r.json();
+        return data?.data || data || [];
+      }
+      async function apiGetOne(id) {
+        const r = await fetch(`/api/menus/${id}`, { headers: AUTH_HEADERS });
+        const data = await r.json();
+        return data?.data || data || {};
+      }
+      async function apiCreate(payload) {
+        const r = await fetch('/api/menus', { method: 'POST', headers: AUTH_HEADERS, body: JSON.stringify(payload) });
+        return r.json();
+      }
+      async function apiUpdate(id, payload) {
+        const r = await fetch(`/api/menus/${id}`, { method: 'PUT', headers: AUTH_HEADERS, body: JSON.stringify(payload) });
+        return r.json();
+      }
+      async function apiDelete(id) {
+        const r = await fetch(`/api/menus/${id}`, { method: 'DELETE', headers: AUTH_HEADERS });
+        return r.json();
+      }
 
-    // ===== 树渲染 =====
-    function renderTree(list) {
-      $tree.innerHTML = '';
-      const ul = document.createElement('ul');
-      ul.className = 'list-unstyled mb-0';
-      list.forEach(n => ul.appendChild(renderNode(n)));
-      $tree.appendChild(ul);
-    }
-    function renderNode(node) {
-      const li = document.createElement('li');
-      li.dataset.id = node.menu_id || node.id;
-      const hasChildren = Array.isArray(node.children) && node.children.length > 0;
+      // ===== 树渲染 =====
+      function renderTree(list) {
+        $tree.innerHTML = '';
+        const ul = document.createElement('ul');
+        ul.className = 'list-unstyled mb-0';
+        list.forEach(n => ul.appendChild(renderNode(n)));
+        $tree.appendChild(ul);
+      }
+      function renderNode(node) {
+        const li = document.createElement('li');
+        li.dataset.id = node.menu_id || node.id;
+        const hasChildren = Array.isArray(node.children) && node.children.length > 0;
 
-      const a = document.createElement('a');
-      a.href = 'javascript:void(0)';
-      a.className = 'd-flex align-items-center py-1';
-      a.innerHTML = `
+        const a = document.createElement('a');
+        a.href = 'javascript:void(0)';
+        a.className = 'd-flex align-items-center py-1';
+        a.innerHTML = `
         <i class="${node.icon || 'bi bi-folder'} me-2"></i>
         <span>${escapeHtml(node.name)}</span>
       `;
-      a.addEventListener('click', () => onSelect(li.dataset.id));
+        a.addEventListener('click', () => onSelect(li.dataset.id));
 
-      li.appendChild(a);
+        li.appendChild(a);
 
-      if (hasChildren) {
-        const ul = document.createElement('ul');
-        ul.className = 'ms-3';
-        node.children.forEach(c => ul.appendChild(renderNode(c)));
-        li.appendChild(ul);
+        if (hasChildren) {
+          const ul = document.createElement('ul');
+          ul.className = 'ms-3';
+          node.children.forEach(c => ul.appendChild(renderNode(c)));
+          li.appendChild(ul);
+        }
+        return li;
       }
-      return li;
-    }
-    function escapeHtml(s=''){return s.replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));}
+      function escapeHtml(s = '') { return s.replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])); }
 
-    // ===== 选择节点 -> 载入详情 =====
-    async function onSelect(id) {
-      currentNodeId = Number(id);
-      enableActions(true);
-      const data = await apiGetOne(currentNodeId);
-      fillForm(data);
-      highlightCurrent(id);
-    }
-    function highlightCurrent(id) {
-      $tree.querySelectorAll('a').forEach(a=>a.classList.remove('text-primary'));
-      const li = $tree.querySelector(`li[data-id="${id}"]`);
-      li?.querySelector('a')?.classList.add('text-primary');
-    }
-    function enableActions(enabled) {
-      $btnAddChild.disabled = !enabled;
-      $btnDelete.disabled = !enabled;
-    }
+      // ===== 选择节点 -> 载入详情 =====
+      async function onSelect(id) {
+        currentNodeId = Number(id);
+        enableActions(true);
+        const data = await apiGetOne(currentNodeId);
+        fillForm(data);
+        highlightCurrent(id);
+      }
+      function highlightCurrent(id) {
+        $tree.querySelectorAll('a').forEach(a => a.classList.remove('text-primary'));
+        const li = $tree.querySelector(`li[data-id="${id}"]`);
+        li?.querySelector('a')?.classList.add('text-primary');
+      }
+      function enableActions(enabled) {
+        $btnAddChild.disabled = !enabled;
+        $btnDelete.disabled = !enabled;
+      }
 
-    // ===== 表单填充/读取 =====
-function findNodeById(nodes, id) {
-  for (const n of nodes) {
-    if ((n.menu_id || n.id) === id) return n;
-    if (n.children && n.children.length) {
-      const got = findNodeById(n.children, id);
-      if (got) return got;
-    }
-  }
-  return null;
-}
+      // ===== 表单填充/读取 =====
+      function findNodeById(nodes, id) {
+        for (const n of nodes) {
+          if ((n.menu_id || n.id) === id) return n;
+          if (n.children && n.children.length) {
+            const got = findNodeById(n.children, id);
+            if (got) return got;
+          }
+        }
+        return null;
+      }
 
-function fillForm(d = {}) {
-  $form.menu_id.value   = d.menu_id ?? d.id ?? '';
-  $form.parent_id.value = d.parent_id ?? 0;
-  $form.name.value      = d.name ?? '';
-  $form.icon.value      = d.icon ?? '';
-  $form.path.value      = d.path ?? '';
-  $form.component.value = d.component ?? '';
-  $form.visible.value   = d.visible ?? 1;
-  $form.status.value    = d.status ?? 1;
-  $form.sort.value      = d.sort ?? 0;
+      function fillForm(d = {}) {
+        $form.menu_id.value = d.menu_id ?? d.id ?? '';
+        $form.parent_id.value = d.parent_id ?? 0;
+        $form.name.value = d.name ?? '';
+        $form.icon.value = d.icon ?? '';
+        $form.path.value = d.path ?? '';
+        $form.component.value = d.component ?? '';
+        $form.visible.value = d.visible ?? 1;
+        $form.status.value = d.status ?? 1;
+        $form.sort.value = d.sort ?? 0;
 
-  // 同步父级显示
-  const $parentLabel = document.getElementById('parentLabel');
-  if ($parentLabel) {
-    const pid = d?.parent_id ?? 0;
-    if (pid === 0) {
-      $parentLabel.value = '根节点（parent_id = 0）';
-    } else {
-      const p = findNodeById(treeData, Number(pid));
-      $parentLabel.value = p?.name ? p.name : `ID: ${pid}`;
-    }
-  }
-}
+        // 同步父级显示
+        const $parentLabel = document.getElementById('parentLabel');
+        if ($parentLabel) {
+          const pid = d?.parent_id ?? 0;
+          if (pid === 0) {
+            $parentLabel.value = '根节点（parent_id = 0）';
+          } else {
+            const p = findNodeById(treeData, Number(pid));
+            $parentLabel.value = p?.name ? p.name : `ID: ${pid}`;
+          }
+        }
+      }
 
-    function formJSON() {
-      return {
-        menu_id: numOrNull($form.menu_id.value),
-        parent_id: number($form.parent_id.value, 0),
-        name: $form.name.value.trim(),
-        icon: $form.icon.value.trim(),
-        path: $form.path.value.trim(),
-        component: $form.component.value.trim(),
-        visible: number($form.visible.value, 1),
-        status: number($form.status.value, 1),
-        sort: number($form.sort.value, 0),
-      };
-    }
-    function number(v, def=0){ const n = Number(v); return Number.isFinite(n)?n:def; }
-    function numOrNull(v){ const n = Number(v); return Number.isFinite(n)?n:null; }
+      function formJSON() {
+        return {
+          menu_id: numOrNull($form.menu_id.value),
+          parent_id: number($form.parent_id.value, 0),
+          name: $form.name.value.trim(),
+          icon: $form.icon.value.trim(),
+          path: $form.path.value.trim(),
+          component: $form.component.value.trim(),
+          visible: number($form.visible.value, 1),
+          status: number($form.status.value, 1),
+          sort: number($form.sort.value, 0),
+        };
+      }
+      function number(v, def = 0) { const n = Number(v); return Number.isFinite(n) ? n : def; }
+      function numOrNull(v) { const n = Number(v); return Number.isFinite(n) ? n : null; }
 
-    // ===== 事件绑定 =====
-    $btnRefresh.addEventListener('click', init);
-    $btnAddRoot.addEventListener('click', () => {
-      enableActions(false);
-      fillForm({ parent_id: 0, visible: 1, status: 1, sort: 0 });
-      currentNodeId = null;
-      $tree.querySelectorAll('a').forEach(a=>a.classList.remove('text-primary'));
-    });
-    $btnAddChild.addEventListener('click', () => {
-      if (!currentNodeId) return;
-      fillForm({ parent_id: currentNodeId, visible: 1, status: 1, sort: 0 });
-      $form.menu_id.value = '';
-    });
-    $btnDelete.addEventListener('click', async () => {
-      if (!currentNodeId) return;
-      if (!confirm('确定要删除该菜单吗？若含有子节点请先清理。')) return;
-      const res = await apiDelete(currentNodeId);
-      if (res.code === 0 || res.success || res.msg === 'success') {
-        await init();
-        fillForm({});
+      // ===== 事件绑定 =====
+      $btnRefresh.addEventListener('click', init);
+      $btnAddRoot.addEventListener('click', () => {
         enableActions(false);
-      } else {
-        alert(res.msg || '删除失败');
-      }
-    });
-    $btnReset.addEventListener('click', () => {
-      if (currentNodeId) { onSelect(currentNodeId); }
-      else { fillForm({ parent_id: 0, visible: 1, status: 1, sort: 0 }); }
-    });
-
-    // 保存（新增/编辑）
-    $form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      if (!$form.checkValidity()) { $form.classList.add('was-validated'); return; }
-      const payload = formJSON();
-      let res;
-      if (payload.menu_id) res = await apiUpdate(payload.menu_id, payload);
-      else res = await apiCreate(payload);
-
-      if (res.code === 0 || res.success || res.msg === 'success') {
-        await init();
-        // 重新定位高亮
-        const id = (res.data?.menu_id || res.data?.id || payload.menu_id);
-        if (id) onSelect(id);
-        alert('保存成功');
-      } else {
-        alert(res.msg || '保存失败');
-      }
-    });
-
-    // 搜索（简单包含过滤）
-    $search.addEventListener('input', () => {
-      const kw = $search.value.trim().toLowerCase();
-      const filtered = kw ? filterTree(treeData, kw) : treeData;
-      renderTree(filtered);
-    });
-    function filterTree(nodes, kw) {
-      const hit = [];
-      nodes.forEach(n => {
-        const name = String(n.name || '').toLowerCase();
-        const children = Array.isArray(n.children) ? filterTree(n.children, kw) : [];
-        if (name.includes(kw) || children.length) {
-          hit.push({ ...n, children });
+        fillForm({ parent_id: 0, visible: 1, status: 1, sort: 0 });
+        currentNodeId = null;
+        $tree.querySelectorAll('a').forEach(a => a.classList.remove('text-primary'));
+      });
+      $btnAddChild.addEventListener('click', () => {
+        if (!currentNodeId) return;
+        fillForm({ parent_id: currentNodeId, visible: 1, status: 1, sort: 0 });
+        $form.menu_id.value = '';
+      });
+      $btnDelete.addEventListener('click', async () => {
+        if (!currentNodeId) return;
+        if (!confirm('确定要删除该菜单吗？若含有子节点请先清理。')) return;
+        const res = await apiDelete(currentNodeId);
+        if (res.code === 0 || res.success || res.msg === 'success') {
+          await init();
+          fillForm({});
+          enableActions(false);
+        } else {
+          alert(res.msg || '删除失败');
         }
       });
-      return hit;
-    }
-
-    // ===== 初始化 =====
-    async function init() {
-      try {
-        treeData = await apiGetTree();
-        renderTree(treeData);
-      } catch (e) {
-        console.error(e);
-        alert('加载菜单失败，请检查后端 /api/menus/tree 接口');
-      }
-    }
-    init();
-  })();
-</script>
-<script>
-(function () {
-  // 复用已有闭包里的数据：不与其它变量冲突
-  const $form = document.getElementById('menuForm');
-  const $btnPickParent = document.getElementById('btnPickParent');
-  const $btnClearParent = document.getElementById('btnClearParent');
-  const $parentLabel = document.getElementById('parentLabel');
-  const $parentPickerTree = document.getElementById('parentPickerTree');
-  const $btnParentPickConfirm = document.getElementById('btnParentPickConfirm');
-
-  let parentPickSelectedId = null;
-  let parentModal;
-
-  function ensureModal() {
-    if (!parentModal) {
-      parentModal = new bootstrap.Modal(document.getElementById('parentPickerModal'));
-      document.getElementById('parentPickerModal').addEventListener('hidden.bs.modal', () => {
-        parentPickSelectedId = null;
-        $btnParentPickConfirm.disabled = true;
-        $parentPickerTree.innerHTML = '';
+      $btnReset.addEventListener('click', () => {
+        if (currentNodeId) { onSelect(currentNodeId); }
+        else { fillForm({ parent_id: 0, visible: 1, status: 1, sort: 0 }); }
       });
-    }
-  }
 
-  function collectDescendantsIds(node, acc = new Set()) {
-    if (!node || !node.children) return acc;
-    for (const c of node.children) {
-      const cid = c.menu_id || c.id;
-      acc.add(cid);
-      collectDescendantsIds(c, acc);
-    }
-    return acc;
-  }
+      // 保存（新增/编辑）
+      $form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!$form.checkValidity()) { $form.classList.add('was-validated'); return; }
+        const payload = formJSON();
+        let res;
+        if (payload.menu_id) res = await apiUpdate(payload.menu_id, payload);
+        else res = await apiCreate(payload);
 
-  function renderParentPickerTree(excludeSet) {
-    $parentPickerTree.innerHTML = '';
+        if (res.code === 0 || res.success || res.msg === 'success') {
+          await init();
+          // 重新定位高亮
+          const id = (res.data?.menu_id || res.data?.id || payload.menu_id);
+          if (id) onSelect(id);
+          alert('保存成功');
+        } else {
+          alert(res.msg || '保存失败');
+        }
+      });
 
-    // 虚拟根
-    const rootLi = document.createElement('li');
-    rootLi.dataset.id = '0';
-    const a0 = document.createElement('a');
-    a0.href = 'javascript:void(0)';
-    a0.className = 'd-flex align-items-center py-1';
-    a0.innerHTML = `<i class="bi bi-house me-2"></i><span>根节点（parent_id = 0）</span>`;
-    a0.addEventListener('click', () => selectParent('0', '根节点（parent_id = 0）'));
-    rootLi.appendChild(a0);
-    $parentPickerTree.appendChild(rootLi);
+      // 搜索（简单包含过滤）
+      $search.addEventListener('input', () => {
+        const kw = $search.value.trim().toLowerCase();
+        const filtered = kw ? filterTree(treeData, kw) : treeData;
+        renderTree(filtered);
+      });
+      function filterTree(nodes, kw) {
+        const hit = [];
+        nodes.forEach(n => {
+          const name = String(n.name || '').toLowerCase();
+          const children = Array.isArray(n.children) ? filterTree(n.children, kw) : [];
+          if (name.includes(kw) || children.length) {
+            hit.push({ ...n, children });
+          }
+        });
+        return hit;
+      }
 
-    const ul = document.createElement('ul');
-    ul.className = 'list-unstyled mt-2';
-    (window.treeData || []).forEach(n => ul.appendChild(renderNode(n, excludeSet)));
-    $parentPickerTree.appendChild(ul);
-  }
+      // ===== 初始化 =====
+      async function init() {
+        try {
+          treeData = await apiGetTree();
+          renderTree(treeData);
+        } catch (e) {
+          console.error(e);
+          alert('加载菜单失败，请检查后端 /api/menus/tree 接口');
+        }
+      }
+      init();
+    })();
+  </script>
+  <script>
+    (function () {
+      // 复用已有闭包里的数据：不与其它变量冲突
+      const $form = document.getElementById('menuForm');
+      const $btnPickParent = document.getElementById('btnPickParent');
+      const $btnClearParent = document.getElementById('btnClearParent');
+      const $parentLabel = document.getElementById('parentLabel');
+      const $parentPickerTree = document.getElementById('parentPickerTree');
+      const $btnParentPickConfirm = document.getElementById('btnParentPickConfirm');
 
-  function renderNode(node, excludeSet) {
-    const li = document.createElement('li');
-    const id = node.menu_id || node.id;
-    li.dataset.id = id;
+      let parentPickSelectedId = null;
+      let parentModal;
 
-    const disabled = excludeSet.has(id);
-    const a = document.createElement('a');
-    a.href = 'javascript:void(0)';
-    a.className = 'd-flex align-items-center py-1 ' + (disabled ? 'text-muted' : '');
-    a.innerHTML = `<i class="${node.icon || 'bi bi-folder'} me-2"></i><span>${escapeHtml(node.name || '')}</span>`;
-    if (!disabled) a.addEventListener('click', () => selectParent(String(id), node.name || String(id)));
-    li.appendChild(a);
+      function ensureModal() {
+        if (!parentModal) {
+          parentModal = new bootstrap.Modal(document.getElementById('parentPickerModal'));
+          document.getElementById('parentPickerModal').addEventListener('hidden.bs.modal', () => {
+            parentPickSelectedId = null;
+            $btnParentPickConfirm.disabled = true;
+            $parentPickerTree.innerHTML = '';
+          });
+        }
+      }
 
-    if (Array.isArray(node.children) && node.children.length) {
-      const ul = document.createElement('ul');
-      ul.className = 'ms-3';
-      node.children.forEach(c => ul.appendChild(renderNode(c, excludeSet)));
-      li.appendChild(ul);
-    }
-    return li;
-  }
+      function collectDescendantsIds(node, acc = new Set()) {
+        if (!node || !node.children) return acc;
+        for (const c of node.children) {
+          const cid = c.menu_id || c.id;
+          acc.add(cid);
+          collectDescendantsIds(c, acc);
+        }
+        return acc;
+      }
 
-  function selectParent(id, label) {
-    parentPickSelectedId = id;
-    $btnParentPickConfirm.disabled = false;
+      function renderParentPickerTree(excludeSet) {
+        $parentPickerTree.innerHTML = '';
 
-    $parentPickerTree.querySelectorAll('a').forEach(a => a.classList.remove('text-primary'));
-    const li = $parentPickerTree.querySelector(`li[data-id="${id}"]`);
-    li?.querySelector('a')?.classList.add('text-primary');
+        // 虚拟根
+        const rootLi = document.createElement('li');
+        rootLi.dataset.id = '0';
+        const a0 = document.createElement('a');
+        a0.href = 'javascript:void(0)';
+        a0.className = 'd-flex align-items-center py-1';
+        a0.innerHTML = `<i class="bi bi-house me-2"></i><span>根节点（parent_id = 0）</span>`;
+        a0.addEventListener('click', () => selectParent('0', '根节点（parent_id = 0）'));
+        rootLi.appendChild(a0);
+        $parentPickerTree.appendChild(rootLi);
 
-    $btnParentPickConfirm.onclick = () => {
-      $form.parent_id.value = id === '0' ? 0 : Number(id);
-      $parentLabel.value = label;
-      parentModal.hide();
-    };
-  }
+        const ul = document.createElement('ul');
+        ul.className = 'list-unstyled mt-2';
+        (window.treeData || []).forEach(n => ul.appendChild(renderNode(n, excludeSet)));
+        $parentPickerTree.appendChild(ul);
+      }
 
-  function escapeHtml(s=''){return s.replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));}
+      function renderNode(node, excludeSet) {
+        const li = document.createElement('li');
+        const id = node.menu_id || node.id;
+        li.dataset.id = id;
 
-  // 事件：打开选择器 / 清空
-  $btnPickParent?.addEventListener('click', () => {
-    ensureModal();
+        const disabled = excludeSet.has(id);
+        const a = document.createElement('a');
+        a.href = 'javascript:void(0)';
+        a.className = 'd-flex align-items-center py-1 ' + (disabled ? 'text-muted' : '');
+        a.innerHTML = `<i class="${node.icon || 'bi bi-folder'} me-2"></i><span>${escapeHtml(node.name || '')}</span>`;
+        if (!disabled) a.addEventListener('click', () => selectParent(String(id), node.name || String(id)));
+        li.appendChild(a);
 
-    const currId = Number($form.menu_id.value || window.currentNodeId || 0);
-    let exclude = new Set([currId]); // 自己不能当自己的父
-    if (currId) {
-      // 自己的所有子孙也不能当父，防止成环
-      const me = (typeof findNodeById === 'function') ? findNodeById(window.treeData || [], currId) : null;
-      if (me) exclude = collectDescendantsIds(me, exclude);
-    }
+        if (Array.isArray(node.children) && node.children.length) {
+          const ul = document.createElement('ul');
+          ul.className = 'ms-3';
+          node.children.forEach(c => ul.appendChild(renderNode(c, excludeSet)));
+          li.appendChild(ul);
+        }
+        return li;
+      }
 
-    renderParentPickerTree(exclude);
-    parentModal.show();
-  });
+      function selectParent(id, label) {
+        parentPickSelectedId = id;
+        $btnParentPickConfirm.disabled = false;
 
-  $btnClearParent?.addEventListener('click', () => {
-    $form.parent_id.value = 0;
-    $parentLabel.value = '根节点（parent_id = 0）';
-  });
-})();
-</script>
+        $parentPickerTree.querySelectorAll('a').forEach(a => a.classList.remove('text-primary'));
+        const li = $parentPickerTree.querySelector(`li[data-id="${id}"]`);
+        li?.querySelector('a')?.classList.add('text-primary');
+
+        $btnParentPickConfirm.onclick = () => {
+          $form.parent_id.value = id === '0' ? 0 : Number(id);
+          $parentLabel.value = label;
+          parentModal.hide();
+        };
+      }
+
+      function escapeHtml(s = '') { return s.replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])); }
+
+      // 事件：打开选择器 / 清空
+      $btnPickParent?.addEventListener('click', () => {
+        ensureModal();
+
+        const currId = Number($form.menu_id.value || window.currentNodeId || 0);
+        let exclude = new Set([currId]); // 自己不能当自己的父
+        if (currId) {
+          // 自己的所有子孙也不能当父，防止成环
+          const me = (typeof findNodeById === 'function') ? findNodeById(window.treeData || [], currId) : null;
+          if (me) exclude = collectDescendantsIds(me, exclude);
+        }
+
+        renderParentPickerTree(exclude);
+        parentModal.show();
+      });
+
+      $btnClearParent?.addEventListener('click', () => {
+        $form.parent_id.value = 0;
+        $parentLabel.value = '根节点（parent_id = 0）';
+      });
+    })();
+  </script>
 
   <!--end::Script-->
 </body>
