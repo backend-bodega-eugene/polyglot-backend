@@ -11,6 +11,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+
+	"eugene-go-starter/internal/db"
 )
 
 // func useMiddlewares(r *gin.Engine) {
@@ -24,19 +28,40 @@ import (
 //		r.POST("/register", h.Register) // 可选
 //		r.POST("/api/refresh", auth.Refresh)
 //	}
-func New(cfg *config.Config, db *sqlx.DB) *gin.Engine {
+func New(cfg *config.Config, dbx *sqlx.DB) *gin.Engine {
 	jwtCfg := config.LoadJWT()
 	jwtSvc := jwtutil.New(jwtCfg)
 
+	// dynamic select repo by DATABASE_TYPE
+	var userRepo repo.UserRepo
+	var menuRepo repo.MenuRepo
+	var permRepo repo.UserMenuRepo
+	var gormDB *gorm.DB
+	if cfg.DatabaseType == "gorm" {
+		gormDB, _ = gorm.Open(mysql.New(mysql.Config{Conn: dbx.DB}), &gorm.Config{})
+		userRepo = repo.NewUserRepoGorm(gormDB)
+		menuRepo = repo.NewMenuRepoGorm(gormDB)
+		permRepo = repo.NewPermissionGorm(gormDB)
+	} else if cfg.DatabaseType == "mongo" {
+		mongoDB, _, _ := db.NewMongoFromEnv()
+		userRepo = repo.NewUserRepoMongo(mongoDB)
+		menuRepo = repo.NewMenuRepoMongo(mongoDB)
+		permRepo = repo.NewPermissionMongo(mongoDB)
+	} else {
+		userRepo = repo.NewUserRepoSQLX(dbx)
+		menuRepo = repo.NewMenuRepoSQLX(dbx)
+		permRepo = repo.NewPermissionMySQL(dbx)
+	}
+
 	auth := &handler.AuthHandler{
-		Users:   repo.NewUserRepoSQLX(db), // 替换
+		Users:   userRepo,
 		JWT:     jwtSvc,
 		Revoker: nil, // 有 Redis 再接
 	}
 	MenuHandler := &handler.MenuHandler{
-		Repo: repo.NewMenuRepoSQLX(db),
+		Repo: menuRepo,
 	}
-	userService := service.NewUserService(repo.NewUserRepoSQLX(db))
+	userService := service.NewUserService(userRepo)
 	user := &handler.UserHandler{
 		Svc: userService,
 	}
@@ -44,11 +69,14 @@ func New(cfg *config.Config, db *sqlx.DB) *gin.Engine {
 		gin.SetMode(gin.ReleaseMode)
 	}
 	PermissionHandler := &handler.PermissionHandler{
-		PermRepo: repo.NewPermissionMySQL(db),
+		PermRepo: permRepo,
 	}
+	gin.SetMode(gin.DebugMode)
 	r := gin.New()
 
 	r.Use(gin.Logger())
+	// Panic 兜底（带堆栈 + 请求详情）
+	r.Use(middleware.RecoveryWithStack())
 	r.Use(gin.Recovery())
 	r.Use(middleware.RequestID())
 	r.Use(middleware.TraceIDMiddleware())

@@ -15,7 +15,7 @@ func Recovery() gin.HandlerFunc {
 		defer func() {
 			if r := recover(); r != nil {
 				log.Printf("panic: %v\n%s", r, debug.Stack())
-				response.InternalError(c, "internal server error")
+				response.InternalError(c, "internal server error", nil)
 				c.AbortWithStatus(http.StatusInternalServerError)
 			}
 		}()
@@ -23,12 +23,13 @@ func Recovery() gin.HandlerFunc {
 	}
 }
 func init() {
-    var err error
-    trace, err = snowflake.NewNode(0) 
-    if err != nil {
-        panic(err)
-    }
+	var err error
+	trace, err = snowflake.NewNode(0)
+	if err != nil {
+		panic(err)
+	}
 }
+
 var trace *snowflake.Node
 
 func TraceIDMiddleware() gin.HandlerFunc {
@@ -36,7 +37,7 @@ func TraceIDMiddleware() gin.HandlerFunc {
 		traceID := trace.Generate().String()
 		c.Set("traceId", traceID)
 		c.Writer.Header().Set("X-Trace-Id", traceID) // 方便前后端对齐
-		c.Next() //必须要调用这一步,才会继续请求过程
+		c.Next()                                     //必须要调用这一步,才会继续请求过程
 	}
 
 }

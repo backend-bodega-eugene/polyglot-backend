@@ -52,7 +52,7 @@ func BadRequest(c *gin.Context, msg string) {
 	lg.Warn("Response bad", "data", nil, "traceId", getTraceID(c))
 }
 
-func InternalError(c *gin.Context, msg string) {
+func InternalErrors(c *gin.Context, msg string) {
 
 	c.JSON(500, Result{Code: 500, Msg: msg, TraceID: getTraceID(c)})
 	lg.Error("Response error", "data", nil, "traceId", getTraceID(c))

@@ -42,6 +42,8 @@ type AuthHandler struct {
 // @Failure 401 {object} ErrResp
 // @Router /api/login [post]
 func (h *AuthHandler) Login(c *gin.Context) {
+	// x, _ := bcrypt.GenerateFromPassword([]byte("eugene"), 10)
+	// fmt.Println("bcrypt(eugene,10) = ", string(x))
 	var in dto.LoginReq
 	if err := c.ShouldBindJSON(&in); err != nil {
 		response.BadRequest(c, "invalid body")
@@ -53,13 +55,16 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		response.SetResultFail(c, 10008)
 		return
 	}
+	//fmt.Println("hashLen=", len(u.PasswordHash), "prefix=", u.PasswordHash[:4])
+	//fmt.Printf("pwd=%q\n", in.Password)
 	if err := bcrypt.CompareHashAndPassword([]byte(u.PasswordHash), []byte(in.Password)); err != nil {
 		response.SetResultFail(c, 10008)
 		return
 	}
+
 	token, exp, jti, err := h.JWT.GenerateAccessToken(u.UserID, u.SiteID, u.Username)
 	if err != nil {
-		response.InternalError(c, "issue token failed")
+		response.InternalError(c, "issue token failed", err)
 		return
 	}
 	response.OK(c, gin.H{
@@ -150,7 +155,7 @@ func (h *AuthHandler) Logout(c *gin.Context) {
 	}
 	// 加入黑名单；失败也按设计返回 500
 	if err := h.Revoker.Revoke(jti, ttl); err != nil {
-		response.InternalError(c, "logout failed")
+		response.InternalError(c, "logout failed", err)
 		return
 	}
 

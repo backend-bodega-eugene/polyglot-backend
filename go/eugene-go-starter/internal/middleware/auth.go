@@ -26,7 +26,7 @@ func AuthRequired(opt AuthOptions) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 基础保护
 		if opt.JWT == nil {
-			response.InternalError(c, "jwt service not initialized")
+			response.InternalError(c, "jwt service not initialized",nil)
 			c.Abort()
 			return
 		}
@@ -57,7 +57,7 @@ func AuthRequired(opt AuthOptions) gin.HandlerFunc {
 		// 黑名单（按 JTI）检查
 		if opt.Revoker != nil && claims.ID != "" {
 			if revoked, err := opt.Revoker.IsRevoked(claims.ID); err != nil {
-				response.InternalError(c, "revoker error")
+				response.InternalError(c, "revoker error",err)
 				c.Abort()
 				return
 			} else if revoked {
