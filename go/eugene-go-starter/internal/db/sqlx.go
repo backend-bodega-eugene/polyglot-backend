@@ -32,3 +32,4 @@ func NewSQLXFromEnv() (*sqlx.DB, func(context.Context) error, error) {
 	cleanup := func(ctx context.Context) error { return db.Close() }
 	return db, cleanup, nil
 }
+

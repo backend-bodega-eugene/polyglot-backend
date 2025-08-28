@@ -1,5 +1,5 @@
 // repo/permission_mysql.go
-package repo
+package sqlxs
 
 import (
 	"context"
@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"eugene-go-starter/internal/model"
+	"eugene-go-starter/internal/repo"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -16,7 +17,7 @@ type PermissionMySQL struct {
 	DB *sqlx.DB
 }
 
-func NewPermissionMySQL(db *sqlx.DB) UserMenuRepo { return &PermissionMySQL{DB: db} }
+func NewPermissionMySQL(db *sqlx.DB) repo.UserMenuRepo { return &PermissionMySQL{DB: db} }
 
 // 创建“多条”
 func (r *PermissionMySQL) CreateUserMenuModels(ctx context.Context, userMenus *model.UserMenu) error {

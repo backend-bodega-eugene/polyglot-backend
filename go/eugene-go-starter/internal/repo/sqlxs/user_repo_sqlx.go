@@ -1,10 +1,11 @@
-package repo
+package sqlxs
 
 import (
 	"context"
 	"database/sql"
 	"errors"
 	"eugene-go-starter/internal/model"
+	"eugene-go-starter/internal/repo"
 	"fmt"
 	"strings"
 	"time"
@@ -18,7 +19,7 @@ const userColumns = `user_id, site_id, username, password_hash, status, last_log
 
 type userRepoSQLX struct{ db *sqlx.DB }
 
-func NewUserRepoSQLX(db *sqlx.DB) UserRepo { return &userRepoSQLX{db: db} }
+func NewUserRepoSQLX(db *sqlx.DB) repo.UserRepo { return &userRepoSQLX{db: db} }
 
 func (r *userRepoSQLX) FindBySiteAndUsername(ctx context.Context, username string) (*model.User, error) {
 	var u model.User
@@ -49,18 +50,18 @@ func (r *userRepoSQLX) UpdatePassword(ctx context.Context, userID uint64, oldPas
 	var u model.User
 	if err := r.db.GetContext(ctx, &u,
 		`SELECT user_id, password_hash FROM users WHERE user_id = ? LIMIT 1`, userID); err != nil {
-		return ErrUserNotFound // 可能是 sql.ErrNoRows
+		return repo.ErrUserNotFound // 可能是 sql.ErrNoRows
 	}
 
 	// 2) 校验旧密码
 	if err := bcrypt.CompareHashAndPassword([]byte(u.PasswordHash), []byte(oldPassword)); err != nil {
-		return ErrOldPasswordIncorrect // 上层可统一成“旧密码不正确”
+		return repo.ErrOldPasswordIncorrect // 上层可统一成“旧密码不正确”
 	}
 
 	// 3) 生成新哈希
 	hash, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
 	if err != nil {
-		return ErrHashWrong
+		return repo.ErrHashWrong
 	}
 
 	// 4) 写入新哈希并更新时间（用 DB 时间）
@@ -68,7 +69,7 @@ func (r *userRepoSQLX) UpdatePassword(ctx context.Context, userID uint64, oldPas
 		`UPDATE users SET password_hash = ?, updated_at = NOW() WHERE user_id = ?`,
 		string(hash), userID)
 	if err != nil {
-		return ErrUpdateFailed
+		return repo.ErrUpdateFailed
 	}
 	if rows, _ := res.RowsAffected(); rows == 0 {
 		return sql.ErrNoRows
@@ -81,7 +82,7 @@ func (r *userRepoSQLX) UpdateStatus(ctx context.Context, userID uint64, status i
 		`UPDATE users SET status=? WHERE user_id=?`,
 		status, userID)
 	if err != nil {
-		return ErrUpdateStatusFailed
+		return repo.ErrUpdateStatusFailed
 	}
 	return nil
 }
@@ -152,7 +153,7 @@ func (r *userRepoSQLX) GetByID(ctx context.Context, userID uint64) (*model.User,
 	u, err := scanUser(row)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, ErrNotFound
+			return nil, repo.ErrNotFound
 		}
 		return nil, err
 	}
@@ -167,7 +168,7 @@ func (r *userRepoSQLX) DdleteByID(ctx context.Context, userID uint64) error {
 		return err
 	}
 	if n, _ := res.RowsAffected(); n == 0 {
-		return ErrNotFound
+		return repo.ErrNotFound
 	}
 	return nil
 }
@@ -180,12 +181,12 @@ func (r *userRepoSQLX) UpdateByID(ctx context.Context, user *model.User) error {
 	if err != nil {
 		// 唯一索引 uk_user_site（site_id, username）冲突时，MySQL 会抛 duplicate
 		if strings.Contains(strings.ToLower(err.Error()), "duplicate") {
-			return ErrConflict
+			return repo.ErrConflict
 		}
 		return err
 	}
 	if n, _ := res.RowsAffected(); n == 0 {
-		return ErrNotFound
+		return repo.ErrNotFound
 	}
 	return nil
 }
@@ -202,7 +203,7 @@ func (r *userRepoSQLX) AddUser(ctx context.Context, user *model.User) error {
 	)
 	if err != nil {
 		if strings.Contains(strings.ToLower(err.Error()), "duplicate") {
-			return ErrConflict
+			return repo.ErrConflict
 		}
 		return err
 	}

@@ -19,7 +19,7 @@ func Load() *Config {
 	}
 	cfg := &Config{
 		Env:      getEnv("APP_ENV", "dev"),
-		HTTPAddr: getEnv("HTTP_ADDR", "127.0.0.1:8080"),
+		HTTPAddr: getEnv("HTTP_ADDR", "127.0.0.1:9527"),
 		AppName:  getEnv("APP_NAME", "eugene-go-starter"),
 	}
 	log.Printf("[config] env=%s addr=%s app=%s", cfg.Env, cfg.HTTPAddr, cfg.AppName)

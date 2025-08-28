@@ -41,12 +41,20 @@ type AuthHandler struct {
 // @Failure 400 {object} ErrResp
 // @Failure 401 {object} ErrResp
 // @Router /api/login [post]
+
 func (h *AuthHandler) Login(c *gin.Context) {
 	var in dto.LoginReq
 	if err := c.ShouldBindJSON(&in); err != nil {
 		response.BadRequest(c, "invalid body")
 		return
 	}
+
+	// str, err := bcrypt.GenerateFromPassword([]byte("eugene"), 10)
+	// if err == nil {
+	// 	fmt.Println(string(str))
+	// 	fmt.Println(len(string(str)))
+	// 	//response.SetResultFail(c, 10008)
+	// }
 	// ✅ 传入真正的 context.Context，避免把 *gin.Context 当 ctx 用
 	u, err := h.Users.FindBySiteAndUsername(c.Request.Context(), in.Username)
 	if err != nil || u == nil || u.Status != 1 {

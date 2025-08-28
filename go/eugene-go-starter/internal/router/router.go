@@ -1,16 +1,22 @@
 package router
 
 import (
+	"context"
+	"eugene-go-starter/internal/db"
 	"eugene-go-starter/internal/handler"
 	"eugene-go-starter/internal/jwtutil"
 	"eugene-go-starter/internal/middleware"
-	"eugene-go-starter/internal/repo"
+	"eugene-go-starter/internal/repo/gorms"
+	"eugene-go-starter/internal/repo/mongos"
+	"eugene-go-starter/internal/repo/sqlxs"
 	"eugene-go-starter/internal/service"
 	"eugene-go-starter/pkg/config"
+	"eugene-go-starter/pkg/logger"
 	"eugene-go-starter/pkg/response"
+	"os"
+	"sync"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jmoiron/sqlx"
 )
 
 // func useMiddlewares(r *gin.Engine) {
@@ -24,28 +30,103 @@ import (
 //		r.POST("/register", h.Register) // 可选
 //		r.POST("/api/refresh", auth.Refresh)
 //	}
-func New(cfg *config.Config, db *sqlx.DB) *gin.Engine {
+var (
+	cleanupfunc func(context.Context) error
+	once        sync.Once
+)
+
+func Cleanup(ctx context.Context) {
+	once.Do(func() {
+		if cleanupfunc != nil {
+			_ = cleanupfunc(ctx)
+		}
+	})
+}
+func New(cfg *config.Config, lg *logger.Logger) *gin.Engine {
 	jwtCfg := config.LoadJWT()
 	jwtSvc := jwtutil.New(jwtCfg)
+	database_type := os.Getenv("DATABASE_TYPE") //GORM=GORM ,SQLX=SQLX
+	if database_type == "" {
+		database_type = "GORM"
 
-	auth := &handler.AuthHandler{
-		Users:   repo.NewUserRepoSQLX(db), // 替换
-		JWT:     jwtSvc,
-		Revoker: nil, // 有 Redis 再接
 	}
-	MenuHandler := &handler.MenuHandler{
-		Repo: repo.NewMenuRepoSQLX(db),
+	var auth *handler.AuthHandler
+	var user *handler.UserHandler
+	var MenuHandler *handler.MenuHandler
+	var PermissionHandler *handler.PermissionHandler
+
+	//var db any
+	if database_type == "SQLX" {
+		sqlxDB, cleanup, err := db.NewSQLXFromEnv()
+		if err != nil {
+			lg.Error("db init", "err", err)
+		}
+		cleanupfunc = cleanup
+		auth = &handler.AuthHandler{
+			Users:   sqlxs.NewUserRepoSQLX(sqlxDB), // 替换
+			JWT:     jwtSvc,
+			Revoker: nil, // 有 Redis 再接
+		}
+		userService := service.NewUserService(sqlxs.NewUserRepoSQLX(sqlxDB))
+		user = &handler.UserHandler{
+			Svc: userService,
+		}
+		MenuHandler = &handler.MenuHandler{
+			Repo: sqlxs.NewMenuRepoSQLX(sqlxDB),
+		}
+		PermissionHandler = &handler.PermissionHandler{
+			PermRepo: sqlxs.NewPermissionMySQL(sqlxDB),
+		}
+	} else if database_type == "GORM" {
+		gormDB, cleanup, err := db.NewGORMFromEnv()
+		if err != nil {
+			lg.Error("db init", "err", err)
+		}
+		cleanupfunc = cleanup
+		auth = &handler.AuthHandler{
+			Users:   gorms.NewUserRepoGORM(gormDB), // 替换
+			JWT:     jwtSvc,
+			Revoker: nil, // 有 Redis 再接
+		}
+		userService := service.NewUserService(gorms.NewUserRepoGORM(gormDB))
+		user = &handler.UserHandler{
+			Svc: userService,
+		}
+		MenuHandler = &handler.MenuHandler{
+			Repo: gorms.NewMenuRepoGORM(gormDB),
+		}
+		PermissionHandler = &handler.PermissionHandler{
+			PermRepo: gorms.NewPermissionMySQLGORM(gormDB),
+		}
+	} else if database_type == "MONGO" {
+		mongodb, cleanup, err := db.NewMongoFromEnv()
+		if err != nil {
+			lg.Error("db init", "err", err)
+		}
+		cleanupfunc = cleanup
+		auth = &handler.AuthHandler{
+			Users:   mongos.NewUserRepoMongo(mongodb.DB), // 替换
+			JWT:     jwtSvc,
+			Revoker: nil, // 有 Redis 再接
+		}
+
+		userService := service.NewUserService(mongos.NewUserRepoMongo(mongodb.DB))
+		user = &handler.UserHandler{
+			Svc: userService,
+		}
+		MenuHandler = &handler.MenuHandler{
+			Repo: mongos.NewMenuRepoMongo(mongodb.DB),
+		}
+		PermissionHandler = &handler.PermissionHandler{
+			PermRepo: mongos.NewPermissionMongo(mongodb.DB),
+		}
+
 	}
-	userService := service.NewUserService(repo.NewUserRepoSQLX(db))
-	user := &handler.UserHandler{
-		Svc: userService,
-	}
-	if cfg.Env == "prod" {
-		gin.SetMode(gin.ReleaseMode)
-	}
-	PermissionHandler := &handler.PermissionHandler{
-		PermRepo: repo.NewPermissionMySQL(db),
-	}
+
+	// if cfg.Env == "prod" {
+	// 	gin.SetMode(gin.ReleaseMode)
+	// }
+
 	r := gin.New()
 
 	r.Use(gin.Logger())

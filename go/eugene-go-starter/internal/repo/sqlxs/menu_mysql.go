@@ -1,10 +1,11 @@
-package repo
+package sqlxs
 
 import (
 	"context"
 	"database/sql"
 	"errors"
 	"eugene-go-starter/internal/model"
+	"eugene-go-starter/internal/repo"
 	"fmt"
 	"strings"
 
@@ -13,7 +14,7 @@ import (
 
 type MenuMySQL struct{ DB *sqlx.DB }
 
-func NewMenuRepoSQLX(db *sqlx.DB) MenuRepo { return &MenuMySQL{DB: db} }
+func NewMenuRepoSQLX(db *sqlx.DB) repo.MenuRepo { return &MenuMySQL{DB: db} }
 
 func (r *MenuMySQL) ListAll(ctx context.Context) ([]model.Menu, error) {
 	const q = `SELECT menu_id, parent_id, name, path, icon, sort, status
@@ -112,18 +113,18 @@ func (r *MenuMySQL) Create(ctx context.Context, m *model.Menu) (uint64, error) {
 	if ok, err := r.parentExistsOrZero(ctx, m.ParentID); err != nil {
 		return 0, err
 	} else if !ok {
-		return 0, ErrParentNotFound
+		return 0, repo.ErrParentNotFound
 	}
 	if dup, err := r.nameDupUnderParent(ctx, m.ParentID, m.Name, 0); err != nil {
 		return 0, err
 	} else if dup {
-		return 0, ErrNameDuplicate
+		return 0, repo.ErrNameDuplicate
 	}
 
 	// 规范一下可空字段
-	m.Path = trimPtr(m.Path)
-	m.Component = trimPtr(m.Component)
-	m.Icon = trimPtr(m.Icon)
+	m.Path = repo.TrimPtr(m.Path)
+	m.Component = repo.TrimPtr(m.Component)
+	m.Icon = repo.TrimPtr(m.Icon)
 
 	res, err := r.DB.ExecContext(ctx, `
 INSERT INTO menus (parent_id, name, path, component, icon, visible, sort, status)
@@ -147,7 +148,7 @@ func (r *MenuMySQL) Update(ctx context.Context, m *model.Menu) error {
 	if ok, err := r.exists(ctx, m.MenuID); err != nil {
 		return err
 	} else if !ok {
-		return ErrNotFound
+		return repo.ErrNotFound
 	}
 
 	m.Name = strings.TrimSpace(m.Name)
@@ -155,30 +156,30 @@ func (r *MenuMySQL) Update(ctx context.Context, m *model.Menu) error {
 		return fmt.Errorf("name required")
 	}
 	if m.ParentID == m.MenuID {
-		return ErrParentIsSelf
+		return repo.ErrParentIsSelf
 	}
 	// 父级存在 & 防环
 	if ok, err := r.parentExistsOrZero(ctx, m.ParentID); err != nil {
 		return err
 	} else if !ok {
-		return ErrParentNotFound
+		return repo.ErrParentNotFound
 	}
 	if desc, err := r.isDescendant(ctx, m.MenuID, m.ParentID); err != nil {
 		return err
 	} else if desc {
-		return ErrParentIsDescendant
+		return repo.ErrParentIsDescendant
 	}
 	// 同父同名
 	if dup, err := r.nameDupUnderParent(ctx, m.ParentID, m.Name, m.MenuID); err != nil {
 		return err
 	} else if dup {
-		return ErrNameDuplicate
+		return repo.ErrNameDuplicate
 	}
 
 	// 规范可空
-	m.Path = trimPtr(m.Path)
-	m.Component = trimPtr(m.Component)
-	m.Icon = trimPtr(m.Icon)
+	m.Path = repo.TrimPtr(m.Path)
+	m.Component = repo.TrimPtr(m.Component)
+	m.Icon = repo.TrimPtr(m.Icon)
 
 	_, err := r.DB.ExecContext(ctx, `
 UPDATE menus
@@ -199,7 +200,7 @@ func (r *MenuMySQL) Delete(ctx context.Context, menuID uint64) error {
 	if ok, err := r.exists(ctx, menuID); err != nil {
 		return err
 	} else if !ok {
-		return ErrNotFound
+		return repo.ErrNotFound
 	}
 	// 有子节点则拒绝
 	var cnt int64
@@ -207,15 +208,8 @@ func (r *MenuMySQL) Delete(ctx context.Context, menuID uint64) error {
 		return err
 	}
 	if cnt > 0 {
-		return ErrHasChildren
+		return repo.ErrHasChildren
 	}
 	_, err := r.DB.ExecContext(ctx, `DELETE FROM menus WHERE menu_id=?`, menuID)
 	return err
-}
-func trimPtr(s *string) *string {
-	if s == nil {
-		return nil
-	}
-	t := strings.TrimSpace(*s)
-	return &t
 }
