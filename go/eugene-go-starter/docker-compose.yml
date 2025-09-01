@@ -1,12 +1,87 @@
 version: "3.9"
+
 services:
-  api:
-    build: .
-    image: eugene-go-starter:latest
+  app:
+    build:
+      context: /app/eugene-go-starter
+      dockerfile: Dockerfile
     container_name: eugene-go-starter
-    ports:
-      - "8080:8080"
     environment:
-      - APP_ENV=dev
-      - HTTP_ADDR=:8080
-      - APP_NAME=eugene-go-starter
+      APP_ENV: prod
+      HTTP_ADDR: ":9527"                         # 容器内需监听 0.0.0.0:9527
+      APP_NAME: eugene-go-starter
+      LANGUAGE: zh
+      # —— JWT 相关（可按需改）——
+      JWT_SECRET: eugenesignature
+      JWT_ISSUER: eugene-go
+      JWT_AUDIENCE: eugene-go-audience
+      JWT_ACCESS_TTL: 24h
+      JWT_REFRESH_TTL: 168h
+      JWT_CLOCK_SKEW: 2m
+      # —— MySQL：容器间用服务名访问 —— 
+      DATABASE_TYPE: SQLX
+      DATABASE_DRIVER: MYSQL
+      DATABASE_NAME: eugene
+      DATABASE_HOST: mysql
+      DATABASE_ROOT: root
+      DATABASE_PASSWORD: root
+      DATABASE_PORT: "3306"
+      DATABASE_CHASET: utf8mb4
+      # 若你的程序也支持 DSN，可直接用这条覆盖：
+      DB_DSN: "root:root@tcp(mysql:3306)/eugene?charset=utf8mb4&parseTime=True&loc=Local"
+      # —— Mongo：无认证 —— 
+      MONGO_URI: "mongodb://mongo:27017"
+      MONGO_DB: "eugene"
+      MONGO_USER: ""
+      MONGO_PORT: "27017"
+      MONGO_AUTH_DB: ""
+      # —— 程序日志目录（容器内路径）——
+      LOG_DIR: "/var/log/eugengo"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+    ports:
+      - "9527:9527"
+    volumes:
+      - /var/eugengo/logs:/var/log/eugengo        # 程序日志
+    restart: unless-stopped
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root                   # root/root
+      MYSQL_DATABASE: eugene
+      TZ: "UTC"
+    ports:
+      - "3306:3306"                               # 宿主机直连 MySQL
+    volumes:
+      - /var/mysql/db:/var/lib/mysql              # 数据
+      - /var/mysql/logs:/var/log/mysql            # 日志（官方镜像主要写 stdout，此目录仅做映射备留）
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -proot > /dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+  mongo:
+    image: mongo:6.0
+    container_name: mongo
+    command: [ "mongod", "--bind_ip_all", "--logpath", "/var/log/mongodb/mongod.log", "--logappend" ]
+    ports:
+      - "27017:27017"                             # 宿主机直连 Mongo
+    volumes:
+      - /var/mongo/dbs:/data/db                   # 数据
+      - /var/mongo/logs:/var/log/mongodb          # 日志
+    healthcheck:
+      test: ["CMD-SHELL", "echo 'db.runCommand({ ping: 1 }).ok' | mongosh --quiet | grep 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+volumes:
+  # 使用宿主机目录，不定义匿名卷
