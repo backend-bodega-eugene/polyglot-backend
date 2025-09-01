@@ -83,5 +83,5 @@ services:
       retries: 12
     restart: unless-stopped
 
-volumes:
+#volumes:
   # 使用宿主机目录，不定义匿名卷
