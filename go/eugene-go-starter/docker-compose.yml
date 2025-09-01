@@ -3,7 +3,7 @@ version: "3.9"
 services:
   app:
     build:
-      context: /app/eugene-go-starter
+      context: /opt/polyglot-backend/go/eugene-go-starter
       dockerfile: Dockerfile
     container_name: eugene-go-starter
     environment:
