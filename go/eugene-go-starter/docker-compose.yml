@@ -70,7 +70,7 @@ services:
   mongo:
     image: mongo:6.0
     container_name: mongo
-    command: [ "mongod", "--bind_ip_all", "--logpath", "/var/log/mongodb/mongod.log", "--logappend" ]
+    #command: [ "mongod", "--bind_ip_all", "--logpath", "/var/log/mongodb/mongod.log", "--logappend" ]
     ports:
       - "27017:27017"                             # 宿主机直连 Mongo
     volumes:
