@@ -70,8 +70,8 @@ func AuthRequired(opt AuthOptions) gin.HandlerFunc {
 		// 注入上下文（下游可直接取用）
 		c.Set("uid", claims.UserID)
 		c.Set("uname", claims.Username)
-		c.Set("jti", claims.ID)        // 方便 logout 直接用（可选）
-		c.Set("claims", claims)        // 需要更多字段时更方便（可选）
+		c.Set("jti", claims.ID) // 方便 logout 直接用（可选）
+		c.Set("claims", claims) // 需要更多字段时更方便（可选）
 
 		c.Next()
 	}

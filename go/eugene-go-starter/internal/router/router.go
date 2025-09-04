@@ -14,7 +14,7 @@ import (
 	"eugene-go-starter/pkg/logger"
 	"eugene-go-starter/pkg/response"
 	"os"
-	"sync"
+	"sync" // 引入工具类
 
 	"github.com/gin-gonic/gin"
 )
@@ -54,8 +54,6 @@ func New(cfg *config.Config, lg *logger.Logger) *gin.Engine {
 	var user *handler.UserHandler
 	var MenuHandler *handler.MenuHandler
 	var PermissionHandler *handler.PermissionHandler
-
-	//var db any
 	if database_type == "SQLX" {
 		sqlxDB, cleanup, err := db.NewSQLXFromEnv()
 		if err != nil {
@@ -122,47 +120,32 @@ func New(cfg *config.Config, lg *logger.Logger) *gin.Engine {
 		}
 
 	}
-
-	// if cfg.Env == "prod" {
-	// 	gin.SetMode(gin.ReleaseMode)
-	// }
-
 	r := gin.New()
-
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 	r.Use(middleware.RequestID())
 	r.Use(middleware.TraceIDMiddleware())
-	// permOpt := middleware.PermOptions{
-	// 	Repo:      MenuHandler.Repo, // 你已有的 ListByUser 实现
-	// 	TTL:       30 * time.Second, // 可选缓存
-	// 	Whitelist: nil,
-	// }
-	// r.Use(middleware.ACLGuard(permOpt))
-	r.POST("/api/login", auth.Login)
-	//r.POST("/api/register", auth.Register) // 可选
-	r.POST("/api/refresh", auth.Refresh)
-	user.RegisterRoutes(r)
-	perm := r.Group("/api/permissions")
-	{
-		perm.GET("/user-menus", PermissionHandler.ListUserMenuIDs) // 返回[]uint64
-		perm.POST("/user-menus", PermissionHandler.SaveUserMenus)  // { userId, menuIds }
-	}
-
 	rAuth := r.Group("/api")
+
 	rAuth.Use(middleware.AuthRequired(middleware.AuthOptions{
 		JWT:     jwtSvc,
 		Revoker: nil,
 	}))
 	{
-		//h := &handler.MenuHandler{Repo: menusRepo}
+		rAuth.POST("/login", auth.Login)
+		rAuth.POST("/refresh", auth.Refresh)
+		user.RegisterRoutes(rAuth)
+		perm := rAuth.Group("/permissions")
+		{
+			perm.GET("/user-menus", PermissionHandler.ListUserMenuIDs) // 返回[]uint64
+			perm.POST("/user-menus", PermissionHandler.SaveUserMenus)  // { userId, menuIds }
+		}
 		rAuth.GET("/menus", MenuHandler.GetMyMenus)    // 你原来的
 		rAuth.GET("/menus/tree", MenuHandler.GetTree)  // 新：管理页树
 		rAuth.GET("/menus/:id", MenuHandler.GetOne)    // 新：详情
 		rAuth.POST("/menus", MenuHandler.Create)       // 新：新增
 		rAuth.PUT("/menus/:id", MenuHandler.Update)    // 新：修改
 		rAuth.DELETE("/menus/:id", MenuHandler.Delete) // 新：删除
-		//rAuth.GET("/menus", MenuHandler.GetMyMenus)
 		rAuth.PUT("/me/password", auth.UpdateUserPassword)
 		rAuth.GET("/me", func(c *gin.Context) {
 			uid, _ := c.Get("uid")
@@ -172,20 +155,41 @@ func New(cfg *config.Config, lg *logger.Logger) *gin.Engine {
 				"username": uname,
 			})
 		})
-		// // 需要管理员
-		// rAuth.GET("/admin/only", middleware.RequireRole("admin"), func(c *gin.Context) {
-		// 	response.OK(c, gin.H{"ok": true})
+		// hub := websocket.NewHub()
+		// go hub.Run()
+
+		// rAuth.GET("/ws", func(c *gin.Context) {
+		// 	hub.HandleConnections(c.Writer, c.Request)
 		// })
-		// }
-		// 健康检查 & 基础信息
-		// r.GET("/health", handler.Health)
 
-		// // 版本示例
-		// api := r.Group("/api/v1")
-		// {
-		// 	api.GET("/hello", func(c *gin.Context) { c.JSON(200, gin.H{"message": "hello, eugene"}) })
-		// }
-
+		// rAuth.GET("/", func(c *gin.Context) {
+		// 	c.String(http.StatusOK, "WebSocket server running! ws://localhost:8080/ws")
+		// })
 		return r
 	}
+	// if cfg.Env == "prod" {
+	// 	gin.SetMode(gin.ReleaseMode)
+	// }
+
+	// permOpt := middleware.PermOptions{
+	// 	Repo:      MenuHandler.Repo, // 你已有的 ListByUser 实现
+	// 	TTL:       30 * time.Second, // 可选缓存
+	// 	Whitelist: nil,
+	// }
+	// r.Use(middleware.ACLGuard(permOpt))
+
+	//r.POST("/api/register", auth.Register) // 可选
+	// // 需要管理员
+	// rAuth.GET("/admin/only", middleware.RequireRole("admin"), func(c *gin.Context) {
+	// 	response.OK(c, gin.H{"ok": true})
+	// })
+	// }
+	// 健康检查 & 基础信息
+	// r.GET("/health", handler.Health)
+
+	// // 版本示例
+	// api := r.Group("/api/v1")
+	// {
+	// 	api.GET("/hello", func(c *gin.Context) { c.JSON(200, gin.H{"message": "hello, eugene"}) })
+	// }
 }

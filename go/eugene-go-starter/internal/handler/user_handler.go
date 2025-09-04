@@ -26,8 +26,8 @@ type Resp struct {
 }
 
 // 注册路由
-func (h *UserHandler) RegisterRoutes(r *gin.Engine) {
-	g := r.Group("/api/users")
+func (h *UserHandler) RegisterRoutes(r *gin.RouterGroup) {
+	g := r.Group("/users")
 	g.GET("", h.ListUsers)         // GET /api/users?page=1&pageSize=10&keyword=xx
 	g.GET("/:id", h.GetUser)       // GET /api/users/1
 	g.PUT("/:id", h.UpdateUser)    // PUT /api/users/1

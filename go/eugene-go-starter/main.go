@@ -21,7 +21,33 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+// func testChan(laohuin string) <-chan string {
+// 	laohuout := make(chan string, 10)
+
+// 	go func() {
+// 		defer close(laohuout)
+// 		select {
+// 		case laohuout <- laohuin:
+// 			fmt.Println("done")
+// 		case <-time.After(5 * time.Second):
+// 			fmt.Println("failed")
+// 		}
+
+// 	}()
+// 	return laohuout
+
+// }
 func main() {
+	// for i := 1; i <= 1000; i++ {
+	// 	//var testlaohuout <-chan string
+	// 	testlaohuout := testChan(" laohu speak" + strconv.Itoa(i))
+	// 	if i%5 != 0 {
+	// 		fmt.Println(<-testlaohuout)
+	// 	} else {
+	// 		fmt.Println("contine!")
+	// 	}
+
+	// }
 	cfg := config.Load()
 	lg := logger.New(cfg)
 	defer router.Cleanup(context.Background())
