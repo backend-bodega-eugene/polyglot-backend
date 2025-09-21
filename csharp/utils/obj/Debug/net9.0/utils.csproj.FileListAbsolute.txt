@@ -1,0 +1,12 @@
+D:\eugene\polyglot-backend\csharp\utils\bin\Debug\net9.0\polyglot.backend.csharp.utils.deps.json
+D:\eugene\polyglot-backend\csharp\utils\bin\Debug\net9.0\polyglot.backend.csharp.utils.dll
+D:\eugene\polyglot-backend\csharp\utils\bin\Debug\net9.0\polyglot.backend.csharp.utils.pdb
+D:\eugene\polyglot-backend\csharp\utils\obj\Debug\net9.0\utils.GeneratedMSBuildEditorConfig.editorconfig
+D:\eugene\polyglot-backend\csharp\utils\obj\Debug\net9.0\utils.AssemblyInfoInputs.cache
+D:\eugene\polyglot-backend\csharp\utils\obj\Debug\net9.0\utils.AssemblyInfo.cs
+D:\eugene\polyglot-backend\csharp\utils\obj\Debug\net9.0\utils.csproj.CoreCompileInputs.cache
+D:\eugene\polyglot-backend\csharp\utils\obj\Debug\net9.0\utils.sourcelink.json
+D:\eugene\polyglot-backend\csharp\utils\obj\Debug\net9.0\polyglot.backend.csharp.utils.dll
+D:\eugene\polyglot-backend\csharp\utils\obj\Debug\net9.0\refint\polyglot.backend.csharp.utils.dll
+D:\eugene\polyglot-backend\csharp\utils\obj\Debug\net9.0\polyglot.backend.csharp.utils.pdb
+D:\eugene\polyglot-backend\csharp\utils\obj\Debug\net9.0\ref\polyglot.backend.csharp.utils.dll

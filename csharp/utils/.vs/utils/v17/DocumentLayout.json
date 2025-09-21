@@ -1,0 +1,105 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\eugene\\polyglot-backend\\csharp\\utils\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{8500810D-0010-4F43-AE1C-EC341C3F117F}|utils.csproj|d:\\eugene\\polyglot-backend\\csharp\\utils\\factory\\eugenefactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8500810D-0010-4F43-AE1C-EC341C3F117F}|utils.csproj|solutionrelative:factory\\eugenefactory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8500810D-0010-4F43-AE1C-EC341C3F117F}|utils.csproj|d:\\eugene\\polyglot-backend\\csharp\\utils\\factory\\eugenelaohu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8500810D-0010-4F43-AE1C-EC341C3F117F}|utils.csproj|solutionrelative:factory\\eugenelaohu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8500810D-0010-4F43-AE1C-EC341C3F117F}|utils.csproj|d:\\eugene\\polyglot-backend\\csharp\\utils\\factory\\eugeneindex.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8500810D-0010-4F43-AE1C-EC341C3F117F}|utils.csproj|solutionrelative:factory\\eugeneindex.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8500810D-0010-4F43-AE1C-EC341C3F117F}|utils.csproj|d:\\eugene\\polyglot-backend\\csharp\\utils\\factory\\ieugene.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8500810D-0010-4F43-AE1C-EC341C3F117F}|utils.csproj|solutionrelative:factory\\ieugene.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8500810D-0010-4F43-AE1C-EC341C3F117F}|utils.csproj|d:\\eugene\\polyglot-backend\\csharp\\utils\\singleton\\singleton.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8500810D-0010-4F43-AE1C-EC341C3F117F}|utils.csproj|solutionrelative:singleton\\singleton.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "EugeneIndex.cs",
+              "DocumentMoniker": "D:\\eugene\\polyglot-backend\\csharp\\utils\\Factory\\EugeneIndex.cs",
+              "RelativeDocumentMoniker": "Factory\\EugeneIndex.cs",
+              "ToolTip": "D:\\eugene\\polyglot-backend\\csharp\\utils\\Factory\\EugeneIndex.cs",
+              "RelativeToolTip": "Factory\\EugeneIndex.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAcwB8AAAA9AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-20T12:03:40.224Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "EugeneLaohu.cs",
+              "DocumentMoniker": "D:\\eugene\\polyglot-backend\\csharp\\utils\\Factory\\EugeneLaohu.cs",
+              "RelativeDocumentMoniker": "Factory\\EugeneLaohu.cs",
+              "ToolTip": "D:\\eugene\\polyglot-backend\\csharp\\utils\\Factory\\EugeneLaohu.cs",
+              "RelativeToolTip": "Factory\\EugeneLaohu.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvw8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-20T11:46:10.857Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "IEugene.cs",
+              "DocumentMoniker": "D:\\eugene\\polyglot-backend\\csharp\\utils\\Factory\\IEugene.cs",
+              "RelativeDocumentMoniker": "Factory\\IEugene.cs",
+              "ToolTip": "D:\\eugene\\polyglot-backend\\csharp\\utils\\Factory\\IEugene.cs",
+              "RelativeToolTip": "Factory\\IEugene.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-20T11:43:01.751Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "EugeneFactory.cs",
+              "DocumentMoniker": "D:\\eugene\\polyglot-backend\\csharp\\utils\\Factory\\EugeneFactory.cs",
+              "RelativeDocumentMoniker": "Factory\\EugeneFactory.cs",
+              "ToolTip": "D:\\eugene\\polyglot-backend\\csharp\\utils\\Factory\\EugeneFactory.cs",
+              "RelativeToolTip": "Factory\\EugeneFactory.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAwwBcAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-20T11:40:13.282Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Singleton.cs",
+              "DocumentMoniker": "D:\\eugene\\polyglot-backend\\csharp\\utils\\SingleTon\\Singleton.cs",
+              "RelativeDocumentMoniker": "SingleTon\\Singleton.cs",
+              "ToolTip": "D:\\eugene\\polyglot-backend\\csharp\\utils\\SingleTon\\Singleton.cs",
+              "RelativeToolTip": "SingleTon\\Singleton.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAAwA8AAAA+AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-20T10:09:47.962Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

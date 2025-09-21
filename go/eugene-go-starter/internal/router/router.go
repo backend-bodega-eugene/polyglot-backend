@@ -125,6 +125,11 @@ func New(cfg *config.Config, lg *logger.Logger) *gin.Engine {
 	r.Use(gin.Recovery())
 	r.Use(middleware.RequestID())
 	r.Use(middleware.TraceIDMiddleware())
+	rPublic := r.Group("/api")
+	{
+		rPublic.POST("/login", auth.Login)
+		rPublic.POST("/refresh", auth.Refresh)
+	}
 	rAuth := r.Group("/api")
 
 	rAuth.Use(middleware.AuthRequired(middleware.AuthOptions{
@@ -132,8 +137,7 @@ func New(cfg *config.Config, lg *logger.Logger) *gin.Engine {
 		Revoker: nil,
 	}))
 	{
-		rAuth.POST("/login", auth.Login)
-		rAuth.POST("/refresh", auth.Refresh)
+
 		user.RegisterRoutes(rAuth)
 		perm := rAuth.Group("/permissions")
 		{
