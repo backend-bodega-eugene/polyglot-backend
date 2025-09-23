@@ -54,7 +54,9 @@ func New(cfg *config.Config, lg *logger.Logger) *gin.Engine {
 	var user *handler.UserHandler
 	var MenuHandler *handler.MenuHandler
 	var PermissionHandler *handler.PermissionHandler
-	if database_type == "SQLX" {
+	// 选择数据库实现
+	switch database_type {
+	case "SQLX":
 		sqlxDB, cleanup, err := db.NewSQLXFromEnv()
 		if err != nil {
 			lg.Error("db init", "err", err)
@@ -75,7 +77,7 @@ func New(cfg *config.Config, lg *logger.Logger) *gin.Engine {
 		PermissionHandler = &handler.PermissionHandler{
 			PermRepo: sqlxs.NewPermissionMySQL(sqlxDB),
 		}
-	} else if database_type == "GORM" {
+	case "GORM":
 		gormDB, cleanup, err := db.NewGORMFromEnv()
 		if err != nil {
 			lg.Error("db init", "err", err)
@@ -96,7 +98,7 @@ func New(cfg *config.Config, lg *logger.Logger) *gin.Engine {
 		PermissionHandler = &handler.PermissionHandler{
 			PermRepo: gorms.NewPermissionMySQLGORM(gormDB),
 		}
-	} else if database_type == "MONGO" {
+	case "MONGO":
 		mongodb, cleanup, err := db.NewMongoFromEnv()
 		if err != nil {
 			lg.Error("db init", "err", err)
@@ -119,54 +121,81 @@ func New(cfg *config.Config, lg *logger.Logger) *gin.Engine {
 			PermRepo: mongos.NewPermissionMongo(mongodb.DB),
 		}
 
+	default:
+		// 默认使用 GORM
+		gormDB, cleanup, err := db.NewGORMFromEnv()
+		if err != nil {
+			lg.Error("db init", "err", err)
+		}
+		cleanupfunc = cleanup
+		auth = &handler.AuthHandler{
+			Users:   gorms.NewUserRepoGORM(gormDB), // 替换
+			JWT:     jwtSvc,
+			Revoker: nil, // 有 Redis 再接
+		}
+		userService := service.NewUserService(gorms.NewUserRepoGORM(gormDB))
+		user = &handler.UserHandler{
+			Svc: userService,
+		}
+		MenuHandler = &handler.MenuHandler{
+			Repo: gorms.NewMenuRepoGORM(gormDB),
+		}
+		PermissionHandler = &handler.PermissionHandler{
+			PermRepo: gorms.NewPermissionMySQLGORM(gormDB),
+		}
+	}
+	if cfg.Env != "prod" {
+		gin.SetMode(gin.ReleaseMode)
 	}
 	r := gin.New()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 	r.Use(middleware.RequestID())
 	r.Use(middleware.TraceIDMiddleware())
+	// Public API group (no auth)
+	rPublic := r.Group("/api")
+	rPublic.POST("/login", auth.Login)
+	rPublic.POST("/refresh", auth.Refresh)
+
+	// Protected API group
 	rAuth := r.Group("/api")
 
 	rAuth.Use(middleware.AuthRequired(middleware.AuthOptions{
 		JWT:     jwtSvc,
 		Revoker: nil,
 	}))
+	user.RegisterRoutes(rAuth)
+	perm := rAuth.Group("/permissions")
 	{
-		rAuth.POST("/login", auth.Login)
-		rAuth.POST("/refresh", auth.Refresh)
-		user.RegisterRoutes(rAuth)
-		perm := rAuth.Group("/permissions")
-		{
-			perm.GET("/user-menus", PermissionHandler.ListUserMenuIDs) // 返回[]uint64
-			perm.POST("/user-menus", PermissionHandler.SaveUserMenus)  // { userId, menuIds }
-		}
-		rAuth.GET("/menus", MenuHandler.GetMyMenus)    // 你原来的
-		rAuth.GET("/menus/tree", MenuHandler.GetTree)  // 新：管理页树
-		rAuth.GET("/menus/:id", MenuHandler.GetOne)    // 新：详情
-		rAuth.POST("/menus", MenuHandler.Create)       // 新：新增
-		rAuth.PUT("/menus/:id", MenuHandler.Update)    // 新：修改
-		rAuth.DELETE("/menus/:id", MenuHandler.Delete) // 新：删除
-		rAuth.PUT("/me/password", auth.UpdateUserPassword)
-		rAuth.GET("/me", func(c *gin.Context) {
-			uid, _ := c.Get("uid")
-			uname, _ := c.Get("uname")
-			response.OK(c, gin.H{
-				"userId":   uid,
-				"username": uname,
-			})
-		})
-		// hub := websocket.NewHub()
-		// go hub.Run()
-
-		// rAuth.GET("/ws", func(c *gin.Context) {
-		// 	hub.HandleConnections(c.Writer, c.Request)
-		// })
-
-		// rAuth.GET("/", func(c *gin.Context) {
-		// 	c.String(http.StatusOK, "WebSocket server running! ws://localhost:8080/ws")
-		// })
-		return r
+		perm.GET("/user-menus", PermissionHandler.ListUserMenuIDs) // 返回[]uint64
+		perm.POST("/user-menus", PermissionHandler.SaveUserMenus)  // { userId, menuIds }
 	}
+	rAuth.GET("/menus", MenuHandler.GetMyMenus)    // 你原来的
+	rAuth.GET("/menus/tree", MenuHandler.GetTree)  // 新：管理页树
+	rAuth.GET("/menus/:id", MenuHandler.GetOne)    // 新：详情
+	rAuth.POST("/menus", MenuHandler.Create)       // 新：新增
+	rAuth.PUT("/menus/:id", MenuHandler.Update)    // 新：修改
+	rAuth.DELETE("/menus/:id", MenuHandler.Delete) // 新：删除
+	rAuth.PUT("/me/password", auth.UpdateUserPassword)
+	rAuth.GET("/me", func(c *gin.Context) {
+		uid, _ := c.Get("uid")
+		uname, _ := c.Get("uname")
+		response.OK(c, gin.H{
+			"userId":   uid,
+			"username": uname,
+		})
+	})
+	// hub := websocket.NewHub()
+	// go hub.Run()
+
+	// rAuth.GET("/ws", func(c *gin.Context) {
+	//     hub.HandleConnections(c.Writer, c.Request)
+	// })
+
+	// rAuth.GET("/", func(c *gin.Context) {
+	//     c.String(http.StatusOK, "WebSocket server running! ws://localhost:8080/ws")
+	// })
+	return r
 	// if cfg.Env == "prod" {
 	// 	gin.SetMode(gin.ReleaseMode)
 	// }
