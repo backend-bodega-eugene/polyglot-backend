@@ -149,7 +149,7 @@ func (h *AuthHandler) Logout(c *gin.Context) {
 	if h.Revoker == nil || jti == "" {
 		c.Status(http.StatusNoContent)
 		return
-	}
+	                               }
 
 	// TTL = 剩余有效期（小于0则置0）
 	ttl := time.Until(exp)

@@ -156,14 +156,12 @@ func New(cfg *config.Config, lg *logger.Logger) *gin.Engine {
 	rPublic := r.Group("/api")
 	rPublic.POST("/login", auth.Login)
 	rPublic.POST("/refresh", auth.Refresh)
-
-	// Protected API group
 	rAuth := r.Group("/api")
-
 	rAuth.Use(middleware.AuthRequired(middleware.AuthOptions{
 		JWT:     jwtSvc,
 		Revoker: nil,
 	}))
+	user.RegisterRoutes(rAuth)
 	user.RegisterRoutes(rAuth)
 	perm := rAuth.Group("/permissions")
 	{
@@ -185,40 +183,52 @@ func New(cfg *config.Config, lg *logger.Logger) *gin.Engine {
 			"username": uname,
 		})
 	})
-	// hub := websocket.NewHub()
-	// go hub.Run()
-
-	// rAuth.GET("/ws", func(c *gin.Context) {
-	//     hub.HandleConnections(c.Writer, c.Request)
-	// })
-
-	// rAuth.GET("/", func(c *gin.Context) {
-	//     c.String(http.StatusOK, "WebSocket server running! ws://localhost:8080/ws")
-	// })
 	return r
-	// if cfg.Env == "prod" {
-	// 	gin.SetMode(gin.ReleaseMode)
-	// }
-
-	// permOpt := middleware.PermOptions{
-	// 	Repo:      MenuHandler.Repo, // 你已有的 ListByUser 实现
-	// 	TTL:       30 * time.Second, // 可选缓存
-	// 	Whitelist: nil,
-	// }
-	// r.Use(middleware.ACLGuard(permOpt))
-
-	//r.POST("/api/register", auth.Register) // 可选
-	// // 需要管理员
-	// rAuth.GET("/admin/only", middleware.RequireRole("admin"), func(c *gin.Context) {
-	// 	response.OK(c, gin.H{"ok": true})
-	// })
-	// }
-	// 健康检查 & 基础信息
-	// r.GET("/health", handler.Health)
-
-	// // 版本示例
-	// api := r.Group("/api/v1")
-	// {
-	// 	api.GET("/hello", func(c *gin.Context) { c.JSON(200, gin.H{"message": "hello, eugene"}) })
-	// }
 }
+
+// hub := websocket.NewHub()
+// go hub.Run()
+
+// rAuth.GET("/ws", func(c *gin.Context) {
+// 	hub.HandleConnections(c.Writer, c.Request)
+// })
+
+// rAuth.GET("/", func(c *gin.Context) {
+// 	c.String(http.StatusOK, "WebSocket server running! ws://localhost:8080/ws")
+// })
+
+// hub := websocket.NewHub()
+// go hub.Run()
+
+// rAuth.GET("/ws", func(c *gin.Context) {
+//     hub.HandleConnections(c.Writer, c.Request)
+// })
+
+// rAuth.GET("/", func(c *gin.Context) {
+//     c.String(http.StatusOK, "WebSocket server running! ws://localhost:8080/ws")
+// })
+// if cfg.Env == "prod" {
+// 	gin.SetMode(gin.ReleaseMode)
+// }
+
+// permOpt := middleware.PermOptions{
+// 	Repo:      MenuHandler.Repo, // 你已有的 ListByUser 实现
+// 	TTL:       30 * time.Second, // 可选缓存
+// 	Whitelist: nil,
+// }
+// r.Use(middleware.ACLGuard(permOpt))
+
+//r.POST("/api/register", auth.Register) // 可选
+// // 需要管理员
+// rAuth.GET("/admin/only", middleware.RequireRole("admin"), func(c *gin.Context) {
+// 	response.OK(c, gin.H{"ok": true})
+// })
+// }
+// 健康检查 & 基础信息
+// r.GET("/health", handler.Health)
+
+// // 版本示例
+// api := r.Group("/api/v1")
+// {
+// 	api.GET("/hello", func(c *gin.Context) { c.JSON(200, gin.H{"message": "hello, eugene"}) })
+// }
