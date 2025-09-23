@@ -162,7 +162,7 @@ func New(cfg *config.Config, lg *logger.Logger) *gin.Engine {
 		Revoker: nil,
 	}))
 	user.RegisterRoutes(rAuth)
-	user.RegisterRoutes(rAuth)
+	//user.RegisterRoutes(rAuth)
 	perm := rAuth.Group("/permissions")
 	{
 		perm.GET("/user-menus", PermissionHandler.ListUserMenuIDs) // 返回[]uint64
