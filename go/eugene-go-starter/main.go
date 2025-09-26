@@ -66,6 +66,8 @@ func main() {
 	//docs.SwaggerInfo.BasePath = "/"
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler)) // ✅ 真正使用
 	r.Static("/eugene", "./web")
-	_ = r.Run(cfg.HTTPAddr)
+	if err := r.Run(cfg.HTTPAddr); err != nil {
+		lg.Error("server failed to start", "err", err)
+	}
 
 }
