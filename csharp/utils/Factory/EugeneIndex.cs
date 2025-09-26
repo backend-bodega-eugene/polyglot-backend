@@ -7,33 +7,25 @@ using System.Threading.Tasks;
 
 namespace utils.Factory
 {
-    internal class EugeneIndex
+    internal sealed class EugeneIndex
     {
+        private static readonly Lazy<EugeneIndex> _instance = new(() => new EugeneIndex());
+        public static EugeneIndex Instance => _instance.Value;
+
+        private readonly Dictionary<string, IEugene> _map;
+
         private EugeneIndex()
         {
-        }
-        private static EugeneIndex? instance;
-        public static EugeneIndex Instance
-        {
-            get
+            _map = new Dictionary<string, IEugene>(StringComparer.OrdinalIgnoreCase)
             {
-                if (instance == null)
-                    instance = new EugeneIndex();
-
-                return instance;
-            }
-        
-        }
-        private Dictionary<string, IEugene> myEugene;
-        public Dictionary<string, IEugene> MyEugene()
-        {
-            if (myEugene == null)
-            {
-                myEugene = new Dictionary<string, IEugene>();
-            }
-            myEugene.Add("laohu", new EugeneLaohu());
-            return myEugene;
+                ["laohu"] = new EugeneLaohu()
+            };
         }
 
-}  
+        public IReadOnlyDictionary<string, IEugene> MyEugene() => _map;
+
+        // 可选：暴露注册点，支持扩展而不改工厂
+       // public bool Register(string key, IEugene impl) => _map.TryAdd(key, impl);
+    }
+
 }

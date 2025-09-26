@@ -15,7 +15,7 @@ namespace utils.Factory
         /// 禁止外部实例化
         /// </summary>
         private EugeneFactory() { }
-        /// 锁定,禁止多线程访问
+        /// 锁定
         private static readonly object objectLock = new object();
         private static EugeneFactory? eugeneFactory;
         /// <summary>
@@ -30,16 +30,13 @@ namespace utils.Factory
                 return eugeneFactory ??= new EugeneFactory();
             }
         }
-        public IEugene CreateEugene(string yourWantEugene)
-        {
-            IEugene? eugene =EugeneIndex.Instance.MyEugene()[yourWantEugene];
-            // 这里可以添加一些公共逻辑
-            if (eugene == null) 
-            {
-                throw new NotImplementedException("没有找到对应的Eugene");
-            }
-            return eugene;
-        }
+public IEugene CreateEugene(string key)
+{
+    var map = EugeneIndex.Instance.MyEugene();
+    if (!map.TryGetValue(key, out var eugene))
+        throw new NotImplementedException($"没有找到对应的Eugene: {key}");
+    return eugene;
+}
 
     }
 }
