@@ -3,8 +3,14 @@
 #include <windows.h>
 #include <d3d11.h>
 #include <tchar.h>
+#include <vector>
 #include "stb_image.h"
 #include "imgui.h"
+#include "grayscale.h"
+#include "flip_horizontal.h"
+#include "flip_vertical.h"
+#include "binarize.h"
+
 #include "backends/imgui_impl_win32.h"
 #include "backends/imgui_impl_dx11.h"
 
@@ -18,6 +24,9 @@ static ID3D11Device* g_pd3dDevice = nullptr;
 static ID3D11DeviceContext* g_pd3dDeviceContext = nullptr;
 static IDXGISwapChain* g_pSwapChain = nullptr;
 static ID3D11RenderTargetView* g_mainRenderTargetView = nullptr;
+static std::vector<unsigned char> g_OriginalPixels;
+static std::vector<unsigned char> g_ProcessedPixels;
+
 ID3D11ShaderResourceView* g_OriginalImageSRV = nullptr;
 ID3D11ShaderResourceView* g_ProcessedImageSRV = nullptr;
 
@@ -31,6 +40,8 @@ bool LoadTextureFromFile(const char* filename,
     ID3D11ShaderResourceView** out_srv,
     int* out_width,
     int* out_height);
+void CreateTextureFromPixels(const std::vector<unsigned char>& pixels);
+
 void ClearImages();
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(
     HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam
@@ -135,7 +146,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
         ImGuiIO& io = ImGui::GetIO();
         ImGui::SetNextWindowPos(ImVec2(0, 0));
         ImGui::SetNextWindowSize(io.DisplaySize);
-
+        static int g_Threshold = 128;
+        ImGui::SliderInt("Threshold", &g_Threshold, 0, 255);
         ImGui::Begin("Eugene Image Lab", nullptr,
             ImGuiWindowFlags_NoTitleBar |
             ImGuiWindowFlags_NoResize |
@@ -157,11 +169,78 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
         
         }
         ImGui::SameLine();
-        if (ImGui::Button("Grayscale")) { /* TODO */ }
+        if (ImGui::Button("Grayscale"))
+        {
+            if (!g_OriginalPixels.empty())
+            {
+                g_ProcessedPixels.resize(g_OriginalPixels.size());
+
+                eugene::Grayscale(
+                    g_OriginalPixels.data(),
+                    g_ProcessedPixels.data(),
+                    g_ImageWidth,
+                    g_ImageHeight
+                );
+
+                CreateTextureFromPixels(g_ProcessedPixels);
+            }
+        }
+
         ImGui::SameLine();
-        if (ImGui::Button("Flip")) { /* TODO */ }
+        if (ImGui::Button("Flip Horizontal"))
+        {
+            if (!g_OriginalPixels.empty())
+            {
+                g_ProcessedPixels.resize(g_OriginalPixels.size());
+
+                eugene::FlipHorizontal(
+                    g_OriginalPixels.data(),
+                    g_ProcessedPixels.data(),
+                    g_ImageWidth,
+                    g_ImageHeight
+                );
+
+                CreateTextureFromPixels(g_ProcessedPixels);
+            }
+        }
+
         ImGui::SameLine();
-        if (ImGui::Button("Binarize")) { /* TODO */ }
+
+        if (ImGui::Button("Flip Vertical"))
+        {
+            if (!g_OriginalPixels.empty())
+            {
+                g_ProcessedPixels.resize(g_OriginalPixels.size());
+
+                eugene::FlipVertical(
+                    g_OriginalPixels.data(),
+                    g_ProcessedPixels.data(),
+                    g_ImageWidth,
+                    g_ImageHeight
+                );
+
+                CreateTextureFromPixels(g_ProcessedPixels);
+            }
+        }
+
+        ImGui::SameLine();
+        if (ImGui::Button("Binarize"))
+        {
+            if (!g_OriginalPixels.empty())
+            {
+                g_ProcessedPixels.resize(g_OriginalPixels.size());
+
+                eugene::Binarize(
+                    g_OriginalPixels.data(),
+                    g_ProcessedPixels.data(),
+                    g_ImageWidth,
+                    g_ImageHeight,
+                    (unsigned char)g_Threshold
+                );
+
+                CreateTextureFromPixels(g_ProcessedPixels);
+            }
+        }
         ImGui::SameLine();
         if (ImGui::Button("Clear"))
         {
@@ -253,6 +332,11 @@ bool LoadTextureFromFile(const char* filename,
     unsigned char* data = stbi_load(filename, &w, &h, &n, 4);
     if (!data) return false;
 
+    g_OriginalPixels.assign(data, data + w * h * 4);
+    g_ProcessedPixels.clear();
+
+    if (*out_srv) { (*out_srv)->Release(); *out_srv = nullptr; }
+
     D3D11_TEXTURE2D_DESC desc{};
     desc.Width = w;
     desc.Height = h;
@@ -268,21 +352,25 @@ bool LoadTextureFromFile(const char* filename,
     sub.SysMemPitch = w * 4;
 
     ID3D11Texture2D* tex = nullptr;
-    device->CreateTexture2D(&desc, &sub, &tex);
+    HRESULT hr = device->CreateTexture2D(&desc, &sub, &tex);
+    if (FAILED(hr)) { stbi_image_free(data); return false; }
 
     D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc{};
     srvDesc.Format = desc.Format;
     srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
     srvDesc.Texture2D.MipLevels = 1;
 
-    device->CreateShaderResourceView(tex, &srvDesc, out_srv);
+    hr = device->CreateShaderResourceView(tex, &srvDesc, out_srv);
     tex->Release();
     stbi_image_free(data);
+
+    if (FAILED(hr)) return false;
 
     *out_width = w;
     *out_height = h;
     return true;
 }
+
 void ClearImages()
 {
     if (g_OriginalImageSRV) {
@@ -298,4 +386,36 @@ void ClearImages()
     g_ImageWidth = 0;
     g_ImageHeight = 0;
 }
+void CreateTextureFromPixels(const std::vector<unsigned char>& pixels)
+{
+    if (pixels.empty() || g_ImageWidth <= 0 || g_ImageHeight <= 0)
+        return;
 
+    if (g_ProcessedImageSRV) { g_ProcessedImageSRV->Release(); g_ProcessedImageSRV = nullptr; }
+
+    D3D11_TEXTURE2D_DESC desc{};
+    desc.Width = g_ImageWidth;
+    desc.Height = g_ImageHeight;
+    desc.MipLevels = 1;
+    desc.ArraySize = 1;
+    desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    desc.SampleDesc.Count = 1;
+    desc.Usage = D3D11_USAGE_DEFAULT;
+    desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+
+    D3D11_SUBRESOURCE_DATA sub{};
+    sub.pSysMem = pixels.data();
+    sub.SysMemPitch = g_ImageWidth * 4;
+
+    ID3D11Texture2D* tex = nullptr;
+    HRESULT hr = g_pd3dDevice->CreateTexture2D(&desc, &sub, &tex);
+    if (FAILED(hr)) return;
+
+    D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+    srvDesc.Format = desc.Format;
+    srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    srvDesc.Texture2D.MipLevels = 1;
+
+    hr = g_pd3dDevice->CreateShaderResourceView(tex, &srvDesc, &g_ProcessedImageSRV);
+    tex->Release();
+}
