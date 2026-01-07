@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  mysql:
+    image: mysql:8.0.30
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      TZ: Asia/Shanghai
+    ports:
+      - 3306:3306
+    volumes:
+      - /opt/mysql/data:/var/lib/mysql
+      - /opt/mysql/conf/my.cnf:/etc/mysql/my.cnf
+      - /opt/mysql/logs:/logs
+    command:
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+      --default-authentication-plugin=mysql_native_password
+
+  redis:
+    build:
+      context: ./redis
+    image: redis:lastest
+    container_name: redis
+    restart: always
+    ports:
+      - 6379:6379
+    volumes:
+      - ./redis/data:/data:rw

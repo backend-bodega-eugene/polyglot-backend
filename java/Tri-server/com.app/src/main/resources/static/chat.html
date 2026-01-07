@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+
+<div id="login">
+    <input id="name" placeholder="输入你的名字">
+    <button onclick="login()">进入</button>
+</div>
+
+<div id="chatArea" style="display:none">
+    <div id="box" style="height:300px;overflow:auto;border:1px solid #aaa"></div>
+    <input id="msg">
+    <button onclick="send()">Send</button>
+</div>
+
+<script>
+    let ws;
+    let myName;
+
+    function login() {
+      myName = document.getElementById("name").value;
+        fetch("/login?name=" + myName)
+          .then(r => r.json())
+            .then(res => {
+                console.log("完整返回:", res);
+                console.log("res.data:", res.data, "类型:", typeof res.data);
+
+                if (res.data === "ok") {
+                    document.getElementById("login").style.display = "none";
+                    document.getElementById("chatArea").style.display = "block";
+                    connect();
+                } else {
+                    alert("不认识你 😐");
+                }
+            });
+
+    }
+
+    function connect() {
+      ws = new WebSocket("ws://localhost:8001/ws/chat?name=" + myName);
+
+      ws.onmessage = e => {
+        let box = document.getElementById("box");
+        box.innerHTML += "<div>" + e.data + "</div>";
+        box.scrollTop = box.scrollHeight;
+      };
+    }
+
+    function send() {
+      let input = document.getElementById("msg");
+      ws.send(myName + ": " + input.value);
+      input.value = "";
+    }
+</script>
+</body>
+</html>

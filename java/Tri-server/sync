@@ -1,0 +1,4 @@
+#!/bin/bash
+scp -P 22 -i ../vpn-test.pem com.app/target/app.jar centos@52.195.15.2:~/api/
+scp -P 22 -i ../vpn-test.pem com.main/target/app.jar centos@52.195.15.2:~/main/
+#scp -P 22 -i ../vpn-test.pem dist.zip centos@52.195.15.2:~/html
