@@ -1,0 +1,39 @@
+services:
+  nacos:
+    image: nacos/nacos-server:v3.0.3
+    container_name: goalhub-nacos
+    restart: unless-stopped
+    environment:
+      MODE: standalone
+      NACOS_AUTH_ENABLE: "false"
+      NACOS_AUTH_TOKEN: "MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTI="
+      NACOS_AUTH_IDENTITY_KEY: "nacos"
+      NACOS_AUTH_IDENTITY_VALUE: "nacos"
+    ports:
+      - "18080:8080"
+      - "8848:8848"
+      - "9848:9848"
+      - "9849:9849"
+    volumes:
+      - ./docker/nacos/logs:/home/nacos/logs
+      - ./docker/nacos/data:/home/nacos/data
+  mysql:
+    image: mysql:8.4
+    container_name: goalhub-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root123456
+      MYSQL_DATABASE: goalhub_user
+      MYSQL_USER: goalhub
+      MYSQL_PASSWORD: goalhub123456
+      TZ: Asia/Bangkok
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./docker/mysql/data:/var/lib/mysql
+      - ./docker/mysql/logs:/var/log/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-time-zone=+07:00
