@@ -22,13 +22,11 @@ fn main() {
     // let mut i=0;
     // let height=10;
     // while i<10{
-     
     //     let mut s=0;
     //     while s <height-1-i {
     //         print!("  ");  
     //         s+=1;
     //     }
-
     //     let mut j=0;
     //     while j<2 * i + 1{
     //         print!("{}",star);   
@@ -61,6 +59,4 @@ fn main() {
         println!();
         i += 1;
     }
-
-    
 }

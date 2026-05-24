@@ -172,6 +172,7 @@ public class ArrayUtils {
             arr[right] = temp;
             left++;
             right--;
+            
         }
     }
 }

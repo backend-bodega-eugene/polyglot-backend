@@ -14,7 +14,6 @@ public class PubMsgTask {
     RedisTemplate<String, Object> redisTemplate;
 
     public void PubMemberStatus(String memberStatus) {
-
-        redisTemplate.convertAndSend("redischannel", memberStatus);
+       redisTemplate.convertAndSend("redischannel", memberStatus);
     }
 }
