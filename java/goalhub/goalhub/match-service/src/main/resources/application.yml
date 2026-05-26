@@ -1,8 +1,9 @@
 server:
-  port: 9001
+  port: 9002
+
 spring:
   application:
-    name: user-service
+    name: match-service
   cloud:
     nacos:
       discovery:
@@ -12,8 +13,3 @@ spring:
     username: goalhub
     password: goalhub123456
     driver-class-name: com.mysql.cj.jdbc.Driver
-springdoc:
-  swagger-ui:
-    path: /swagger-ui.html
-  api-docs:
-    path: /v3/api-docs

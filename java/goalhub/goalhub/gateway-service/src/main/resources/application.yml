@@ -14,9 +14,27 @@ spring:
       server:
         webflux:
           routes:
+#            - id: user-service-swagger
+#              uri: lb://user-service
+#              predicates:
+#              - Path=/api/user/swagger-ui/**,/api/user/v3/api-docs/**
+#              filters:
+#              - StripPrefix=2
+#            - id: match-service-swagger
+#              uri: lb://match-service
+#              predicates:
+#              - Path=/api/soccer/swagger-ui/**,/api/soccer/v3/api-docs/**
+#              filters:
+#              - StripPrefix=2
             - id: user-service
               uri: lb://user-service
               predicates:
-                - Path=/api/users/**
+                - Path=/api/user/**
+              filters:
+                - StripPrefix=1
+            - id: match-service
+              uri: lb://match-service
+              predicates:
+                - Path=/api/soccer/**
               filters:
                 - StripPrefix=1

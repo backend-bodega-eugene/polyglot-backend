@@ -1,8 +1,6 @@
 package com.eugene.goalhub.user.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 
 import java.time.LocalDateTime;
 
@@ -27,9 +25,7 @@ public class UserEntity {
     private Integer status;
 
     private LocalDateTime lastLoginAt;
-
     private LocalDateTime createdAt;
-
     private LocalDateTime updatedAt;
 
     public Long getId() {
