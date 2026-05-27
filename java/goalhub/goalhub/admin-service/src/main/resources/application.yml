@@ -1,0 +1,19 @@
+server:
+  port: 9003
+spring:
+  application:
+    name: admin-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/goalhub_user?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Bangkok
+    username: goalhub
+    password: goalhub123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs

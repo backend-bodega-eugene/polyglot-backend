@@ -13,6 +13,7 @@
         <module>user-service</module>
         <module>gateway-service</module>
         <module>match-service</module>
+        <module>admin-service</module>
     </modules>
 
     <properties>

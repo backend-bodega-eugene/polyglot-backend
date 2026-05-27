@@ -88,7 +88,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         try {
 
-            Claims claims = JwtUtil.parseToken(token);
+            Claims claims = JwtUtil.userParseToken(token);
 
             String userId = claims.getSubject();
             String username = claims.get("username", String.class);

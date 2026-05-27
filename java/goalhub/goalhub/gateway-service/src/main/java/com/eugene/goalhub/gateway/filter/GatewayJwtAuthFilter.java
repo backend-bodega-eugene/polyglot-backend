@@ -1,6 +1,5 @@
 package com.eugene.goalhub.gateway.filter;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -27,9 +26,14 @@ public class GatewayJwtAuthFilter implements GlobalFilter, Ordered {
 
     private static final AntPathMatcher PATH_MATCHER = new AntPathMatcher();
 
+    private static final String ADMIN_PREFIX = "/admin/";
+
     private static final List<String> WHITE_LIST = List.of(
             "/api/user/login",
             "/api/user/register",
+
+            "/admin/auth/login",
+            "/admin/test/ping",
 
             // swagger
             "/swagger-ui/**",
@@ -37,8 +41,12 @@ public class GatewayJwtAuthFilter implements GlobalFilter, Ordered {
             "/api/user/swagger-ui/**",
             "/api/user/v3/api-docs/**",
             "/api/soccer/swagger-ui/**",
-            "/api/soccer/v3/api-docs/**"
+            "/api/soccer/v3/api-docs/**",
+            "/admin/swagger-ui/**",
+            "/admin/v3/api-docs/**"
     );
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -49,37 +57,18 @@ public class GatewayJwtAuthFilter implements GlobalFilter, Ordered {
             return chain.filter(exchange);
         }
 
-        String authorization = exchange.getRequest()
-                .getHeaders()
-                .getFirst(HttpHeaders.AUTHORIZATION);
-
-        if (authorization == null || !authorization.startsWith("Bearer ")) {
-
-            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-            exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
-
-            try {
-
-                Result<Void> result = Result.fail(ResultCode.UNAUTHORIZED);
-
-                String body = new ObjectMapper().writeValueAsString(result);
-
-                DataBuffer buffer = exchange.getResponse()
-                        .bufferFactory()
-                        .wrap(body.getBytes(StandardCharsets.UTF_8));
-
-                return exchange.getResponse().writeWith(Mono.just(buffer));
-
-            } catch (Exception e) {
-                return exchange.getResponse().setComplete();
-            }
+        if (path.startsWith(ADMIN_PREFIX)) {
+            return handleAdminToken(exchange, chain);
         }
 
-        String token = authorization.substring(7);
+        return handleUserToken(exchange, chain);
+    }
 
+    private Mono<Void> handleUserToken(ServerWebExchange exchange, GatewayFilterChain chain) {
         try {
+            String token = getBearerToken(exchange);
 
-            Claims claims = JwtUtil.parseToken(token);
+            Claims claims = JwtUtil.userParseToken(token);
 
             String userId = claims.getSubject();
             String username = claims.get("username", String.class);
@@ -90,37 +79,70 @@ public class GatewayJwtAuthFilter implements GlobalFilter, Ordered {
                     .header("X-Username", username)
                     .build();
 
-            ServerWebExchange newExchange = exchange.mutate()
-                    .request(newRequest)
-                    .build();
-
-            return chain.filter(newExchange);
+            return chain.filter(exchange.mutate().request(newRequest).build());
 
         } catch (Exception e) {
+            return unauthorized(exchange);
+        }
+    }
 
-            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-            exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
+    private Mono<Void> handleAdminToken(ServerWebExchange exchange, GatewayFilterChain chain) {
+        try {
+            String token = getBearerToken(exchange);
 
-            try {
+            Claims claims = JwtUtil.adminParseToken(token);
 
-                Result<Void> result = Result.fail(ResultCode.UNAUTHORIZED);
+            String adminId = claims.getSubject();
+            String username = claims.get("username", String.class);
+            String role = claims.get("role", String.class);
 
-                String body = new ObjectMapper().writeValueAsString(result);
+            ServerHttpRequest newRequest = exchange.getRequest()
+                    .mutate()
+                    .header("X-Admin-Id", adminId)
+                    .header("X-Admin-Username", username)
+                    .header("X-Admin-Role", role == null ? "" : role)
+                    .build();
 
-                DataBuffer buffer = exchange.getResponse()
-                        .bufferFactory()
-                        .wrap(body.getBytes(StandardCharsets.UTF_8));
+            return chain.filter(exchange.mutate().request(newRequest).build());
 
-                return exchange.getResponse().writeWith(Mono.just(buffer));
+        } catch (Exception e) {
+            return unauthorized(exchange);
+        }
+    }
 
-            } catch (Exception ex) {
-                return exchange.getResponse().setComplete();
-            }
+    private String getBearerToken(ServerWebExchange exchange) {
+        String authorization = exchange.getRequest()
+                .getHeaders()
+                .getFirst(HttpHeaders.AUTHORIZATION);
+
+        if (authorization == null || !authorization.startsWith("Bearer ")) {
+            throw new RuntimeException("Missing token");
+        }
+
+        return authorization.substring(7);
+    }
+
+    private Mono<Void> unauthorized(ServerWebExchange exchange) {
+        exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+        exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
+
+        try {
+            Result<Void> result = Result.fail(ResultCode.UNAUTHORIZED);
+
+            String body = objectMapper.writeValueAsString(result);
+
+            DataBuffer buffer = exchange.getResponse()
+                    .bufferFactory()
+                    .wrap(body.getBytes(StandardCharsets.UTF_8));
+
+            return exchange.getResponse().writeWith(Mono.just(buffer));
+
+        } catch (Exception e) {
+            return exchange.getResponse().setComplete();
         }
     }
 
     private boolean isWhiteList(String path) {
-
         return WHITE_LIST.stream()
                 .anyMatch(pattern -> PATH_MATCHER.match(pattern, path));
     }

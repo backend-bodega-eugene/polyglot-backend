@@ -100,7 +100,7 @@ public class UserServiceImpl
             throw new BusinessException(ResultCode.PASSWORD_ERROR);
         }
 
-        String token = JwtUtil.generateToken(user.getId(), user.getUsername());
+        String token = JwtUtil.userGenerateToken(user.getId(), user.getUsername());
 
         LoginResponse response = new LoginResponse();
         response.setUserId(user.getId());

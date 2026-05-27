@@ -38,3 +38,7 @@ spring:
                 - Path=/api/soccer/**
               filters:
                 - StripPrefix=1
+            - id: admin-service
+              uri: lb://admin-service
+              predicates:
+                - Path=/admin/**
