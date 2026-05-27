@@ -1,0 +1,749 @@
+<!doctype html>
+<html lang="en">
+<!--begin::Head-->
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>AdminLTE v4 | 权限分配</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#007bff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
+    <meta name="title" content="AdminLTE v4 | 权限分配" />
+    <meta name="author" content="ColorlibHQ" />
+    <meta name="description" content="AdminLTE 权限分配页面（用户-菜单授权）。" />
+    <meta name="supported-color-schemes" content="light dark" />
+
+    <link rel="preload" href="css/adminlte.css" as="style" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
+        crossorigin="anonymous" media="print" onload="this.media='all'" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css"
+        crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+        crossorigin="anonymous" />
+    <link rel="stylesheet" href="./css/adminlte.css" />
+
+    <style>
+        /* 侧栏图标&文字对齐 */
+        .app-sidebar .sidebar-menu .nav-link {
+            display: flex;
+            align-items: center;
+        }
+
+        .app-sidebar .sidebar-menu .nav-link p {
+            margin: 0 0 0 .5rem;
+            white-space: nowrap;
+        }
+    </style>
+    <script>
+(function () {
+  // 1) 取 token（与现有逻辑一致）
+  const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+  if (!token) { location.replace('/eugene/login.html'); return; }
+
+  // 2) 拉取当前用户可见菜单（后端已按人算好 ACL）
+  fetch('/api/menus', { headers: { 'Authorization': 'Bearer ' + token }, credentials: 'include' })
+    .then(res => res.ok ? res.json() : Promise.reject(res.status))
+    .then(menus => {
+      // 3) 判断当前页面路径是否被允许
+      const allowed = (function isAllowed(path, nodes){
+        const exact = new Set(), prefix = [];
+        (function flat(arr){
+          arr.forEach(n => {
+            if (!n || !n.path) return;
+            const p = String(n.path);
+            if (p.endsWith('/*')) prefix.push(p.slice(0, -1)); // 前缀授权
+            else exact.add(p);
+            if (Array.isArray(n.children)) flat(n.children);
+          });
+        })(Array.isArray(nodes) ? nodes : (nodes?.data || []));
+        if (exact.has(path)) return true;
+        return prefix.some(pre => path.startsWith(pre));
+      })(location.pathname, menus);
+
+      if (!allowed) {
+        // 不允许：给个 403 页面或跳首页
+        // location.replace('/eugene/403.html');
+        location.replace('/eugene/index.html'); // 简单点：回首页
+      }
+    })
+    .catch(() => location.replace('/eugene/login.html')); // token 失效 → 去登录
+})();
+</script>
+
+</head>
+<!--end::Head-->
+
+<!--begin::Body-->
+
+<body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
+    <div class="app-wrapper">
+        <!-- Header -->
+        <nav class="app-header navbar navbar-expand bg-body">
+            <div class="container-fluid">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button"><i
+                                class="bi bi-list"></i></a>
+                    </li>
+                </ul>
+
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-lte-toggle="fullscreen">
+                            <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
+                            <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display:none"></i>
+                        </a>
+                    </li>
+
+                    <!-- 用户菜单 -->
+                    <li class="nav-item dropdown user-menu">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                            <img id="user-avatar" src="assets/img/eugene.jpg" class="user-image rounded-circle shadow"
+                                alt="User" />
+                            <span id="user-name" class="d-none d-md-inline">eugene temp</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
+                            <li class="user-header text-bg-primary">
+                                <img id="user-avatar-large" src="assets/img/eugene.jpg" class="rounded-circle shadow"
+                                    alt="User" />
+                                <p id="user-title">eugene - Super Admin <small id="user-since">Member since
+                                        Today</small></p>
+                            </li>
+                            <li class="user-footer d-flex gap-2">
+                                <a id="btn-profile" href="/eugene/profile.html"
+                                    class="btn btn-default btn-flat flex-fill">Profile</a>
+                                <button id="btn-signout" class="btn btn-default btn-flat flex-fill">Sign out</button>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Sidebar -->
+        <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+            <div class="sidebar-brand">
+                <a href="index.html" class="brand-link">
+                    <img src="assets/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image opacity-75 shadow" />
+                    <span class="brand-text fw-light">AdminLTE 4</span>
+                </a>
+            </div>
+            <div class="sidebar-wrapper">
+                <nav class="mt-2">
+                    <ul class="nav nav-pills nav-sidebar flex-column sidebar-menu" data-lte-toggle="treeview"
+                        role="menu" aria-label="Main navigation" data-accordion="false" id="navigation"></ul>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main -->
+        <main class="app-main">
+            <div class="app-content-header">
+                <div class="container-fluid"></div>
+            </div>
+
+            <div class="app-content">
+                <div class="container-fluid">
+                    <div class="row align-items-center mb-2">
+                        <div class="col-auto">
+                            <h4 class="mb-0">权限分配</h4>
+                        </div>
+                        <div class="col"><span id="current-user-tag" class="badge badge-info">请选择左侧用户</span></div>
+                        <div class="col-auto">
+                            <button id="btn-save" class="btn btn-primary btn-sm" disabled>保存</button>
+                            <button id="btn-refresh" class="btn btn-outline-secondary btn-sm">刷新</button>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- 左：用户列表 -->
+                        <div class="col-12 col-md-4">
+                            <div class="card">
+                                <div class="card-header"><strong>用户列表</strong></div>
+                                <div class="card-body">
+                                    <div class="form-inline mb-2">
+                                        <input id="input-keyword" class="form-control form-control-sm mr-2"
+                                            placeholder="搜索用户名/昵称">
+                                        <button id="btn-search" class="btn btn-sm btn-secondary">搜索</button>
+                                    </div>
+                                    <div class="table-responsive" style="max-height:420px; overflow:auto;">
+                                        <table class="table table-sm table-hover mb-0">
+                                            <thead class="thead-light">
+                                                <tr>
+                                                    <th style="width:80px;">ID</th>
+                                                    <th>账号</th>
+                                                    <th>操作</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="user-tbody"></tbody>
+                                        </table>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mt-2">
+                                        <div class="small text-muted">共 <span id="user-total">0</span> 条</div>
+                                        <div>
+                                            <button id="btn-prev"
+                                                class="btn btn-sm btn-outline-primary mr-1">上一页</button>
+                                            <span class="small" id="page-indicator">1/1</span>
+                                            <button id="btn-next"
+                                                class="btn btn-sm btn-outline-primary ml-1">下一页</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 右：菜单树 -->
+                        <div class="col-12 col-md-8">
+                            <div class="card">
+                                <div class="card-header d-flex align-items-center">
+                                    <strong>菜单权限</strong>
+                                    <div class="ms-auto d-flex align-items-center">
+                                        <div class="form-check form-switch me-2">
+                                            <input class="form-check-input" type="checkbox" id="switch-only-checked">
+                                            <label class="form-check-label" for="switch-only-checked">只看已选</label>
+                                        </div>
+                                        <button id="btn-check-all"
+                                            class="btn btn-sm btn-outline-success me-1">全选叶子</button>
+                                        <button id="btn-uncheck-all" class="btn btn-sm btn-outline-danger">全不选</button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div id="menu-tree" style="max-height:520px; overflow:auto;"></div>
+                                    <div id="dirty-tip" class="mt-2 text-danger d-none">有未保存更改</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <div class="float-end d-none d-sm-inline">Anything you want</div>
+            <strong>Copyright &copy; 2014-2025&nbsp;<a href="https://adminlte.io"
+                    class="text-decoration-none">AdminLTE.io</a>.</strong>
+            All rights reserved.
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js"
+        crossorigin="anonymous"></script>
+    <script src="./js/adminlte.js"></script>
+
+    <!-- 侧栏滚动 -->
+    <script>
+        const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';
+        const Default = { scrollbarTheme: 'os-theme-light', scrollbarAutoHide: 'leave', scrollbarClickScroll: true };
+        document.addEventListener('DOMContentLoaded', function () {
+            const sidebarWrapper = document.querySelector(SELECTOR_SIDEBAR_WRAPPER);
+            if (sidebarWrapper && OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined) {
+                OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
+                    scrollbars: { theme: Default.scrollbarTheme, autoHide: Default.scrollbarAutoHide, clickScroll: Default.scrollbarClickScroll },
+                });
+            }
+        });
+    </script>
+
+    <!-- 菜单（侧栏）加载 -->
+    <script>
+        (function () {
+            const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+            if (!token) { location.href = '/eugene/login.html'; return; }
+
+            async function fetchMenus() {
+                const res = await fetch('/api/menus', { headers: { 'Authorization': 'Bearer ' + token } });
+                if (res.status === 401) { location.href = '/eugene/login.html'; return []; }
+                if (!res.ok) throw new Error('load menus failed');
+                return res.json();
+            }
+
+            function renderMenus(menus) {
+                const root = document.querySelector('aside.app-sidebar #navigation');
+                if (!root) return;
+                root.innerHTML = '';
+
+                const createItem = (node) => {
+                    const hasChildren = Array.isArray(node.children) && node.children.length > 0;
+                    const li = document.createElement('li');
+                    li.className = 'nav-item';
+
+                    if (!hasChildren) {
+                        li.innerHTML = `
+              <a href="${node.path || '#'}" class="nav-link${location.pathname === (node.path || '') ? ' active' : ''}">
+                <i class="nav-icon ${node.icon || 'bi bi-speedometer'}"></i>
+                <p>${node.name}</p>
+              </a>`;
+                        return li;
+                    }
+
+                    li.innerHTML = `
+            <a href="#" class="nav-link">
+              <i class="nav-icon ${node.icon || 'bi bi-folder'}"></i>
+              <p>${node.name} <i class="nav-arrow bi bi-chevron-right"></i></p>
+            </a>`;
+                    const ul = document.createElement('ul');
+                    ul.className = 'nav nav-treeview';
+                    node.children.forEach(ch => ul.appendChild(createItem(ch)));
+                    li.appendChild(ul);
+                    return li;
+                };
+
+                menus.forEach(m => root.appendChild(createItem(m)));
+            }
+
+            function jumpDefault(menus) {
+                const flat = JSON.stringify(menus);
+                if ((flat.includes('"/index.html"') || flat.includes('"/dashboard"')) && location.pathname === '/') {
+                    location.replace('/index.html');
+                }
+            }
+
+            fetchMenus()
+                .then(m => { if (!m || m.length === 0) return; renderMenus(m); jumpDefault(m); })
+                .catch(e => { console.error(e); location.href = '/eugene/login.html'; });
+        })();
+    </script>
+
+    <!-- 顶栏个人信息 -->
+    <script>
+        (function () {
+            const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+            const AUTH_HEADERS = token ? { 'Authorization': 'Bearer ' + token } : {};
+
+            const $name = document.getElementById('user-name');
+            const $title = document.getElementById('user-title');
+            const $since = document.getElementById('user-since');
+            const $av1 = document.getElementById('user-avatar');
+            const $av2 = document.getElementById('user-avatar-large');
+            const $out = document.getElementById('btn-signout');
+
+            function setProfile(p = {}) {
+                const n = p.nickname || p.fullName || p.realName || p.username || 'eugene';
+                const sinceTxt = p.memberSince ? `Member since ${new Date(p.memberSince).toLocaleDateString()}` : 'Member since Today';
+                if ($name) $name.textContent = n;
+                if ($title) $title.innerHTML = `${n} - Super Admin <small id="user-since">${sinceTxt}</small>`;
+                if ($since) $since.textContent = sinceTxt;
+                const avatar = p.avatarUrl || p.avatar || 'assets/img/eugene.jpg';
+                if ($av1) $av1.src = avatar;
+                if ($av2) $av2.src = avatar;
+            }
+
+            function getCurrentUserIdFromContext() {
+                if (typeof window !== 'undefined' && window.CURRENT_USER_ID) return window.CURRENT_USER_ID;
+                if (token && token.split('.').length === 3) {
+                    try {
+                        const payload = JSON.parse(atob(token.split('.')[1]));
+                        return payload.userId || payload.uid || payload.userid || payload.sub || payload.id || null;
+                    } catch (_) { }
+                }
+                return null;
+            }
+
+            function normalizeUser(data) {
+                const obj = (data && (data.data?.user || data.data)) || data;
+                if (!obj || typeof obj !== 'object') return null;
+                if (Array.isArray(obj.records) || Array.isArray(obj.items)) return null;
+                return obj;
+            }
+
+            async function loadProfile() {
+                try {
+                    const uid = getCurrentUserIdFromContext();
+                    if (uid) {
+                        const res = await fetch(`/api/users/${encodeURIComponent(uid)}`, { headers: AUTH_HEADERS });
+                        if (res.ok) {
+                            const data = await res.json();
+                            const user = normalizeUser(data);
+                            if (user) { setProfile(user); return; }
+                        }
+                    }
+                    // 兜底：取列表第一页第一条（仅为不空）
+                    const res2 = await fetch(`/api/users?page=1&pageSize=1`, { headers: AUTH_HEADERS });
+                    if (res2.ok) {
+                        const data2 = await res2.json();
+                        const list = data2.records || data2.items || data2.data?.records || [];
+                        setProfile(Array.isArray(list) && list.length ? list[0] : {});
+                        return;
+                    }
+                } catch (_) { }
+                setProfile({});
+            }
+
+            $out?.addEventListener('click', () => {
+                localStorage.removeItem('authToken');
+                sessionStorage.removeItem('authToken');
+                location.href = '/eugene/login.html';
+            });
+
+            loadProfile();
+        })();
+    </script>
+
+    <!-- 权限页核心逻辑（用户+菜单树+保存） -->
+    <script>
+        (function () {
+            // ====== 配置 ======
+            const API = {
+                users: '/api/users',
+                menuTree: '/api/menus/tree',
+                getUserMenus: (userId) => `/api/permissions/user-menus?userId=${encodeURIComponent(userId)}`,
+                saveUserMenus: '/api/permissions/user-menus'
+            };
+
+            const PAGE_SIZE = 10;
+
+            // ✅ 这里单独拿 token，做统一鉴权头（这段作用域内可用）
+            const TOKEN = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+            if (!TOKEN) { location.href = '/eugene/login.html'; return; }
+            const AUTH = { 'Authorization': 'Bearer ' + TOKEN };
+
+            // ====== 状态 ======
+            const state = {
+                users: [], page: 1, pageSize: PAGE_SIZE, total: 0, keyword: '',
+                currentUser: null,
+                menuTreeRaw: [],
+                checkedSet: new Set(),
+                dirty: false, onlyChecked: false
+            };
+
+            // ====== DOM ======
+            const $ = (s) => document.querySelector(s);
+            const userTbody = $('#user-tbody');
+            const userTotal = $('#user-total');
+            const pageIndicator = $('#page-indicator');
+            const inputKeyword = $('#input-keyword');
+            const btnSearch = $('#btn-search');
+            const btnPrev = $('#btn-prev');
+            const btnNext = $('#btn-next');
+            const btnSave = $('#btn-save');
+            const btnRefresh = $('#btn-refresh');
+            const currentUserTag = $('#current-user-tag');
+            const switchOnlyChecked = $('#switch-only-checked');
+            const btnCheckAll = $('#btn-check-all');
+            const btnUncheckAll = $('#btn-uncheck-all');
+            const menuTreeRoot = $('#menu-tree');
+            const dirtyTip = $('#dirty-tip');
+
+            // ====== 工具 ======
+            async function httpGet(url) {
+                const res = await fetch(url, { credentials: 'include', headers: AUTH });
+                if (res.status === 401) { location.href = '/eugene/login.html'; throw new Error('401'); }
+                if (!res.ok) throw new Error(`GET ${url} ${res.status}`);
+                return res.json();
+            }
+            async function httpPost(url, data) {
+                const res = await fetch(url, {
+                    method: 'POST',
+                    headers: Object.assign({ 'Content-Type': 'application/json' }, AUTH),
+                    credentials: 'include',
+                    body: JSON.stringify(data)
+                });
+                if (res.status === 401) { location.href = '/eugene/login.html'; throw new Error('401'); }
+                if (!res.ok) throw new Error(`POST ${url} ${res.status}`);
+                return res.json();
+            }
+            function qs(name) { const u = new URL(window.location.href); return u.searchParams.get(name); }
+            function setDirty(v) {
+                state.dirty = v;
+                dirtyTip.classList.toggle('d-none', !v);
+                btnSave.disabled = !state.currentUser ? true : false; // 选了用户即可保存（幂等）
+            }
+            function escapeHtml(s) {
+                return (s ?? '').toString().replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+            }
+
+            // ====== 用户：列表/分页/选择 ======
+            // ====== 用户：列表/分页/选择 ======
+            async function fetchUsers() {
+                const { page, pageSize, keyword } = state;
+                const url = `${API.users}?page=${page}&pageSize=${pageSize}&keyword=${encodeURIComponent(keyword || '')}`;
+
+                const payload = await httpGet(url);
+
+                // 关键：兼容多种包裹层级与字段名
+                const root =
+                    (payload && (payload.data || payload.result || payload.page || payload.payload)) || payload || {};
+
+                const records =
+                    root.records ||
+                    root.list ||
+                    root.items ||
+                    root.users ||
+                    []; // 兜底空数组
+
+                const total =
+                    root.total ||
+                    root.count ||
+                    (Array.isArray(records) ? records.length : 0);
+
+                state.users = Array.isArray(records) ? records : [];
+                state.total = Number(total) || 0;
+
+                renderUsers();
+            }
+
+            function renderUsers() {
+                userTbody.innerHTML = '';
+                state.users.forEach(u => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+            <td>${u.userId}</td>
+            <td>${escapeHtml(u.username)}</td>
+            <td><button class="btn btn-link btn-sm p-0">分配</button></td>`;
+                    tr.querySelector('button').addEventListener('click', () => selectUser(u));
+                    tr.addEventListener('click', (e) => { if (e.target.tagName !== 'BUTTON') selectUser(u); });
+                    userTbody.appendChild(tr);
+                });
+                userTotal.textContent = state.total;
+                const totalPages = Math.max(1, Math.ceil(state.total / state.pageSize));
+                pageIndicator.textContent = `${state.page}/${totalPages}`;
+                btnPrev.disabled = state.page <= 1;
+                btnNext.disabled = state.page >= totalPages;
+            }
+            async function selectUser(user) {
+                if (state.dirty) {
+                    const ok = confirm('有未保存更改，确定切换用户吗？'); if (!ok) return;
+                }
+                state.currentUser = user;
+                currentUserTag.className = 'badge badge-success';
+                currentUserTag.textContent = `当前用户：${user.username}（ID:${user.userId}）`;
+                btnSave.disabled = false;
+                await loadUserCheckedMenus();
+            }
+
+            // ====== 菜单树：渲染/勾选/半选 ======
+            // async function fetchMenuTree() {
+            //     const tree = await httpGet(API.menuTree);
+            //     state.menuTreeRaw = Array.isArray(tree) ? tree : (tree.data || []);
+            //     renderMenuTree();
+            // }
+            async function fetchMenuTree() {
+                const raw = await httpGet(API.menuTree);
+                const arr = Array.isArray(raw) ? raw : (raw.data || []);
+                state.menuTreeRaw = _normalizeTree(arr);   // ✅ 用规范化后的 _id
+                renderMenuTree();
+            }
+            function _rawNodeId(n) {
+                return n?.menuId ?? n?.id ?? n?.menuID ?? n?.menu_id ?? n?.MenuID ?? null;
+            }
+            function _toId(x) {
+                const v = Number(x);
+                return Number.isFinite(v) ? v : null;
+            }
+            function _normalizeTree(nodes = []) {
+                return nodes.map(n => ({
+                    ...n,
+                    _id: _toId(_rawNodeId(n)),
+                    children: _normalizeTree(n.children || [])
+                }));
+            }
+
+            function renderMenuTree() {
+                menuTreeRoot.innerHTML = '';
+                const treeData = state.onlyChecked ? filterTreeByChecked(state.menuTreeRaw, state.checkedSet) : state.menuTreeRaw;
+                const ul = buildTreeUl(treeData);
+                menuTreeRoot.appendChild(ul);
+                updateIndeterminateAll(menuTreeRoot);
+            }
+            function buildTreeUl(nodes) {
+                const ul = document.createElement('ul');
+                ul.className = 'list-unstyled ms-2';
+                nodes.forEach(n => {
+                    const li = document.createElement('li');
+                    li.className = 'mb-1';
+
+                    const id = n._id;                                  // ✅ 用标准化后的 _id
+                    const hasChildren = Array.isArray(n.children) && n.children.length > 0;
+
+                    const label = document.createElement('label');
+                    label.className = 'd-flex align-items-center';
+                    label.style.cursor = 'pointer';
+
+                    const cb = document.createElement('input');
+                    cb.type = 'checkbox';
+                    cb.className = 'me-2';
+                    if (id != null) cb.dataset.id = String(id);        // ✅ 只有有值才挂 data-id
+                    cb.checked = id != null && state.checkedSet.has(id);
+                    cb.disabled = id == null;                          // 没有 id 的节点禁用，避免脏数据
+                    cb.addEventListener('change', onCheckboxChange);
+
+                    const icon = document.createElement('i');
+                    icon.className = (n.icon || 'far fa-circle') + ' me-2';
+
+                    const text = document.createElement('span');
+                    text.textContent = n.name;
+
+                    label.appendChild(cb);
+                    label.appendChild(icon);
+                    label.appendChild(text);
+                    li.appendChild(label);
+
+                    if (hasChildren) li.appendChild(buildTreeUl(n.children));
+                    ul.appendChild(li);
+                });
+                return ul;
+            }
+
+            function onCheckboxChange(e) {
+                const cb = e.target;
+                const id = _toId(cb.dataset.id);
+                if (id == null) return;                    // ✅ 没有有效 id 的直接跳过
+
+                const checked = cb.checked;
+                // 1) 当前
+                toggleChecked(id, checked);
+
+                // 2) 子孙
+                const li = cb.closest('li');
+                if (li) {
+                    li.querySelectorAll('input[type="checkbox"]').forEach(childCb => {
+                        if (childCb === cb) return;
+                        const cid = _toId(childCb.dataset.id);
+                        if (cid == null) return;
+                        childCb.checked = checked;
+                        childCb.indeterminate = false;
+                        toggleChecked(cid, checked);
+                    });
+                }
+
+                // 3) 向上半选
+                updateAncestorsIndeterminate(cb);
+                setDirty(true);
+            }
+
+
+            function toggleChecked(id, on) { if (on) state.checkedSet.add(id); else state.checkedSet.delete(id); }
+            function updateAncestorsIndeterminate(cb) {
+                let li = cb.closest('li');
+                while (li && li.parentElement && li.parentElement.closest('li')) {
+                    const parentLi = li.parentElement.closest('li');
+                    const cbs = parentLi.querySelectorAll(':scope > ul input[type="checkbox"]');
+                    const parentCb = parentLi.querySelector(':scope > label input[type="checkbox"]');
+                    if (parentCb) {
+                        const all = Array.from(cbs);
+                        const checkedCount = all.filter(x => x.checked).length;
+                        if (checkedCount === 0) {
+                            parentCb.checked = false; parentCb.indeterminate = false; toggleChecked(Number(parentCb.dataset.id), false);
+                        } else if (checkedCount === all.length) {
+                            parentCb.checked = true; parentCb.indeterminate = false; toggleChecked(Number(parentCb.dataset.id), true);
+                        } else {
+                            parentCb.checked = false; parentCb.indeterminate = true;
+                        }
+                    }
+                    li = parentLi;
+                }
+            }
+            function updateIndeterminateAll(root) {
+                const lis = Array.from(root.querySelectorAll('li')).reverse();
+                lis.forEach(li => {
+                    const parentCb = li.querySelector(':scope > label input[type="checkbox"]');
+                    const childCbs = li.querySelectorAll(':scope > ul input[type="checkbox"]');
+                    if (!parentCb || childCbs.length === 0) return;
+                    const all = Array.from(childCbs);
+                    const checkedCount = all.filter(x => x.checked).length;
+                    if (checkedCount === 0) { parentCb.checked = false; parentCb.indeterminate = false; }
+                    else if (checkedCount === all.length) { parentCb.checked = true; parentCb.indeterminate = false; }
+                    else { parentCb.checked = false; parentCb.indeterminate = true; }
+                });
+            }
+            function filterTreeByChecked(nodes, set) {
+                const dfs = (arr) => {
+                    const out = [];
+                    arr.forEach(n => {
+                        const children = n.children ? dfs(n.children) : [];
+                        if (set.has(n.menuId) || children.length > 0) out.push({ ...n, children });
+                    });
+                    return out;
+                };
+                return dfs(nodes);
+            }
+            function collectLeafIds(nodes, bucket = []) {
+                nodes.forEach(n => {
+                    if (n.children && n.children.length) collectLeafIds(n.children, bucket);
+                    else if (n._id != null) bucket.push(n._id);       // ✅ 叶子必须有 _id
+                });
+                return bucket;
+            }
+            function getCheckedLeafIds() {                        // ← 新函数，替换原来的 DOM 版本
+                const leafSet = new Set(collectLeafIds(state.menuTreeRaw, []));
+                // 只返回既在“已勾选集合”里、又是叶子的 id
+                return [...state.checkedSet].filter(id => leafSet.has(id));
+            }
+            function getCheckedLeafIdsFromDom() {
+                // 现代浏览器支持 :has，若不支持可降级用数据源判断
+                const sel = 'li:not(:has(> ul)) > label input[type="checkbox"]';
+                const leafCbs = menuTreeRoot.querySelectorAll(sel);
+                if (leafCbs.length === 0) {
+                    // 简易降级：根据原始树判断叶子
+                    const leaves = collectLeafIds(state.menuTreeRaw, []);
+                    return leaves.filter(id => state.checkedSet.has(id));
+                }
+                return Array.from(leafCbs).filter(cb => cb.checked).map(cb => Number(cb.dataset.id));
+            }
+
+            // ====== 用户-菜单：加载/保存 ======
+            async function loadUserCheckedMenus() {
+                if (!state.currentUser) return;
+                const ids = await httpGet(API.getUserMenus(state.currentUser.userId));
+                state.checkedSet = new Set((ids && ids.length ? ids : []).map(Number));
+                setDirty(false);
+                renderMenuTree();
+            }
+            async function saveUserMenus() {
+                if (!state.currentUser) return alert('请先选择用户');
+                const leafIds = getCheckedLeafIds();                // ✅
+                await httpPost(API.saveUserMenus, {
+                    userId: String(state.currentUser.userId),      // ✅ 变成字符串
+                    menuIds: leafIds.map(Number)                   // ✅ 保证是 number，而不是 null / undefined
+                });
+                setDirty(false);
+                alert('保存成功 ✅');
+            }
+
+
+            // ====== 事件 ======
+            btnSearch.addEventListener('click', async () => { state.keyword = inputKeyword.value.trim(); state.page = 1; await fetchUsers(); });
+            inputKeyword.addEventListener('keyup', (e) => { if (e.key === 'Enter') btnSearch.click(); });
+            btnPrev.addEventListener('click', async () => { if (state.page > 1) { state.page--; await fetchUsers(); } });
+            btnNext.addEventListener('click', async () => {
+                const totalPages = Math.max(1, Math.ceil(state.total / state.pageSize));
+                if (state.page < totalPages) { state.page++; await fetchUsers(); }
+            });
+            btnSave.addEventListener('click', saveUserMenus);
+            btnRefresh.addEventListener('click', async () => {
+                await Promise.all([fetchUsers(), fetchMenuTree()]);
+                if (state.currentUser) await loadUserCheckedMenus();
+            });
+            switchOnlyChecked.addEventListener('change', () => { state.onlyChecked = switchOnlyChecked.checked; renderMenuTree(); });
+            btnCheckAll.addEventListener('click', () => { const leafIds = collectLeafIds(state.menuTreeRaw, []); state.checkedSet = new Set(leafIds); renderMenuTree(); setDirty(true); });
+            btnUncheckAll.addEventListener('click', () => { state.checkedSet.clear(); renderMenuTree(); setDirty(true); });
+
+            // ====== 启动 ======
+            (async function init() {
+                try {
+                    await Promise.all([fetchUsers(), fetchMenuTree()]);
+                    const uid = qs('userId');
+                    if (uid) {
+                        const found = state.users.find(u => String(u.userId) === String(uid));
+                        if (found) selectUser(found);
+                        else currentUserTag.textContent = `传入 userId=${uid}（不在当前页）`;
+                    }
+                } catch (e) {
+                    console.error('[perm] init fail:', e);
+                    alert('初始化失败，请检查接口是否可用');
+                }
+            })();
+        })();
+    </script>
+</body>
+
+</html>
