@@ -13,34 +13,41 @@
     <artifactId>gateway-service</artifactId>
 
     <dependencies>
+        <!-- 公共 DTO、响应包装和 JWT 工具模块。 -->
         <dependency>
             <groupId>com.eugene</groupId>
             <artifactId>common</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- Spring Cloud Gateway WebFlux 网关能力。 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-gateway-server-webflux</artifactId>
         </dependency>
+        <!-- Nacos 服务发现。 -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>
+        <!-- Spring Cloud 负载均衡支持，用于 lb:// 服务转发。 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-loadbalancer</artifactId>
         </dependency>
+        <!-- JJWT API，用于生成和解析 JWT。 -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
             <version>0.12.5</version>
         </dependency>
+        <!-- JJWT 运行时实现。 -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-impl</artifactId>
             <version>0.12.5</version>
             <scope>runtime</scope>
         </dependency>
+        <!-- JJWT Jackson 序列化支持。 -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-jackson</artifactId>

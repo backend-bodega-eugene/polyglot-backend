@@ -7,10 +7,22 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+/**
+ * 后台管理员初始化器。
+ * <p>
+ * 应用启动时如果管理员表为空，则创建默认超级管理员账号。
+ */
 @Component
 public class AdminUserInitializer implements CommandLineRunner {
 
+    /**
+     * 管理员账号 Mapper。
+     */
     private final AdminUserMapper adminUserMapper;
+
+    /**
+     * 密码加密器。
+     */
     private final PasswordEncoder passwordEncoder;
 
     public AdminUserInitializer(AdminUserMapper adminUserMapper,PasswordEncoder passwordEncoder) {
@@ -18,6 +30,12 @@ public class AdminUserInitializer implements CommandLineRunner {
         this.adminUserMapper = adminUserMapper;
         // this.jwtUtil = jwtUtil;
     }
+
+    /**
+     * 启动后执行默认管理员初始化逻辑。
+     *
+     * @param args 启动参数
+     */
     @Override
     public void run(String... args) {
         Long count = adminUserMapper.selectCount(null);
@@ -25,6 +43,7 @@ public class AdminUserInitializer implements CommandLineRunner {
             return;
         }
 
+        // 首次启动时写入一个可登录的超级管理员账号。
         AdminUser user = new AdminUser();
         user.setUsername("eugene");
         user.setPasswordHash(passwordEncoder.encode("eugene"));

@@ -13,11 +13,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import response.ResultCode;
 
+/**
+ * 用户账号服务实现。
+ */
 @Service
 public class UserServiceImpl
         extends ServiceImpl<UserMapper, UserEntity>
         implements UserService {
 
+    /**
+     * 密码加密与校验组件。
+     */
     private final PasswordEncoder passwordEncoder;
     //private final JwtUtil jwtUtil;
 
@@ -25,6 +31,14 @@ public class UserServiceImpl
         this.passwordEncoder = passwordEncoder;
        // this.jwtUtil = jwtUtil;
     }
+
+    /**
+     * 注册用户。
+     * <p>
+     * 用户名会去除首尾空格，并根据格式补充邮箱或手机号字段。
+     *
+     * @param request 注册参数
+     */
     @Override
     public void register(RegisterRequest request) {
 
@@ -48,12 +62,12 @@ public class UserServiceImpl
 
         user.setUsername(username);
 
-        // 邮箱
+        // 用户名包含 @ 时同步保存为邮箱。
         if (username.contains("@")) {
             user.setEmail(username);
         }
 
-        // 手机号
+        // 用户名为纯数字或带国际区号格式时同步保存为手机号。
         if (username.matches("^\\+?\\d+$")) {
             user.setPhone(username);
         }
@@ -64,6 +78,15 @@ public class UserServiceImpl
 
         save(user);
     }
+
+    /**
+     * 用户登录。
+     * <p>
+     * 支持使用用户名、邮箱或手机号登录，密码校验通过后签发 JWT。
+     *
+     * @param request 登录参数
+     * @return 登录结果
+     */
     @Override
     public LoginResponse login(LoginRequest request) {
 

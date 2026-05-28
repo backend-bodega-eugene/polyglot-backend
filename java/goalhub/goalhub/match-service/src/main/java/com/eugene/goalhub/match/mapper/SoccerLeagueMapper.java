@@ -4,6 +4,9 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.eugene.goalhub.match.entity.SoccerLeagueEntity;
 import org.apache.ibatis.annotations.Mapper;
 
+/**
+ * 足球联赛表 Mapper。
+ */
 @Mapper
 public interface SoccerLeagueMapper extends BaseMapper<SoccerLeagueEntity> {
 }

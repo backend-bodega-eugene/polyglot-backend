@@ -12,35 +12,53 @@
     <artifactId>admin-service</artifactId>
 
     <dependencies>
+        <!-- 公共 DTO、响应包装和工具类模块。 -->
         <dependency>
             <groupId>com.eugene</groupId>
             <artifactId>common</artifactId>
             <version>${project.version}</version>
         </dependency>
 
+        <!-- Spring MVC Web 能力。 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        <!-- Nacos 服务发现。 -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>
+        <!-- OpenFeign 服务间 HTTP 调用。 -->
         <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+        <!-- Spring Cloud 负载均衡支持。 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+        </dependency>
+        <!-- MyBatis-Plus ORM 支持。 -->
+        <dependency>
+
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
             <version>${mybatis-plus.version}</version>
         </dependency>
 
+        <!-- MySQL JDBC 驱动。 -->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
         </dependency>
+        <!-- OpenAPI/Swagger UI 接口文档。 -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.8.9</version>
         </dependency>
+        <!-- Spring Security 密码加密组件。 -->
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-crypto</artifactId>

@@ -1,4 +1,5 @@
 services:
+  # Nacos 注册中心，供各 Spring Cloud 服务注册和发现。
   nacos:
     image: nacos/nacos-server:v3.0.3
     container_name: goalhub-nacos
@@ -17,6 +18,8 @@ services:
     volumes:
       - ./docker/nacos/logs:/home/nacos/logs
       - ./docker/nacos/data:/home/nacos/data
+
+  # MySQL 数据库，保存用户、后台管理和比赛相关数据。
   mysql:
     image: mysql:8.4
     container_name: goalhub-mysql
@@ -32,8 +35,10 @@ services:
     volumes:
       - ./docker/mysql/data:/var/lib/mysql
       - ./docker/mysql/logs:/var/log/mysql
+      # 初始化 SQL 放在该目录下会在容器首次启动时自动执行。
       - ./docker/mysql/init:/docker-entrypoint-initdb.d
     command:
+      # 统一使用 utf8mb4 字符集和 Bangkok 时区。
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
       - --default-time-zone=+07:00

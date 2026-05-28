@@ -6,20 +6,41 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.time.LocalDateTime;
 
+/**
+ * 足球球队实体，对应 soccer_team 表。
+ */
 @TableName("soccer_team")
 public class SoccerTeamEntity {
 
+    /**
+     * 球队 ID。
+     */
     @TableId(type = IdType.AUTO)
     private Long id;
 
+    /**
+     * 球队编码。
+     */
     private String code;
 
+    /**
+     * 球队 Logo 地址。
+     */
     private String logoUrl;
 
+    /**
+     * 状态：1 启用，0 禁用。
+     */
     private Integer status;
 
+    /**
+     * 创建时间。
+     */
     private LocalDateTime createdAt;
 
+    /**
+     * 更新时间。
+     */
     private LocalDateTime updatedAt;
 
     public Long getId() {

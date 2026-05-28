@@ -1,30 +1,43 @@
 package com.eugene.goalhub.admin.service.impl;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.eugene.goalhub.admin.entity.AdminUser;
 import com.eugene.goalhub.admin.mapper.AdminUserMapper;
 import com.eugene.goalhub.admin.service.AdminUserService;
-import dto.AdminLoginRequest;
-import dto.AdminPasswordUpdateRequest;
-import dto.AdminUserCreateRequest;
-import dto.AdminUserUpdateRequest;
+import dto.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import utils.JwtUtil;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
+/**
+ * 后台管理员账号管理服务实现。
+ */
 @Service
 public class AdminUserServiceImpl extends ServiceImpl<AdminUserMapper, AdminUser>
         implements AdminUserService {
 
+    /**
+     * 密码加密与校验组件。
+     */
     private final PasswordEncoder passwordEncoder;
 
     public AdminUserServiceImpl(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
 
+    /**
+     * 管理员登录。
+     * <p>
+     * 登录成功后更新最近登录时间，并签发后台管理 JWT。
+     *
+     * @param request 登录参数
+     * @return token 和管理员基础信息
+     */
     @Override
     public Object login(AdminLoginRequest request) {
         AdminUser user = lambdaQuery()
@@ -32,10 +45,12 @@ public class AdminUserServiceImpl extends ServiceImpl<AdminUserMapper, AdminUser
                 .one();
 
         if (user == null) {
+            // 用户不存在时返回统一错误，避免暴露账号是否存在。
             throw new RuntimeException("用户名或密码错误");
         }
 
         if (Integer.valueOf(1).equals(user.getDeleted())) {
+            // 已删除账号按登录失败处理。
             throw new RuntimeException("用户名或密码错误");
         }
 
@@ -47,6 +62,7 @@ public class AdminUserServiceImpl extends ServiceImpl<AdminUserMapper, AdminUser
             throw new RuntimeException("用户名或密码错误");
         }
 
+        // 登录成功后记录最近登录时间。
         user.setLastLoginAt(LocalDateTime.now());
         updateById(user);
 
@@ -69,6 +85,12 @@ public class AdminUserServiceImpl extends ServiceImpl<AdminUserMapper, AdminUser
         );
     }
 
+    /**
+     * 创建管理员账号。
+     *
+     * @param request 管理员创建参数
+     * @return 新管理员 ID
+     */
     @Override
     public Long create(AdminUserCreateRequest request) {
         boolean exists = lambdaQuery()
@@ -90,6 +112,12 @@ public class AdminUserServiceImpl extends ServiceImpl<AdminUserMapper, AdminUser
         return user.getId();
     }
 
+    /**
+     * 更新管理员基础信息。
+     *
+     * @param id      管理员 ID
+     * @param request 更新参数
+     */
     @Override
     public void update(Long id, AdminUserUpdateRequest request) {
         AdminUser user = getById(id);
@@ -104,6 +132,13 @@ public class AdminUserServiceImpl extends ServiceImpl<AdminUserMapper, AdminUser
         updateById(user);
     }
 
+    /**
+     * 删除管理员账号。
+     * <p>
+     * 超级管理员账号不允许删除。
+     *
+     * @param id 管理员 ID
+     */
     @Override
     public void delete(Long id) {
         AdminUser user = getById(id);
@@ -118,6 +153,12 @@ public class AdminUserServiceImpl extends ServiceImpl<AdminUserMapper, AdminUser
         removeById(id);
     }
 
+    /**
+     * 修改管理员密码。
+     *
+     * @param id      管理员 ID
+     * @param request 密码更新参数
+     */
     @Override
     public void updatePassword(Long id, AdminPasswordUpdateRequest request) {
         AdminUser user = getById(id);
@@ -127,5 +168,71 @@ public class AdminUserServiceImpl extends ServiceImpl<AdminUserMapper, AdminUser
 
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         updateById(user);
+    }
+
+    /**
+     * 分页查询管理员账号。
+     *
+     * @param pageIndex 页码
+     * @param pageSize  每页数量
+     * @param username  用户名筛选条件
+     * @return 管理员分页数据
+     */
+    @Override
+    public PageResponse<AdminUserPageResponse> page(Integer pageIndex, Integer pageSize, String username) {
+        Page<AdminUser> page = new Page<>(pageIndex, pageSize);
+
+        Page<AdminUser> result = page(
+                page,
+                lambdaQuery()
+                        .eq(AdminUser::getDeleted, 0)
+                        .like(username != null && !username.isBlank(), AdminUser::getUsername, username)
+                        .orderByDesc(AdminUser::getCreatedAt)
+                        .getWrapper()
+        );
+
+        List<AdminUserPageResponse> records = result.getRecords()
+                .stream()
+                .map(this::toPageResponse)
+                .toList();
+
+        PageResponse<AdminUserPageResponse> response = new PageResponse<>();
+        response.setTotal(result.getTotal());
+        response.setPageIndex(pageIndex);
+        response.setPageSize(pageSize);
+        response.setRecords(records);
+
+        return response;
+    }
+
+    /**
+     * 更新管理员启用状态。
+     *
+     * @param id     管理员 ID
+     * @param status 状态值
+     */
+    @Override
+    public void updateStatus(Long id, Integer status) {
+        lambdaUpdate()
+                .eq(AdminUser::getId, id)
+                .set(AdminUser::getStatus, status)
+                .update();
+    }
+
+    /**
+     * 将管理员实体转换为分页响应对象。
+     *
+     * @param adminUser 管理员实体
+     * @return 管理员分页响应对象
+     */
+    private AdminUserPageResponse toPageResponse(AdminUser adminUser) {
+        AdminUserPageResponse response = new AdminUserPageResponse();
+        response.setId(adminUser.getId());
+        response.setUsername(adminUser.getUsername());
+        response.setNickname(adminUser.getNickname());
+        response.setStatus(adminUser.getStatus());
+        response.setCreatedAt(adminUser.getCreatedAt());
+        response.setUpdatedAt(adminUser.getUpdatedAt());
+        return response;
     }
 }

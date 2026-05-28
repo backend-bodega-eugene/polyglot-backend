@@ -14,26 +14,31 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * 用户服务 JWT 认证过滤器。
+ * <p>
+ * 校验非白名单请求的用户 token，并把用户身份写入 request attribute。
+ */
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     //private final JwtUtil jwtUtil;
 
     /**
-     * 白名单
+     * 不需要 JWT 鉴权的路径列表。
      */
     private static final List<String> WHITE_LIST = List.of(
             "/user/register",
             "/user/login",
-
-            // swagger
+            "/internal/admin/users/**",
+            // Swagger/OpenAPI 文档路径。
             "/swagger-ui.html",
             "/swagger-ui/**",
             "/v3/api-docs/**"
     );
 
     /**
-     * Spring 路径匹配器
+     * Spring 路径匹配器。
      */
     private static final AntPathMatcher PATH_MATCHER = new AntPathMatcher();
 
@@ -41,6 +46,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 //        this.jwtUtil = jwtUtil;
 //    }
 
+    /**
+     * 过滤每个 HTTP 请求，白名单直接放行，其余请求校验 Bearer token。
+     *
+     * @param request     HTTP 请求
+     * @param response    HTTP 响应
+     * @param filterChain 过滤链
+     * @throws ServletException Servlet 异常
+     * @throws IOException      IO 异常
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     @Nonnull HttpServletResponse response,
@@ -52,17 +66,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         // 调试时可以打开
         // System.out.println("request path = " + path);
 
-        /**
-         * 白名单放行
-         */
+        // 白名单请求直接放行。
         if (isWhiteList(path)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        /**
-         * 获取 Authorization
-         */
+        // 从 Authorization 请求头中读取 Bearer token。
         String authorization = request.getHeader("Authorization");
 
         if (authorization == null || !authorization.startsWith("Bearer ")) {
@@ -81,9 +91,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        /**
-         * 提取 token
-         */
+        // 提取 Bearer token 内容。
         String token = authorization.substring(7);
 
         try {
@@ -93,9 +101,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             String userId = claims.getSubject();
             String username = claims.get("username", String.class);
 
-            /**
-             * 放入 request
-             */
+            // 将用户身份放入 request attribute，供后续业务读取。
             request.setAttribute("userId", userId);
             request.setAttribute("username", username);
 
@@ -117,7 +123,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     /**
-     * 判断是否白名单
+     * 判断请求路径是否在白名单中。
+     *
+     * @param path 请求路径
+     * @return true 表示无需鉴权
      */
     private boolean isWhiteList(String path) {
 

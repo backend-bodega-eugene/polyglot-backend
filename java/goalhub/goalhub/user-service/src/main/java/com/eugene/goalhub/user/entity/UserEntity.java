@@ -4,28 +4,66 @@ import com.baomidou.mybatisplus.annotation.*;
 
 import java.time.LocalDateTime;
 
+/**
+ * 应用用户实体，对应 users 表。
+ */
 @TableName("users")
 public class UserEntity {
 
+    /**
+     * 用户 ID。
+     */
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
+    /**
+     * 用户名。
+     */
     private String username;
 
+    /**
+     * 邮箱。
+     */
     private String email;
 
+    /**
+     * 手机号。
+     */
     private String phone;
 
+    /**
+     * BCrypt 加密后的登录密码。
+     */
     private String passwordHash;
 
+    /**
+     * 昵称。
+     */
     private String nickname;
 
+    /**
+     * 头像地址。
+     */
     private String avatarUrl;
 
+    /**
+     * 账号状态：1 启用，0 禁用。
+     */
     private Integer status;
 
+    /**
+     * 最近登录时间。
+     */
     private LocalDateTime lastLoginAt;
+
+    /**
+     * 创建时间。
+     */
     private LocalDateTime createdAt;
+
+    /**
+     * 更新时间。
+     */
     private LocalDateTime updatedAt;
 
     public Long getId() {

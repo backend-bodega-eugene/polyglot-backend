@@ -17,15 +17,36 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+/**
+ * 足球比赛查询服务实现。
+ */
 @Service
 public class SoccerMatchServiceImpl
         extends ServiceImpl<SoccerMatchMapper, SoccerMatchEntity>
         implements SoccerMatchService {
+
+    /**
+     * 未开始状态编码。
+     */
     private static final String STATUS_NOT_STARTED = "NOT_STARTED";
+
+    /**
+     * 已结束状态编码。
+     */
     private static final String STATUS_FINISHED = "FINISHED";
 
+    /**
+     * 数据库查询使用的 UTC 时间字符串格式。
+     */
     private static final DateTimeFormatter DATE_TIME_FORMATTER =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    /**
+     * 分页查询足球比赛。
+     *
+     * @param request 分页和筛选条件
+     * @return 比赛分页结果
+     */
     @Override
     public PageResponse<SoccerMatchListResponse> pageMatches(SoccerMatchPageRequest request) {
 
@@ -41,6 +62,7 @@ public class SoccerMatchServiceImpl
             request.setLangCode("en-US");
         }
 
+        // 使用 MyBatis-Plus 分页对象承载自定义 SQL 查询结果。
         Page<SoccerMatchListResponse> page =
                 new Page<>(request.getPageIndex(), request.getPageSize());
 
@@ -56,6 +78,13 @@ public class SoccerMatchServiceImpl
         return response;
     }
 
+    /**
+     * 查询足球比赛详情。
+     *
+     * @param id      赛事 ID
+     * @param request 详情查询参数
+     * @return 赛事详情
+     */
     @Override
     public SoccerMatchDetailResponse getMatchDetail(Long id, SoccerMatchDetailRequest request) {
 
@@ -67,6 +96,13 @@ public class SoccerMatchServiceImpl
 
         return baseMapper.selectMatchDetail(id, langCode);
     }
+
+    /**
+     * 分页查询 UTC 当天的比赛。
+     *
+     * @param request 分页和筛选条件
+     * @return 今日比赛分页结果
+     */
     @Override
     public PageResponse<SoccerMatchListResponse> pageTodayMatches(SoccerMatchPageRequest request) {
         initPageIfNecessary(request);
@@ -82,6 +118,14 @@ public class SoccerMatchServiceImpl
         return pageMatches(request);
     }
 
+    /**
+     * 分页查询即将开始的比赛。
+     * <p>
+     * 查询范围为当前 UTC 时间到 UTC 明天结束。
+     *
+     * @param request 分页和筛选条件
+     * @return 即将开始比赛分页结果
+     */
     @Override
     public PageResponse<SoccerMatchListResponse> pageUpcomingMatches(SoccerMatchPageRequest request) {
         initPageIfNecessary(request);
@@ -98,6 +142,12 @@ public class SoccerMatchServiceImpl
         return pageMatches(request);
     }
 
+    /**
+     * 分页查询已结束比赛。
+     *
+     * @param request 分页和筛选条件
+     * @return 已结束比赛分页结果
+     */
     @Override
     public PageResponse<SoccerMatchListResponse> pageFinishedMatches(SoccerMatchPageRequest request) {
         initPageIfNecessary(request);
@@ -108,12 +158,25 @@ public class SoccerMatchServiceImpl
     }
 
 
+    /**
+     * 检查赛事是否存在。
+     *
+     * @param matchId 赛事 ID
+     * @return true 表示存在
+     */
     @Override
     public boolean existsById(Long matchId) {
         return lambdaQuery()
                 .eq(SoccerMatchEntity::getId, matchId)
                 .exists();
     }
+
+    /**
+     * 查询热门比赛。
+     *
+     * @param request 热门比赛查询参数
+     * @return 热门比赛列表
+     */
     @Override
     public List<SoccerMatchListResponse> listHotMatches(SoccerHotMatchRequest request) {
 
@@ -135,6 +198,12 @@ public class SoccerMatchServiceImpl
 
         return baseMapper.selectHotMatches(request);
     }
+
+    /**
+     * 如果分页参数为空，则补充默认分页值。
+     *
+     * @param request 分页查询请求
+     */
     private void initPageIfNecessary(SoccerMatchPageRequest request) {
         if (request.getPageIndex() == null) {
             request.setPageIndex(1);

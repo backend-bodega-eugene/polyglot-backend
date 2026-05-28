@@ -1,19 +1,25 @@
 server:
+  # user-service 服务端口。
   port: 9001
 spring:
   application:
+    # 注册到 Nacos 的服务名。
     name: user-service
   cloud:
     nacos:
       discovery:
+        # Nacos 服务发现地址。
         server-addr: 127.0.0.1:8848
   datasource:
+    # 用户服务数据库连接。
     url: jdbc:mysql://127.0.0.1:3306/goalhub_user?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Bangkok
     username: goalhub
     password: goalhub123456
     driver-class-name: com.mysql.cj.jdbc.Driver
 springdoc:
   swagger-ui:
+    # Swagger UI 访问路径。
     path: /swagger-ui.html
   api-docs:
+    # OpenAPI 文档路径。
     path: /v3/api-docs

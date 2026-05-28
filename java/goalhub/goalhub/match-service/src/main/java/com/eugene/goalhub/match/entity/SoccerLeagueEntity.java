@@ -6,23 +6,48 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.time.LocalDateTime;
 
+/**
+ * 足球联赛实体，对应 soccer_league 表。
+ */
 @TableName("soccer_league")
 public class SoccerLeagueEntity {
 
+    /**
+     * 联赛 ID。
+     */
     @TableId(type = IdType.AUTO)
     private Long id;
 
+    /**
+     * 联赛编码。
+     */
     private String code;
 
+    /**
+     * 主办国家。
+     */
     private String hostCountry;
 
+    /**
+     * 联赛 Logo 地址。
+     */
     private String logoUrl;
 
+    /**
+     * 状态：1 启用，0 禁用。
+     */
     private Integer status;
 
+    /**
+     * 创建时间。
+     */
     private LocalDateTime createdAt;
 
+    /**
+     * 更新时间。
+     */
     private LocalDateTime updatedAt;
+
     public Long getId() {
         return id;
     }

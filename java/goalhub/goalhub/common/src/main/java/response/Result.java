@@ -5,7 +5,9 @@ public class Result<T> {
     private int code;
     private String message;
     private T data;
+    public Result(){
 
+    }
     public static <T> Result<T> success() {
         return new Result<>(ResultCode.SUCCESS.getCode(), ResultCode.SUCCESS.getMessage(), null);
     }

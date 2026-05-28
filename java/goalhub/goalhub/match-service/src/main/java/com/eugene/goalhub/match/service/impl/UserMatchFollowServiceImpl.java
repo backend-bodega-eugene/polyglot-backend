@@ -11,17 +11,31 @@ import response.ResultCode;
 
 import java.util.List;
 
+/**
+ * 用户赛事关注服务实现。
+ */
 @Service
 public class UserMatchFollowServiceImpl
         extends ServiceImpl<UserMatchFollowMapper, UserMatchFollow>
         implements UserMatchFollowService {
 
+    /**
+     * 赛事查询服务，用于校验赛事是否存在。
+     */
     private final SoccerMatchService soccerMatchService;
 
     public UserMatchFollowServiceImpl(SoccerMatchService soccerMatchService) {
         this.soccerMatchService = soccerMatchService;
     }
 
+    /**
+     * 关注赛事。
+     * <p>
+     * 如果用户已关注该赛事，则直接返回，避免重复插入。
+     *
+     * @param userId  用户 ID
+     * @param matchId 赛事 ID
+     */
     @Override
     public void follow(Long userId, Long matchId) {
         checkMatchExists(matchId);
@@ -42,6 +56,12 @@ public class UserMatchFollowServiceImpl
         save(follow);
     }
 
+    /**
+     * 取消关注赛事。
+     *
+     * @param userId  用户 ID
+     * @param matchId 赛事 ID
+     */
     @Override
     public void unfollow(Long userId, Long matchId) {
         checkMatchExists(matchId);
@@ -61,6 +81,13 @@ public class UserMatchFollowServiceImpl
                 .remove();
     }
 
+    /**
+     * 判断用户是否已关注赛事。
+     *
+     * @param userId  用户 ID
+     * @param matchId 赛事 ID
+     * @return true 表示已关注
+     */
     @Override
     public Boolean isFollowed(Long userId, Long matchId) {
         checkMatchExists(matchId);
@@ -71,6 +98,12 @@ public class UserMatchFollowServiceImpl
                 .exists();
     }
 
+    /**
+     * 查询用户关注记录。
+     *
+     * @param userId 用户 ID
+     * @return 关注记录列表
+     */
     @Override
     public List<UserMatchFollow> listMyFollows(Long userId) {
         return lambdaQuery()
@@ -79,6 +112,11 @@ public class UserMatchFollowServiceImpl
                 .list();
     }
 
+    /**
+     * 校验赛事是否存在。
+     *
+     * @param matchId 赛事 ID
+     */
     private void checkMatchExists(Long matchId) {
         boolean matchExists = soccerMatchService.existsById(matchId);
 

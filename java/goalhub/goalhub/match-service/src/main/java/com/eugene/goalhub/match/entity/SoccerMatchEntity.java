@@ -7,35 +7,78 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.time.LocalDateTime;
 
+/**
+ * 足球比赛实体，对应 soccer_match 表。
+ */
 @TableName("soccer_match")
 public class SoccerMatchEntity {
 
+    /**
+     * 赛事 ID。
+     */
     @TableId(type = IdType.AUTO)
     private Long id;
 
+    /**
+     * 所属联赛 ID。
+     */
     private Long leagueId;
 
+    /**
+     * 赛事编码。
+     */
     private String matchCode;
 
+    /**
+     * 阶段编码。
+     */
     private String stageCode;
 
+    /**
+     * 主队 ID。
+     */
     private Long homeTeamId;
 
+    /**
+     * 客队 ID。
+     */
     private Long awayTeamId;
 
+    /**
+     * 计划开赛时间，UTC 时间。
+     */
     private LocalDateTime scheduledStartTimeUtc;
 
+    /**
+     * 实际开赛时间，UTC 时间。
+     */
     private LocalDateTime actualStartTimeUtc;
 
+    /**
+     * 实际结束时间，UTC 时间。
+     */
     private LocalDateTime actualEndTimeUtc;
 
+    /**
+     * 主办国家。
+     */
     private String hostCountry;
 
+    /**
+     * 赛事状态。
+     */
     private String status;
 
+    /**
+     * 创建时间。
+     */
     private LocalDateTime createdAt;
 
+    /**
+     * 更新时间。
+     */
     private LocalDateTime updatedAt;
+
     public Long getId() {
         return id;
     }

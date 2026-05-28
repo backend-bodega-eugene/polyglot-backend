@@ -6,25 +6,56 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.time.LocalDateTime;
 
+/**
+ * 足球比赛多语言实体，对应 soccer_match_i18n 表。
+ */
 @TableName("soccer_match_i18n")
 public class SoccerMatchI18nEntity {
 
+    /**
+     * 多语言记录 ID。
+     */
     @TableId(type = IdType.AUTO)
     private Long id;
 
+    /**
+     * 赛事 ID。
+     */
     private Long matchId;
+
+    /**
+     * 语言编码。
+     */
     private String langCode;
 
+    /**
+     * 比赛名称。
+     */
     private String matchName;
 
+    /**
+     * 阶段名称。
+     */
     private String stageName;
 
+    /**
+     * 比赛城市。
+     */
     private String city;
 
+    /**
+     * 比赛场馆。
+     */
     private String venue;
 
+    /**
+     * 创建时间。
+     */
     private LocalDateTime createdAt;
 
+    /**
+     * 更新时间。
+     */
     private LocalDateTime updatedAt;
 
     public Long getId() {

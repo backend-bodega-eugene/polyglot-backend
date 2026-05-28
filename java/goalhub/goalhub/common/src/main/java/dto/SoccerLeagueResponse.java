@@ -2,33 +2,39 @@ package dto;
 
 import lombok.Data;
 
+/**
+ * 足球联赛响应。
+ */
 @Data
 public class SoccerLeagueResponse {
 
+    /**
+     * 联赛 ID。
+     */
     private Long id;
 
     /**
-     * 联盟编码，例如 FIFA_WORLD_CUP_2026
+     * 联赛编码，例如 FIFA_WORLD_CUP_2026。
      */
     private String code;
 
     /**
-     * 联盟名称，根据 langCode 返回
+     * 联赛名称，按 langCode 返回对应语言。
      */
     private String name;
 
     /**
-     * 联盟简称，根据 langCode 返回
+     * 联赛简称，按 langCode 返回对应语言。
      */
     private String shortName;
 
     /**
-     * 举办国家
+     * 主办国家。
      */
     private String hostCountry;
 
     /**
-     * 联盟Logo地址
+     * 联赛 Logo 地址。
      */
     private String logoUrl;
 }

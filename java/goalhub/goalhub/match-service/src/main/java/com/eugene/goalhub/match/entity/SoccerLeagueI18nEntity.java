@@ -6,23 +6,48 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.time.LocalDateTime;
 
+/**
+ * 足球联赛多语言实体，对应 soccer_league_i18n 表。
+ */
 @TableName("soccer_league_i18n")
 public class SoccerLeagueI18nEntity {
 
+    /**
+     * 多语言记录 ID。
+     */
     @TableId(type = IdType.AUTO)
     private Long id;
 
+    /**
+     * 联赛 ID。
+     */
     private Long leagueId;
 
+    /**
+     * 语言编码。
+     */
     private String langCode;
 
+    /**
+     * 联赛名称。
+     */
     private String name;
 
+    /**
+     * 联赛简称。
+     */
     private String shortName;
 
+    /**
+     * 创建时间。
+     */
     private LocalDateTime createdAt;
 
+    /**
+     * 更新时间。
+     */
     private LocalDateTime updatedAt;
+
     public Long getId() {
         return id;
     }

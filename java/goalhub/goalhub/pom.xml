@@ -8,6 +8,8 @@
     <artifactId>goalhub</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
+
+    <!-- 聚合管理所有后端服务模块。 -->
     <modules>
         <module>common</module>
         <module>user-service</module>
@@ -17,9 +19,11 @@
     </modules>
 
     <properties>
+        <!-- 项目统一使用 Java 21。 -->
         <java.version>21</java.version>
         <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- 统一管理 Spring、Spring Cloud、Nacos 和 MyBatis-Plus 版本。 -->
         <spring.boot.version>3.5.14</spring.boot.version>
         <spring.cloud.version>2025.0.1</spring.cloud.version>
         <spring.cloud.alibaba.version>2025.0.0.0</spring.cloud.alibaba.version>
@@ -28,6 +32,7 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- Spring Boot 依赖版本管理。 -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
@@ -36,6 +41,7 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- Spring Cloud 依赖版本管理。 -->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
@@ -43,6 +49,7 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <!-- Spring Cloud Alibaba 依赖版本管理。 -->
             <dependency>
                 <groupId>com.alibaba.cloud</groupId>
                 <artifactId>spring-cloud-alibaba-dependencies</artifactId>

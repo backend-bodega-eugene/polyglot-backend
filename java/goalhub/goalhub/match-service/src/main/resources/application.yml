@@ -1,14 +1,18 @@
 server:
+  # match-service 服务端口。
   port: 9002
 
 spring:
   application:
+    # 注册到 Nacos 的服务名。
     name: match-service
   cloud:
     nacos:
       discovery:
+        # Nacos 服务发现地址。
         server-addr: 127.0.0.1:8848
   datasource:
+    # 比赛服务数据库连接。
     url: jdbc:mysql://127.0.0.1:3306/goalhub_user?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Bangkok
     username: goalhub
     password: goalhub123456

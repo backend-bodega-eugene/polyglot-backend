@@ -6,17 +6,36 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.time.LocalDateTime;
 
+/**
+ * 用户赛事关注实体，对应 user_match_follow 表。
+ */
 @TableName("user_match_follow")
 public class UserMatchFollow {
 
+    /**
+     * 关注记录 ID。
+     */
     @TableId(type = IdType.AUTO)
     private Long id;
+
+    /**
+     * 用户 ID。
+     */
     private Long userId;
 
+    /**
+     * 赛事 ID。
+     */
     private Long matchId;
 
+    /**
+     * 创建时间。
+     */
     private LocalDateTime createdAt;
 
+    /**
+     * 更新时间。
+     */
     private LocalDateTime updatedAt;
 
     public Long getId() {

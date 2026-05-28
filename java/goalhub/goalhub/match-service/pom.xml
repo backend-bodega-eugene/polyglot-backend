@@ -11,30 +11,36 @@
 
     <artifactId>match-service</artifactId>
     <dependencies>
+        <!-- 公共 DTO、响应包装和通用异常等基础模块。 -->
         <dependency>
             <groupId>com.eugene</groupId>
             <artifactId>common</artifactId>
             <version>${project.version}</version>
         </dependency>
 
+        <!-- Spring MVC Web 能力。 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        <!-- Nacos 服务发现。 -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>
+        <!-- MyBatis-Plus ORM 支持。 -->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
             <version>${mybatis-plus.version}</version>
         </dependency>
 
+        <!-- MySQL JDBC 驱动。 -->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
         </dependency>
+        <!-- OpenAPI/Swagger UI 接口文档。 -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>

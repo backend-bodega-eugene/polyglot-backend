@@ -15,10 +15,18 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * 后台菜单管理服务实现。
+ */
 @Service
 public class AdminMenuServiceImpl extends ServiceImpl<AdminMenuMapper, AdminMenu>
         implements AdminMenuService {
 
+    /**
+     * 查询菜单列表，并按 parentId 组装为前端需要的树形结构。
+     *
+     * @return 菜单树列表
+     */
     @Override
     public List<AdminMenuTreeResponse> tree() {
         List<AdminMenu> menus = lambdaQuery()
@@ -38,6 +46,7 @@ public class AdminMenuServiceImpl extends ServiceImpl<AdminMenuMapper, AdminMenu
         for (AdminMenuTreeResponse menu : responses) {
             Long parentId = menu.getParentId();
 
+            // 顶级菜单没有父节点，直接放入根节点列表。
             if (parentId == null || parentId == 0) {
                 tree.add(menu);
                 continue;
@@ -45,6 +54,7 @@ public class AdminMenuServiceImpl extends ServiceImpl<AdminMenuMapper, AdminMenu
 
             AdminMenuTreeResponse parent = menuMap.get(parentId);
             if (parent == null) {
+                // 父节点不存在时降级为根节点，避免菜单丢失。
                 tree.add(menu);
             } else {
                 parent.getChildren().add(menu);
@@ -54,6 +64,12 @@ public class AdminMenuServiceImpl extends ServiceImpl<AdminMenuMapper, AdminMenu
         return tree;
     }
 
+    /**
+     * 创建菜单，缺省字段会补充默认值。
+     *
+     * @param request 菜单创建参数
+     * @return 新菜单 ID
+     */
     @Override
     public Long create(AdminMenuCreateRequest request) {
         checkMenuType(request.getType());
@@ -73,6 +89,12 @@ public class AdminMenuServiceImpl extends ServiceImpl<AdminMenuMapper, AdminMenu
         return menu.getId();
     }
 
+    /**
+     * 更新菜单信息，并禁止把自身设置为父菜单。
+     *
+     * @param id      菜单 ID
+     * @param request 菜单更新参数
+     */
     @Override
     public void update(Long id, AdminMenuUpdateRequest request) {
         AdminMenu menu = getById(id);
@@ -98,6 +120,13 @@ public class AdminMenuServiceImpl extends ServiceImpl<AdminMenuMapper, AdminMenu
         updateById(menu);
     }
 
+    /**
+     * 删除菜单。
+     * <p>
+     * 存在子菜单时不允许直接删除，避免产生孤儿菜单。
+     *
+     * @param id 菜单 ID
+     */
     @Override
     public void delete(Long id) {
         AdminMenu menu = getById(id);
@@ -116,6 +145,13 @@ public class AdminMenuServiceImpl extends ServiceImpl<AdminMenuMapper, AdminMenu
         removeById(id);
     }
 
+    /**
+     * 校验菜单类型。
+     * <p>
+     * 当前约定：1 目录，2 菜单，3 按钮。
+     *
+     * @param type 菜单类型
+     */
     private void checkMenuType(Integer type) {
         if (type == null) {
             throw new RuntimeException("菜单类型不能为空");
@@ -126,6 +162,12 @@ public class AdminMenuServiceImpl extends ServiceImpl<AdminMenuMapper, AdminMenu
         }
     }
 
+    /**
+     * 将菜单实体转换为树节点响应对象。
+     *
+     * @param menu 菜单实体
+     * @return 菜单树节点
+     */
     private AdminMenuTreeResponse toTreeResponse(AdminMenu menu) {
         AdminMenuTreeResponse response = new AdminMenuTreeResponse();
         response.setId(menu.getId());

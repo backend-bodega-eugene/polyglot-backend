@@ -13,9 +13,19 @@ import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
+/**
+ * 足球比赛表 Mapper。
+ */
 @Mapper
 public interface SoccerMatchMapper extends BaseMapper<SoccerMatchEntity> {
 
+    /**
+     * 分页查询比赛列表，包含比赛和主客队的多语言名称。
+     *
+     * @param page    MyBatis-Plus 分页对象
+     * @param request 查询条件
+     * @return 比赛列表分页结果
+     */
     @Select("""
             <script>
             SELECT
@@ -74,6 +84,13 @@ public interface SoccerMatchMapper extends BaseMapper<SoccerMatchEntity> {
             @Param("req") SoccerMatchPageRequest request
     );
 
+    /**
+     * 查询比赛详情，包含联赛、主队、客队和比赛多语言信息。
+     *
+     * @param id       赛事 ID
+     * @param langCode 语言编码
+     * @return 比赛详情
+     */
     @Select("""
             SELECT
                 m.id,
@@ -116,6 +133,15 @@ public interface SoccerMatchMapper extends BaseMapper<SoccerMatchEntity> {
             @Param("id") Long id,
             @Param("langCode") String langCode
     );
+
+    /**
+     * 查询热门比赛。
+     * <p>
+     * 当前按关注次数倒序、计划开赛时间升序排序。
+     *
+     * @param request 热门比赛查询参数
+     * @return 热门比赛列表
+     */
     @Select("""
         SELECT
             m.id,
