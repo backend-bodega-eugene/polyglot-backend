@@ -8,7 +8,11 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 /**
  * 后台管理服务启动类。
  */
-@SpringBootApplication
+@SpringBootApplication(
+        scanBasePackages = {
+                "com.eugene.goalhub"
+        }
+)
 @MapperScan("com.eugene.goalhub.admin.mapper")
 @EnableFeignClients
 public class AdminServiceApplication {

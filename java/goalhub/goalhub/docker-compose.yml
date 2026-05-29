@@ -42,3 +42,17 @@ services:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
       - --default-time-zone=+07:00
+  # MongoDB，用于业务日志、异常日志、系统日志。
+  mongodb:
+    image: mongo:8.0
+    container_name: goalhub-mongodb
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Bangkok
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root123456
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./docker/mongodb/data:/data/db
+      - ./docker/mongodb/logs:/var/log/mongodb

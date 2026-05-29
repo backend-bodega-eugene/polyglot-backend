@@ -7,7 +7,9 @@ import com.eugene.goalhub.admin.service.AdminMenuService;
 import dto.AdminMenuCreateRequest;
 import dto.AdminMenuTreeResponse;
 import dto.AdminMenuUpdateRequest;
+import exception.BusinessException;
 import org.springframework.stereotype.Service;
+import response.ResultCode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,14 +101,15 @@ public class AdminMenuServiceImpl extends ServiceImpl<AdminMenuMapper, AdminMenu
     public void update(Long id, AdminMenuUpdateRequest request) {
         AdminMenu menu = getById(id);
         if (menu == null) {
-            throw new RuntimeException("菜单不存在");
+            throw new BusinessException(ResultCode.MENU_NOT_EXISTS);
         }
 
         checkMenuType(request.getType());
 
         Long parentId = request.getParentId() == null ? 0L : request.getParentId();
         if (Objects.equals(id, parentId)) {
-            throw new RuntimeException("父级菜单不能是自己");
+           // throw new RuntimeException("父级菜单不能是自己");
+            throw new BusinessException(ResultCode.FATHER_NOT_OWN);
         }
 
         menu.setParentId(parentId);
@@ -131,7 +134,8 @@ public class AdminMenuServiceImpl extends ServiceImpl<AdminMenuMapper, AdminMenu
     public void delete(Long id) {
         AdminMenu menu = getById(id);
         if (menu == null) {
-            throw new RuntimeException("菜单不存在");
+            //throw new RuntimeException("菜单不存在");
+            throw new BusinessException(ResultCode.MENU_NOT_EXISTS);
         }
 
         boolean hasChildren = lambdaQuery()
@@ -139,7 +143,8 @@ public class AdminMenuServiceImpl extends ServiceImpl<AdminMenuMapper, AdminMenu
                 .exists();
 
         if (hasChildren) {
-            throw new RuntimeException("该菜单存在子菜单，不能直接删除");
+           // throw new RuntimeException("该菜单存在子菜单，不能直接删除");
+            throw new BusinessException(ResultCode.MENU_HAVE_CHILDREN);
         }
 
         removeById(id);
@@ -154,11 +159,13 @@ public class AdminMenuServiceImpl extends ServiceImpl<AdminMenuMapper, AdminMenu
      */
     private void checkMenuType(Integer type) {
         if (type == null) {
-            throw new RuntimeException("菜单类型不能为空");
+           // throw new RuntimeException("菜单类型不能为空");
+            throw new BusinessException(ResultCode.MENU_TYPE_NOT_NULL);
         }
 
         if (type != 1 && type != 2 && type != 3) {
-            throw new RuntimeException("菜单类型错误");
+           // throw new RuntimeException("菜单类型错误");
+            throw new BusinessException(ResultCode.MENU_WRONG_TYPE);
         }
     }
 

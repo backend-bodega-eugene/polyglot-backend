@@ -6,6 +6,7 @@ spring:
   application:
     # 注册到 Nacos 的服务名。
     name: match-service
+
   cloud:
     nacos:
       discovery:

@@ -7,7 +7,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /**
  * 比赛服务启动类。
  */
-@SpringBootApplication
+@SpringBootApplication(
+        scanBasePackages = {
+                "com.eugene.goalhub"
+        }
+)
 @MapperScan("com.eugene.goalhub.match.mapper")
 public class MatchServiceApplication {
 

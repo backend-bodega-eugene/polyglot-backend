@@ -75,7 +75,6 @@ public class UserServiceImpl
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         user.setNickname(request.getNickname());
         user.setStatus(1);
-
         save(user);
     }
 

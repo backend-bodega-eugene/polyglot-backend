@@ -19,6 +19,11 @@
             <artifactId>common</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.eugene</groupId>
+            <artifactId>boot</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <!-- Spring Cloud Gateway WebFlux 网关能力。 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>

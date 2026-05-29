@@ -1,6 +1,7 @@
 package com.eugene.goalhub.gateway.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import exception.BusinessException;
 import io.jsonwebtoken.Claims;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -164,7 +165,7 @@ public class GatewayJwtAuthFilter implements GlobalFilter, Ordered {
                 .getFirst(HttpHeaders.AUTHORIZATION);
 
         if (authorization == null || !authorization.startsWith("Bearer ")) {
-            throw new RuntimeException("Missing token");
+            throw new BusinessException(ResultCode.MISS_TOKEN);
         }
 
         return authorization.substring(7);

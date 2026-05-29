@@ -16,6 +16,7 @@
         <module>gateway-service</module>
         <module>match-service</module>
         <module>admin-service</module>
+        <module>boot</module>
     </modules>
 
     <properties>

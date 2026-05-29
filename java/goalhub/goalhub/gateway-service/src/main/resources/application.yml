@@ -6,7 +6,6 @@ spring:
   application:
     # 注册到 Nacos 的服务名。
     name: gateway-service
-
   cloud:
     nacos:
       discovery:

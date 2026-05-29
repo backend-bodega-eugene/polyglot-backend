@@ -1,0 +1,52 @@
+#server:
+#  # 网关服务端口。
+#  port: 8000
+#
+#spring:
+#  application:
+#    # 注册到 Nacos 的服务名。
+#    name: gateway-service
+#  cloud:
+#    nacos:
+#      discovery:
+#        # Nacos 服务发现地址。
+#        server-addr: 127.0.0.1:8848
+#
+#    gateway:
+#      server:
+#        webflux:
+#          # 网关路由配置，请求会按 Path 断言转发到对应服务。
+#          routes:
+##            # user-service Swagger 文档路由，当前未启用。
+##            - id: user-service-swagger
+##              uri: lb://user-service
+##              predicates:
+##              - Path=/api/user/swagger-ui/**,/api/user/v3/api-docs/**
+##              filters:
+##              - StripPrefix=2
+##            # match-service Swagger 文档路由，当前未启用。
+##            - id: match-service-swagger
+##              uri: lb://match-service
+##              predicates:
+##              - Path=/api/soccer/swagger-ui/**,/api/soccer/v3/api-docs/**
+##              filters:
+##              - StripPrefix=2
+#            # 用户服务路由，/api/user/** 转发到 user-service，并去掉第一段路径。
+#            - id: user-service
+#              uri: lb://user-service
+#              predicates:
+#                - Path=/api/user/**
+#              filters:
+#                - StripPrefix=1
+#            # 比赛服务路由，/api/soccer/** 转发到 match-service，并去掉第一段路径。
+#            - id: match-service
+#              uri: lb://match-service
+#              predicates:
+#                - Path=/api/soccer/**
+#              filters:
+#                - StripPrefix=1
+#            # 后台管理服务路由，/admin/** 转发到 admin-service。
+#            - id: admin-service
+#              uri: lb://admin-service
+#              predicates:
+#                - Path=/admin/**

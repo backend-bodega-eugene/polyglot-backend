@@ -91,9 +91,7 @@ public class InternalAdminUserServiceImpl
         user.setNickname(request.getNickname());
         user.setAvatarUrl(request.getAvatarUrl());
         user.setStatus(request.getStatus());
-
         save(user);
-
         return user.getId();
     }
 

@@ -6,7 +6,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /**
  * 网关服务启动类。
  */
-@SpringBootApplication
+@SpringBootApplication(
+        scanBasePackages = {
+                "com.eugene.goalhub"
+        }
+)
 public class GatewayServiceApplication {
 
     /**

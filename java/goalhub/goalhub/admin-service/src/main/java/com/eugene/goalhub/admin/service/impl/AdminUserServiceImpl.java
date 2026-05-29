@@ -6,8 +6,10 @@ import com.eugene.goalhub.admin.entity.AdminUser;
 import com.eugene.goalhub.admin.mapper.AdminUserMapper;
 import com.eugene.goalhub.admin.service.AdminUserService;
 import dto.*;
+import exception.BusinessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import response.ResultCode;
 import utils.JwtUtil;
 
 import java.time.LocalDateTime;
@@ -46,20 +48,24 @@ public class AdminUserServiceImpl extends ServiceImpl<AdminUserMapper, AdminUser
 
         if (user == null) {
             // 用户不存在时返回统一错误，避免暴露账号是否存在。
-            throw new RuntimeException("用户名或密码错误");
+            //throw new RuntimeException("用户名或密码错误");
+            throw new BusinessException(ResultCode.USERNAME_PASSWORD_WRONG);
         }
 
         if (Integer.valueOf(1).equals(user.getDeleted())) {
             // 已删除账号按登录失败处理。
-            throw new RuntimeException("用户名或密码错误");
+            //throw new RuntimeException("用户名或密码错误");
+            throw new BusinessException(ResultCode.USERNAME_PASSWORD_WRONG);
         }
 
         if (user.getStatus() == 0) {
-            throw new RuntimeException("管理员已禁用");
+           // throw new RuntimeException("管理员已禁用");
+            throw new BusinessException(ResultCode.USERNAME_PASSWORD_WRONG);
         }
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
-            throw new RuntimeException("用户名或密码错误");
+            //throw new RuntimeException("用户名或密码错误");
+            throw new BusinessException(ResultCode.USERNAME_PASSWORD_WRONG);
         }
 
         // 登录成功后记录最近登录时间。
@@ -98,7 +104,8 @@ public class AdminUserServiceImpl extends ServiceImpl<AdminUserMapper, AdminUser
                 .exists();
 
         if (exists) {
-            throw new RuntimeException("管理员账号已存在");
+            //throw new RuntimeException("管理员账号已存在");
+            throw new BusinessException(ResultCode.USERNAME_EXISTS);
         }
 
         AdminUser user = new AdminUser();
@@ -122,7 +129,8 @@ public class AdminUserServiceImpl extends ServiceImpl<AdminUserMapper, AdminUser
     public void update(Long id, AdminUserUpdateRequest request) {
         AdminUser user = getById(id);
         if (user == null) {
-            throw new RuntimeException("管理员不存在");
+           // throw new RuntimeException("管理员不存在");
+            throw new BusinessException(ResultCode.USERNAME__NOT_EXISTS);
         }
 
         user.setNickname(request.getNickname());
@@ -143,11 +151,13 @@ public class AdminUserServiceImpl extends ServiceImpl<AdminUserMapper, AdminUser
     public void delete(Long id) {
         AdminUser user = getById(id);
         if (user == null) {
-            throw new RuntimeException("管理员不存在");
+          //  throw new RuntimeException("管理员不存在");
+            throw new BusinessException(ResultCode.USERNAME__NOT_EXISTS);
         }
 
         if (Integer.valueOf(1).equals(user.getIsSuperAdmin())) {
-            throw new RuntimeException("超级管理员不能删除");
+           // throw new RuntimeException("超级管理员不能删除");
+            throw new BusinessException(ResultCode.EUGENE_NOT_DELETE);
         }
 
         removeById(id);
@@ -163,7 +173,8 @@ public class AdminUserServiceImpl extends ServiceImpl<AdminUserMapper, AdminUser
     public void updatePassword(Long id, AdminPasswordUpdateRequest request) {
         AdminUser user = getById(id);
         if (user == null) {
-            throw new RuntimeException("管理员不存在");
+           // throw new RuntimeException("管理员不存在");
+            throw new BusinessException(ResultCode.USERNAME__NOT_EXISTS);
         }
 
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
