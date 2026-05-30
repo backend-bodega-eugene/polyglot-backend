@@ -12,6 +12,13 @@ import java.util.List;
 @Data
 public class PageResponse<T> {
 
+    public PageResponse() {}
+    public PageResponse(Long total,Integer pageIndex,Integer pageSize,List<T>  records) {
+        this.total = total;
+        this.pageIndex = pageIndex;
+        this.pageSize = pageSize;
+        this.records = records;
+    }
     /**
      * 总记录数。
      */

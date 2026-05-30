@@ -54,7 +54,7 @@ public class AdminMenuController {
      * @return 空结果
      */
     @PutMapping("/{id}")
-    public Result<Void> update(@PathVariable Long id,
+    public Result<Void> update(@PathVariable("id") Long id,
                                @RequestBody AdminMenuUpdateRequest request) {
         adminMenuService.update(id, request);
         return Result.success();
@@ -67,7 +67,7 @@ public class AdminMenuController {
      * @return 空结果
      */
     @DeleteMapping("/{id}")
-    public Result<Void> delete(@PathVariable Long id) {
+    public Result<Void> delete(@PathVariable("id") Long id) {
         adminMenuService.delete(id);
         return Result.success();
     }

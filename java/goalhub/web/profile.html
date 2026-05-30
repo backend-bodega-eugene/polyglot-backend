@@ -1,9 +1,9 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8" />
-    <title>AdminLTE v4 | Profile</title>
+    <title>GoalHub | 个人资料</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
     <meta name="color-scheme" content="light dark" />
     <meta name="theme-color" content="#007bff" media="(prefers-color-scheme: light)" />
@@ -16,8 +16,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
         crossorigin="anonymous" />
     <link rel="stylesheet" href="./css/adminlte.css" />
-
-    <!-- 仅为侧栏文字/图标对齐的小样式，和 index 保持一致 -->
+    <script src="js/auth.js"></script>
     <style>
         .app-sidebar .sidebar-menu .nav-link {
             display: flex;
@@ -33,7 +32,6 @@
 
 <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
     <div class="app-wrapper">
-        <!-- Header（和 index 保持同结构） -->
         <nav class="app-header navbar navbar-expand bg-body">
             <div class="container-fluid">
                 <ul class="navbar-nav">
@@ -51,93 +49,84 @@
                             <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i>
                         </a>
                     </li>
-
-                    <!-- User Menu Dropdown（与你 index 的一模一样） -->
                     <li class="nav-item dropdown user-menu">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            <img id="user-avatar" src="assets/img/eugene.jpg" class="user-image rounded-circle shadow"
-                                alt="User" />
-                            <span id="user-name" class="d-none d-md-inline">eugene</span>
+                            <img id="user-avatar" src="assets/img/default-avatar.jpg" class="user-image rounded-circle shadow"
+                                alt="用户头像" />
+                            <span id="user-name" class="d-none d-md-inline">管理员</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
                             <li class="user-header text-bg-primary">
-                                <img id="user-avatar-large" src="assets/img/eugene.jpg" class="rounded-circle shadow"
-                                    alt="User" />
+                                <img id="user-avatar-large" src="assets/img/default-avatar.jpg" class="rounded-circle shadow"
+                                    alt="用户头像" />
                                 <p id="user-title">
-                                    eugene - Super Admin
-                                    <small id="user-since">Member since Today</small>
+                                    管理员 - Admin
+                                    <small id="user-since">今日登录</small>
                                 </p>
                             </li>
                             <li class="user-footer d-flex gap-2">
-                                <a id="btn-profile" href="/eugene/profile.html"
-                                    class="btn btn-default btn-flat flex-fill">Profile</a>
-                                <button id="btn-signout" class="btn btn-default btn-flat flex-fill">Sign out</button>
+                                <a id="btn-profile" href="profile.html"
+                                    class="btn btn-default btn-flat flex-fill">个人资料</a>
+                                <button id="btn-signout" class="btn btn-default btn-flat flex-fill">退出登录</button>
                             </li>
                         </ul>
                     </li>
                 </ul>
             </div>
         </nav>
-
-        <!-- Sidebar（和 index 保持同结构/同 id） -->
         <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
             <div class="sidebar-brand">
-                <a href="/eugene/index.html" class="brand-link">
-                    <img src="assets/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image opacity-75 shadow" />
-                    <span class="brand-text fw-light">AdminLTE 4</span>
+                <a href="index.html" class="brand-link">
+                    <img src="assets/img/goalhub-logo.png" alt="GoalHub Logo" class="brand-image opacity-75 shadow" />
+                    <span class="brand-text fw-light">GoalHub</span>
                 </a>
             </div>
             <div class="sidebar-wrapper">
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column sidebar-menu" data-lte-toggle="treeview"
-                        role="menu" aria-label="Main navigation" data-accordion="false" id="navigation"></ul>
+                        role="menu" aria-label="主导航" data-accordion="false" id="navigation"></ul>
                 </nav>
             </div>
         </aside>
-
-        <!-- Main -->
         <main class="app-main">
             <div class="app-content">
                 <div class="container-fluid">
 
-                    <!-- 只保留：修改密码 -->
-                    <h3 class="mb-3">Security Settings</h3>
+                    <h3 class="mb-3">安全设置</h3>
 
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title mb-0">Change Password</h5>
+                            <h5 class="card-title mb-0">修改密码</h5>
                         </div>
                         <div class="card-body">
                             <form id="form-password" class="row g-3">
                                 <div class="col-md-4">
-                                    <label class="form-label">Current Password</label>
+                                    <label class="form-label">当前密码</label>
                                     <input id="oldPwd" type="password" class="form-control"
                                         autocomplete="current-password" required />
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="form-label">New Password</label>
+                                    <label class="form-label">新密码</label>
                                     <input id="newPwd" type="password" class="form-control" autocomplete="new-password"
                                         required />
                                 </div>
                                 <div class="col-md-4">
-                                    <label class="form-label">Confirm New Password</label>
+                                    <label class="form-label">确认新密码</label>
                                     <input id="newPwd2" type="password" class="form-control" autocomplete="new-password"
                                         required />
                                 </div>
                                 <div class="col-12">
                                     <button type="submit" class="btn btn-warning" id="btnChangePwd">
-                                        <i class="bi bi-key-fill me-1"></i> Update Password
+                                        <i class="bi bi-key-fill me-1"></i> 更新密码
                                     </button>
                                 </div>
                             </form>
                         </div>
                     </div>
-
-                    <!-- toasts -->
                     <div class="toast align-items-center text-bg-success border-0 position-fixed bottom-0 end-0 m-3"
                         id="okToast" role="alert">
                         <div class="d-flex">
-                            <div class="toast-body" id="okToastText">Saved</div>
+                            <div class="toast-body" id="okToastText">已保存</div>
                             <button type="button" class="btn-close btn-close-white me-2 m-auto"
                                 data-bs-dismiss="toast"></button>
                         </div>
@@ -145,7 +134,7 @@
                     <div class="toast align-items-center text-bg-danger border-0 position-fixed bottom-0 end-0 m-3"
                         id="errToast" role="alert">
                         <div class="d-flex">
-                            <div class="toast-body" id="errToastText">Error</div>
+                            <div class="toast-body" id="errToastText">操作失败</div>
                             <button type="button" class="btn-close btn-close-white me-2 m-auto"
                                 data-bs-dismiss="toast"></button>
                         </div>
@@ -156,16 +145,10 @@
         </main>
 
         <footer class="app-footer">
-            <div class="float-end d-none d-sm-inline">Anything you want</div>
-            <strong>
-                Copyright &copy; 2014-2025&nbsp;
-                <a href="https://adminlte.io" class="text-decoration-none">AdminLTE.io</a>.
-            </strong>
-            All rights reserved.
+            <div class="float-end d-none d-sm-inline">GoalHub 管理后台</div>
+            <strong>Copyright &copy; 2026&nbsp;<span class="text-decoration-none">GoalHub</span>.</strong> All rights reserved.
         </footer>
     </div>
-
-    <!-- 基础脚本（和 index 同步；不引入无用 demo 图表/地图） -->
     <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js"
         crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
@@ -173,8 +156,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js"
         crossorigin="anonymous"></script>
     <script src="./js/adminlte.js"></script>
-
-    <!-- 侧栏滚动条 -->
     <script>
         const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';
         const Default = { scrollbarTheme: 'os-theme-light', scrollbarAutoHide: 'leave', scrollbarClickScroll: true };
@@ -187,19 +168,15 @@
             }
         });
     </script>
-
-    <!-- 菜单渲染（与你 index 相同） -->
     <script>
         (function () {
-            function getToken() { return localStorage.getItem('authToken') || sessionStorage.getItem('authToken'); }
-            const token = getToken();
-            if (!token) { location.href = '/eugene/login.html'; return; }
+            const auth = window.GoalHubAuth;
 
             async function fetchMenus() {
-                const res = await fetch('/api/menus', { headers: { 'Authorization': 'Bearer ' + token } });
-                if (res.status === 401) { location.href = '/eugene/login.html'; return []; }
-                if (!res.ok) throw new Error('load menus failed');
-                return res.json();
+                const res = await auth.authFetch('/admin/auth/menus');
+                if (!res.ok) throw new Error('菜单加载失败');
+                const data = await res.json();
+                return Array.isArray(data) ? data : (data.data || []);
             }
             function renderMenus(menus) {
                 const root = document.querySelector('aside.app-sidebar #navigation');
@@ -208,8 +185,9 @@
                     const hasChildren = Array.isArray(node.children) && node.children.length > 0;
                     const li = document.createElement('li'); li.className = 'nav-item';
                     if (!hasChildren) {
+                        const path = node.path || '#';
                         li.innerHTML = `
-              <a href="${node.path || '#'}" class="nav-link${location.pathname === (node.path || '') ? ' active' : ''}">
+              <a href="${path}" class="nav-link${path !== '#' && location.pathname.endsWith('/' + path) ? ' active' : ''}">
                 <i class="nav-icon ${node.icon || 'bi bi-speedometer'}"></i>
                 <p>${node.name}</p>
               </a>`; return li;
@@ -224,15 +202,12 @@
                 };
                 menus.forEach(m => root.appendChild(createItem(m)));
             }
-            fetchMenus().then(m => { if (!m || m.length === 0) return; renderMenus(m); }).catch(() => location.href = '/eugene/login.html');
+            fetchMenus().then(m => { if (!m || m.length === 0) return; renderMenus(m); }).catch(e => console.warn(e));
         })();
     </script>
-
-    <!-- 顶部头像资料（与你 index 相同策略） -->
     <script>
         (function () {
-            const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
-            const AUTH_HEADERS = token ? { 'Authorization': 'Bearer ' + token } : {};
+            const auth = window.GoalHubAuth;
 
             const $name = document.getElementById('user-name');
             const $title = document.getElementById('user-title');
@@ -242,66 +217,43 @@
             const $out = document.getElementById('btn-signout');
 
             function setProfile(p = {}) {
-                const n = p.nickname || p.fullName || p.realName || p.username || 'eugene';
-                const sinceTxt = p.memberSince ? `Member since ${new Date(p.memberSince).toLocaleDateString()}` : 'Member since Today';
+                const n = p.nickname || p.fullName || p.realName || p.username || '管理员';
+                const role = Number(p.isSuperAdmin) === 1 ? 'Super Admin' : 'Admin';
+                const sinceTxt = p.memberSince ? `登录时间 ${new Date(p.memberSince).toLocaleDateString()}` : '今日登录';
                 if ($name) $name.textContent = n;
-                if ($title) $title.innerHTML = `${n} - Super Admin <small id="user-since">${sinceTxt}</small>`;
+                if ($title) $title.innerHTML = `${n} - ${role} <small id="user-since">${sinceTxt}</small>`;
                 if ($since) $since.textContent = sinceTxt;
-                const avatar = p.avatarUrl || p.avatar || 'assets/img/eugene.jpg';
+                const avatar = p.avatarUrl || p.avatar || 'assets/img/default-avatar.jpg';
                 if ($av1) $av1.src = avatar;
                 if ($av2) $av2.src = avatar;
             }
 
             async function loadProfile() {
-                const endpoints = ['/api/me', '/api/user/info'];
-                for (const url of endpoints) {
-                    try {
-                        const res = await fetch(url, { headers: AUTH_HEADERS });
-                        if (!res.ok) continue;
-                        const data = await res.json().catch(() => ({}));
-                        const u = (data && (data.data?.user || data.data)) || data || {};
-                        setProfile(u); return;
-                    } catch (_) { }
-                }
-                setProfile({});
+                setProfile(auth.getAdminUser() || {});
             }
 
             $out?.addEventListener('click', () => {
-                localStorage.removeItem('authToken');
-                sessionStorage.removeItem('authToken');
-                location.href = '/eugene/login.html';
+                auth.toLogin();
             });
 
             loadProfile();
         })();
     </script>
-
-    <!-- Profile 页面逻辑（仅保留修改密码） -->
     <script>
         (function () {
-            const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
-            if (!token) { location.href = '/eugene/login.html'; return; }
-            const HEADERS = { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' };
-
             document.getElementById('form-password')?.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const oldPwd = document.getElementById('oldPwd').value;
                 const newPwd = document.getElementById('newPwd').value;
                 const newPwd2 = document.getElementById('newPwd2').value;
-                if (newPwd !== newPwd2) { alert('New passwords not match'); return; }
-                try {
-                    const res = await fetch('/api/me/password', { method: 'PUT', headers: HEADERS, body: JSON.stringify({ oldPwd, newPwd }) });
-                    if (!res.ok) throw 0;
-                    document.getElementById('okToastText').textContent = 'Password changed';
-                    new bootstrap.Toast(document.getElementById('okToast')).show();
-                    e.target.reset();
-                } catch (_) {
-                    document.getElementById('errToastText').textContent = 'Password update failed';
-                    new bootstrap.Toast(document.getElementById('errToast')).show();
-                }
+                if (newPwd !== newPwd2) { alert('两次输入的新密码不一致'); return; }
+                document.getElementById('errToastText').textContent = '修改个人密码接口暂未接入';
+                new bootstrap.Toast(document.getElementById('errToast')).show();
             });
         })();
     </script>
 </body>
 
 </html>
+
+
+

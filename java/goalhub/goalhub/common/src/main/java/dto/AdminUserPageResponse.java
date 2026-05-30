@@ -31,6 +31,11 @@ public class AdminUserPageResponse {
     private Integer status;
 
     /**
+     * 是否超级管理员：1 是，0 否。
+     */
+    private Integer isSuperAdmin;
+
+    /**
      * 创建时间。
      */
     private LocalDateTime createdAt;

@@ -58,8 +58,8 @@ public class AdminUserMenuController {
      */
     @GetMapping("/auth/menus")
     public Result<List<AdminMenuTreeResponse>> getCurrentLoginMenus(
-            @RequestParam("adminUserId") Long adminUserId,
-            @RequestParam("username") String username
+            @RequestHeader("X-Admin-Id") Long adminUserId,
+            @RequestHeader("X-Admin-Username") String username
     ) {
         return Result.success(adminUserMenuService.getCurrentLoginMenus(adminUserId, username));
     }

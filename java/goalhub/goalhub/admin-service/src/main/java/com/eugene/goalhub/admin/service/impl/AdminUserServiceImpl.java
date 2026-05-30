@@ -242,6 +242,7 @@ public class AdminUserServiceImpl extends ServiceImpl<AdminUserMapper, AdminUser
         response.setUsername(adminUser.getUsername());
         response.setNickname(adminUser.getNickname());
         response.setStatus(adminUser.getStatus());
+        response.setIsSuperAdmin(adminUser.getIsSuperAdmin());
         response.setCreatedAt(adminUser.getCreatedAt());
         response.setUpdatedAt(adminUser.getUpdatedAt());
         return response;
