@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>GoalHub | 错误日志</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" content="#007bff" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
+  <meta name="title" content="GoalHub | 错误日志" />
+  <meta name="author" content="GoalHub" />
+  <meta name="description" content="GoalHub 管理后台" />
+  <meta name="keywords" content="goalhub, admin" />
+  <meta name="supported-color-schemes" content="light dark" />
+  <link rel="preload" href="css/adminlte.css" as="style" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
+    crossorigin="anonymous" media="print" onload="this.media='all'" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css"
+    crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    crossorigin="anonymous" />
+  <link rel="stylesheet" href="./css/adminlte.css" />
+  <script src="js/auth.js"></script>
+  <style>
+    .app-sidebar .sidebar-menu .nav-link { display: flex; align-items: center; }
+    .app-sidebar .sidebar-menu .nav-link p { margin: 0 0 0 .5rem; white-space: nowrap; }
+  </style>
+</head>
+
+<body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
+  <div class="app-wrapper">
+    <nav class="app-header navbar navbar-expand bg-body">
+      <div class="container-fluid">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button"><i class="bi bi-list"></i></a>
+          </li>
+        </ul>
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-lte-toggle="fullscreen">
+              <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
+              <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i>
+            </a>
+          </li>
+          <li class="nav-item dropdown user-menu">
+            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+              <img id="user-avatar" src="assets/img/default-avatar.jpg" class="user-image rounded-circle shadow" alt="用户头像" />
+              <span id="user-name" class="d-none d-md-inline">管理员</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
+              <li class="user-header text-bg-primary">
+                <img id="user-avatar-large" src="assets/img/default-avatar.jpg" class="rounded-circle shadow" alt="用户头像" />
+                <p id="user-title">管理员 - Admin <small id="user-since">今日登录</small></p>
+              </li>
+              <li class="user-footer d-flex gap-2">
+                <a id="btn-profile" href="profile.html" class="btn btn-default btn-flat flex-fill">个人资料</a>
+                <button id="btn-signout" class="btn btn-default btn-flat flex-fill">退出登录</button>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+      <div class="sidebar-brand">
+        <a href="index.html" class="brand-link">
+          <img src="assets/img/goalhub-logo.png" alt="GoalHub Logo" class="brand-image opacity-75 shadow" />
+          <span class="brand-text fw-light">GoalHub</span>
+        </a>
+      </div>
+      <div class="sidebar-wrapper">
+        <nav class="mt-2">
+          <ul class="nav nav-pills nav-sidebar flex-column sidebar-menu" data-lte-toggle="treeview"
+            role="menu" aria-label="主导航" data-accordion="false" id="navigation"></ul>
+        </nav>
+      </div>
+    </aside>
+
+    <main class="app-main">
+      <div class="app-content-header">
+        <div class="container-fluid">
+          <div class="row align-items-center">
+            <div class="col"><h3 id="page-title" class="mb-0">错误日志</h3></div>
+            <div class="col-auto">
+              <button id="btn-refresh" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-arrow-clockwise me-1"></i>刷新
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="app-content">
+        <div class="container-fluid">
+          <div class="card mb-3">
+            <div class="card-body">
+              <form id="filter-form" class="row g-2">
+                <div class="col-12 col-md-2"><label class="form-label">服务名称</label><input id="f-serviceName" class="form-control" placeholder="serviceName"></div>
+                <div class="col-12 col-md-2"><label class="form-label">模块名称</label><input id="f-moduleName" class="form-control" placeholder="moduleName"></div>
+                <div class="col-12 col-md-2"><label class="form-label">事件</label><input id="f-event" class="form-control" placeholder="event"></div>
+                <div class="col-12 col-md-2"><label class="form-label">操作者</label><input id="f-operatorName" class="form-control" placeholder="operatorName"></div>
+                <div class="col-6 col-md-2"><label class="form-label">每页</label><select id="f-pageSize" class="form-select"><option>10</option><option>20</option><option>50</option></select></div>
+                <div class="col-12 col-md-3"><label class="form-label">创建开始时间</label><input id="f-created-start" type="datetime-local" class="form-control"></div>
+                <div class="col-12 col-md-3"><label class="form-label">创建结束时间</label><input id="f-created-end" type="datetime-local" class="form-control"></div>
+                <div class="col-12 col-md-3 d-flex align-items-end"><button type="submit" class="btn btn-dark w-100"><i class="bi bi-search me-1"></i>查询</button></div>
+                <div class="col-12 col-md-3 d-flex align-items-end"><button type="button" id="btn-reset" class="btn btn-outline-secondary w-100"><i class="bi bi-x-circle me-1"></i>重置</button></div>
+              </form>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0 align-middle">
+                  <thead class="table-light">
+                    <tr>
+                      <th style="width:80px;">ID</th><th>服务名称</th><th>模块名称</th><th>事件</th><th>操作者</th><th>内容</th><th style="width:170px;">创建时间</th><th style="width:100px;">结果</th>
+                    </tr>
+                  </thead>
+                  <tbody id="logs-tbody"><tr><td colspan="8" class="text-center py-4">加载中...</td></tr></tbody>
+                </table>
+              </div>
+            </div>
+            <div class="card-footer">
+              <div class="d-flex justify-content-between align-items-center">
+                <div><span id="logs-total">0</span> 条记录</div>
+                <nav><ul class="pagination pagination-sm mb-0" id="logs-pager"></ul></nav>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="app-footer">
+      <div class="float-end d-none d-sm-inline">GoalHub 管理后台</div>
+      <strong>Copyright &copy; 2026&nbsp;<span class="text-decoration-none">GoalHub</span>.</strong> All rights reserved.
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+  <script src="./js/adminlte.js"></script>
+  <script>
+    window.GoalHubLogPage = {
+      title: '错误日志',
+      endpoint: '/admin/logs/err/page',
+    };
+  </script>
+  <script src="js/log-page.js"></script>
+</body>
+
+</html>
