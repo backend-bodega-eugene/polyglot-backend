@@ -8,15 +8,29 @@ import response.ResultMessages;
 
 import java.util.Locale;
 
+/**
+ * Result 响应消息国际化配置。
+ */
 @Component
 public class SpringResultMessageConfig {
 
+    /**
+     * Spring 国际化消息源。
+     */
     private final MessageSource messageSource;
 
+    /**
+     * 创建 Result 响应消息配置。
+     *
+     * @param messageSource Spring 国际化消息源
+     */
     public SpringResultMessageConfig(MessageSource messageSource) {
         this.messageSource = messageSource;
     }
 
+    /**
+     * 初始化 Result 消息解析器。
+     */
     @PostConstruct
     public void init() {
         System.out.println("Result i18n resolver initialized");

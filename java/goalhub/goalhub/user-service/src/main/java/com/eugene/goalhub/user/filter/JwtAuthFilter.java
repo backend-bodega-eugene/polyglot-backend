@@ -31,6 +31,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             "/user/register",
             "/user/login",
             "/internal/admin/users/**",
+            "/internal/admin/account/**",
             // Swagger/OpenAPI 文档路径。
             "/swagger-ui.html",
             "/swagger-ui/**",

@@ -1,0 +1,682 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>GoalHub | 赛事结果</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#007bff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
+    <meta name="title" content="GoalHub | 赛事结果" />
+    <meta name="author" content="GoalHub" />
+    <meta name="description" content="GoalHub 管理后台" />
+    <meta name="keywords" content="goalhub, admin" />
+    <meta name="supported-color-schemes" content="light dark" />
+    <link rel="preload" href="css/adminlte.css" as="style" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
+        integrity="sha256-tXJfXfp6Ewt1ilPzLDtQnJV4hclT9XuaZUKyUvmyr+Q=" crossorigin="anonymous" media="print"
+        onload="this.media='all'" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css"
+        crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+        crossorigin="anonymous" />
+    <link rel="stylesheet" href="./css/adminlte.css" />
+    <script src="js/auth.js"></script>
+    <style>
+        .app-sidebar .sidebar-menu .nav-link {
+            display: flex;
+            align-items: center;
+        }
+
+        .app-sidebar .sidebar-menu .nav-link p {
+            margin: 0 0 0 .5rem;
+            white-space: nowrap;
+        }
+
+        .score-cell {
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+
+        .match-name {
+            min-width: 220px;
+        }
+
+        #result-modal .modal-content {
+            max-height: calc(100vh - 3.5rem);
+        }
+
+        #result-form {
+            display: flex;
+            flex-direction: column;
+            max-height: calc(100vh - 3.5rem);
+            min-height: 0;
+        }
+
+        #result-modal .modal-header,
+        #result-modal .modal-footer {
+            flex: 0 0 auto;
+        }
+
+        #result-modal .modal-body {
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow-y: auto;
+        }
+
+        @media (max-width: 575.98px) {
+            #result-modal .modal-content,
+            #result-form {
+                max-height: calc(100vh - 1rem);
+            }
+        }
+    </style>
+</head>
+
+<body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
+    <div class="app-wrapper">
+        <nav class="app-header navbar navbar-expand bg-body">
+            <div class="container-fluid">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button">
+                            <i class="bi bi-list"></i>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-lte-toggle="fullscreen">
+                            <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
+                            <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown user-menu">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                            <img id="user-avatar" src="assets/img/default-avatar.jpg" class="user-image rounded-circle shadow"
+                                alt="用户头像" />
+                            <span id="user-name" class="d-none d-md-inline">管理员</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
+                            <li class="user-header text-bg-primary">
+                                <img id="user-avatar-large" src="assets/img/default-avatar.jpg" class="rounded-circle shadow"
+                                    alt="用户头像" />
+                                <p id="user-title">
+                                    管理员 - Admin
+                                    <small id="user-since">今日登录</small>
+                                </p>
+                            </li>
+                            <li class="user-footer d-flex gap-2">
+                                <a id="btn-profile" href="profile.html"
+                                    class="btn btn-default btn-flat flex-fill">个人资料</a>
+                                <button id="btn-signout" class="btn btn-default btn-flat flex-fill">退出登录</button>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+            <div class="sidebar-brand">
+                <a href="index.html" class="brand-link">
+                    <img src="assets/img/goalhub-logo.png" alt="GoalHub Logo" class="brand-image opacity-75 shadow" />
+                    <span class="brand-text fw-light">GoalHub</span>
+                </a>
+            </div>
+            <div class="sidebar-wrapper">
+                <nav class="mt-2">
+                    <ul class="nav nav-pills nav-sidebar flex-column sidebar-menu" data-lte-toggle="treeview"
+                        role="menu" aria-label="主导航" data-accordion="false" id="navigation"></ul>
+                </nav>
+            </div>
+        </aside>
+
+        <main class="app-main">
+            <div class="app-content-header">
+                <div class="container-fluid">
+                    <div class="row g-3" id="match-result-page">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header d-flex align-items-center justify-content-between">
+                                    <h3 class="card-title mb-0"><i class="bi bi-trophy me-2"></i>赛事结果</h3>
+                                    <button class="btn btn-outline-secondary btn-sm" id="btn-refresh">
+                                        <i class="bi bi-arrow-clockwise me-1"></i>刷新
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <form id="filter-form" class="row g-2">
+                                        <div class="col-12 col-md-2">
+                                            <label class="form-label">赛事名称</label>
+                                            <input type="text" class="form-control" id="f-match-name" placeholder="赛事名称">
+                                        </div>
+                                        <div class="col-12 col-md-2">
+                                            <label class="form-label">球队名称</label>
+                                            <input type="text" class="form-control" id="f-team-name" placeholder="主队/客队">
+                                        </div>
+                                        <div class="col-6 col-md-2">
+                                            <label class="form-label">语言</label>
+                                            <input type="text" class="form-control" id="f-lang-code" placeholder="zh_CN">
+                                        </div>
+                                        <div class="col-6 col-md-2">
+                                            <label class="form-label">赛事状态</label>
+                                            <input type="text" class="form-control" id="f-match-status" placeholder="状态">
+                                        </div>
+                                        <div class="col-6 col-md-2">
+                                            <label class="form-label">每页</label>
+                                            <select class="form-select" id="f-pageSize">
+                                                <option>10</option>
+                                                <option>20</option>
+                                                <option>50</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-12 col-md-3">
+                                            <label class="form-label">开始时间</label>
+                                            <input type="datetime-local" class="form-control" id="f-start">
+                                        </div>
+                                        <div class="col-12 col-md-3">
+                                            <label class="form-label">结束时间</label>
+                                            <input type="datetime-local" class="form-control" id="f-end">
+                                        </div>
+                                        <div class="col-12 col-md-3 d-flex align-items-end">
+                                            <button type="submit" class="btn btn-dark w-100">
+                                                <i class="bi bi-search me-1"></i>查询
+                                            </button>
+                                        </div>
+                                        <div class="col-12 col-md-3 d-flex align-items-end">
+                                            <button type="button" class="btn btn-outline-secondary w-100" id="btn-reset">
+                                                <i class="bi bi-x-circle me-1"></i>重置
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-striped mb-0 align-middle">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th style="width: 90px;">赛事ID</th>
+                                                    <th class="match-name">赛事</th>
+                                                    <th style="width: 180px;">对阵</th>
+                                                    <th style="width: 100px;">常规比分</th>
+                                                    <th style="width: 100px;">加时比分</th>
+                                                    <th style="width: 100px;">点球比分</th>
+                                                    <th style="width: 100px;">结果状态</th>
+                                                    <th style="width: 160px;">开赛时间</th>
+                                                    <th style="width: 160px;">结束时间</th>
+                                                    <th style="width: 190px;" class="text-end pe-3">操作</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="results-tbody">
+                                                <tr>
+                                                    <td colspan="10" class="text-center py-4">加载中...</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div><span id="results-total">0</span> 条记录</div>
+                                        <nav>
+                                            <ul class="pagination pagination-sm mb-0" id="results-pager"></ul>
+                                        </nav>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="result-modal" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                            <div class="modal-content">
+                                <form id="result-form">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="result-modal-title">保存赛事结果</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="关闭"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <input type="hidden" id="r-match-id">
+                                        <div class="row g-3">
+                                            <div class="col-12">
+                                                <label class="form-label">赛事</label>
+                                                <input type="text" class="form-control" id="r-match-label" disabled>
+                                            </div>
+                                            <div class="col-12 col-md-4">
+                                                <label class="form-label">常规主队比分</label>
+                                                <input type="number" min="0" step="1" class="form-control" id="r-regular-home">
+                                            </div>
+                                            <div class="col-12 col-md-4">
+                                                <label class="form-label">常规客队比分</label>
+                                                <input type="number" min="0" step="1" class="form-control" id="r-regular-away">
+                                            </div>
+                                            <div class="col-12 col-md-4">
+                                                <label class="form-label">比赛结束时间</label>
+                                                <input type="datetime-local" class="form-control" id="r-ended-at">
+                                            </div>
+                                            <div class="col-12 col-md-3">
+                                                <label class="form-label">加时主队比分</label>
+                                                <input type="number" min="0" step="1" class="form-control" id="r-extra-home">
+                                            </div>
+                                            <div class="col-12 col-md-3">
+                                                <label class="form-label">加时客队比分</label>
+                                                <input type="number" min="0" step="1" class="form-control" id="r-extra-away">
+                                            </div>
+                                            <div class="col-12 col-md-3">
+                                                <label class="form-label">点球主队比分</label>
+                                                <input type="number" min="0" step="1" class="form-control" id="r-penalty-home">
+                                            </div>
+                                            <div class="col-12 col-md-3">
+                                                <label class="form-label">点球客队比分</label>
+                                                <input type="number" min="0" step="1" class="form-control" id="r-penalty-away">
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="row g-3">
+                                            <div class="col-6 col-md-3">
+                                                <label class="form-label">主队点球数</label>
+                                                <input type="number" min="0" step="1" class="form-control" id="r-home-penalty-count">
+                                            </div>
+                                            <div class="col-6 col-md-3">
+                                                <label class="form-label">客队点球数</label>
+                                                <input type="number" min="0" step="1" class="form-control" id="r-away-penalty-count">
+                                            </div>
+                                            <div class="col-6 col-md-3">
+                                                <label class="form-label">主队角球</label>
+                                                <input type="number" min="0" step="1" class="form-control" id="r-home-corner-count">
+                                            </div>
+                                            <div class="col-6 col-md-3">
+                                                <label class="form-label">客队角球</label>
+                                                <input type="number" min="0" step="1" class="form-control" id="r-away-corner-count">
+                                            </div>
+                                            <div class="col-6 col-md-3">
+                                                <label class="form-label">主队界外球</label>
+                                                <input type="number" min="0" step="1" class="form-control" id="r-home-throwin-count">
+                                            </div>
+                                            <div class="col-6 col-md-3">
+                                                <label class="form-label">客队界外球</label>
+                                                <input type="number" min="0" step="1" class="form-control" id="r-away-throwin-count">
+                                            </div>
+                                            <div class="col-6 col-md-3">
+                                                <label class="form-label">主队犯规</label>
+                                                <input type="number" min="0" step="1" class="form-control" id="r-home-foul-count">
+                                            </div>
+                                            <div class="col-6 col-md-3">
+                                                <label class="form-label">客队犯规</label>
+                                                <input type="number" min="0" step="1" class="form-control" id="r-away-foul-count">
+                                            </div>
+                                            <div class="col-6 col-md-3">
+                                                <label class="form-label">主队任意球</label>
+                                                <input type="number" min="0" step="1" class="form-control" id="r-home-freekick-count">
+                                            </div>
+                                            <div class="col-6 col-md-3">
+                                                <label class="form-label">客队任意球</label>
+                                                <input type="number" min="0" step="1" class="form-control" id="r-away-freekick-count">
+                                            </div>
+                                            <div class="col-6 col-md-3">
+                                                <label class="form-label">主队红牌</label>
+                                                <input type="number" min="0" step="1" class="form-control" id="r-home-red-count">
+                                            </div>
+                                            <div class="col-6 col-md-3">
+                                                <label class="form-label">客队红牌</label>
+                                                <input type="number" min="0" step="1" class="form-control" id="r-away-red-count">
+                                            </div>
+                                            <div class="col-6 col-md-3">
+                                                <label class="form-label">主队黄牌</label>
+                                                <input type="number" min="0" step="1" class="form-control" id="r-home-yellow-count">
+                                            </div>
+                                            <div class="col-6 col-md-3">
+                                                <label class="form-label">客队黄牌</label>
+                                                <input type="number" min="0" step="1" class="form-control" id="r-away-yellow-count">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">取消</button>
+                                        <button class="btn btn-primary" type="submit">
+                                            <i class="bi bi-check2-circle me-1"></i>保存
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <div class="float-end d-none d-sm-inline">GoalHub 管理后台</div>
+            <strong>Copyright &copy; 2026&nbsp;<span class="text-decoration-none">GoalHub</span>.</strong> All rights reserved.
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js"
+        crossorigin="anonymous"></script>
+    <script src="./js/adminlte.js"></script>
+    <script src="./js/page-common.js"></script>
+
+    <script>
+        (function () {
+            const auth = window.GoalHubAuth;
+            const API = '/admin/matchresult';
+            const state = { pageIndex: 1, pageSize: 10, total: 0, list: [], filters: {} };
+
+            const $tbody = document.getElementById('results-tbody');
+            const $pager = document.getElementById('results-pager');
+            const $total = document.getElementById('results-total');
+            const $form = document.getElementById('filter-form');
+            const $reset = document.getElementById('btn-reset');
+            const $refresh = document.getElementById('btn-refresh');
+            const $fMatchName = document.getElementById('f-match-name');
+            const $fTeamName = document.getElementById('f-team-name');
+            const $fLangCode = document.getElementById('f-lang-code');
+            const $fMatchStatus = document.getElementById('f-match-status');
+            const $fPageSize = document.getElementById('f-pageSize');
+            const $fStart = document.getElementById('f-start');
+            const $fEnd = document.getElementById('f-end');
+
+            const resultModal = new bootstrap.Modal(document.getElementById('result-modal'));
+            const $resultForm = document.getElementById('result-form');
+            const $rMatchId = document.getElementById('r-match-id');
+            const $rMatchLabel = document.getElementById('r-match-label');
+            const $rEndedAt = document.getElementById('r-ended-at');
+            const fields = {
+                regularHomeScore: document.getElementById('r-regular-home'),
+                regularAwayScore: document.getElementById('r-regular-away'),
+                extraHomeScore: document.getElementById('r-extra-home'),
+                extraAwayScore: document.getElementById('r-extra-away'),
+                penaltyHomeScore: document.getElementById('r-penalty-home'),
+                penaltyAwayScore: document.getElementById('r-penalty-away'),
+                homePenaltyCount: document.getElementById('r-home-penalty-count'),
+                awayPenaltyCount: document.getElementById('r-away-penalty-count'),
+                homeCornerCount: document.getElementById('r-home-corner-count'),
+                awayCornerCount: document.getElementById('r-away-corner-count'),
+                homeThrowInCount: document.getElementById('r-home-throwin-count'),
+                awayThrowInCount: document.getElementById('r-away-throwin-count'),
+                homeFoulCount: document.getElementById('r-home-foul-count'),
+                awayFoulCount: document.getElementById('r-away-foul-count'),
+                homeFreeKickCount: document.getElementById('r-home-freekick-count'),
+                awayFreeKickCount: document.getElementById('r-away-freekick-count'),
+                homeRedCardCount: document.getElementById('r-home-red-count'),
+                awayRedCardCount: document.getElementById('r-away-red-count'),
+                homeYellowCardCount: document.getElementById('r-home-yellow-count'),
+                awayYellowCardCount: document.getElementById('r-away-yellow-count'),
+            };
+
+            const esc = (s) => (s == null ? '' : String(s)).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+            const ok = (data) => data && (data.code === 200 || data.code === 0 || data.success === true);
+            const messageOf = (data, fallback) => data?.message || data?.msg || fallback;
+
+            function fmtTime(value) {
+                if (!value) return '-';
+                const date = new Date(String(value));
+                return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleString();
+            }
+
+            function isoFromLocal(value) {
+                if (!value) return '';
+                const date = new Date(value);
+                return Number.isNaN(date.getTime()) ? '' : date.toISOString();
+            }
+
+            function localFromValue(value) {
+                if (!value) return '';
+                const date = new Date(String(value));
+                if (Number.isNaN(date.getTime())) return '';
+                const pad = (n) => String(n).padStart(2, '0');
+                return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+            }
+
+            function intOrZero(value) {
+                if (value === '' || value === null || value === undefined) return 0;
+                const num = Number(value);
+                return Number.isFinite(num) ? Math.max(0, Math.trunc(num)) : 0;
+            }
+
+            async function request(url, options = {}) {
+                const res = await auth.authFetch(url, options);
+                const text = await res.text();
+                let data = {};
+                if (text) {
+                    try {
+                        data = JSON.parse(text);
+                    } catch (_) {
+                        if (res.ok) return {};
+                        throw new Error('接口返回格式错误');
+                    }
+                }
+                if (!text && res.ok) return data;
+                if (!res.ok || !ok(data)) throw new Error(messageOf(data, '请求失败'));
+                return data;
+            }
+
+            function readFilters() {
+                return {
+                    matchName: $fMatchName.value.trim(),
+                    teamName: $fTeamName.value.trim(),
+                    langCode: $fLangCode.value.trim(),
+                    matchStatus: $fMatchStatus.value.trim(),
+                    startTime: isoFromLocal($fStart.value),
+                    endTime: isoFromLocal($fEnd.value),
+                };
+            }
+
+            function buildPageBody() {
+                const body = { pageIndex: state.pageIndex - 1, pageSize: state.pageSize };
+                Object.entries(state.filters).forEach(([key, value]) => {
+                    if (value !== '' && value !== null && value !== undefined) body[key] = value;
+                });
+                return body;
+            }
+
+            function extractPage(data) {
+                const page = data.data || data.result || data || {};
+                const records = page.records || page.list || page.rows || page.data || [];
+                const rawPageIndex = page.pageIndex ?? page.current ?? page.pageNum;
+                const nextPageIndex = rawPageIndex === undefined ? state.pageIndex : Number(rawPageIndex) + 1;
+                return {
+                    list: Array.isArray(records) ? records : [],
+                    total: Math.max(Number(page.total || page.totalCount || 0), Array.isArray(records) ? records.length : 0),
+                    pageIndex: Number.isFinite(nextPageIndex) ? nextPageIndex : state.pageIndex,
+                    pageSize: Number(page.pageSize || page.size || state.pageSize),
+                };
+            }
+
+            async function apiList() {
+                const data = await request(`${API}/page`, {
+                    method: 'POST',
+                    body: JSON.stringify(buildPageBody()),
+                });
+                return extractPage(data);
+            }
+
+            function apiSave(body) {
+                return request(`${API}/save`, { method: 'POST', body: JSON.stringify(body) });
+            }
+
+            function apiApprove(matchId) {
+                return request(`${API}/approve`, {
+                    method: 'POST',
+                    body: JSON.stringify({ matchId: Number(matchId) }),
+                });
+            }
+
+            function scorePair(home, away) {
+                const h = home ?? '-';
+                const a = away ?? '-';
+                return `${h} : ${a}`;
+            }
+
+            function resultBadge(status) {
+                return Number(status) === 1
+                    ? '<span class="badge bg-success">已审核</span>'
+                    : '<span class="badge bg-warning text-dark">未审核</span>';
+            }
+
+            function renderRows(list) {
+                if (!list || list.length === 0) {
+                    $tbody.innerHTML = `<tr><td colspan="10" class="text-center py-4 text-muted">暂无数据</td></tr>`;
+                    return;
+                }
+
+                $tbody.innerHTML = list.map((x) => {
+                    const matchId = x.matchId ?? '';
+                    const approved = Number(x.resultStatus ?? 0) === 1;
+                    return `
+        <tr data-id="${esc(matchId)}">
+          <td>${esc(matchId)}</td>
+          <td class="match-name">
+            <div class="fw-semibold">${esc(x.matchName || x.matchCode || '-')}</div>
+            <div class="text-muted small">${esc(x.matchCode || '')}</div>
+          </td>
+          <td>${esc(x.homeTeamName || x.homeTeamId || '-')} <span class="text-muted">vs</span> ${esc(x.awayTeamName || x.awayTeamId || '-')}</td>
+          <td class="score-cell">${esc(scorePair(x.regularHomeScore, x.regularAwayScore))}</td>
+          <td class="score-cell">${esc(scorePair(x.extraHomeScore, x.extraAwayScore))}</td>
+          <td class="score-cell">${esc(scorePair(x.penaltyHomeScore, x.penaltyAwayScore))}</td>
+          <td>${resultBadge(x.resultStatus)}</td>
+          <td>${esc(fmtTime(x.matchStartTime))}</td>
+          <td>${esc(fmtTime(x.matchEndedAt))}</td>
+          <td class="text-end pe-3">
+            <button class="btn btn-outline-primary btn-sm me-1" data-op="edit">结果</button>
+            <button class="btn btn-outline-success btn-sm" data-op="approve" ${approved ? 'disabled' : ''}>审核</button>
+          </td>
+        </tr>`;
+                }).join('');
+            }
+
+            function renderPager() {
+                const pages = Math.max(1, Math.ceil(state.total / state.pageSize));
+                const cur = Math.min(Math.max(1, state.pageIndex), pages);
+                const item = (p, txt, disabled = false, active = false) =>
+                    `<li class="page-item ${disabled ? 'disabled' : ''} ${active ? 'active' : ''}"><a href="#" class="page-link" data-page="${p}">${txt}</a></li>`;
+                const items = [item(cur - 1, '&laquo;', cur <= 1)];
+                const start = Math.max(1, cur - 3);
+                const end = Math.min(pages, start + 6);
+                for (let p = start; p <= end; p++) items.push(item(p, p, false, p === cur));
+                items.push(item(cur + 1, '&raquo;', cur >= pages));
+                $pager.innerHTML = items.join('');
+                $total.textContent = state.total;
+            }
+
+            async function reload() {
+                try {
+                    $tbody.innerHTML = `<tr><td colspan="10" class="text-center py-4">加载中...</td></tr>`;
+                    const page = await apiList();
+                    state.list = page.list;
+                    state.total = page.total;
+                    state.pageIndex = page.pageIndex;
+                    state.pageSize = page.pageSize;
+                    renderRows(state.list);
+                    renderPager();
+                } catch (error) {
+                    console.error(error);
+                    $tbody.innerHTML = `<tr><td colspan="10" class="text-center py-4 text-danger">${esc(error.message || '加载失败')}</td></tr>`;
+                }
+            }
+
+            function findRow(matchId) {
+                return state.list.find((x) => String(x.matchId) === String(matchId));
+            }
+
+            function openResultModal(row) {
+                $resultForm.reset();
+                $rMatchId.value = row.matchId ?? '';
+                $rMatchLabel.value = `${row.matchName || row.matchCode || '-'} / ${row.homeTeamName || row.homeTeamId || '-'} vs ${row.awayTeamName || row.awayTeamId || '-'}`;
+                $rEndedAt.value = localFromValue(row.matchEndedAt);
+                Object.entries(fields).forEach(([key, input]) => {
+                    input.value = row[key] ?? 0;
+                });
+                resultModal.show();
+            }
+
+            $form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                state.filters = readFilters();
+                state.pageSize = Number($fPageSize.value || 10);
+                state.pageIndex = 1;
+                reload();
+            });
+
+            $reset.addEventListener('click', () => {
+                $form.reset();
+                $fPageSize.value = String(state.pageSize);
+                state.filters = {};
+                state.pageIndex = 1;
+                reload();
+            });
+
+            $refresh.addEventListener('click', reload);
+
+            $pager.addEventListener('click', (e) => {
+                const a = e.target.closest('a[data-page]');
+                if (!a) return;
+                e.preventDefault();
+                const page = Number(a.dataset.page);
+                if (!Number.isFinite(page) || page < 1 || page === state.pageIndex) return;
+                state.pageIndex = page;
+                reload();
+            });
+
+            $tbody.addEventListener('click', async (e) => {
+                const btn = e.target.closest('button[data-op]');
+                if (!btn) return;
+                const matchId = btn.closest('tr')?.dataset?.id;
+                const row = findRow(matchId);
+                if (!row) return;
+
+                if (btn.dataset.op === 'edit') {
+                    openResultModal(row);
+                    return;
+                }
+
+                if (btn.dataset.op === 'approve') {
+                    if (!confirm('确定审核该赛事结果吗？')) return;
+                    try {
+                        await apiApprove(matchId);
+                        await reload();
+                    } catch (error) {
+                        alert(error.message || '审核失败');
+                    }
+                }
+            });
+
+            $resultForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const matchId = Number($rMatchId.value);
+                if (!Number.isFinite(matchId) || matchId <= 0) {
+                    alert('赛事ID无效');
+                    return;
+                }
+                const body = { matchId, matchEndedAt: isoFromLocal($rEndedAt.value) || null };
+                Object.entries(fields).forEach(([key, input]) => {
+                    body[key] = intOrZero(input.value);
+                });
+                try {
+                    await apiSave(body);
+                    resultModal.hide();
+                    await reload();
+                } catch (error) {
+                    alert(error.message || '保存失败');
+                }
+            });
+
+            $fPageSize.value = String(state.pageSize);
+            state.filters = readFilters();
+            reload();
+        })();
+    </script>
+</body>
+
+</html>

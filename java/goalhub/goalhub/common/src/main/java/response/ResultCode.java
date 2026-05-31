@@ -23,7 +23,13 @@ public enum ResultCode {
     USERNAME__NOT_EXISTS(10014,"username.not.exists"),
     EUGENE_NOT_DELETE(10015,"eugene.not.delete"),
     MISS_TOKEN(10016,"missing.token"),
+    ACCOUNT_NOT_FOUND(10017,"account.not.found"),
+    BALANCE_NOT_ENOUGH(10018,"balance.not.enough"),
+    PARAM_ERROR(10019,"parameter.error"),
+    MATCH_RESULT_APPROVED(10020,"match.result.approved"),
+    MATCH_RESULT_NOT_FOUND(10021,"match.result.not.found"),
     FATHER_NOT_OWN(10030,"father.not.own");
+
    // SOCCER_NOT_EXISTS(10009,"没有关注");
 
     private final int code;

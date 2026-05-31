@@ -18,6 +18,12 @@
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
+        <!-- OpenAPI Schema 注解，用于描述对外 DTO 字段。 -->
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations-jakarta</artifactId>
+            <version>2.2.30</version>
+        </dependency>
         <!-- JJWT API，用于生成和解析 JWT。 -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>

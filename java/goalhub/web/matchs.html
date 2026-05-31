@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>GoalHub | 赛事管理</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <link rel="preload" href="css/adminlte.css" as="style" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css" crossorigin="anonymous" media="print" onload="this.media='all'" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="./css/adminlte.css" />
+    <script src="js/auth.js"></script>
+    <style>
+        .app-sidebar .sidebar-menu .nav-link { display: flex; align-items: center; }
+        .app-sidebar .sidebar-menu .nav-link p { margin: 0 0 0 .5rem; white-space: nowrap; }
+    </style>
+</head>
+
+<body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
+    <div class="app-wrapper">
+        <nav class="app-header navbar navbar-expand bg-body">
+            <div class="container-fluid">
+                <ul class="navbar-nav"><li class="nav-item"><a class="nav-link" data-lte-toggle="sidebar" href="#" role="button"><i class="bi bi-list"></i></a></li></ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#" data-lte-toggle="fullscreen"><i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i><i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i></a></li>
+                    <li class="nav-item dropdown user-menu">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><img id="user-avatar" src="assets/img/default-avatar.jpg" class="user-image rounded-circle shadow" alt="用户头像" /><span id="user-name" class="d-none d-md-inline">管理员</span></a>
+                        <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
+                            <li class="user-header text-bg-primary"><img id="user-avatar-large" src="assets/img/default-avatar.jpg" class="rounded-circle shadow" alt="用户头像" /><p id="user-title">管理员 - Admin<small id="user-since">今日登录</small></p></li>
+                            <li class="user-footer d-flex gap-2"><a id="btn-profile" href="profile.html" class="btn btn-default btn-flat flex-fill">个人资料</a><button id="btn-signout" class="btn btn-default btn-flat flex-fill">退出登录</button></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+            <div class="sidebar-brand"><a href="index.html" class="brand-link"><img src="assets/img/goalhub-logo.png" alt="GoalHub Logo" class="brand-image opacity-75 shadow" /><span class="brand-text fw-light">GoalHub</span></a></div>
+            <div class="sidebar-wrapper"><nav class="mt-2"><ul class="nav nav-pills nav-sidebar flex-column sidebar-menu" data-lte-toggle="treeview" role="menu" aria-label="主导航" data-accordion="false" id="navigation"></ul></nav></div>
+        </aside>
+
+        <main class="app-main">
+            <div class="app-content-header">
+                <div class="container-fluid">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header d-flex align-items-center justify-content-between">
+                                    <h3 class="card-title mb-0"><i class="bi bi-calendar-event me-2"></i>赛事管理</h3>
+                                    <div class="d-flex gap-2"><button class="btn btn-outline-secondary btn-sm" id="btn-refresh"><i class="bi bi-arrow-clockwise me-1"></i>刷新</button><button class="btn btn-primary btn-sm" id="btn-create"><i class="bi bi-plus-lg me-1"></i>新增赛事</button></div>
+                                </div>
+                                <div class="card-body">
+                                    <form id="filter-form" class="row g-2">
+                                        <div class="col-12 col-md-4"><label class="form-label">关键词</label><input type="text" class="form-control" id="f-keyword" placeholder="赛事编码 / 阶段 / 国家"></div>
+                                        <div class="col-12 col-md-2"><label class="form-label">语言</label><input type="text" class="form-control" id="f-langCode" placeholder="zh-CN"></div>
+                                        <div class="col-6 col-md-2"><label class="form-label">每页</label><select class="form-select" id="f-pageSize"><option>10</option><option>20</option><option>50</option></select></div>
+                                        <div class="col-6 col-md-2 d-flex align-items-end"><button type="submit" class="btn btn-dark w-100"><i class="bi bi-search me-1"></i>查询</button></div>
+                                        <div class="col-12 col-md-2 d-flex align-items-end"><button type="button" class="btn btn-outline-secondary w-100" id="btn-reset"><i class="bi bi-x-circle me-1"></i>重置</button></div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-striped mb-0 align-middle">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th style="width: 80px;">ID</th>
+                                                    <th>联盟</th>
+                                                    <th>赛事编码</th>
+                                                    <th>阶段</th>
+                                                    <th>主队</th>
+                                                    <th>客队</th>
+                                                    <th style="width: 170px;">开赛时间</th>
+                                                    <th>主办国家</th>
+                                                    <th style="width: 110px;">状态</th>
+                                                    <th style="width: 230px;" class="text-end pe-3">操作</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="entity-tbody"><tr><td colspan="10" class="text-center py-4">加载中...</td></tr></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="card-footer"><div class="d-flex justify-content-between align-items-center"><div><span id="entity-total">0</span> 条记录</div><nav><ul class="pagination pagination-sm mb-0" id="entity-pager"></ul></nav></div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="entity-modal" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                            <div class="modal-content">
+                                <form id="entity-form">
+                                    <div class="modal-header"><h5 class="modal-title" id="entity-modal-title">新增赛事</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="关闭"></button></div>
+                                    <div class="modal-body">
+                                        <input type="hidden" id="entity-id">
+                                        <div class="row g-3">
+                                            <div class="col-12 col-md-6"><label class="form-label">联盟<span class="text-danger">*</span></label><select class="form-select" id="e-leagueId" data-option-key="leagues" required><option value="">请选择</option></select></div>
+                                            <div class="col-12 col-md-6"><label class="form-label">赛事编码<span class="text-danger">*</span></label><input type="text" class="form-control" id="e-matchCode" required></div>
+                                            <div class="col-12 col-md-6"><label class="form-label">阶段编码</label><input type="text" class="form-control" id="e-stageCode"></div>
+                                            <div class="col-12 col-md-6"><label class="form-label">开赛时间 UTC<span class="text-danger">*</span></label><input type="datetime-local" class="form-control" id="e-scheduledStartTimeUtc" required></div>
+                                            <div class="col-12 col-md-6"><label class="form-label">主队<span class="text-danger">*</span></label><select class="form-select" id="e-homeTeamId" data-option-key="teams" required><option value="">请选择</option></select></div>
+                                            <div class="col-12 col-md-6"><label class="form-label">客队<span class="text-danger">*</span></label><select class="form-select" id="e-awayTeamId" data-option-key="teams" required><option value="">请选择</option></select></div>
+                                            <div class="col-12 col-md-6"><label class="form-label">主办国家</label><input type="text" class="form-control" id="e-hostCountry"></div>
+                                            <div class="col-12 col-md-6"><label class="form-label">状态</label><select class="form-select" id="e-status"><option value="SCHEDULED">SCHEDULED</option><option value="LIVE">LIVE</option><option value="FINISHED">FINISHED</option><option value="CANCELLED">CANCELLED</option><option value="POSTPONED">POSTPONED</option></select></div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer"><button class="btn btn-secondary" type="button" data-bs-dismiss="modal">取消</button><button class="btn btn-primary" type="submit"><i class="bi bi-check2-circle me-1"></i>保存</button></div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="app-footer"><div class="float-end d-none d-sm-inline">GoalHub 管理后台</div><strong>Copyright &copy; 2026&nbsp;<span class="text-decoration-none">GoalHub</span>.</strong> All rights reserved.</footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="./js/adminlte.js"></script>
+    <script src="./js/page-common.js"></script>
+    <script>
+        window.GoalHubEntityConfig = {
+            entityName: '赛事',
+            createTitle: '新增赛事',
+            editTitle: '编辑赛事',
+            api: {
+                page: '/admin/match/match/page',
+                add: '/admin/match/match/add',
+                update: '/admin/match/match/update',
+                delete: '/admin/match/match/delete',
+            },
+            optionLoaders: {
+                leagues: {
+                    api: '/admin/match/league/page',
+                    label: (x) => `${x.code || x.name || x.id}${x.hostCountry ? ' - ' + x.hostCountry : ''}`,
+                },
+                teams: {
+                    api: '/admin/match/team/page',
+                    label: (x) => `${x.code || x.name || x.id}`,
+                },
+            },
+            columns: [
+                { key: 'leagueId', label: '联盟', type: 'select', optionKey: 'leagues', displayKey: 'leagueName' },
+                { key: 'matchCode', label: '赛事编码' },
+                { key: 'stageCode', label: '阶段' },
+                { key: 'homeTeamId', label: '主队', type: 'select', optionKey: 'teams', displayKey: 'homeTeamName' },
+                { key: 'awayTeamId', label: '客队', type: 'select', optionKey: 'teams', displayKey: 'awayTeamName' },
+                { key: 'scheduledStartTimeUtc', label: '开赛时间', type: 'datetime' },
+                { key: 'hostCountry', label: '主办国家' },
+                { key: 'status', label: '状态', type: 'status' },
+            ],
+            fields: [
+                { id: 'e-leagueId', key: 'leagueId', type: 'select', valueType: 'number', optionKey: 'leagues' },
+                { id: 'e-matchCode', key: 'matchCode' },
+                { id: 'e-stageCode', key: 'stageCode' },
+                { id: 'e-homeTeamId', key: 'homeTeamId', type: 'select', valueType: 'number', optionKey: 'teams' },
+                { id: 'e-awayTeamId', key: 'awayTeamId', type: 'select', valueType: 'number', optionKey: 'teams' },
+                { id: 'e-scheduledStartTimeUtc', key: 'scheduledStartTimeUtc', type: 'datetime' },
+                { id: 'e-hostCountry', key: 'hostCountry' },
+                { id: 'e-status', key: 'status', type: 'select' },
+            ],
+            createKeys: ['leagueId', 'matchCode', 'stageCode', 'homeTeamId', 'awayTeamId', 'scheduledStartTimeUtc', 'hostCountry', 'status'],
+            defaults: [['e-status', 'SCHEDULED']],
+        };
+    </script>
+    <script src="./js/match-management.js"></script>
+</body>
+
+</html>

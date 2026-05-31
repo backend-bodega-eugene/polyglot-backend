@@ -65,6 +65,60 @@ public class UserEntity {
      * 更新时间。
      */
     private LocalDateTime updatedAt;
+    /**
+     * 邀请码。
+     */
+    private String inviteCode;
+
+    /**
+     * 邀请人用户ID。
+     */
+    private Long inviterUserId;
+
+    /**
+     * 注册IP。
+     */
+    private String registerIp;
+
+    /**
+     * 最后登录IP。
+     */
+    private String lastLoginIp;
+    public String getInviteCode() {
+        return inviteCode;
+    }
+
+    public UserEntity setInviteCode(String inviteCode) {
+        this.inviteCode = inviteCode;
+        return this;
+    }
+
+    public Long getInviterUserId() {
+        return inviterUserId;
+    }
+
+    public UserEntity setInviterUserId(Long inviterUserId) {
+        this.inviterUserId = inviterUserId;
+        return this;
+    }
+
+    public String getRegisterIp() {
+        return registerIp;
+    }
+
+    public UserEntity setRegisterIp(String registerIp) {
+        this.registerIp = registerIp;
+        return this;
+    }
+
+    public String getLastLoginIp() {
+        return lastLoginIp;
+    }
+
+    public UserEntity setLastLoginIp(String lastLoginIp) {
+        this.lastLoginIp = lastLoginIp;
+        return this;
+    }
 
     public Long getId() {
         return id;

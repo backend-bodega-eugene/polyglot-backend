@@ -15,30 +15,68 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 基于 MongoDB 的 GoalHub 日志查询服务实现。
+ */
 @Service
 public class GoalhubLogQueryServiceImpl implements GoalhubLogQueryService {
 
+    /**
+     * MongoDB 操作模板。
+     */
     private final MongoTemplate mongoTemplate;
 
+    /**
+     * 创建日志查询服务实现。
+     *
+     * @param mongoTemplate MongoDB 操作模板
+     */
     public GoalhubLogQueryServiceImpl(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
     }
 
+    /**
+     * 分页查询业务日志。
+     *
+     * @param request 日志查询参数
+     * @return 业务日志分页结果
+     */
     @Override
     public PageResponse<BizLogDocument> queryBizLogs(LogQueryRequest request) {
         return query(request, BizLogDocument.class, "biz_logs");
     }
 
+    /**
+     * 分页查询系统日志。
+     *
+     * @param request 日志查询参数
+     * @return 系统日志分页结果
+     */
     @Override
     public PageResponse<SysLogDocument> querySysLogs(LogQueryRequest request) {
         return query(request, SysLogDocument.class, "sys_logs");
     }
 
+    /**
+     * 分页查询错误日志。
+     *
+     * @param request 日志查询参数
+     * @return 错误日志分页结果
+     */
     @Override
     public PageResponse<ErrLogDocument> queryErrLogs(LogQueryRequest request) {
         return query(request, ErrLogDocument.class, "err_logs");
     }
 
+    /**
+     * 按集合名称分页查询日志。
+     *
+     * @param request        日志查询参数
+     * @param clazz          返回文档类型
+     * @param collectionName MongoDB 集合名称
+     * @param <T>            日志文档类型
+     * @return 日志分页结果
+     */
     private <T> PageResponse<T> query(LogQueryRequest request, Class<T> clazz, String collectionName) {
         int pageIndex = request.getPageIndex() == null || request.getPageIndex() < 1
                 ? 1
@@ -61,6 +99,12 @@ public class GoalhubLogQueryServiceImpl implements GoalhubLogQueryService {
         return new PageResponse<>(total, pageIndex, pageSize, records);
     }
 
+    /**
+     * 根据查询请求构造 MongoDB 查询条件。
+     *
+     * @param request 日志查询参数
+     * @return MongoDB 查询对象
+     */
     private Query buildQuery(LogQueryRequest request) {
         List<Criteria> criteriaList = new ArrayList<>();
 
@@ -103,6 +147,12 @@ public class GoalhubLogQueryServiceImpl implements GoalhubLogQueryService {
         return query;
     }
 
+    /**
+     * 判断字符串是否包含有效文本。
+     *
+     * @param value 待判断字符串
+     * @return 包含有效文本返回 true，否则返回 false
+     */
     private boolean hasText(String value) {
         return value != null && !value.trim().isEmpty();
     }

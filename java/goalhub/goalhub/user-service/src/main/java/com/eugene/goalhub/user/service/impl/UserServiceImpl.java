@@ -1,9 +1,12 @@
 package com.eugene.goalhub.user.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.eugene.goalhub.user.entity.UserAccountEntity;
 import com.eugene.goalhub.user.entity.UserEntity;
+import com.eugene.goalhub.user.mapper.UserAccountMapper;
 import com.eugene.goalhub.user.mapper.UserMapper;
 import com.eugene.goalhub.user.service.UserService;
+import org.springframework.transaction.annotation.Transactional;
 import utils.JwtUtil;
 import dto.LoginRequest;
 import dto.LoginResponse;
@@ -12,6 +15,8 @@ import exception.BusinessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import response.ResultCode;
+
+import java.math.BigDecimal;
 
 /**
  * 用户账号服务实现。
@@ -25,11 +30,15 @@ public class UserServiceImpl
      * 密码加密与校验组件。
      */
     private final PasswordEncoder passwordEncoder;
+    private final UserAccountMapper userAccountMapper;
     //private final JwtUtil jwtUtil;
 
-    public UserServiceImpl(PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(
+            PasswordEncoder passwordEncoder,
+            UserAccountMapper userAccountMapper) {
+
         this.passwordEncoder = passwordEncoder;
-       // this.jwtUtil = jwtUtil;
+        this.userAccountMapper = userAccountMapper;
     }
 
     /**
@@ -40,6 +49,7 @@ public class UserServiceImpl
      * @param request 注册参数
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void register(RegisterRequest request) {
 
         String username = request.getUsername();
@@ -76,6 +86,15 @@ public class UserServiceImpl
         user.setNickname(request.getNickname());
         user.setStatus(1);
         save(user);
+        UserAccountEntity account =
+                new UserAccountEntity();
+
+        account.setUserId(user.getId());
+        account.setCurrencyCode("USDT");
+        account.setBalance(BigDecimal.ZERO);
+        account.setFrozenBalance(BigDecimal.ZERO);
+        account.setStatus(1);
+        userAccountMapper.insert(account);
     }
 
     /**

@@ -14,12 +14,28 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.LocalDateTime;
 
+/**
+ * 基于 MongoDB 的 GoalHub 日志写入服务实现。
+ */
 @Service
 public class GoalhubLogServiceImpl implements GoalhubLogService {
 
+    /**
+     * MongoDB 操作模板。
+     */
     private final MongoTemplate mongoTemplate;
+
+    /**
+     * 当前应用服务名称。
+     */
     private final String serviceName;
 
+    /**
+     * 创建日志写入服务实现。
+     *
+     * @param mongoTemplate MongoDB 操作模板
+     * @param environment   Spring 环境配置
+     */
     public GoalhubLogServiceImpl(
             MongoTemplate mongoTemplate,
             Environment environment
@@ -31,6 +47,15 @@ public class GoalhubLogServiceImpl implements GoalhubLogService {
         );
     }
 
+    /**
+     * 写入业务日志。
+     *
+     * @param moduleName   业务模块名称
+     * @param event        业务事件名称
+     * @param operatorId   操作人 ID
+     * @param operatorName 操作人名称
+     * @param content      业务日志内容
+     */
     @Override
     public void bizLog(
             String moduleName,
@@ -58,6 +83,13 @@ public class GoalhubLogServiceImpl implements GoalhubLogService {
         }
     }
 
+    /**
+     * 写入系统日志。
+     *
+     * @param moduleName 系统模块名称
+     * @param event      系统事件名称
+     * @param content    系统日志内容
+     */
     @Override
     public void sysLog(
             String moduleName,
@@ -81,6 +113,13 @@ public class GoalhubLogServiceImpl implements GoalhubLogService {
         }
     }
 
+    /**
+     * 写入错误日志。
+     *
+     * @param moduleName 错误所属模块名称
+     * @param event      错误事件名称
+     * @param throwable  异常对象
+     */
     @Override
     public void errLog(
             String moduleName,
