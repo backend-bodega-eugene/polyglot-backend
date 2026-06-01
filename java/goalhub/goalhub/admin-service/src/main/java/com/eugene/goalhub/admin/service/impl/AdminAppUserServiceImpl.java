@@ -1,6 +1,7 @@
 package com.eugene.goalhub.admin.service.impl;
 import com.eugene.goalhub.admin.client.UserServiceClient;
 import com.eugene.goalhub.admin.service.AdminAppUserService;
+import com.eugene.goalhub.admin.service.support.FeignResultSupport;
 import dto.*;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,11 @@ public class AdminAppUserServiceImpl implements AdminAppUserService {
      */
     private final UserServiceClient userServiceClient;
 
+    /**
+     * 创建后台应用用户管理服务实现。
+     *
+     * @param userServiceClient 用户服务远程调用客户端
+     */
     public AdminAppUserServiceImpl(UserServiceClient userServiceClient) {
         this.userServiceClient = userServiceClient;
     }
@@ -29,7 +35,7 @@ public class AdminAppUserServiceImpl implements AdminAppUserService {
      */
     @Override
     public PageResponse<UserAdminPageResponse> page(UserAdminPageRequest request) {
-        return userServiceClient.page(request).getData();
+        return FeignResultSupport.data(userServiceClient.page(request));
     }
 
     /**
@@ -40,7 +46,7 @@ public class AdminAppUserServiceImpl implements AdminAppUserService {
      */
     @Override
     public Long create(UserAdminCreateRequest request) {
-        return userServiceClient.create(request).getData();
+        return FeignResultSupport.data(userServiceClient.create(request));
     }
 
     /**
@@ -51,7 +57,7 @@ public class AdminAppUserServiceImpl implements AdminAppUserService {
      */
     @Override
     public void update(Long id, UserAdminUpdateRequest request) {
-        userServiceClient.update(id, request);
+        FeignResultSupport.checkSuccess(userServiceClient.update(id, request));
     }
 
     /**
@@ -61,7 +67,7 @@ public class AdminAppUserServiceImpl implements AdminAppUserService {
      */
     @Override
     public void delete(Long id) {
-        userServiceClient.delete(id);
+        FeignResultSupport.checkSuccess(userServiceClient.delete(id));
     }
 
     /**
@@ -72,6 +78,6 @@ public class AdminAppUserServiceImpl implements AdminAppUserService {
      */
     @Override
     public void updatePassword(Long id, UserAdminPasswordUpdateRequest request) {
-        userServiceClient.updatePassword(id, request);
+        FeignResultSupport.checkSuccess(userServiceClient.updatePassword(id, request));
     }
 }

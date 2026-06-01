@@ -27,6 +27,11 @@ public class SoccerMatchController {
      */
     private final SoccerMatchService soccerMatchService;
 
+    /**
+     * 创建足球比赛查询接口实例。
+     *
+     * @param soccerMatchService 足球比赛服务
+     */
     public SoccerMatchController(SoccerMatchService soccerMatchService) {
         this.soccerMatchService = soccerMatchService;
     }

@@ -24,6 +24,11 @@ public class InternalAdminUserController {
      */
     private final InternalAdminUserService internalAdminUserService;
 
+    /**
+     * 创建后台管理内部用户接口。
+     *
+     * @param internalAdminUserService 后台管理内部用户服务
+     */
     public InternalAdminUserController(InternalAdminUserService internalAdminUserService) {
         this.internalAdminUserService = internalAdminUserService;
     }

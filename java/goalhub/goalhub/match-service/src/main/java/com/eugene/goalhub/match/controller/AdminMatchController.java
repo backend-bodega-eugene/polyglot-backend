@@ -16,8 +16,16 @@ import response.Result;
 @RequestMapping("/internal/admin")
 public class AdminMatchController {
 
+    /**
+     * 后台赛事基础数据服务。
+     */
     private final AdminMatchService adminMatchService;
 
+    /**
+     * 创建内部后台赛事基础数据管理接口实例。
+     *
+     * @param adminMatchService 后台赛事基础数据服务
+     */
     public AdminMatchController(AdminMatchService adminMatchService) {
         this.adminMatchService = adminMatchService;
     }

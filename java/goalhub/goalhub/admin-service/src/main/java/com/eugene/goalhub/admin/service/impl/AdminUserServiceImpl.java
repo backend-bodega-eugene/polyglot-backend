@@ -28,6 +28,11 @@ public class AdminUserServiceImpl extends ServiceImpl<AdminUserMapper, AdminUser
      */
     private final PasswordEncoder passwordEncoder;
 
+    /**
+     * 创建后台管理员账号管理服务实现。
+     *
+     * @param passwordEncoder 密码加密与校验组件
+     */
     public AdminUserServiceImpl(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
@@ -224,10 +229,17 @@ public class AdminUserServiceImpl extends ServiceImpl<AdminUserMapper, AdminUser
      */
     @Override
     public void updateStatus(Long id, Integer status) {
-        lambdaUpdate()
-                .eq(AdminUser::getId, id)
-                .set(AdminUser::getStatus, status)
-                .update();
+        AdminUser user = getById(id);
+        if (user == null) {
+            throw new BusinessException(ResultCode.USERNAME__NOT_EXISTS);
+        }
+
+        if (Integer.valueOf(1).equals(user.getIsSuperAdmin())) {
+            throw new BusinessException(ResultCode.SUPER_ADMIN_STATUS_NOT_ALLOW_UPDATE_CODE);
+        }
+
+        user.setStatus(status);
+        updateById(user);
     }
 
     /**

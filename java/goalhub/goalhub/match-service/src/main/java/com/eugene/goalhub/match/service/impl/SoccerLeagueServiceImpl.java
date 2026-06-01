@@ -25,6 +25,11 @@ public class SoccerLeagueServiceImpl
      */
     private final SoccerLeagueI18nMapper soccerLeagueI18nMapper;
 
+    /**
+     * 创建足球联赛查询服务实现。
+     *
+     * @param soccerLeagueI18nMapper 联赛多语言 Mapper
+     */
     public SoccerLeagueServiceImpl(SoccerLeagueI18nMapper soccerLeagueI18nMapper) {
         this.soccerLeagueI18nMapper = soccerLeagueI18nMapper;
     }

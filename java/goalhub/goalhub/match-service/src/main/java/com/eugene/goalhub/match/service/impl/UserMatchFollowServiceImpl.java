@@ -5,6 +5,7 @@ import com.eugene.goalhub.match.entity.UserMatchFollow;
 import com.eugene.goalhub.match.mapper.UserMatchFollowMapper;
 import com.eugene.goalhub.match.service.SoccerMatchService;
 import com.eugene.goalhub.match.service.UserMatchFollowService;
+import dto.UserMatchFollowResponse;
 import exception.BusinessException;
 import org.springframework.stereotype.Service;
 import response.ResultCode;
@@ -24,6 +25,11 @@ public class UserMatchFollowServiceImpl
      */
     private final SoccerMatchService soccerMatchService;
 
+    /**
+     * 创建用户赛事关注服务实现。
+     *
+     * @param soccerMatchService 赛事查询服务
+     */
     public UserMatchFollowServiceImpl(SoccerMatchService soccerMatchService) {
         this.soccerMatchService = soccerMatchService;
     }
@@ -105,11 +111,30 @@ public class UserMatchFollowServiceImpl
      * @return 关注记录列表
      */
     @Override
-    public List<UserMatchFollow> listMyFollows(Long userId) {
+    public List<UserMatchFollowResponse> listMyFollows(Long userId) {
         return lambdaQuery()
                 .eq(UserMatchFollow::getUserId, userId)
                 .orderByDesc(UserMatchFollow::getCreatedAt)
-                .list();
+                .list()
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    /**
+     * 将关注实体转换为响应对象。
+     *
+     * @param follow 关注实体
+     * @return 用户赛事关注响应
+     */
+    private UserMatchFollowResponse toResponse(UserMatchFollow follow) {
+        UserMatchFollowResponse response = new UserMatchFollowResponse();
+        response.setId(follow.getId());
+        response.setUserId(follow.getUserId());
+        response.setMatchId(follow.getMatchId());
+        response.setCreatedAt(follow.getCreatedAt());
+        response.setUpdatedAt(follow.getUpdatedAt());
+        return response;
     }
 
     /**

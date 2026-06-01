@@ -110,8 +110,12 @@ public class GatewayJwtAuthFilter implements GlobalFilter, Ordered {
             // 将解析出的用户身份写入请求头，供下游服务读取。
             ServerHttpRequest newRequest = exchange.getRequest()
                     .mutate()
-                    .header("X-User-Id", userId)
-                    .header("X-Username", username)
+                    .headers(headers -> {
+                        headers.remove("X-User-Id");
+                        headers.remove("X-Username");
+                        headers.add("X-User-Id", userId);
+                        headers.add("X-Username", username);
+                    })
                     .build();
 
             return chain.filter(exchange.mutate().request(newRequest).build());
@@ -141,9 +145,14 @@ public class GatewayJwtAuthFilter implements GlobalFilter, Ordered {
             // 将解析出的管理员身份写入请求头，供 admin-service 读取。
             ServerHttpRequest newRequest = exchange.getRequest()
                     .mutate()
-                    .header("X-Admin-Id", adminId)
-                    .header("X-Admin-Username", username)
-                    .header("X-Admin-Role", role == null ? "" : role)
+                    .headers(headers -> {
+                        headers.remove("X-Admin-Id");
+                        headers.remove("X-Admin-Username");
+                        headers.remove("X-Admin-Role");
+                        headers.add("X-Admin-Id", adminId);
+                        headers.add("X-Admin-Username", username);
+                        headers.add("X-Admin-Role", role == null ? "" : role);
+                    })
                     .build();
 
             return chain.filter(exchange.mutate().request(newRequest).build());

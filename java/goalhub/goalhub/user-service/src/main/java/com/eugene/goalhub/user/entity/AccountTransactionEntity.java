@@ -68,6 +68,7 @@ public class AccountTransactionEntity {
      * 创建时间。
      */
     private LocalDateTime createdAt;
+
     public Long getId() {
         return id;
     }

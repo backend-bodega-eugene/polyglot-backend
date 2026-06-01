@@ -19,11 +19,34 @@ import org.springframework.util.StringUtils;
 @Service
 public class AdminMatchServiceImpl implements AdminMatchService {
 
+    /**
+     * 后台赛事复合查询 Mapper。
+     */
     private final AdminMatchMapper adminMatchMapper;
+
+    /**
+     * 联赛基础数据 Mapper。
+     */
     private final SoccerLeagueMapper soccerLeagueMapper;
+
+    /**
+     * 比赛基础数据 Mapper。
+     */
     private final SoccerMatchMapper soccerMatchMapper;
+
+    /**
+     * 球队基础数据 Mapper。
+     */
     private final SoccerTeamMapper soccerTeamMapper;
 
+    /**
+     * 创建后台赛事基础数据管理服务实现。
+     *
+     * @param adminMatchMapper   后台赛事复合查询 Mapper
+     * @param soccerLeagueMapper 联赛基础数据 Mapper
+     * @param soccerMatchMapper  比赛基础数据 Mapper
+     * @param soccerTeamMapper   球队基础数据 Mapper
+     */
     public AdminMatchServiceImpl(AdminMatchMapper adminMatchMapper,
                                  SoccerLeagueMapper soccerLeagueMapper,
                                  SoccerMatchMapper soccerMatchMapper,

@@ -102,14 +102,20 @@
     if (value === 1 || value === '1') return '<span class="badge bg-success">启用</span>';
     if (value === 0 || value === '0') return '<span class="badge bg-secondary">禁用</span>';
     const text = String(value || '-');
-    const cls = /live|进行|active|启用/i.test(text)
-      ? 'bg-success'
-      : /finish|结束|complete/i.test(text)
-        ? 'bg-primary'
-        : /cancel|postpone|取消|延期|禁用/i.test(text)
-          ? 'bg-secondary'
+    const cls = /inactive|disable|closed|suspend|cancel|postpone|取消|延期|禁用/i.test(text)
+      ? 'bg-secondary'
+      : /open|live|进行|active|enable|启用/i.test(text)
+        ? 'bg-success'
+        : /finish|结束|complete/i.test(text)
+          ? 'bg-primary'
           : 'bg-info';
     return `<span class="badge ${cls}">${esc(text)}</span>`;
+  }
+
+  function visibleBadge(value) {
+    if (value === 1 || value === '1' || value === true) return '<span class="badge bg-success">可见</span>';
+    if (value === 0 || value === '0' || value === false) return '<span class="badge bg-secondary">隐藏</span>';
+    return statusBadge(value);
   }
 
   function labelFor(field, value) {
@@ -127,6 +133,7 @@
       const src = value || 'assets/img/default-avatar.jpg';
       return `<img src="${esc(src)}" alt="${esc(field.label)}" class="rounded-circle entity-logo" onerror="this.src='assets/img/default-avatar.jpg'">`;
     }
+    if (field.type === 'visible') return visibleBadge(value);
     if (field.type === 'status') return statusBadge(value);
     if (field.type === 'datetime') return esc(fmtTime(value));
     if (field.type === 'select') return esc(labelFor(field, value));
@@ -171,6 +178,12 @@
     const filters = {};
     if ($keyword) filters.keyword = $keyword.value.trim();
     if ($langCode) filters.langCode = $langCode.value.trim();
+    (config.filterFields || []).forEach((field) => {
+      const input = $(field.id);
+      if (!input) return;
+      const raw = input.value.trim();
+      filters[field.key] = field.valueType === 'number' && raw !== '' ? Number(raw) : raw;
+    });
     if (config.listParam?.filterId) {
       const input = $(config.listParam.filterId);
       filters[config.listParam.key] = input?.value ? Number(input.value) : '';
@@ -180,12 +193,11 @@
 
   function buildPageBody() {
     const body = config.api.list
-      ? { [config.listParam.key]: state.filters[config.listParam.key] }
+      ? { ...state.filters }
       : {
           pageIndex: state.pageIndex,
           pageSize: state.pageSize,
-          langCode: state.filters.langCode,
-          keyword: state.filters.keyword,
+          ...state.filters,
         };
     Object.keys(body).forEach((key) => {
       if (body[key] === '' || body[key] == null) delete body[key];
@@ -247,7 +259,9 @@
   function readFormBody(isCreate) {
     const body = {};
     if (!isCreate) body.id = Number($entityId.value);
+    const allowedKeys = isCreate ? config.createKeys : config.updateKeys;
     config.fields.forEach((field) => {
+      if (Array.isArray(allowedKeys) && !allowedKeys.includes(field.key)) return;
       const input = $(field.id);
       let value = input.value;
       if (field.type === 'number' || field.valueType === 'number') value = value === '' ? null : Number(value);
@@ -270,9 +284,27 @@
     const loaders = config.optionLoaders || {};
     for (const [key, loader] of Object.entries(loaders)) {
       try {
+        const dependsOn = loader.dependsOn ? $(loader.dependsOn) : null;
+        const dependsValue = dependsOn?.value || '';
+        if (loader.dependsOn && !dependsValue) {
+          state.options[key] = [];
+          document.querySelectorAll(`select[data-option-key="${key}"]`).forEach((select) => {
+            select.innerHTML = `<option value="">${esc(select.dataset.emptyLabel || '请选择')}</option>`;
+          });
+          continue;
+        }
+        const body = { ...(loader.body || {}) };
+        if (loader.page !== false) {
+          body.pageIndex = 1;
+          body.pageSize = loader.pageSize || 200;
+        }
+        if (loader.dependsOn) {
+          const value = loader.dependsValueType === 'number' ? Number(dependsValue) : dependsValue;
+          body[loader.dependsParam || 'marketId'] = value;
+        }
         const data = await request(loader.api, {
           method: 'POST',
-          body: JSON.stringify({ pageIndex: 1, pageSize: loader.pageSize || 200 }),
+          body: JSON.stringify(body),
         });
         const page = unwrapListPayload(data);
         state.options[key] = page.list.map((x) => ({
@@ -281,7 +313,7 @@
         }));
         document.querySelectorAll(`select[data-option-key="${key}"]`).forEach((select) => {
           const current = select.value;
-          select.innerHTML = '<option value="">请选择</option>' + state.options[key]
+          select.innerHTML = `<option value="">${esc(select.dataset.emptyLabel || '请选择')}</option>` + state.options[key]
             .map((x) => `<option value="${esc(x.value)}">${esc(x.label)}</option>`)
             .join('');
           if (current) setSelectValue(select, current);
@@ -290,6 +322,21 @@
         console.warn(`${key} options load failed`, error);
       }
     }
+  }
+
+  function bindDependentOptions() {
+    const loaders = config.optionLoaders || {};
+    Object.entries(loaders).forEach(([key, loader]) => {
+      if (!loader.dependsOn) return;
+      const parent = $(loader.dependsOn);
+      if (!parent) return;
+      parent.addEventListener('change', () => {
+        document.querySelectorAll(`select[data-option-key="${key}"]`).forEach((select) => {
+          select.value = '';
+        });
+        loadOptions();
+      });
+    });
   }
 
   $form.addEventListener('submit', (e) => {
@@ -349,6 +396,8 @@
       $modalTitle.textContent = config.editTitle;
       await loadOptions();
       fillForm(row);
+      await loadOptions();
+      fillForm(row);
       entityModal.show();
       return;
     }
@@ -380,5 +429,6 @@
 
   if ($pageSize) $pageSize.value = String(state.pageSize);
   state.filters = readFilters();
+  bindDependentOptions();
   loadOptions().finally(reload);
 })();

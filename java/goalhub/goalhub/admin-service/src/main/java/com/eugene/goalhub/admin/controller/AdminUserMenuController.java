@@ -24,6 +24,11 @@ public class AdminUserMenuController {
      */
     private final AdminUserMenuService adminUserMenuService;
 
+    /**
+     * 创建管理员菜单权限接口实例。
+     *
+     * @param adminUserMenuService 管理员菜单权限服务
+     */
     public AdminUserMenuController(AdminUserMenuService adminUserMenuService) {
         this.adminUserMenuService = adminUserMenuService;
     }

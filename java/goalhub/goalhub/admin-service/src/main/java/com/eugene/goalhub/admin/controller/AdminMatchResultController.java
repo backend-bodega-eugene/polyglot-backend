@@ -16,9 +16,17 @@ import response.Result;
 @RequestMapping("/admin/matchresult")
 public class AdminMatchResultController {
 
+    /**
+     * 后台比赛结果服务。
+     */
     private final AdminMatchResultService
             adminMatchResultService;
 
+    /**
+     * 创建后台比赛结果管理接口实例。
+     *
+     * @param adminMatchResultService 后台比赛结果服务
+     */
     public AdminMatchResultController(
             AdminMatchResultService adminMatchResultService) {
         this.adminMatchResultService =

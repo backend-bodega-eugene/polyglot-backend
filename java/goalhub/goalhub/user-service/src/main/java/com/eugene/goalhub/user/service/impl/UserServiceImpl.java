@@ -30,9 +30,19 @@ public class UserServiceImpl
      * 密码加密与校验组件。
      */
     private final PasswordEncoder passwordEncoder;
+
+    /**
+     * 用户账户 Mapper。
+     */
     private final UserAccountMapper userAccountMapper;
     //private final JwtUtil jwtUtil;
 
+    /**
+     * 创建用户账号服务实现。
+     *
+     * @param passwordEncoder   密码加密与校验组件
+     * @param userAccountMapper 用户账户 Mapper
+     */
     public UserServiceImpl(
             PasswordEncoder passwordEncoder,
             UserAccountMapper userAccountMapper) {
@@ -130,6 +140,10 @@ public class UserServiceImpl
 
         if (user == null) {
             throw new BusinessException(ResultCode.USER_NOT_FOUND);
+        }
+
+        if (!Integer.valueOf(1).equals(user.getStatus())) {
+            throw new BusinessException(ResultCode.USER_DISABLED);
         }
 
         boolean matched = passwordEncoder.matches(

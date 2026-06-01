@@ -2,13 +2,17 @@ package com.eugene.goalhub.admin.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.eugene.goalhub.admin.entity.AdminMenu;
+import com.eugene.goalhub.admin.entity.AdminUser;
 import com.eugene.goalhub.admin.entity.AdminUserMenu;
 import com.eugene.goalhub.admin.mapper.AdminMenuMapper;
+import com.eugene.goalhub.admin.mapper.AdminUserMapper;
 import com.eugene.goalhub.admin.mapper.AdminUserMenuMapper;
 import com.eugene.goalhub.admin.service.AdminUserMenuService;
 import dto.AdminMenuTreeResponse;
+import exception.BusinessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import response.ResultCode;
 
 import java.util.Comparator;
 import java.util.List;
@@ -29,8 +33,21 @@ public class AdminUserMenuServiceImpl
      */
     private final AdminMenuMapper adminMenuMapper;
 
-    public AdminUserMenuServiceImpl(AdminMenuMapper adminMenuMapper) {
+    /**
+     * 管理员 Mapper，用于查询管理员身份。
+     */
+    private final AdminUserMapper adminUserMapper;
+
+    /**
+     * 创建管理员菜单权限服务实现。
+     *
+     * @param adminMenuMapper 菜单 Mapper
+     * @param adminUserMapper 管理员 Mapper
+     */
+    public AdminUserMenuServiceImpl(AdminMenuMapper adminMenuMapper,
+                                    AdminUserMapper adminUserMapper) {
         this.adminMenuMapper = adminMenuMapper;
+        this.adminUserMapper = adminUserMapper;
     }
 
     /**
@@ -100,7 +117,7 @@ public class AdminUserMenuServiceImpl
     /**
      * 查询当前登录管理员可访问的菜单。
      * <p>
-     * 默认超级管理员 eugene 可访问全部启用菜单，其他管理员按授权关系查询。
+     * 超级管理员可访问全部启用菜单，其他管理员按授权关系查询。
      *
      * @param adminUserId 管理员 ID
      * @param username    管理员用户名
@@ -108,7 +125,12 @@ public class AdminUserMenuServiceImpl
      */
     @Override
     public List<AdminMenuTreeResponse> getCurrentLoginMenus(Long adminUserId, String username) {
-        if ("eugene".equals(username)) {
+        AdminUser adminUser = adminUserMapper.selectById(adminUserId);
+        if (adminUser == null) {
+            throw new BusinessException(ResultCode.USERNAME__NOT_EXISTS);
+        }
+
+        if (Integer.valueOf(1).equals(adminUser.getIsSuperAdmin())) {
             List<AdminMenu> menus = adminMenuMapper.selectList(
                     new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<AdminMenu>()
                             .eq(AdminMenu::getDeleted, 0)

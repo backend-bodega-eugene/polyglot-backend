@@ -12,9 +12,11 @@ import org.springframework.stereotype.Service;
 import response.ResultCode;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -112,6 +114,10 @@ public class AdminMenuServiceImpl extends ServiceImpl<AdminMenuMapper, AdminMenu
             throw new BusinessException(ResultCode.FATHER_NOT_OWN);
         }
 
+        if (isDescendantMenu(parentId, id)) {
+            throw new BusinessException(ResultCode.FATHER_NOT_CHILD_CODE);
+        }
+
         menu.setParentId(parentId);
         menu.setName(request.getName());
         menu.setType(request.getType());
@@ -186,5 +192,40 @@ public class AdminMenuServiceImpl extends ServiceImpl<AdminMenuMapper, AdminMenu
         response.setSortOrder(menu.getSortOrder());
         response.setStatus(menu.getStatus());
         return response;
+    }
+
+    /**
+     * 判断目标父菜单是否为当前菜单的子孙节点。
+     *
+     * @param targetParentId 目标父菜单 ID
+     * @param currentMenuId  当前菜单 ID
+     * @return 是子孙节点时返回 true
+     */
+    private boolean isDescendantMenu(Long targetParentId, Long currentMenuId) {
+        if (targetParentId == null || targetParentId == 0) {
+            return false;
+        }
+
+        Set<Long> visitedMenuIds = new HashSet<>();
+        Long cursorMenuId = targetParentId;
+
+        while (cursorMenuId != null && cursorMenuId != 0) {
+            if (Objects.equals(cursorMenuId, currentMenuId)) {
+                return true;
+            }
+
+            if (!visitedMenuIds.add(cursorMenuId)) {
+                return false;
+            }
+
+            AdminMenu cursorMenu = getById(cursorMenuId);
+            if (cursorMenu == null) {
+                return false;
+            }
+
+            cursorMenuId = cursorMenu.getParentId();
+        }
+
+        return false;
     }
 }

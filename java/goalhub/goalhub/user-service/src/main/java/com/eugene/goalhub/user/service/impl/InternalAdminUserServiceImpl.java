@@ -7,8 +7,10 @@ import com.eugene.goalhub.user.entity.UserEntity;
 import com.eugene.goalhub.user.mapper.UserMapper;
 import com.eugene.goalhub.user.service.InternalAdminUserService;
 import dto.*;
+import exception.BusinessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import response.ResultCode;
 
 import java.util.List;
 
@@ -26,6 +28,11 @@ public class InternalAdminUserServiceImpl
     private final PasswordEncoder passwordEncoder;
     //private final JwtUtil jwtUtil;
 
+    /**
+     * 创建后台管理内部用户服务实现。
+     *
+     * @param passwordEncoder 密码加密与校验组件
+     */
     public InternalAdminUserServiceImpl(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
         // this.jwtUtil = jwtUtil;
@@ -105,6 +112,8 @@ public class InternalAdminUserServiceImpl
      */
     @Override
     public void update(Long id, UserAdminUpdateRequest request) {
+        checkUserExists(id);
+
         lambdaUpdate()
                 .eq(UserEntity::getId, id)
                 .set(UserEntity::getEmail, request.getEmail())
@@ -127,6 +136,8 @@ public class InternalAdminUserServiceImpl
      */
     @Override
     public void delete(Long id) {
+        checkUserExists(id);
+
         removeById(id);
     }
 
@@ -138,10 +149,25 @@ public class InternalAdminUserServiceImpl
      */
     @Override
     public void updatePassword(Long id, UserAdminPasswordUpdateRequest request) {
+        checkUserExists(id);
+
         lambdaUpdate()
                 .eq(UserEntity::getId, id)
                 .set(UserEntity::getPasswordHash, passwordEncoder.encode(request.getPassword()))
                 .update();
+    }
+
+    /**
+     * 校验应用用户是否存在。
+     *
+     * @param id 应用用户 ID
+     */
+    private void checkUserExists(Long id) {
+        UserEntity user = getById(id);
+
+        if (user == null) {
+            throw new BusinessException(ResultCode.USER_NOT_FOUND);
+        }
     }
 
     /**

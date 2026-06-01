@@ -65,6 +65,7 @@ public class UserEntity {
      * 更新时间。
      */
     private LocalDateTime updatedAt;
+
     /**
      * 邀请码。
      */
@@ -84,6 +85,7 @@ public class UserEntity {
      * 最后登录IP。
      */
     private String lastLoginIp;
+
     public String getInviteCode() {
         return inviteCode;
     }

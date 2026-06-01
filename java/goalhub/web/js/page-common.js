@@ -1,6 +1,37 @@
 (function () {
   const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';
   const Default = { scrollbarTheme: 'os-theme-light', scrollbarAutoHide: 'leave', scrollbarClickScroll: true };
+  const embedded = new URLSearchParams(location.search).get('embedded') === '1' || window.self !== window.top;
+
+  function applyEmbeddedLayout() {
+    document.body.classList.add('gh-embedded-page');
+    if (document.getElementById('gh-embedded-style')) return;
+
+    const style = document.createElement('style');
+    style.id = 'gh-embedded-style';
+    style.textContent = `
+      html, body { min-height: 0 !important; background: var(--bs-tertiary-bg, #f8f9fa) !important; }
+      body.gh-embedded-page { overflow: auto !important; }
+      body.gh-embedded-page > .app-wrapper { display: block !important; min-height: 0 !important; }
+      body.gh-embedded-page .app-header,
+      body.gh-embedded-page .app-sidebar,
+      body.gh-embedded-page .app-footer { display: none !important; }
+      body.gh-embedded-page .app-main {
+        display: block !important;
+        min-height: 0 !important;
+        width: 100% !important;
+        margin-left: 0 !important;
+        padding: 0 !important;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  if (embedded) {
+    if (document.body) applyEmbeddedLayout();
+    else document.addEventListener('DOMContentLoaded', applyEmbeddedLayout);
+    return;
+  }
 
   document.addEventListener('DOMContentLoaded', function () {
     const sidebarWrapper = document.querySelector(SELECTOR_SIDEBAR_WRAPPER);
@@ -33,8 +64,9 @@
 
       if (!hasChildren) {
         const page = node.path || '#';
+        const href = page === '#' ? '#' : `index.html?page=${encodeURIComponent(page)}`;
         li.innerHTML = `
-          <a href="${page}" class="nav-link${location.pathname.endsWith('/' + page) ? ' active' : ''}">
+          <a href="${href}" class="nav-link${location.pathname.endsWith('/' + page) ? ' active' : ''}">
             <i class="nav-icon ${node.icon || 'bi bi-speedometer'}"></i>
             <p>${node.name}</p>
           </a>`;

@@ -21,6 +21,11 @@ public class AdminUserController {
      */
     private final AdminUserService adminUserService;
 
+    /**
+     * 创建后台管理员账号接口实例。
+     *
+     * @param adminUserService 管理员账号服务
+     */
     public AdminUserController(AdminUserService adminUserService) {
         this.adminUserService = adminUserService;
     }

@@ -16,8 +16,16 @@ import response.Result;
 @RequestMapping("/internal/admin/account")
 public class InternalAdminAccountController {
 
+    /**
+     * 用户账户服务。
+     */
     private final UserAccountService userAccountService;
 
+    /**
+     * 创建内部后台用户账户管理接口。
+     *
+     * @param userAccountService 用户账户服务
+     */
     public InternalAdminAccountController(
             UserAccountService userAccountService) {
         this.userAccountService = userAccountService;

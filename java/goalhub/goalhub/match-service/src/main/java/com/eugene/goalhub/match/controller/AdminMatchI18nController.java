@@ -20,10 +20,28 @@ import java.util.List;
 @RequestMapping("/internal/admin/matchi18n")
 public class AdminMatchI18nController {
 
+    /**
+     * 后台联赛国际化服务。
+     */
     private final AdminLeagueI18nService adminLeagueI18nService;
+
+    /**
+     * 后台比赛国际化服务。
+     */
     private final AdminMatchI18nService adminMatchI18nService;
+
+    /**
+     * 后台球队国际化服务。
+     */
     private final AdminTeamI18nService adminTeamI18nService;
 
+    /**
+     * 创建内部后台赛事国际化管理接口实例。
+     *
+     * @param adminLeagueI18nService 后台联赛国际化服务
+     * @param adminMatchI18nService  后台比赛国际化服务
+     * @param adminTeamI18nService   后台球队国际化服务
+     */
     public AdminMatchI18nController(AdminLeagueI18nService adminLeagueI18nService,
                                     AdminMatchI18nService adminMatchI18nService,
                                     AdminTeamI18nService adminTeamI18nService) {

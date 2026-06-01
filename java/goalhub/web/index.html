@@ -1,14 +1,14 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <title>GoalHub | 后台首页</title>
+  <title>GoalHub | 管理后台</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <meta name="color-scheme" content="light dark" />
   <meta name="theme-color" content="#007bff" media="(prefers-color-scheme: light)" />
   <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
-  <meta name="title" content="GoalHub | 后台首页" />
+  <meta name="title" content="GoalHub | 管理后台" />
   <meta name="author" content="GoalHub" />
   <meta name="description" content="GoalHub 管理后台" />
   <meta name="keywords" content="goalhub, admin" />
@@ -24,6 +24,12 @@
   <link rel="stylesheet" href="./css/adminlte.css" />
   <script src="js/auth.js"></script>
   <style>
+    html,
+    body,
+    .app-wrapper {
+      height: 100%;
+    }
+
     .app-sidebar .sidebar-menu .nav-link {
       display: flex;
       align-items: center;
@@ -32,6 +38,38 @@
     .app-sidebar .sidebar-menu .nav-link p {
       margin: 0 0 0 .5rem;
       white-space: nowrap;
+    }
+
+    .app-main {
+      min-height: 0;
+    }
+
+    .app-frame-wrap {
+      height: calc(100vh - 57px);
+      min-height: 0;
+      background: var(--bs-tertiary-bg);
+    }
+
+    .app-frame {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: var(--bs-tertiary-bg);
+    }
+
+    .app-frame-loading {
+      position: absolute;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(248, 249, 250, .72);
+      z-index: 2;
+    }
+
+    .app-frame-wrap.is-loading .app-frame-loading {
+      display: flex;
     }
   </style>
 </head>
@@ -49,7 +87,6 @@
         </ul>
 
         <ul class="navbar-nav ms-auto">
-
           <li class="nav-item">
             <a class="nav-link" href="#" data-lte-toggle="fullscreen">
               <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
@@ -75,10 +112,10 @@
               </li>
             </ul>
           </li>
-
         </ul>
       </div>
     </nav>
+
     <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
       <div class="sidebar-brand">
         <a href="index.html" class="brand-link">
@@ -89,163 +126,28 @@
       <div class="sidebar-wrapper">
         <nav class="mt-2">
           <ul class="nav nav-pills nav-sidebar flex-column sidebar-menu" data-lte-toggle="treeview" role="menu"
-            aria-label="主导航" data-accordion="false" id="navigation">
-          </ul>
+            aria-label="主导航" data-accordion="false" id="navigation"></ul>
         </nav>
       </div>
     </aside>
+
     <main class="app-main">
-      <div class="app-content-header">
-        <div class="container-fluid">
-
+      <div class="app-frame-wrap position-relative" id="app-frame-wrap">
+        <div class="app-frame-loading">
+          <div class="spinner-border text-primary" role="status" aria-label="页面加载中"></div>
         </div>
-      </div>
-      <div class="app-content">
-        <div class="container-fluid">
-
-        </div>
+        <iframe id="app-frame" class="app-frame" title="GoalHub 功能页面"></iframe>
       </div>
     </main>
-    <footer class="app-footer">
-      <div class="float-end d-none d-sm-inline">GoalHub 管理后台</div>
-      <strong>Copyright &copy; 2026&nbsp;<span class="text-decoration-none">GoalHub</span>.</strong> All rights reserved.
-    </footer>
   </div>
+
   <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js"
     crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
     crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
   <script src="./js/adminlte.js"></script>
-
-  <script>
-    const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';
-    const Default = { scrollbarTheme: 'os-theme-light', scrollbarAutoHide: 'leave', scrollbarClickScroll: true };
-    document.addEventListener('DOMContentLoaded', function () {
-      const sidebarWrapper = document.querySelector(SELECTOR_SIDEBAR_WRAPPER);
-      if (sidebarWrapper && OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined) {
-        OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
-          scrollbars: { theme: Default.scrollbarTheme, autoHide: Default.scrollbarAutoHide, clickScroll: Default.scrollbarClickScroll },
-        });
-      }
-    });
-  </script>
-  <script>
-    (function () {
-      const auth = window.GoalHubAuth;
-      const LOGIN_PAGE = 'login.html';
-
-      function getToken() { return auth.getToken(); }
-      const token = getToken();
-      if (!token) { location.href = LOGIN_PAGE; return; }
-
-      async function fetchMenus() {
-        const res = await auth.authFetch('/admin/auth/menus');
-        if (!res.ok) throw new Error('菜单加载失败');
-        const data = await res.json();
-        return Array.isArray(data) ? data : (data.data || []);
-      }
-
-      // ★ 关键：只往“侧边栏里的”#navigation 塞节点，防止同名 id 抢占
-      function renderMenus(menus) {
-        const root = document.querySelector('aside.app-sidebar #navigation'); // ★
-        if (!root) return;
-        root.innerHTML = '';
-
-        const createItem = (node) => {
-          const hasChildren = Array.isArray(node.children) && node.children.length > 0;
-          const li = document.createElement('li');
-          li.className = 'nav-item';
-
-          if (!hasChildren) {
-            const path = node.path || '#';
-            li.innerHTML = `
-              <a href="${path}" class="nav-link${location.pathname.endsWith('/' + path) ? ' active' : ''}">
-                <i class="nav-icon ${node.icon || 'bi bi-speedometer'}"></i>
-                <p>${node.name}</p>
-              </a>`;
-            return li;
-          }
-
-          li.innerHTML = `
-            <a href="#" class="nav-link">
-              <i class="nav-icon ${node.icon || 'bi bi-folder'}"></i>
-              <p>${node.name} <i class="nav-arrow bi bi-chevron-right"></i></p>
-            </a>`;
-          const ul = document.createElement('ul');
-          ul.className = 'nav nav-treeview';
-          node.children.forEach(ch => ul.appendChild(createItem(ch)));
-          li.appendChild(ul);
-          return li;
-        };
-
-        menus.forEach(m => root.appendChild(createItem(m)));
-      }
-      // ★ END
-
-      function jumpDefault(menus) {
-        const flat = JSON.stringify(menus);
-        if ((flat.includes('"/index.html"') || flat.includes('"/dashboard"')) && location.pathname === '/') {
-          location.replace('/index.html');
-        }
-      }
-
-      fetchMenus()
-        .then(m => { renderMenus(m || []); jumpDefault(m || []); })
-        .catch(e => { console.warn(e); });
-    })();
-  </script>
-  <script>
-    (function () {
-      // —— 取 token（跟你菜单那套一致）
-      const LOGIN_PAGE = 'login.html';
-      const token = localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
-      const AUTH_HEADERS = token ? { 'Authorization': 'Bearer ' + token } : {};
-
-      // —— DOM
-      const $name = document.getElementById('user-name');
-      const $title = document.getElementById('user-title');
-      const $since = document.getElementById('user-since');
-      const $av1 = document.getElementById('user-avatar');
-      const $av2 = document.getElementById('user-avatar-large');
-      const $out = document.getElementById('btn-signout');
-
-      function setProfile(p = {}) {
-        const n = p.nickname || p.fullName || p.realName || p.username || '管理员';
-        const role = Number(p.isSuperAdmin) === 1 ? 'Super Admin' : 'Admin';
-        const sinceTxt = p.memberSince
-          ? `登录时间 ${new Date(p.memberSince).toLocaleDateString()}`
-          : '今日登录';
-
-        if ($name) $name.textContent = n;
-        if ($title) {
-          $title.innerHTML = `${n} - ${role} <small id="user-since">${sinceTxt}</small>`;
-        }
-        if ($since) $since.textContent = sinceTxt;
-
-        // 头像：优先接口返回，否则用默认头像
-        const avatar = p.avatarUrl || p.avatar || 'assets/img/default-avatar.jpg';
-        if ($av1) $av1.src = avatar;
-        if ($av2) $av2.src = avatar;
-      }
-
-      async function loadProfile() {
-        const storedUser = JSON.parse(localStorage.getItem('adminUser') || sessionStorage.getItem('adminUser') || 'null');
-        setProfile(storedUser || {});
-      }
-
-      // —— 退出登录
-      $out?.addEventListener('click', () => {
-        window.GoalHubAuth?.toLogin ? window.GoalHubAuth.toLogin() : location.href = LOGIN_PAGE;
-      });
-
-      loadProfile();
-    })();
-  </script>
+  <script src="./js/app-shell.js"></script>
 </body>
 
 </html>
-
-
-
-

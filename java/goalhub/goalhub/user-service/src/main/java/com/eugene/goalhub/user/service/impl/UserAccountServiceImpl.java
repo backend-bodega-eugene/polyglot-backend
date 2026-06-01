@@ -25,10 +25,22 @@ import java.util.stream.Collectors;
 public class UserAccountServiceImpl
         implements UserAccountService {
 
+    /**
+     * 用户账户 Mapper。
+     */
     private final UserAccountMapper userAccountMapper;
 
+    /**
+     * 账户流水 Mapper。
+     */
     private final AccountTransactionMapper accountTransactionMapper;
 
+    /**
+     * 创建用户账户服务实现。
+     *
+     * @param userAccountMapper        用户账户 Mapper
+     * @param accountTransactionMapper 账户流水 Mapper
+     */
     public UserAccountServiceImpl(
             UserAccountMapper userAccountMapper,
             AccountTransactionMapper accountTransactionMapper) {
@@ -246,6 +258,10 @@ public class UserAccountServiceImpl
     @Transactional(rollbackFor = Exception.class)
     public void adminSubBalance(
             AdminAccountBalanceChangeRequest request) {
+
+        if (request.getAmount() == null) {
+            throw new BusinessException(ResultCode.ACCOUNT_CHANGE_AMOUNT_NOT_NULL);
+        }
 
         changeBalance(
                 request.getAccountId(),

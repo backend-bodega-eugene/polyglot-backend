@@ -23,8 +23,16 @@ import response.Result;
 @RequestMapping("/admin/logs")
 public class AdminLogController {
 
+    /**
+     * 日志查询服务。
+     */
     private final GoalhubLogQueryService goalhubLogQueryService;
 
+    /**
+     * 创建后台日志查询接口实例。
+     *
+     * @param goalhubLogQueryService 日志查询服务
+     */
     public AdminLogController(GoalhubLogQueryService goalhubLogQueryService) {
         this.goalhubLogQueryService = goalhubLogQueryService;
     }

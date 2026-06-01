@@ -22,6 +22,11 @@ public class AdminAppUserController {
      */
     private final AdminAppUserService adminAppUserService;
 
+    /**
+     * 创建后台应用用户管理接口实例。
+     *
+     * @param adminAppUserService 应用用户管理服务
+     */
     public AdminAppUserController(AdminAppUserService adminAppUserService) {
         this.adminAppUserService = adminAppUserService;
     }

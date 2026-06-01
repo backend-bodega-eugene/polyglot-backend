@@ -25,6 +25,11 @@ public class AdminMenuController {
      */
     private final AdminMenuService adminMenuService;
 
+    /**
+     * 创建后台菜单管理接口实例。
+     *
+     * @param adminMenuService 菜单业务服务
+     */
     public AdminMenuController(AdminMenuService adminMenuService) {
         this.adminMenuService = adminMenuService;
     }

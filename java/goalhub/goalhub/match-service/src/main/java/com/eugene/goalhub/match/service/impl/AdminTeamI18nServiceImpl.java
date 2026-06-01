@@ -15,8 +15,16 @@ import java.util.List;
 @Service
 public class AdminTeamI18nServiceImpl implements AdminTeamI18nService {
 
+    /**
+     * 球队国际化 Mapper。
+     */
     private final SoccerTeamI18nMapper soccerTeamI18nMapper;
 
+    /**
+     * 创建后台球队国际化配置管理服务实现。
+     *
+     * @param soccerTeamI18nMapper 球队国际化 Mapper
+     */
     public AdminTeamI18nServiceImpl(SoccerTeamI18nMapper soccerTeamI18nMapper) {
         this.soccerTeamI18nMapper = soccerTeamI18nMapper;
     }

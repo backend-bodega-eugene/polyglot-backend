@@ -16,9 +16,17 @@ import response.Result;
 @RequestMapping("/admin/account")
 public class AdminUserAccountController {
 
+    /**
+     * 后台用户账户服务。
+     */
     private final AdminUserAccountService
             adminUserAccountService;
 
+    /**
+     * 创建后台用户账户管理接口实例。
+     *
+     * @param adminUserAccountService 后台用户账户服务
+     */
     public AdminUserAccountController(
             AdminUserAccountService adminUserAccountService) {
 

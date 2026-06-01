@@ -23,6 +23,10 @@
 
   function toLogin() {
     clearLogin();
+    if (window.self !== window.top) {
+      window.top.location.replace(LOGIN_PAGE);
+      return;
+    }
     location.replace(LOGIN_PAGE);
   }
 
@@ -67,4 +71,15 @@
   if (!/\/?login\.html$/i.test(location.pathname)) {
     window.GoalHubAuth.requireLogin();
   }
+
+  (function routeStandalonePagesThroughShell() {
+    const file = location.pathname.split('/').pop() || '';
+    const embedded = new URLSearchParams(location.search).get('embedded') === '1' || window.self !== window.top;
+    if (embedded || !file || file === 'index.html' || file === LOGIN_PAGE) return;
+    if (!getToken()) return;
+    if (!/\.html$/i.test(file)) return;
+
+    const targetPage = `${file}${location.search || ''}${location.hash || ''}`;
+    location.replace(`index.html?page=${encodeURIComponent(targetPage)}`);
+  })();
 })();

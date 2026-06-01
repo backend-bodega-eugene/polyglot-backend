@@ -8,7 +8,8 @@ import response.Result;
 /**
  * user-service 内部管理接口 Feign 客户端。
  */
-@FeignClient(name = "user-service")
+@FeignClient(name = "user-service",
+        contextId = "UserServiceClient")
 public interface UserServiceClient {
 
     /**

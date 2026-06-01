@@ -46,6 +46,12 @@ spring:
               filters:
                 - StripPrefix=1
             # 后台管理服务路由，/admin/** 转发到 admin-service。
+            - id: order-service
+              uri: lb://order-service
+              predicates:
+                - Path=/api/order/**
+              filters:
+                - StripPrefix=1
             - id: admin-service
               uri: lb://admin-service
               predicates:

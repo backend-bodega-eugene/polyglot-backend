@@ -18,8 +18,16 @@ import java.time.LocalDateTime;
 @Service
 public class MatchResultServiceImpl implements MatchResultService {
 
+    /**
+     * 比赛结果 Mapper。
+     */
     private final MatchResultMapper matchResultMapper;
 
+    /**
+     * 创建比赛结果管理服务实现。
+     *
+     * @param matchResultMapper 比赛结果 Mapper
+     */
     public MatchResultServiceImpl(
             MatchResultMapper matchResultMapper) {
         this.matchResultMapper = matchResultMapper;

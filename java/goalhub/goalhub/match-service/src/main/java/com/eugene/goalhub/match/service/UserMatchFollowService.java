@@ -3,6 +3,7 @@ package com.eugene.goalhub.match.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.eugene.goalhub.match.entity.UserMatchFollow;
+import dto.UserMatchFollowResponse;
 
 import java.util.List;
 
@@ -42,5 +43,5 @@ public interface UserMatchFollowService extends IService<UserMatchFollow> {
      * @param userId 用户 ID
      * @return 关注记录列表
      */
-    List<UserMatchFollow> listMyFollows(Long userId);
+    List<UserMatchFollowResponse> listMyFollows(Long userId);
 }

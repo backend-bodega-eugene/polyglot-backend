@@ -171,7 +171,7 @@ public interface SoccerMatchMapper extends BaseMapper<SoccerMatchEntity> {
             m.status
         ORDER BY COUNT(f.match_id) DESC,
                  m.scheduled_start_time_utc ASC
-        LIMIT ${req.limit}
+        LIMIT #{req.limit}
         """)
     List<SoccerMatchListResponse> selectHotMatches(
             @Param("req") SoccerHotMatchRequest request

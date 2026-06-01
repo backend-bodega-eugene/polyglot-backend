@@ -17,6 +17,7 @@
         <module>match-service</module>
         <module>admin-service</module>
         <module>boot</module>
+        <module>order-service</module>
     </modules>
 
     <properties>

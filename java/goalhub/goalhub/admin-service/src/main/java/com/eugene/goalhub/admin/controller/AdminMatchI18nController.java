@@ -17,8 +17,16 @@ import java.util.List;
 @RequestMapping("/admin/matchi18n")
 public class AdminMatchI18nController {
 
+    /**
+     * 后台赛事国际化服务。
+     */
     private final AdminMatchI18nService adminMatchI18nService;
 
+    /**
+     * 创建后台赛事国际化管理接口实例。
+     *
+     * @param adminMatchI18nService 后台赛事国际化服务
+     */
     public AdminMatchI18nController(AdminMatchI18nService adminMatchI18nService) {
         this.adminMatchI18nService = adminMatchI18nService;
     }

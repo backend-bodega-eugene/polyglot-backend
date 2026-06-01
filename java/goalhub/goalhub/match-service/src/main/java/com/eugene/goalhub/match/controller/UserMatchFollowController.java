@@ -1,7 +1,7 @@
 package com.eugene.goalhub.match.controller;
 
-import com.eugene.goalhub.match.entity.UserMatchFollow;
 import com.eugene.goalhub.match.service.UserMatchFollowService;
+import dto.UserMatchFollowResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,6 +23,11 @@ public class UserMatchFollowController {
      */
     private final UserMatchFollowService userMatchFollowService;
 
+    /**
+     * 创建用户赛事关注接口实例。
+     *
+     * @param userMatchFollowService 用户赛事关注服务
+     */
     public UserMatchFollowController(UserMatchFollowService userMatchFollowService) {
         this.userMatchFollowService = userMatchFollowService;
     }
@@ -85,7 +90,7 @@ public class UserMatchFollowController {
      */
     @Operation(summary = "查询我的赛事关注列表", description = "查询当前登录用户关注的足球赛事记录列表。")
     @GetMapping("/my")
-    public Result<List<UserMatchFollow>> myFollows(
+    public Result<List<UserMatchFollowResponse>> myFollows(
             @Parameter(description = "当前登录用户 ID，由网关写入请求头", required = true)
             @RequestHeader("X-User-Id") Long userId) {
         return Result.success(userMatchFollowService.listMyFollows(userId));

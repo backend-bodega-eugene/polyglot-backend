@@ -16,8 +16,16 @@ import response.Result;
 @RequestMapping("/internal/admin/matchresult")
 public class InternalAdminMatchResultController {
 
+    /**
+     * 比赛结果服务。
+     */
     private final MatchResultService matchResultService;
 
+    /**
+     * 创建内部后台比赛结果管理接口实例。
+     *
+     * @param matchResultService 比赛结果服务
+     */
     public InternalAdminMatchResultController(
             MatchResultService matchResultService) {
         this.matchResultService = matchResultService;

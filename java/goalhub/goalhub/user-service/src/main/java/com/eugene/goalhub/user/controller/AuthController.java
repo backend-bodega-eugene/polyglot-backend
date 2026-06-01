@@ -26,6 +26,11 @@ public class AuthController {
      */
     private final UserService userService;
 
+    /**
+     * 创建用户认证接口。
+     *
+     * @param userService 用户服务
+     */
     public AuthController(UserService userService) {
         this.userService = userService;
     }

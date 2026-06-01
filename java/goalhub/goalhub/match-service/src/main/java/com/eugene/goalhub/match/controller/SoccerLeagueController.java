@@ -26,6 +26,11 @@ public class SoccerLeagueController {
      */
     private final SoccerLeagueService soccerLeagueService;
 
+    /**
+     * 创建足球联赛查询接口实例。
+     *
+     * @param soccerLeagueService 足球联赛服务
+     */
     public SoccerLeagueController(SoccerLeagueService soccerLeagueService) {
         this.soccerLeagueService = soccerLeagueService;
     }

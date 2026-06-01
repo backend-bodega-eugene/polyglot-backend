@@ -1,6 +1,7 @@
 (function () {
   const auth = window.GoalHubAuth;
   const config = window.GoalHubLogPage || {};
+  const embedded = new URLSearchParams(location.search).get('embedded') === '1' || window.self !== window.top;
   const state = {
     pageIndex: 1,
     pageSize: 10,
@@ -19,6 +20,30 @@
 
   const ok = (data) => data && (data.code === 200 || data.code === 0 || data.success === true);
   const messageOf = (data, fallback) => data?.message || data?.msg || fallback;
+
+  function applyEmbeddedLayout() {
+    document.body.classList.add('gh-embedded-page');
+    if (document.getElementById('gh-embedded-style')) return;
+
+    const style = document.createElement('style');
+    style.id = 'gh-embedded-style';
+    style.textContent = `
+      html, body { min-height: 0 !important; background: var(--bs-tertiary-bg, #f8f9fa) !important; }
+      body.gh-embedded-page { overflow: auto !important; }
+      body.gh-embedded-page > .app-wrapper { display: block !important; min-height: 0 !important; }
+      body.gh-embedded-page .app-header,
+      body.gh-embedded-page .app-sidebar,
+      body.gh-embedded-page .app-footer { display: none !important; }
+      body.gh-embedded-page .app-main {
+        display: block !important;
+        min-height: 0 !important;
+        width: 100% !important;
+        margin-left: 0 !important;
+        padding: 0 !important;
+      }
+    `;
+    document.head.appendChild(style);
+  }
 
   function fmtTime(value) {
     if (!value) return '-';
@@ -69,8 +94,9 @@
 
       if (!hasChildren) {
         const path = node.path || '#';
+        const href = path === '#' ? '#' : `index.html?page=${encodeURIComponent(path)}`;
         li.innerHTML = `
-          <a href="${esc(path)}" class="nav-link${path !== '#' && location.pathname.endsWith('/' + path) ? ' active' : ''}">
+          <a href="${esc(href)}" class="nav-link${path !== '#' && location.pathname.endsWith('/' + path) ? ' active' : ''}">
             <i class="nav-icon ${esc(node.icon || 'bi bi-speedometer')}"></i>
             <p>${esc(node.name || '')}</p>
           </a>`;
@@ -266,17 +292,20 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
+    if (embedded) applyEmbeddedLayout();
     document.getElementById('page-title').textContent = config.title || '日志查询';
     document.title = `GoalHub | ${config.title || '日志查询'}`;
-    initSidebarScroll();
-    renderProfile();
+    if (!embedded) {
+      initSidebarScroll();
+      renderProfile();
+    }
     bindLogEvents();
 
     const pageSize = document.getElementById('f-pageSize');
     if (pageSize) pageSize.value = String(state.pageSize);
     state.filters = readFilters();
 
-    loadSidebarMenus().then(renderSidebarMenus).catch((error) => console.warn(error));
+    if (!embedded) loadSidebarMenus().then(renderSidebarMenus).catch((error) => console.warn(error));
     reload();
   });
 })();
