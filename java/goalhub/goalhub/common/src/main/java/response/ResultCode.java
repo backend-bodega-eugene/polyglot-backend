@@ -58,6 +58,27 @@ public enum ResultCode {
     ORDER_USER_ACCOUNT_FEIGN_RESULT_FAIL(10049,"order.user.account.feign.result.fail"),
     ACCOUNT_CHANGE_AMOUNT_NOT_NULL(10050,"account.change.amount.not.null"),
     USER_DISABLED(10051,"user.disabled"),
+    CAPTCHA_NOT_NULL(10052,"captcha.not.null"),
+    CAPTCHA_EXPIRED(10053,"captcha.expired"),
+    CAPTCHA_ERROR(10054,"captcha.error"),
+    REGISTER_TOO_FREQUENT(10055,"register.too.frequent"),
+    LOGIN_TOO_FREQUENT(10056,"login.too.frequent"),
+    LOGIN_ACCOUNT_LOCKED(10057,"login.account.locked"),
+    USER_ID_NOT_NULL(10058,"user.id.not.null"),
+    BET_ORDER_REQUEST_NOT_NULL(10059,"bet.order.request.not.null"),
+    MATCH_MARKET_OPTION_ID_NOT_NULL(10060,"match.market.option.id.not.null"),
+    BET_AMOUNT_INVALID(10061,"bet.amount.invalid"),
+    ORDER_MATCH_FEIGN_RESULT_NULL(10062,"order.match.feign.result.null"),
+    ORDER_MATCH_FEIGN_RESULT_FAIL(10063,"order.match.feign.result.fail"),
+    ORDER_MATCH_SNAPSHOT_NOT_FOUND(10064,"order.match.snapshot.not.found"),
+    BET_OPTION_NOT_VISIBLE(10065,"bet.option.not.visible"),
+    BET_OPTION_NOT_OPEN(10066,"bet.option.not.open"),
+    BET_ODDS_INVALID(10067,"bet.odds.invalid"),
+    MATCH_NOT_ALLOW_BET(10068,"match.not.allow.bet"),
+    ORDER_ACCOUNT_FEIGN_RESULT_NULL(10069,"order.account.feign.result.null"),
+    ORDER_ACCOUNT_FEIGN_RESULT_FAIL(10070,"order.account.feign.result.fail"),
+    ORDER_ACCOUNT_DEDUCT_RESULT_NULL(10071,"order.account.deduct.result.null"),
+
     FATHER_NOT_OWN(10100,"father.not.own");
 
    // SOCCER_NOT_EXISTS(10009,"没有关注");

@@ -10,6 +10,10 @@ spring:
       discovery:
         # Nacos 服务发现地址。
         server-addr: 127.0.0.1:8848
+  data:
+    redis:
+      host: localhost
+      port: 6379
   datasource:
     # 用户服务数据库连接。
     url: jdbc:mysql://127.0.0.1:3306/goalhub_user?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Bangkok

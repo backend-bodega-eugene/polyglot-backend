@@ -46,9 +46,9 @@ public class GatewayJwtAuthFilter implements GlobalFilter, Ordered {
     private static final List<String> WHITE_LIST = List.of(
             "/api/user/login",
             "/api/user/register",
-
+            "/api/user/captcha",
             "/admin/auth/login",
-            "/admin/test/ping",
+           // "/admin/test/ping",
 
             // Swagger/OpenAPI 文档路径。
             "/swagger-ui/**",

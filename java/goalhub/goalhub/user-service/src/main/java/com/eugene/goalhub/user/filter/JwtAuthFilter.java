@@ -30,8 +30,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private static final List<String> WHITE_LIST = List.of(
             "/user/register",
             "/user/login",
+            "/user/captcha",
             "/internal/admin/users/**",
             "/internal/admin/account/**",
+            "/internal/order/**",
             // Swagger/OpenAPI 文档路径。
             "/swagger-ui.html",
             "/swagger-ui/**",

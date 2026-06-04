@@ -10,15 +10,15 @@ import lombok.Data;
 @Data
 public class LoginRequest {
 
-    /**
-     * 登录账号，可为用户名、邮箱或手机号。
-     */
     @Schema(description = "登录账号，可为用户名、邮箱或手机号", example = "zhangsan")
     private String account;
 
-    /**
-     * 登录密码。
-     */
     @Schema(description = "登录密码", example = "123456")
     private String password;
+
+    @Schema(description = "验证码 key")
+    private String captchaKey;
+
+    @Schema(description = "验证码内容", example = "1234")
+    private String captchaCode;
 }

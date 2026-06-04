@@ -35,5 +35,7 @@ public interface OrderUserAccountFeignClient {
     Result<Void> subBalance(
             @RequestBody AdminAccountBalanceChangeRequest request);
 
-
+    @PostMapping("/internal/order/account/deductdefaultusdt")
+    Result<DeductDefaultAccountResponse> deductDefaultUsdt(
+            @RequestBody DeductDefaultAccountRequest request);
 }

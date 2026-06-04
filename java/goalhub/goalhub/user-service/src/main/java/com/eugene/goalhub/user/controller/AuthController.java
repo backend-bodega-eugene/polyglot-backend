@@ -1,16 +1,16 @@
 package com.eugene.goalhub.user.controller;
 
+import com.eugene.goalhub.user.service.CaptchaService;
 import com.eugene.goalhub.user.service.UserService;
+import dto.CaptchaResponse;
 import dto.LoginRequest;
 import dto.LoginResponse;
 import dto.RegisterRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.*;
 import response.Result;
 
 /**
@@ -27,39 +27,79 @@ public class AuthController {
     private final UserService userService;
 
     /**
-     * 创建用户认证接口。
-     *
-     * @param userService 用户服务
+     * 验证码服务。
      */
-    public AuthController(UserService userService) {
+    private final CaptchaService captchaService;
+
+    /**
+     * 构造函数。
+     */
+    public AuthController(UserService userService,
+                          CaptchaService captchaService) {
         this.userService = userService;
+        this.captchaService = captchaService;
+    }
+
+    /**
+     * 获取图形验证码。
+     */
+    @Operation(summary = "获取图形验证码")
+    @GetMapping("/captcha")
+    public Result<CaptchaResponse> captcha() {
+        return Result.success(captchaService.generate());
     }
 
     /**
      * 用户注册。
-     *
-     * @param request 注册参数
-     * @return 空结果
      */
-    @Operation(summary = "用户注册", description = "用户使用用户名、密码和昵称注册账号。")
+    @Operation(summary = "用户注册")
     @PostMapping("/register")
-    public Result<Void> register(@Parameter(description = "用户注册参数", required = true)
-                                 @RequestBody RegisterRequest request) {
-        userService.register(request);
+    public Result<Void> register(
+            @Parameter(description = "用户注册参数", required = true)
+            @RequestBody RegisterRequest request,
+            HttpServletRequest httpServletRequest) {
+
+        String clientIp = getClientIp(httpServletRequest);
+
+        userService.register(request, clientIp);
+
         return Result.success();
     }
 
     /**
      * 用户登录。
-     *
-     * @param request 登录参数
-     * @return 登录结果，包含 token
      */
-    @Operation(summary = "用户登录", description = "用户使用账号和密码登录，登录成功后返回 token。")
+    @Operation(summary = "用户登录")
     @PostMapping("/login")
-    public Result<LoginResponse> login(@Parameter(description = "用户登录参数", required = true)
-                                       @RequestBody LoginRequest request) {
-        return Result.success(userService.login(request));
+    public Result<LoginResponse> login(
+            @Parameter(description = "用户登录参数", required = true)
+            @RequestBody LoginRequest request,
+            HttpServletRequest httpServletRequest) {
+
+        String clientIp = getClientIp(httpServletRequest);
+
+        return Result.success(
+                userService.login(request, clientIp)
+        );
     }
 
+    /**
+     * 获取客户端IP。
+     */
+    private String getClientIp(HttpServletRequest request) {
+
+        String ip = request.getHeader("X-Forwarded-For");
+
+        if (ip != null && !ip.isBlank()) {
+            return ip.split(",")[0].trim();
+        }
+
+        ip = request.getHeader("X-Real-IP");
+
+        if (ip != null && !ip.isBlank()) {
+            return ip;
+        }
+
+        return request.getRemoteAddr();
+    }
 }

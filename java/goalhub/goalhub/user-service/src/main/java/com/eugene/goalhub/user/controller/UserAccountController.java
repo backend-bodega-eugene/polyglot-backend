@@ -18,7 +18,7 @@ import java.util.List;
  */
 @Tag(name = "用户账户", description = "用户账户相关接口")
 @RestController
-@RequestMapping("/account")
+@RequestMapping("/user/account")
 public class UserAccountController {
 
     /**

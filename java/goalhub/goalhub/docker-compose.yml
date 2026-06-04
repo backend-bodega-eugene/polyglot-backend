@@ -56,3 +56,11 @@ services:
     volumes:
       - ./docker/mongodb/data:/data/db
       - ./docker/mongodb/logs:/var/log/mongodb
+  redis:
+    image: redis:7.2
+    container_name: goalhub-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - ./data/redis:/data

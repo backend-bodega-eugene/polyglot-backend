@@ -25,9 +25,17 @@ public class CorsConfig {
         // 允许跨域请求携带 Cookie 或认证信息。
         config.setAllowCredentials(true);
 
-        // 允许前端开发环境访问网关。
-        //config.addAllowedOriginPattern("*");
+        // 保留你的后台管理系统端口
         config.addAllowedOrigin("http://localhost:5173");
+
+        // 添加这些来支持前端
+        config.addAllowedOrigin("http://localhost");      // 不带端口
+        config.addAllowedOrigin("http://localhost:80");   // 明确指定端口 80
+        config.addAllowedOrigin("http://127.0.0.1");      // IP 形式
+        config.addAllowedOrigin("http://127.0.0.1:80");
+
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
 
         // 允许所有请求头。
         config.addAllowedHeader("*");

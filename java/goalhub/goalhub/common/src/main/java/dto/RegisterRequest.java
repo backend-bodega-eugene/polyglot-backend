@@ -10,22 +10,18 @@ import lombok.Data;
 @Data
 public class RegisterRequest {
 
-    /**
-     * 用户名。
-     */
     @Schema(description = "用户名", example = "zhangsan")
     private String username;
 
-    /**
-     * 登录密码。
-     */
     @Schema(description = "登录密码", example = "123456")
     private String password;
 
-    /**
-     * 昵称。
-     */
     @Schema(description = "昵称", example = "张三")
     private String nickname;
 
+    @Schema(description = "验证码 key")
+    private String captchaKey;
+
+    @Schema(description = "验证码内容", example = "1234")
+    private String captchaCode;
 }

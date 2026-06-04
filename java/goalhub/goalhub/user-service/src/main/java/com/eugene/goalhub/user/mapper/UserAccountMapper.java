@@ -81,4 +81,21 @@ public interface UserAccountMapper extends BaseMapper<UserAccountEntity> {
         """)
     UserAccountEntity selectByIdForUpdate(
             @Param("accountId") Long accountId);
+    /**
+     * 根据用户 ID 和币种查询账户并加行锁。
+     *
+     * @param userId 用户 ID
+     * @param currencyCode 币种编码
+     * @return 用户账户实体
+     */
+    @Select("""
+        SELECT *
+        FROM user_accounts
+        WHERE user_id = #{userId}
+          AND currency_code = #{currencyCode}
+        FOR UPDATE
+        """)
+    UserAccountEntity selectByUserIdAndCurrencyForUpdate(
+            @Param("userId") Long userId,
+            @Param("currencyCode") String currencyCode);
 }
