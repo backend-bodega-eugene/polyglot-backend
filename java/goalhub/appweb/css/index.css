@@ -1,0 +1,789 @@
+/* ========== 首页特定样式 ========== */
+
+/* 头部样式 */
+.index-header {
+    background: white;
+    padding-top: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    font-size: 18px;
+}
+
+.back-btn {
+    cursor: pointer;
+    color: #333;
+    font-weight: bold;
+}
+
+.balance {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #ff9800;
+}
+
+/* 主导航标签 */
+.nav-tabs {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    padding: 0 10px;
+    margin-bottom: 10px;
+}
+
+.nav-tabs::-webkit-scrollbar {
+    height: 3px;
+}
+
+.nav-tabs::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 2px;
+}
+
+.nav-tab {
+    padding: 8px 15px;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 13px;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+    color: #666;
+}
+
+.nav-tab.active {
+    background: #2196F3;
+    color: white;
+    border-color: #2196F3;
+}
+
+.nav-tab:hover {
+    border-color: #2196F3;
+    color: #2196F3;
+}
+
+
+
+/* 体育分类导航 */
+.sports-nav {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 10px 15px;
+    background: #f9f9f9;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.sports-nav::-webkit-scrollbar {
+    height: 3px;
+}
+
+.sports-nav::-webkit-scrollbar-thumb {
+    background: #ddd;
+}
+
+.nav-item {
+    padding: 8px 10px;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+    color: #666;
+}
+
+.nav-item.active {
+    background: #2196F3;
+    color: white;
+    border-color: #2196F3;
+}
+
+.search-input {
+    border: 1px solid #e0e0e0;
+    padding: 6px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    background: white;
+    width: 50px;
+}
+
+.search-input::placeholder {
+    color: #ccc;
+}
+
+/* 内容包装器 - 两列布局 */
+.content-wrapper {
+    display: flex;
+    gap: 0;
+    background: #f9f9f9;
+    min-height: 400px;
+    overflow-y: auto;
+}
+
+/* 联盟列表 - 左侧蓝色区域 */
+.leagues-section {
+    width: 80px;
+    background: white;
+    border-right: 1px solid #e0e0e0;
+    flex-shrink: 0;
+}
+
+.leagues-section .section-title {
+    padding: 10px;
+    background: #f5f5f5;
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+    border-bottom: 1px solid #e0e0e0;
+    font-weight: 600;
+}
+
+.leagues-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.league-item {
+    padding: 10px;
+    font-size: 12px;
+    color: #666;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.league-item:hover {
+    background: #f0f0f0;
+}
+
+.league-item.active {
+    background: #e3f2fd;
+    color: #2196F3;
+    border-left: 3px solid #2196F3;
+    font-weight: 600;
+}
+
+/* 赛事列表 - 右侧红色区域 */
+.matches-section {
+    flex: 1;
+    overflow-y: auto;
+    background: white;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background: #f5f5f5;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 13px;
+}
+
+.status-filter {
+    color: #666;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.status-filter.active {
+    background: white;
+    color: #2196F3;
+    font-weight: 600;
+}
+
+.sort-btn {
+    color: #999;
+    cursor: pointer;
+}
+
+/* 赛事列表项 */
+.matches-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.match-item {
+    padding: 12px 15px;
+    border-bottom: 1px solid #f0f0f0;
+    background: white;
+    transition: background 0.2s ease;
+}
+
+.match-item:hover {
+    background: #fafafa;
+}
+
+.match-time {
+    font-size: 12px;
+    color: #999;
+    margin-bottom: 8px;
+}
+
+.match-teams {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.team {
+    flex: 1;
+    font-size: 13px;
+    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.score {
+    font-size: 16px;
+    font-weight: bold;
+    color: #2196F3;
+    min-width: 25px;
+    text-align: center;
+}
+
+.odds-options {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+    overflow-x: auto;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+
+.odds-options::-webkit-scrollbar {
+    height: 2px;
+}
+
+.odds-options::-webkit-scrollbar-thumb {
+    background: #ddd;
+}
+
+.odd {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4px 8px;
+    background: #f0f0f0;
+    border-radius: 3px;
+    font-size: 11px;
+    min-width: 50px;
+    cursor: pointer;
+}
+
+.odds-market {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 120px;
+    max-width: 100%;
+    padding: 6px;
+    border: 1px solid #f0f0f0;
+    border-radius: 6px;
+    background: #fafafa;
+}
+
+.odds-market-title {
+    color: #555;
+    font-size: 12px;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.odds-market-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.odds-empty {
+    padding: 6px 8px;
+    color: #999;
+    font-size: 12px;
+}
+
+.odds-error {
+    color: #e74c3c;
+}
+
+.odd .label {
+    color: #666;
+    margin-bottom: 2px;
+}
+
+.odd .rate {
+    color: #2196F3;
+    font-weight: 600;
+}
+
+.odd.closed {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.odd-status {
+    margin-top: 2px;
+    color: #999;
+    font-size: 10px;
+}
+
+/* 下单弹出层 */
+.bet-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: none;
+}
+
+.bet-modal.active {
+    display: block;
+}
+
+.bet-modal-mask {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+}
+
+.bet-sheet {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: min(100%, 600px);
+    max-height: 92vh;
+    overflow-y: auto;
+    transform: translateX(-50%);
+    padding: 22px 26px 24px;
+    border-radius: 24px 24px 0 0;
+    background: white;
+    box-shadow: 0 -12px 30px rgba(0, 0, 0, 0.16);
+}
+
+.bet-close {
+    position: absolute;
+    top: -42px;
+    right: 14px;
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    color: #777;
+    font-size: 24px;
+    line-height: 28px;
+    cursor: pointer;
+}
+
+.bet-sheet-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.bet-type {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #2196F3;
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.bet-title {
+    flex: 1;
+    color: #2d3340;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.bet-balance {
+    padding: 6px 10px;
+    border-radius: 14px;
+    background: #f4f8ff;
+    color: #2196F3;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.bet-info {
+    padding: 14px;
+    border-radius: 12px;
+    background: #f8faff;
+}
+
+.bet-option-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.bet-option-name {
+    color: #2d3340;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.bet-market-name,
+.bet-match,
+.bet-time {
+    color: #73809a;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.bet-odds {
+    flex-shrink: 0;
+    color: #2d3340;
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.bet-amount-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    padding: 0 12px;
+    border: 1px solid #dfe6f0;
+    border-radius: 8px;
+    background: white;
+}
+
+.bet-amount-input {
+    flex: 1;
+    min-width: 0;
+    height: 42px;
+    border: none;
+    outline: none;
+    color: #2d3340;
+    font-size: 16px;
+}
+
+.bet-currency {
+    color: #73809a;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.bet-presets {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin: 12px 0;
+}
+
+.bet-preset {
+    height: 44px;
+    border: 1px solid #e1f2ff;
+    border-radius: 8px;
+    background: #f8fcff;
+    color: #2196F3;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.bet-summary {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    color: #73809a;
+    font-size: 12px;
+    margin-bottom: 10px;
+}
+
+.bet-summary strong {
+    color: #2196F3;
+}
+
+.bet-message {
+    min-height: 18px;
+    margin-bottom: 10px;
+    color: #73809a;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.bet-message.error {
+    color: #e74c3c;
+}
+
+.bet-message.success {
+    color: #18a058;
+}
+
+.bet-submit {
+    width: 100%;
+    height: 52px;
+    border: none;
+    border-radius: 26px;
+    background: #2196F3;
+    color: white;
+    font-size: 18px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 8px 18px rgba(33, 150, 243, 0.28);
+}
+
+.bet-submit:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.match-icons {
+    display: flex;
+    gap: 8px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.match-icons .icon {
+    padding: 4px;
+    border-radius: 3px;
+    transition: background 0.2s ease;
+}
+
+.match-icons .icon:hover {
+    background: #f0f0f0;
+}
+
+/* 赛果列表项 */
+.result-item {
+    padding-top: 10px;
+}
+
+.result-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.result-league {
+    min-width: 0;
+    color: #666;
+    font-size: 12px;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.result-status {
+    flex-shrink: 0;
+    padding: 2px 7px;
+    border-radius: 10px;
+    background: #eef6ff;
+    color: #2196F3;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.result-scoreboard {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: 10px;
+    margin: 8px 0;
+}
+
+.result-team {
+    min-width: 0;
+    color: #333;
+    font-size: 13px;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.result-team-home {
+    text-align: right;
+}
+
+.result-team-away {
+    text-align: left;
+}
+
+.result-score {
+    min-width: 58px;
+    padding: 5px 8px;
+    border-radius: 6px;
+    background: #2196F3;
+    color: white;
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.result-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-height: 0;
+}
+
+.result-stat {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 7px;
+    border-radius: 4px;
+    background: #f5f5f5;
+    color: #666;
+    font-size: 11px;
+}
+
+.result-stat-label {
+    color: #999;
+}
+
+.result-stat-score {
+    color: #333;
+    font-weight: 600;
+}
+
+/* 加载更多 */
+.load-more {
+    padding: 12px 15px;
+    text-align: center;
+    font-size: 13px;
+    color: #2196F3;
+    border-top: 1px solid #e0e0e0;
+    cursor: pointer;
+    background: #f9f9f9;
+}
+
+/* 底部菜单栏 */
+.index-footer {
+    display: flex;
+    justify-content: space-around;
+    background: white;
+    border-top: 1px solid #e0e0e0;
+    padding: 8px 0;
+    margin-top: auto;
+}
+
+.footer-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #ccc;
+    font-size: 12px;
+}
+
+.footer-item:hover,
+.footer-item.active {
+    color: #2196F3;
+}
+
+.footer-icon {
+    font-size: 18px;
+}
+
+/* 响应式设计 */
+@media (max-width: 600px) {
+    .content-wrapper {
+        flex-direction: column;
+    }
+
+    .leagues-section {
+        width: 100%;
+        display: flex;
+        overflow-x: auto;
+        border-right: none;
+        border-bottom: 1px solid #e0e0e0;
+        min-height: auto;
+    }
+
+    .leagues-list {
+        flex-direction: row;
+    }
+
+    .league-item {
+        padding: 10px 12px;
+        border-right: 1px solid #f0f0f0;
+        border-bottom: none;
+        border-left: none;
+    }
+
+    .league-item.active {
+        border-right: 3px solid #2196F3;
+        border-bottom: 3px solid #2196F3;
+        border-left: none;
+    }
+
+    .promo-section {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 400px) {
+    .nav-tabs,
+    .version-tabs,
+    .sports-nav {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    .match-teams {
+        gap: 5px;
+    }
+
+    .odds-options {
+        font-size: 10px;
+    }
+
+    .odd {
+        min-width: 45px;
+        padding: 3px 6px;
+    }
+
+    .index-footer {
+        padding: 6px 0;
+    }
+
+    .footer-item {
+        padding: 6px 8px;
+        gap: 2px;
+        font-size: 11px;
+    }
+
+    .footer-icon {
+        font-size: 16px;
+    }
+}

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在线客服 - GoalHub</title>
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        .service-content {
+            padding: 30px 20px;
+        }
+        .service-section {
+            margin-bottom: 30px;
+        }
+        .service-section h3 {
+            color: #1e3c72;
+            font-size: 18px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .service-section p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        .service-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid #1e3c72;
+            margin-bottom: 15px;
+        }
+        .service-info strong {
+            color: #1e3c72;
+        }
+        .service-action {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .service-btn {
+            padding: 12px 16px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .service-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(30, 60, 114, 0.3);
+        }
+        .service-btn.secondary {
+            background: #f0f0f0;
+            color: #666;
+            border: 1px solid #ddd;
+        }
+        .service-btn.secondary:hover {
+            background: #e8e8e8;
+            border-color: #bbb;
+        }
+        @media (max-width: 400px) {
+            .service-action {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">GoalHub</div>
+            <div class="subtitle">让每个目标都闪闪发光</div>
+        </div>
+
+        <div class="service-content">
+            <div class="service-section">
+                <h3>⏰ 在线客服时间</h3>
+                <div class="service-info">
+                    <p><strong>工作时间：</strong> 周一至周日 8:00 - 22:00</p>
+                    <p><strong>节假日：</strong> 8:00 - 20:00</p>
+                    <p><strong>应答时间：</strong> 一般在 5 分钟内回复</p>
+                </div>
+            </div>
+
+            <div class="service-section">
+                <h3>💬 联系方式</h3>
+                <div class="service-info">
+                    <p><strong>客服电话：</strong> 400-800-1234</p>
+                    <p><strong>电子邮箱：</strong> support@goalhub.com</p>
+                    <p><strong>微信客服：</strong> GoalHub_Service</p>
+                </div>
+            </div>
+
+            <div class="service-section">
+                <h3>❓ 常见问题</h3>
+                <div class="service-info">
+                    <p><strong>Q：如何重置密码？</strong></p>
+                    <p>A：在登录页面点击"忘记密码"，按照提示通过邮箱验证即可重置。</p>
+                </div>
+                <div class="service-info">
+                    <p><strong>Q：账号安全如何保障？</strong></p>
+                    <p>A：我们采用 SSL 加密、定期安全审计等多层保护措施。</p>
+                </div>
+                <div class="service-info">
+                    <p><strong>Q：如何修改个人信息？</strong></p>
+                    <p>A：登录后进入"个人中心"即可修改用户名、昵称等信息。</p>
+                </div>
+            </div>
+
+            <div class="service-section">
+                <h3>🎯 我们能帮助您</h3>
+                <p>无论您在使用 GoalHub 中遇到任何问题，我们的专业客服团队都随时准备为您服务。</p>
+                <p>我们承诺快速、专业、友好的服务态度！</p>
+            </div>
+
+            <div class="service-action">
+                <button class="service-btn" onclick="startChat()">💬 启动实时客服</button>
+                <button class="service-btn" onclick="emailUs()">📧 发送邮件</button>
+                <button class="service-btn secondary" onclick="goHome()">🏠 返回首页</button>
+                <button class="service-btn secondary" onclick="goRegister()">📋 返回注册</button>
+            </div>
+        </div>
+
+        <!-- 底部导航 -->
+        <div class="footer-nav">
+            <a href="/login.html" class="footer-btn" style="text-decoration: none;">
+                <span class="icon">📝</span>
+                <span>前往登陆</span>
+            </a>
+            <a href="/index.html" class="footer-btn" style="text-decoration: none;">
+                <span class="icon">🏠</span>
+                <span>前往首页</span>
+            </a>
+            <a href="/register.html" class="footer-btn" style="text-decoration: none;">
+                <span class="icon">📋</span>
+                <span>前往注册</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        function startChat() {
+            alert('实时客服功能已启动，请等待连接...');
+        }
+        
+        function emailUs() {
+            window.location.href = 'mailto:support@goalhub.com?subject=GoalHub%20客服咨询';
+        }
+        
+        function goHome() {
+            window.location.href = '/index.html';
+        }
+        
+        function goRegister() {
+            window.location.href = '/register.html';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户登录 - GoalHub</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <div class="header">
+            <div class="logo">GoalHub</div>
+            <div class="subtitle">让每个目标都闪闪发光</div>
+        </div>
+
+        <!-- 登录表单 -->
+        <form id="loginForm" class="form">
+            <div class="form-group">
+                <label for="account">账号</label>
+                <input 
+                    type="text" 
+                    id="account" 
+                    name="account" 
+                    placeholder="请输入用户名或邮箱"
+                    required
+                >
+                <span class="error-msg" id="accountError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    placeholder="请输入密码"
+                    required
+                >
+                <span class="error-msg" id="passwordError"></span>
+            </div>
+
+            <!-- 验证码部分 -->
+            <div class="form-group captcha-group">
+                <label>验证码</label>
+                <div class="captcha-container">
+                    <input 
+                        type="text" 
+                        id="captchaCode" 
+                        name="captchaCode" 
+                        placeholder="请输入验证码"
+                        required
+                    >
+                    <img id="captchaImage" src="" alt="验证码" class="captcha-image">
+                    <button type="button" id="refreshCaptcha" class="btn-refresh">刷新</button>
+                </div>
+                <span class="error-msg" id="captchaCodeError"></span>
+            </div>
+
+            <div class="form-group checkbox">
+                <input type="checkbox" id="rememberMe" name="rememberMe">
+                <label for="rememberMe">记住我</label>
+            </div>
+
+            <button type="submit" class="btn-submit">登录</button>
+            <span class="error-msg" id="formError"></span>
+        </form>
+
+        <!-- 底部导航 -->
+        <div class="footer-nav">
+            <a href="/register.html" class="footer-btn" style="text-decoration: none;">
+                <span class="icon">📋</span>
+                <span>前往注册</span>
+            </a>
+            <a href="/index.html" class="footer-btn" style="text-decoration: none;">
+                <span class="icon">👥</span>
+                <span>游客进入</span>
+            </a>
+            <a href="/service.html" class="footer-btn" style="text-decoration: none;">
+                <span class="icon">💬</span>
+                <span>前往客服</span>
+            </a>
+        </div>
+    </div>
+
+    <script src="js/login.js"></script>
+</body>
+</html>
