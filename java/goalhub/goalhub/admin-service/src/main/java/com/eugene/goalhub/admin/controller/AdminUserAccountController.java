@@ -10,6 +10,8 @@ import response.Result;
 
 /**
  * 后台用户账户管理接口。
+ *
+ * <p>提供用户账户、账户流水查询，以及后台余额调整和账户状态维护能力。</p>
  */
 @Tag(name = "后台用户账户管理", description = "后台用户账户、账户流水和余额管理接口")
 @RestController

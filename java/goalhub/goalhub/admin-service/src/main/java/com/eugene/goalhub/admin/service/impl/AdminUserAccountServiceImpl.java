@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
  * 后台用户账户管理服务实现。
  * <p>
  * 当前服务通过 Feign 调用 user-service 的内部用户账户接口。
+ * 账户余额和流水的实际变更由 user-service 负责。
  */
 @Service
 public class AdminUserAccountServiceImpl

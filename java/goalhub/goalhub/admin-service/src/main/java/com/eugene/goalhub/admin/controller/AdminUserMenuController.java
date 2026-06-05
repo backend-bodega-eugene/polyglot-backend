@@ -3,16 +3,21 @@ package com.eugene.goalhub.admin.controller;
 import com.eugene.goalhub.admin.service.AdminUserMenuService;
 import dto.AdminMenuTreeResponse;
 import dto.AdminUserMenuSaveRequest;
+import exception.BusinessException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import response.Result;
+import response.ResultCode;
 
 import java.util.List;
 
 /**
  * 管理员菜单权限接口。
+ *
+ * <p>提供管理员菜单权限查询、保存，以及当前登录管理员菜单查询能力。</p>
  */
 @Tag(name = "后台管理员菜单权限", description = "后台管理员菜单权限查询和保存接口")
 @RestController
@@ -59,7 +64,11 @@ public class AdminUserMenuController {
     public Result<Void> saveUserMenus(@Parameter(description = "管理员 ID", required = true)
                                       @PathVariable("id") Long id,
                                       @Parameter(description = "菜单权限保存参数", required = true)
-                                      @RequestBody AdminUserMenuSaveRequest request) {
+                                      @Valid @RequestBody AdminUserMenuSaveRequest request) {
+        if (request == null || request.getMenuIds() == null) {
+            throw new BusinessException(ResultCode.PARAM_ERROR);
+        }
+
         adminUserMenuService.saveUserMenus(id, request.getMenuIds());
         return Result.success();
     }

@@ -5,28 +5,54 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 
+/**
+ * 前端赛事玩法选项赔率响应。
+ *
+ * <p>返回赛事下某个玩法选项的赔率和投注状态。</p>
+ */
 @Data
 @Schema(description = "前端赛事玩法选项赔率响应")
 public class AppMatchMarketOptionResponse {
 
-    @Schema(description = "赛事玩法赔率ID")
+    /**
+     * 赛事玩法赔率 ID。
+     */
+    @Schema(description = "赛事玩法赔率 ID", example = "1")
     private Long id;
 
-    @Schema(description = "玩法选项ID")
+    /**
+     * 玩法选项 ID。
+     */
+    @Schema(description = "玩法选项 ID", example = "1")
     private Long marketOptionId;
 
-    @Schema(description = "玩法选项编码")
+    /**
+     * 玩法选项编码。
+     */
+    @Schema(description = "玩法选项编码", example = "HOME_WIN")
     private String marketOptionCode;
 
-    @Schema(description = "玩法选项名称")
+    /**
+     * 玩法选项名称。
+     */
+    @Schema(description = "玩法选项名称", example = "主胜")
     private String marketOptionName;
 
-    @Schema(description = "赔率")
+    /**
+     * 赔率。
+     */
+    @Schema(description = "赔率", example = "1.95")
     private BigDecimal odds;
 
-    @Schema(description = "投注状态")
+    /**
+     * 投注状态。
+     */
+    @Schema(description = "投注状态", example = "OPEN")
     private String betStatus;
 
-    @Schema(description = "排序值")
+    /**
+     * 排序值。
+     */
+    @Schema(description = "排序值", example = "1")
     private Integer sortOrder;
 }

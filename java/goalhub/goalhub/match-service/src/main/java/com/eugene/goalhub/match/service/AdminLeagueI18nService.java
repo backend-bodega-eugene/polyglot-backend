@@ -6,6 +6,8 @@ import java.util.List;
 
 /**
  * 后台联赛国际化配置管理服务。
+ *
+ * <p>负责联赛多语言配置的查询、新增、更新和删除。</p>
  */
 public interface AdminLeagueI18nService {
 

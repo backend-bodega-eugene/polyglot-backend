@@ -1,6 +1,7 @@
 package com.eugene.goalhub.user.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.eugene.goalhub.boot.logs.service.GoalhubLogService;
 import com.eugene.goalhub.user.entity.UserAccountEntity;
 import com.eugene.goalhub.user.entity.UserEntity;
 import com.eugene.goalhub.user.mapper.UserAccountMapper;
@@ -23,30 +24,73 @@ import java.time.LocalDateTime;
 
 /**
  * 用户账号服务实现。
+ *
+ * <p>负责前端用户注册、登录、验证码校验、登录限流、密码校验和默认账户创建。</p>
  */
 @Service
 public class UserServiceImpl
         extends ServiceImpl<UserMapper, UserEntity>
         implements UserService {
 
+    /**
+     * 业务日志模块名称。
+     */
+    private static final String MODULE_NAME = "用户账号";
+
+    /**
+     * 密码加密与校验组件。
+     */
     private final PasswordEncoder passwordEncoder;
 
+    /**
+     * 用户账户 Mapper。
+     */
     private final UserAccountMapper userAccountMapper;
 
+    /**
+     * 图形验证码服务。
+     */
     private final CaptchaService captchaService;
 
+    /**
+     * 限流服务。
+     */
     private final RateLimitService rateLimitService;
 
+    /**
+     * 日志写入服务。
+     */
+    private final GoalhubLogService goalhubLogService;
+
+    /**
+     * 创建用户账号服务实现。
+     *
+     * @param passwordEncoder   密码加密与校验组件
+     * @param userAccountMapper 用户账户 Mapper
+     * @param captchaService    图形验证码服务
+     * @param rateLimitService  限流服务
+     * @param goalhubLogService 日志写入服务
+     */
     public UserServiceImpl(PasswordEncoder passwordEncoder,
                            UserAccountMapper userAccountMapper,
                            CaptchaService captchaService,
-                           RateLimitService rateLimitService) {
+                           RateLimitService rateLimitService,
+                           GoalhubLogService goalhubLogService) {
         this.passwordEncoder = passwordEncoder;
         this.userAccountMapper = userAccountMapper;
         this.captchaService = captchaService;
         this.rateLimitService = rateLimitService;
+        this.goalhubLogService = goalhubLogService;
     }
 
+    /**
+     * 注册前端应用用户。
+     *
+     * <p>注册时会进行 IP 限流、验证码校验、用户名唯一性校验，并创建默认 USDT 账户。</p>
+     *
+     * @param request  用户注册参数
+     * @param clientIp 客户端 IP
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void register(RegisterRequest request, String clientIp) {
@@ -104,16 +148,37 @@ public class UserServiceImpl
         account.setStatus(1);
 
         userAccountMapper.insert(account);
+        goalhubLogService.bizLog(
+                MODULE_NAME,
+                "USER_REGISTER",
+                user.getId(),
+                user.getUsername(),
+                "用户注册成功，userId=" + user.getId()
+                        + ", username=" + user.getUsername()
+                        + ", clientIp=" + clientIp
+        );
     }
 
+    /**
+     * 前端应用用户登录。
+     *
+     * <p>登录时会进行 IP 限流、账号锁定校验、验证码校验、密码校验，并在成功后签发 JWT。</p>
+     *
+     * @param request  用户登录参数
+     * @param clientIp 客户端 IP
+     * @return 登录结果
+     */
     @Override
     public LoginResponse login(LoginRequest request, String clientIp) {
 
         rateLimitService.checkLoginIpLimit(clientIp);
+        if(request.getAccount()==null){
+            throw new BusinessException(ResultCode.USERNAME_NOT_NULL);
 
-        String account = request.getAccount();
+        }
+        String account = request.getAccount().trim();
 
-        if (account == null || account.trim().isEmpty()) {
+        if ( account.isEmpty()) {
             throw new BusinessException(ResultCode.USERNAME_NOT_NULL);
         }
 
@@ -121,7 +186,7 @@ public class UserServiceImpl
             throw new BusinessException(ResultCode.PASSWORD_NOT_NULL);
         }
 
-        account = account.trim();
+       // account = account.trim();
 
         rateLimitService.checkLoginAccountLocked(account);
 
@@ -131,11 +196,12 @@ public class UserServiceImpl
         );
 
         UserEntity user = lambdaQuery()
-                .eq(UserEntity::getUsername, account)
-                .or()
-                .eq(UserEntity::getEmail, account)
-                .or()
-                .eq(UserEntity::getPhone, account)
+                .and(wrapper -> wrapper
+                        .eq(UserEntity::getUsername, account)
+                        .or()
+                        .eq(UserEntity::getEmail, account)
+                        .or()
+                        .eq(UserEntity::getPhone, account))
                 .one();
 
         if (user == null) {
@@ -170,6 +236,15 @@ public class UserServiceImpl
         response.setUsername(user.getUsername());
         response.setToken(token);
 
+        goalhubLogService.bizLog(
+                MODULE_NAME,
+                "USER_LOGIN",
+                user.getId(),
+                user.getUsername(),
+                "用户登录成功，userId=" + user.getId()
+                        + ", username=" + user.getUsername()
+                        + ", clientIp=" + clientIp
+        );
         return response;
     }
 }

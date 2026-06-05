@@ -12,6 +12,7 @@ import java.util.List;
  * 后台赛事国际化管理服务实现。
  * <p>
  * 当前服务通过 Feign 调用 match-service 的内部赛事国际化接口。
+ * 联赛、比赛和球队多语言数据的实际维护由 match-service 完成。
  */
 @Service
 public class AdminMatchI18nServiceImpl implements AdminMatchI18nService {

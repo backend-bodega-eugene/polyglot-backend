@@ -4,6 +4,8 @@ import dto.*;
 
 /**
  * 后台投注订单管理服务。
+ *
+ * <p>定义后台投注订单查询、订单明细查询、审核、冻结和结算能力。</p>
  */
 public interface AdminBetOrderService {
 

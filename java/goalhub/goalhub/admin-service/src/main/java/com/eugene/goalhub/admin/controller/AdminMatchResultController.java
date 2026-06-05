@@ -10,6 +10,8 @@ import response.Result;
 
 /**
  * 后台比赛结果管理接口。
+ *
+ * <p>提供比赛结果分页查询、结果保存和审核入口，用于后台维护赛果数据。</p>
  */
 @Tag(name = "后台比赛结果管理", description = "后台比赛结果保存、审核和查询接口")
 @RestController

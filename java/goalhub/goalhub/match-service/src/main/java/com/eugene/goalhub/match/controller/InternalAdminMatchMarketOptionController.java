@@ -5,6 +5,7 @@ import dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import response.Result;
 
@@ -41,7 +42,7 @@ public class InternalAdminMatchMarketOptionController {
     @PostMapping("/page")
     public Result<PageResponse<MatchMarketOptionResponse>> page(
             @Parameter(description = "赛事玩法赔率分页查询参数", required = true)
-            @RequestBody MatchMarketOptionPageRequest request) {
+            @Valid @RequestBody MatchMarketOptionPageRequest request) {
 
         return Result.success(
                 matchMarketOptionService.page(request)
@@ -58,7 +59,7 @@ public class InternalAdminMatchMarketOptionController {
     @PostMapping("/add")
     public Result<Void> add(
             @Parameter(description = "赛事玩法赔率新增参数", required = true)
-            @RequestBody AddMatchMarketOptionRequest request) {
+            @Valid @RequestBody AddMatchMarketOptionRequest request) {
 
         matchMarketOptionService.add(request);
 
@@ -75,7 +76,7 @@ public class InternalAdminMatchMarketOptionController {
     @PostMapping("/update")
     public Result<Void> update(
             @Parameter(description = "赛事玩法赔率更新参数", required = true)
-            @RequestBody UpdateMatchMarketOptionRequest request) {
+            @Valid @RequestBody UpdateMatchMarketOptionRequest request) {
 
         matchMarketOptionService.update(request);
 
@@ -92,7 +93,7 @@ public class InternalAdminMatchMarketOptionController {
     @PostMapping("/delete")
     public Result<Void> delete(
             @Parameter(description = "赛事玩法赔率删除参数", required = true)
-            @RequestBody DeleteMatchMarketOptionRequest request) {
+            @Valid @RequestBody DeleteMatchMarketOptionRequest request) {
 
         matchMarketOptionService.delete(request);
 

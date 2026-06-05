@@ -5,6 +5,8 @@ import lombok.Data;
 
 /**
  * 用户登录响应。
+ *
+ * <p>返回登录用户基础身份信息和后续接口访问令牌。</p>
  */
 @Schema(description = "用户登录响应")
 @Data
@@ -25,6 +27,6 @@ public class LoginResponse {
     /**
      * 登录成功后签发的访问令牌。
      */
-    @Schema(description = "登录成功后签发的访问令牌")
+    @Schema(description = "登录成功后签发的访问令牌", example = "eyJhbGciOiJIUzI1NiJ9.demo")
     private String token;
 }

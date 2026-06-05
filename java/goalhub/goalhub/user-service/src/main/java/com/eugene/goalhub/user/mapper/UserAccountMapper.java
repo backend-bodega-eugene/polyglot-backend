@@ -11,6 +11,8 @@ import org.apache.ibatis.annotations.Select;
 
 /**
  * 用户账户 Mapper。
+ *
+ * <p>负责用户账户表的基础 CRUD、后台账户分页查询和带行锁的账户查询。</p>
  */
 @Mapper
 public interface UserAccountMapper extends BaseMapper<UserAccountEntity> {
@@ -84,7 +86,7 @@ public interface UserAccountMapper extends BaseMapper<UserAccountEntity> {
     /**
      * 根据用户 ID 和币种查询账户并加行锁。
      *
-     * @param userId 用户 ID
+     * @param userId       用户 ID
      * @param currencyCode 币种编码
      * @return 用户账户实体
      */

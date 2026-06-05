@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 
 /**
  * 日志分页查询请求。
+ *
+ * <p>用于按服务、模块、事件、操作人和创建时间范围分页查询日志。</p>
  */
 @Schema(description = "日志分页查询请求")
 @Data

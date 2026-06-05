@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 
 /**
  * 赛事玩法赔率实体，对应 match_market_option 表。
+ *
+ * <p>保存指定比赛下玩法选项的赔率、展示状态、投注状态和玩法快照。</p>
  */
 @TableName("match_market_option")
 public class MatchMarketOptionEntity {

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
  * 后台应用用户管理服务实现。
  * <p>
  * 当前服务不直接访问用户表，而是通过 Feign 调用 user-service 的内部管理接口。
+ * 所有远程调用结果统一交给 {@link FeignResultSupport} 校验。
  */
 @Service
 public class AdminAppUserServiceImpl implements AdminAppUserService {

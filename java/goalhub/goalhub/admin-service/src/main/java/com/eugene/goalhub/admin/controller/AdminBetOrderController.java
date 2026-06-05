@@ -10,6 +10,8 @@ import response.Result;
 
 /**
  * 后台投注订单管理接口。
+ *
+ * <p>提供投注订单主表、订单明细和历史订单查询，以及订单审核、冻结和结算等后台操作入口。</p>
  */
 @Tag(name = "后台投注订单管理", description = "后台投注订单查询、审核、冻结和结算接口")
 @RestController
@@ -53,10 +55,12 @@ public class AdminBetOrderController {
     /**
      * 分页查询历史订单。
      *
+     * <p>历史订单固定查询已结算订单。</p>
+     *
      * @param request 订单分页查询条件
      * @return 历史订单分页数据
      */
-    @Operation(summary = "分页查询历史订单", description = "分页查询历史订单。")
+    @Operation(summary = "分页查询历史订单", description = "分页查询已结算的历史投注订单。")
     @PostMapping("/pagehistory")
     public Result<PageResponse<AdminBetOrderResponse>> orderPageHistory(
             @Parameter(description = "订单分页查询参数", required = true)

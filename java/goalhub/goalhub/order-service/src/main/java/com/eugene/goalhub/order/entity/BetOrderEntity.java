@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 
 /**
  * 投注订单实体。
+ *
+ * <p>映射 bet_order 表，记录投注订单主信息、金额快照、审核信息和结算信息。</p>
  */
 @TableName("bet_order")
 public class BetOrderEntity {

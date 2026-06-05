@@ -13,6 +13,8 @@ import response.Result;
 
 /**
  * 后台赛事基础数据管理接口。
+ *
+ * <p>维护联赛、比赛和球队等赛事基础数据，供后台运营管理使用。</p>
  */
 @Tag(name = "后台赛事管理", description = "后台联赛、比赛和球队管理接口")
 @RestController

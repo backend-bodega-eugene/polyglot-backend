@@ -11,6 +11,8 @@ import org.apache.ibatis.annotations.Select;
 
 /**
  * 投注订单明细 Mapper。
+ *
+ * <p>负责投注订单明细表的基础 CRUD，以及后台订单明细分页查询。</p>
  */
 @Mapper
 public interface BetOrderItemMapper

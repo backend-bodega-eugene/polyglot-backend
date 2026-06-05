@@ -11,6 +11,8 @@ import org.apache.ibatis.annotations.Select;
 
 /**
  * 投注订单 Mapper。
+ *
+ * <p>负责投注订单表的基础 CRUD，以及后台订单分页查询。</p>
  */
 @Mapper
 public interface BetOrderMapper extends BaseMapper<BetOrderEntity> {
@@ -81,5 +83,21 @@ public interface BetOrderMapper extends BaseMapper<BetOrderEntity> {
     Page<AdminBetOrderResponse> selectAdminOrderPage(
             Page<AdminBetOrderResponse> page,
             @Param("req") AdminBetOrderPageRequest request
+    );
+
+    /**
+     * 根据订单 ID 查询订单并加行锁。
+     *
+     * @param orderId 订单 ID
+     * @return 投注订单
+     */
+    @Select("""
+            SELECT *
+            FROM bet_order
+            WHERE id = #{orderId}
+            FOR UPDATE
+            """)
+    BetOrderEntity selectByIdForUpdate(
+            @Param("orderId") Long orderId
     );
 }

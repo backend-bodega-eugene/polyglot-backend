@@ -5,11 +5,14 @@ import dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import response.Result;
 
 /**
  * 内部后台用户账户管理接口。
+ *
+ * <p>提供 admin-service 远程调用的用户账户、账户流水、余额变更和状态维护接口。</p>
  */
 @Tag(name = "内部后台用户账户管理", description = "内部后台用户账户、账户流水和余额管理接口")
 @RestController
@@ -41,7 +44,7 @@ public class InternalAdminAccountController {
     @PostMapping("/page")
     public Result<PageResponse<AdminUserAccountResponse>> accountPage(
             @Parameter(description = "用户账户分页查询参数", required = true)
-            @RequestBody AdminUserAccountPageRequest request) {
+            @Valid @RequestBody AdminUserAccountPageRequest request) {
 
         return Result.success(
                 userAccountService.adminAccountPage(request)
@@ -58,7 +61,7 @@ public class InternalAdminAccountController {
     @PostMapping("/transaction/page")
     public Result<PageResponse<AdminAccountTransactionResponse>> transactionPage(
             @Parameter(description = "账户流水分页查询参数", required = true)
-            @RequestBody AdminAccountTransactionPageRequest request) {
+            @Valid @RequestBody AdminAccountTransactionPageRequest request) {
 
         return Result.success(
                 userAccountService.adminTransactionPage(request)
@@ -75,7 +78,7 @@ public class InternalAdminAccountController {
     @PostMapping("/addbalance")
     public Result<Void> addBalance(
             @Parameter(description = "账户余额增加参数", required = true)
-            @RequestBody AdminAccountBalanceChangeRequest request) {
+            @Valid @RequestBody AdminAccountBalanceChangeRequest request) {
 
         userAccountService.adminAddBalance(request);
 
@@ -92,7 +95,7 @@ public class InternalAdminAccountController {
     @PostMapping("/subbalance")
     public Result<Void> subBalance(
             @Parameter(description = "账户余额扣减参数", required = true)
-            @RequestBody AdminAccountBalanceChangeRequest request) {
+            @Valid @RequestBody AdminAccountBalanceChangeRequest request) {
 
         userAccountService.adminSubBalance(request);
 
@@ -109,7 +112,7 @@ public class InternalAdminAccountController {
     @PostMapping("/updatestatus")
     public Result<Void> updateStatus(
             @Parameter(description = "账户状态更新参数", required = true)
-            @RequestBody AdminAccountStatusUpdateRequest request) {
+            @Valid @RequestBody AdminAccountStatusUpdateRequest request) {
 
         userAccountService.adminUpdateStatus(request);
 

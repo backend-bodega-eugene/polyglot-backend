@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 足球比赛国际化 Mapper。
+ *
+ * <p>负责足球比赛多语言配置表的通用 CRUD。</p>
  */
 @Mapper
 public interface SoccerMatchI18nMapper extends BaseMapper<SoccerMatchI18nEntity> {

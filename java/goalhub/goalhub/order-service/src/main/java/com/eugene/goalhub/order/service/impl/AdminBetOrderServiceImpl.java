@@ -1,8 +1,10 @@
 package com.eugene.goalhub.order.service.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.eugene.goalhub.boot.logs.service.GoalhubLogService;
 import com.eugene.goalhub.order.entity.BetOrderEntity;
+import com.eugene.goalhub.order.entity.BetOrderItemEntity;
 import com.eugene.goalhub.order.mapper.BetOrderItemMapper;
 import com.eugene.goalhub.order.mapper.BetOrderMapper;
 import com.eugene.goalhub.order.service.AdminBetOrderService;
@@ -14,10 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 import response.ResultCode;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 后台投注订单管理服务实现。
+ *
+ * <p>负责后台投注订单分页查询、明细查询、人工审核、冻结和结算处理。</p>
  */
 @Service
 public class AdminBetOrderServiceImpl
@@ -64,24 +70,19 @@ public class AdminBetOrderServiceImpl
     private static final String STATUS_SETTLED = "SETTLED";
 
     /**
-     * 系统判定赢。
+     * 扣款中订单状态。
      */
-    private static final String SYSTEM_WIN = "WIN";
+    private static final String STATUS_DEDUCTING = "DEDUCTING";
 
     /**
-     * 系统判定输。
+     * 默认页码。
      */
-    private static final String SYSTEM_LOSE = "LOSE";
+    private static final int DEFAULT_PAGE_INDEX = 1;
 
     /**
-     * 系统判定取消。
+     * 默认和最大每页数量。
      */
-    private static final String SYSTEM_CANCELLED = "CANCELLED";
-
-    /**
-     * 系统判定退款。
-     */
-    private static final String SYSTEM_REFUNDED = "REFUNDED";
+    private static final int DEFAULT_PAGE_SIZE = 100;
 
     /**
      * 投注订单 Mapper。
@@ -133,15 +134,13 @@ public class AdminBetOrderServiceImpl
     public PageResponse<AdminBetOrderResponse> orderPage(
             AdminBetOrderPageRequest request) {
 
-        Integer pageIndex =
-                request.getPageIndex() == null
-                        ? 1
-                        : request.getPageIndex();
+        if (request == null) {
+            request = new AdminBetOrderPageRequest();
+        }
 
-        Integer pageSize =
-                request.getPageSize() == null
-                        ? 10
-                        : request.getPageSize();
+        initPage(request);
+        Integer pageIndex = request.getPageIndex();
+        Integer pageSize = request.getPageSize();
 
         Page<AdminBetOrderResponse> page =
                 new Page<>(pageIndex, pageSize);
@@ -152,6 +151,16 @@ public class AdminBetOrderServiceImpl
                         request
                 );
 
+        goalhubLogService.sysLog(
+                MODULE_NAME,
+                "ORDER_PAGE",
+                "分页查询投注订单，pageIndex=" + pageIndex
+                        + ", pageSize=" + pageSize
+                        + ", orderNo=" + request.getOrderNo()
+                        + ", userId=" + request.getUserId()
+                        + ", status=" + request.getStatus()
+                        + ", total=" + resultPage.getTotal()
+        );
         return new PageResponse<>(
                 resultPage.getTotal(),
                 pageIndex,
@@ -170,21 +179,20 @@ public class AdminBetOrderServiceImpl
     public PageResponse<AdminBetOrderItemResponse> orderItemPage(
             AdminBetOrderItemPageRequest request) {
 
+        if (request == null) {
+            request = new AdminBetOrderItemPageRequest();
+        }
+
+        initPage(request);
+
         if (request.getLangCode() == null
                 || request.getLangCode().isBlank()) {
 
             request.setLangCode("zh-CN");
         }
 
-        Integer pageIndex =
-                request.getPageIndex() == null
-                        ? 1
-                        : request.getPageIndex();
-
-        Integer pageSize =
-                request.getPageSize() == null
-                        ? 10
-                        : request.getPageSize();
+        Integer pageIndex = request.getPageIndex();
+        Integer pageSize = request.getPageSize();
 
         Page<AdminBetOrderItemResponse> page =
                 new Page<>(pageIndex, pageSize);
@@ -195,6 +203,15 @@ public class AdminBetOrderServiceImpl
                         request
                 );
 
+        goalhubLogService.sysLog(
+                MODULE_NAME,
+                "ORDER_ITEM_PAGE",
+                "分页查询投注订单明细，pageIndex=" + pageIndex
+                        + ", pageSize=" + pageSize
+                        + ", orderId=" + request.getOrderId()
+                        + ", orderNo=" + request.getOrderNo()
+                        + ", total=" + resultPage.getTotal()
+        );
         return new PageResponse<>(
                 resultPage.getTotal(),
                 pageIndex,
@@ -222,14 +239,11 @@ public class AdminBetOrderServiceImpl
         BetOrderEntity order =
                 getOrderOrThrow(request.getOrderId());
 
-        if (!STATUS_PENDING.equals(order.getStatus())) {
-            throw new BusinessException(ResultCode.BET_ORDER_ONLY_PENDING_CAN_REVIEW);
+        if (STATUS_SETTLED.equals(order.getStatus())) {
+            throw new BusinessException(ResultCode.BET_ORDER_ALREADY_SETTLED);
         }
 
-        validateReviewResult(
-                order.getSystemResult(),
-                request.getReviewResult()
-        );
+        validateReviewResult(request.getReviewResult());
 
         order.setStatus(request.getReviewResult());
         order.setReviewResult(request.getReviewResult());
@@ -238,7 +252,7 @@ public class AdminBetOrderServiceImpl
         order.setReviewAdminName(adminUsername);
         order.setReviewedAt(LocalDateTime.now());
 
-        betOrderMapper.updateById(order);
+        int affectedRows = updateOrderOrThrow(order);
 
         goalhubLogService.bizLog(
                 MODULE_NAME,
@@ -249,6 +263,7 @@ public class AdminBetOrderServiceImpl
                         + "，系统判定结果：" + order.getSystemResult()
                         + "，审核结果：" + request.getReviewResult()
                         + "，备注：" + request.getRemark()
+                        + "，影响行数：" + affectedRows
         );
     }
 
@@ -282,7 +297,7 @@ public class AdminBetOrderServiceImpl
         order.setReviewAdminName(adminUsername);
         order.setReviewedAt(LocalDateTime.now());
 
-        betOrderMapper.updateById(order);
+        int affectedRows = updateOrderOrThrow(order);
 
         goalhubLogService.bizLog(
                 MODULE_NAME,
@@ -291,6 +306,7 @@ public class AdminBetOrderServiceImpl
                 adminUsername,
                 "订单号：" + order.getOrderNo()
                         + "，备注：" + request.getRemark()
+                        + "，影响行数：" + affectedRows
         );
     }
 
@@ -333,6 +349,7 @@ public class AdminBetOrderServiceImpl
 
             balanceRequest.setAccountId(order.getAccountId());
             balanceRequest.setAmount(settleAmount);
+            balanceRequest.setBizId("SETTLE_" + order.getOrderNo());
             balanceRequest.setRemark(
                     "投注订单结算，订单号：" + order.getOrderNo()
                             + "，备注：" + request.getRemark()
@@ -348,7 +365,7 @@ public class AdminBetOrderServiceImpl
         order.setSettleRemark(request.getRemark());
         order.setSettledAt(LocalDateTime.now());
 
-        betOrderMapper.updateById(order);
+        int affectedRows = updateOrderOrThrow(order);
 
         goalhubLogService.bizLog(
                 MODULE_NAME,
@@ -358,6 +375,7 @@ public class AdminBetOrderServiceImpl
                 "订单号：" + order.getOrderNo()
                         + "，结算金额：" + settleAmount
                         + "，备注：" + request.getRemark()
+                        + "，影响行数：" + affectedRows
         );
     }
 
@@ -370,11 +388,16 @@ public class AdminBetOrderServiceImpl
     private BigDecimal calculateSettleAmount(
             BetOrderEntity order) {
 
-        if (STATUS_WIN.equals(order.getStatus())) {
-            return order.getTotalExpectedReturn();
+        if (STATUS_LOSE.equals(order.getStatus())) {
+            return BigDecimal.ZERO;
         }
 
-        if (STATUS_REFUNDED.equals(order.getStatus())) {
+        if (STATUS_WIN.equals(order.getStatus())) {
+            return calculateWinSettleAmount(order.getId());
+        }
+
+        if (STATUS_REFUNDED.equals(order.getStatus())
+                || STATUS_CANCELLED.equals(order.getStatus())) {
             return order.getTotalBetAmount();
         }
 
@@ -395,13 +418,75 @@ public class AdminBetOrderServiceImpl
         }
 
         BetOrderEntity order =
-                betOrderMapper.selectById(orderId);
+                betOrderMapper.selectByIdForUpdate(orderId);
 
         if (order == null) {
             throw new BusinessException(ResultCode.BET_ORDER_NOT_FOUND);
         }
 
         return order;
+    }
+
+    /**
+     * 更新订单，不成功时抛出异常。
+     *
+     * @param order 投注订单
+     * @return 影响行数
+     */
+    private int updateOrderOrThrow(
+            BetOrderEntity order) {
+
+        int affectedRows = betOrderMapper.updateById(order);
+
+        if (affectedRows != 1) {
+            throw new BusinessException(ResultCode.PARAM_ERROR);
+        }
+
+        return affectedRows;
+    }
+
+    /**
+     * 初始化订单分页参数。
+     *
+     * @param request 分页请求
+     */
+    private void initPage(
+            AdminBetOrderPageRequest request) {
+
+        if (request.getPageIndex() == null || request.getPageIndex() < 1) {
+            request.setPageIndex(DEFAULT_PAGE_INDEX);
+        }
+
+        if (request.getPageSize() == null || request.getPageSize() < 1) {
+            request.setPageSize(DEFAULT_PAGE_SIZE);
+            return;
+        }
+
+        if (request.getPageSize() > DEFAULT_PAGE_SIZE) {
+            request.setPageSize(DEFAULT_PAGE_SIZE);
+        }
+    }
+
+    /**
+     * 初始化订单明细分页参数。
+     *
+     * @param request 分页请求
+     */
+    private void initPage(
+            AdminBetOrderItemPageRequest request) {
+
+        if (request.getPageIndex() == null || request.getPageIndex() < 1) {
+            request.setPageIndex(DEFAULT_PAGE_INDEX);
+        }
+
+        if (request.getPageSize() == null || request.getPageSize() < 1) {
+            request.setPageSize(DEFAULT_PAGE_SIZE);
+            return;
+        }
+
+        if (request.getPageSize() > DEFAULT_PAGE_SIZE) {
+            request.setPageSize(DEFAULT_PAGE_SIZE);
+        }
     }
 
     /**
@@ -418,55 +503,70 @@ public class AdminBetOrderServiceImpl
     }
 
     /**
-     * 校验人工审核结果是否符合系统判定结果。
+     * 根据订单明细快照计算赢单结算金额。
      *
-     * @param systemResult 系统判定结果
+     * @param orderId 订单 ID
+     * @return 赢单结算金额
+     */
+    private BigDecimal calculateWinSettleAmount(
+            Long orderId) {
+
+        List<BetOrderItemEntity> items =
+                betOrderItemMapper.selectList(
+                        Wrappers.lambdaQuery(BetOrderItemEntity.class)
+                                .eq(BetOrderItemEntity::getOrderId, orderId)
+                );
+
+        if (items == null || items.isEmpty()) {
+            throw new BusinessException(ResultCode.BET_ORDER_NOT_FOUND);
+        }
+
+        BigDecimal settleAmount = BigDecimal.ZERO;
+
+        for (BetOrderItemEntity item : items) {
+            BigDecimal betAmount = item.getBetAmount();
+            BigDecimal odds = item.getOdds();
+
+            if (betAmount == null
+                    || odds == null
+                    || betAmount.compareTo(BigDecimal.ZERO) <= 0
+                    || odds.compareTo(BigDecimal.ZERO) <= 0) {
+                throw new BusinessException(ResultCode.BET_ORDER_SETTLE_AMOUNT_INVALID);
+            }
+
+            BigDecimal profit = betAmount
+                    .multiply(odds)
+                    .subtract(betAmount)
+                    .setScale(2, RoundingMode.DOWN);
+
+            if (profit.compareTo(BigDecimal.ZERO) < 0) {
+                throw new BusinessException(ResultCode.BET_ORDER_SETTLE_AMOUNT_INVALID);
+            }
+
+            settleAmount = settleAmount.add(profit);
+        }
+
+        return settleAmount.setScale(2, RoundingMode.DOWN);
+    }
+
+    /**
+     * 校验人工审核结果是否合法。
+     *
      * @param reviewResult 人工审核结果
      */
     private void validateReviewResult(
-            String systemResult,
             String reviewResult) {
 
         if (reviewResult == null || reviewResult.isBlank()) {
             throw new BusinessException(ResultCode.BET_ORDER_REVIEW_RESULT_NOT_NULL);
         }
 
-        if (STATUS_FROZEN.equals(reviewResult)) {
-            throw new BusinessException(ResultCode.BET_ORDER_FREEZE_USE_FREEZE_API);
-        }
-
-        if (systemResult == null || systemResult.isBlank()) {
-            throw new BusinessException(ResultCode.BET_ORDER_SYSTEM_RESULT_NOT_EXISTS);
-        }
-
-        if (SYSTEM_WIN.equals(systemResult)) {
-            if (!STATUS_WIN.equals(reviewResult)
-                    && !STATUS_CANCELLED.equals(reviewResult)) {
-                throw new BusinessException(ResultCode.BET_ORDER_SYSTEM_WIN_REVIEW_RESULT_INVALID);
-            }
-            return;
-        }
-
-        if (SYSTEM_LOSE.equals(systemResult)) {
-            if (!STATUS_LOSE.equals(reviewResult)
-                    && !STATUS_CANCELLED.equals(reviewResult)) {
-                throw new BusinessException(ResultCode.BET_ORDER_SYSTEM_LOSE_REVIEW_RESULT_INVALID);
-            }
-            return;
-        }
-
-        if (SYSTEM_REFUNDED.equals(systemResult)) {
-            if (!STATUS_REFUNDED.equals(reviewResult)
-                    && !STATUS_CANCELLED.equals(reviewResult)) {
-                throw new BusinessException(ResultCode.BET_ORDER_SYSTEM_REFUNDED_REVIEW_RESULT_INVALID);
-            }
-            return;
-        }
-
-        if (SYSTEM_CANCELLED.equals(systemResult)) {
-            if (!STATUS_CANCELLED.equals(reviewResult)) {
-                throw new BusinessException(ResultCode.BET_ORDER_SYSTEM_CANCELLED_REVIEW_RESULT_INVALID);
-            }
+        if (STATUS_PENDING.equals(reviewResult)
+                || STATUS_FROZEN.equals(reviewResult)
+                || STATUS_LOSE.equals(reviewResult)
+                || STATUS_WIN.equals(reviewResult)
+                || STATUS_REFUNDED.equals(reviewResult)
+                || STATUS_CANCELLED.equals(reviewResult)) {
             return;
         }
 

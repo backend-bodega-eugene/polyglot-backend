@@ -5,6 +5,7 @@ import com.eugene.goalhub.match.entity.UserMatchFollow;
 import com.eugene.goalhub.match.mapper.UserMatchFollowMapper;
 import com.eugene.goalhub.match.service.SoccerMatchService;
 import com.eugene.goalhub.match.service.UserMatchFollowService;
+import com.eugene.goalhub.match.service.support.MatchOperationLogger;
 import dto.UserMatchFollowResponse;
 import exception.BusinessException;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,8 @@ import java.util.List;
 
 /**
  * 用户赛事关注服务实现。
+ *
+ * <p>负责用户关注赛事、取消关注、关注状态判断和关注列表查询。</p>
  */
 @Service
 public class UserMatchFollowServiceImpl
@@ -21,17 +24,29 @@ public class UserMatchFollowServiceImpl
         implements UserMatchFollowService {
 
     /**
+     * 业务日志模块名称。
+     */
+    private static final String MODULE_NAME = "用户赛事关注";
+
+    /**
      * 赛事查询服务，用于校验赛事是否存在。
      */
     private final SoccerMatchService soccerMatchService;
+
+    /**
+     * 比赛服务操作日志工具。
+     */
+    private final MatchOperationLogger matchOperationLogger;
 
     /**
      * 创建用户赛事关注服务实现。
      *
      * @param soccerMatchService 赛事查询服务
      */
-    public UserMatchFollowServiceImpl(SoccerMatchService soccerMatchService) {
+    public UserMatchFollowServiceImpl(SoccerMatchService soccerMatchService,
+                                      MatchOperationLogger matchOperationLogger) {
         this.soccerMatchService = soccerMatchService;
+        this.matchOperationLogger = matchOperationLogger;
     }
 
     /**
@@ -60,6 +75,11 @@ public class UserMatchFollowServiceImpl
         follow.setMatchId(matchId);
 
         save(follow);
+        matchOperationLogger.userBizLog(
+                MODULE_NAME,
+                "FOLLOW_MATCH",
+                "关注赛事成功，userId=" + userId + ", matchId=" + matchId
+        );
     }
 
     /**
@@ -85,6 +105,11 @@ public class UserMatchFollowServiceImpl
                 .eq(UserMatchFollow::getUserId, userId)
                 .eq(UserMatchFollow::getMatchId, matchId)
                 .remove();
+        matchOperationLogger.userBizLog(
+                MODULE_NAME,
+                "UNFOLLOW_MATCH",
+                "取消关注赛事成功，userId=" + userId + ", matchId=" + matchId
+        );
     }
 
     /**
@@ -98,10 +123,18 @@ public class UserMatchFollowServiceImpl
     public Boolean isFollowed(Long userId, Long matchId) {
         checkMatchExists(matchId);
 
-        return lambdaQuery()
+        boolean followed = lambdaQuery()
                 .eq(UserMatchFollow::getUserId, userId)
                 .eq(UserMatchFollow::getMatchId, matchId)
                 .exists();
+        matchOperationLogger.sysLog(
+                MODULE_NAME,
+                "IS_MATCH_FOLLOWED",
+                "查询赛事关注状态，userId=" + userId
+                        + ", matchId=" + matchId
+                        + ", followed=" + followed
+        );
+        return followed;
     }
 
     /**
@@ -112,13 +145,20 @@ public class UserMatchFollowServiceImpl
      */
     @Override
     public List<UserMatchFollowResponse> listMyFollows(Long userId) {
-        return lambdaQuery()
+        List<UserMatchFollowResponse> responses = lambdaQuery()
                 .eq(UserMatchFollow::getUserId, userId)
                 .orderByDesc(UserMatchFollow::getCreatedAt)
                 .list()
                 .stream()
                 .map(this::toResponse)
                 .toList();
+        matchOperationLogger.sysLog(
+                MODULE_NAME,
+                "LIST_MY_FOLLOWS",
+                "查询用户赛事关注列表，userId=" + userId
+                        + ", resultCount=" + responses.size()
+        );
+        return responses;
     }
 
     /**

@@ -5,6 +5,8 @@ import lombok.Data;
 
 /**
  * 足球比赛详情查询请求。
+ *
+ * <p>用于指定足球比赛详情的返回语言。</p>
  */
 @Schema(description = "足球比赛详情查询请求")
 @Data

@@ -7,6 +7,7 @@ import dto.AdminMenuUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import response.Result;
 
@@ -14,6 +15,8 @@ import java.util.List;
 
 /**
  * 后台菜单管理接口。
+ *
+ * <p>维护后台系统菜单树结构，包含菜单查询、创建、更新和删除。</p>
  */
 @Tag(name = "后台菜单管理", description = "后台菜单树查询、创建、更新和删除接口")
 @RestController
@@ -54,7 +57,7 @@ public class AdminMenuController {
     @Operation(summary = "创建后台菜单", description = "创建一个新的后台菜单节点。")
     @PostMapping
     public Result<Long> create(@Parameter(description = "菜单创建参数", required = true)
-                               @RequestBody AdminMenuCreateRequest request) {
+                               @Valid @RequestBody AdminMenuCreateRequest request) {
         return Result.success(adminMenuService.create(request));
     }
 
@@ -70,7 +73,7 @@ public class AdminMenuController {
     public Result<Void> update(@Parameter(description = "菜单 ID", required = true)
                                @PathVariable("id") Long id,
                                @Parameter(description = "菜单更新参数", required = true)
-                               @RequestBody AdminMenuUpdateRequest request) {
+                               @Valid @RequestBody AdminMenuUpdateRequest request) {
         adminMenuService.update(id, request);
         return Result.success();
     }

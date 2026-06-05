@@ -11,6 +11,8 @@ import java.util.List;
 
 /**
  * 后台赛事国际化管理接口。
+ *
+ * <p>维护联赛、比赛和球队在不同语言下的展示名称与国际化配置。</p>
  */
 @Tag(name = "后台赛事国际化管理", description = "后台联赛、比赛和球队国际化配置管理接口")
 @RestController

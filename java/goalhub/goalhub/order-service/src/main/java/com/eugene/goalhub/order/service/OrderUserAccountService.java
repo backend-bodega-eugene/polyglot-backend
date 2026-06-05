@@ -5,6 +5,8 @@ import dto.*;
 
 /**
  * 后台用户账户管理服务。
+ *
+ * <p>定义订单服务侧调用用户账户服务进行余额增加和扣减的能力。</p>
  */
 public interface OrderUserAccountService {
 

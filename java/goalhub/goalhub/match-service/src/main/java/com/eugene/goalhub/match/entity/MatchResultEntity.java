@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 
 /**
  * 比赛结果实体。
+ *
+ * <p>对应 match_results 表，保存比赛比分、技术统计、审核状态和审计时间。</p>
  */
 @TableName("match_results")
 public class MatchResultEntity {

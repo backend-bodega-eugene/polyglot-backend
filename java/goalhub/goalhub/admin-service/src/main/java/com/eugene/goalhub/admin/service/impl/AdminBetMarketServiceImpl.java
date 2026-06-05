@@ -10,6 +10,8 @@ import java.util.List;
 
 /**
  * 后台投注玩法管理服务实现。
+ * <p>
+ * 当前服务通过 Feign 调用 match-service 的内部投注玩法和玩法选项接口。
  */
 @Service
 public class AdminBetMarketServiceImpl implements AdminBetMarketService {

@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @OpenAPIDefinition(
         info = @Info(
-                title = "GoalHub 比用户服务接口文档",
+                title = "GoalHub 用户服务接口文档",
                 version = "1.0.0",
                 description = "GoalHub 用户服务 OpenAPI 接口文档"
         )

@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 
 /**
  * 应用用户实体，对应 users 表。
+ *
+ * <p>记录前端应用用户的登录身份、基础资料、邀请关系、注册 IP 和最近登录信息。</p>
  */
 @TableName("users")
 public class UserEntity {

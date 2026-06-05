@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 
 /**
  * 用户账户实体。
+ *
+ * <p>映射 user_accounts 表，记录用户不同币种账户的可用余额、冻结余额和启用状态。</p>
  */
 @TableName("user_accounts")
 public class UserAccountEntity {

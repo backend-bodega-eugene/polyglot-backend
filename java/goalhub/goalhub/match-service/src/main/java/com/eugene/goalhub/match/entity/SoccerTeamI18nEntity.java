@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 
 /**
  * 足球球队多语言实体，对应 soccer_team_i18n 表。
+ *
+ * <p>保存球队在不同语言下的展示名称和简称。</p>
  */
 @TableName("soccer_team_i18n")
 public class SoccerTeamI18nEntity {

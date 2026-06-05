@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 
 /**
  * 后台球队响应。
+ *
+ * <p>返回球队基础信息及当前语言下的展示名称。</p>
  */
 @Schema(description = "后台球队响应")
 @Data
@@ -15,13 +17,13 @@ public class AdminTeamResponse {
     /**
      * 球队 ID。
      */
-    @Schema(description = "球队 ID")
+    @Schema(description = "球队 ID", example = "1")
     private Long id;
 
     /**
      * 球队编码。
      */
-    @Schema(description = "球队编码")
+    @Schema(description = "球队编码", example = "TEAM_001")
     private String code;
 
     /**
@@ -33,7 +35,7 @@ public class AdminTeamResponse {
     /**
      * 球队状态。
      */
-    @Schema(description = "球队状态")
+    @Schema(description = "球队状态", example = "1")
     private Integer status;
 
     /**

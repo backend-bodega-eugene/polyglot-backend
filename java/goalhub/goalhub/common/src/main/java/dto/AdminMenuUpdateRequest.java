@@ -1,10 +1,16 @@
 package dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 /**
  * 后台菜单更新请求。
+ *
+ * <p>用于更新后台菜单树节点，支持调整父节点、路由、排序和启用状态。</p>
  */
 @Schema(description = "后台菜单更新请求")
 @Data
@@ -20,12 +26,14 @@ public class AdminMenuUpdateRequest {
      * 菜单名称。
      */
     @Schema(description = "菜单名称", example = "用户管理")
+    @NotBlank(message = "parameter.error")
     private String name;
 
     /**
      * 菜单类型：1 目录，2 菜单，3 按钮。
      */
     @Schema(description = "菜单类型：1 目录，2 菜单，3 按钮", example = "2")
+    @NotNull(message = "menu.type.not.null")
     private Integer type;
 
     /**
@@ -50,5 +58,7 @@ public class AdminMenuUpdateRequest {
      * 状态：1 启用，0 禁用。
      */
     @Schema(description = "状态：1 启用，0 禁用", example = "1")
+    @Min(value = 0, message = "parameter.error")
+    @Max(value = 1, message = "parameter.error")
     private Integer status;
 }

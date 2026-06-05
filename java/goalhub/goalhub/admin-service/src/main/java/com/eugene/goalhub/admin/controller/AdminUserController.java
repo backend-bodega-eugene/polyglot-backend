@@ -5,15 +5,22 @@ import dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import response.Result;
 
 /**
  * 后台管理员账号接口。
+ *
+ * <p>提供后台管理员登录、账号分页查询、账号维护、密码修改和启用状态管理。</p>
  */
 @Tag(name = "后台管理员账号", description = "后台管理员登录、分页查询、创建、更新、删除、改密和状态管理接口")
 @RestController
 @RequestMapping("/admin")
+@Validated
 public class AdminUserController {
 
     /**
@@ -38,8 +45,8 @@ public class AdminUserController {
      */
     @Operation(summary = "管理员登录", description = "后台管理员使用账号密码登录，登录成功后返回 JWT 和管理员基础信息。")
     @PostMapping("/auth/login")
-    public Result<Object> login(@Parameter(description = "管理员登录参数", required = true)
-                                @RequestBody AdminLoginRequest request) {
+    public Result<AdminLoginResponse> login(@Parameter(description = "管理员登录参数", required = true)
+                                            @Valid @RequestBody AdminLoginRequest request) {
         return Result.success(adminUserService.login(request));
     }
 
@@ -55,8 +62,11 @@ public class AdminUserController {
     @GetMapping("/users")
     public Result<PageResponse<AdminUserPageResponse>> page(
             @Parameter(description = "页码", required = true)
+            @Min(value = 1, message = "parameter.error")
             @RequestParam("pageIndex") Integer pageIndex,
             @Parameter(description = "每页数量", required = true)
+            @Min(value = 1, message = "parameter.error")
+            @Max(value = 100, message = "parameter.error")
             @RequestParam("pageSize") Integer pageSize,
             @Parameter(description = "用户名筛选条件")
             @RequestParam(value = "username", required = false) String username
@@ -73,8 +83,10 @@ public class AdminUserController {
     @Operation(summary = "创建管理员账号", description = "创建一个新的后台管理员账号。")
     @PostMapping("/users")
     public Result<Long> create(@Parameter(description = "管理员创建参数", required = true)
-                               @RequestBody AdminUserCreateRequest request) {
-        return Result.success(adminUserService.create(request));
+                               @Valid @RequestBody AdminUserCreateRequest request,
+                               @Parameter(description = "当前管理员 ID")
+                               @RequestHeader(value = "X-Admin-Id", required = false) Long operatorAdminUserId) {
+        return Result.success(adminUserService.create(request, operatorAdminUserId));
     }
 
     /**
@@ -88,9 +100,11 @@ public class AdminUserController {
     @PutMapping("/users/{id}")
     public Result<Void> update(@Parameter(description = "管理员 ID", required = true)
                                @PathVariable("id") Long id,
+                               @Parameter(description = "当前管理员 ID")
+                               @RequestHeader(value = "X-Admin-Id", required = false) Long operatorAdminUserId,
                                @Parameter(description = "管理员更新参数", required = true)
-                               @RequestBody AdminUserUpdateRequest request) {
-        adminUserService.update(id, request);
+                               @Valid @RequestBody AdminUserUpdateRequest request) {
+        adminUserService.update(id, operatorAdminUserId, request);
         return Result.success();
     }
 
@@ -120,7 +134,7 @@ public class AdminUserController {
     public Result<Void> updatePassword(@Parameter(description = "管理员 ID", required = true)
                                        @PathVariable("id") Long id,
                                        @Parameter(description = "管理员密码更新参数", required = true)
-                                       @RequestBody AdminPasswordUpdateRequest request) {
+                                       @Valid @RequestBody AdminPasswordUpdateRequest request) {
         adminUserService.updatePassword(id, request);
         return Result.success();
     }
@@ -137,7 +151,7 @@ public class AdminUserController {
     public Result<Void> updateStatus(@Parameter(description = "管理员 ID", required = true)
                                      @PathVariable("id") Long id,
                                      @Parameter(description = "管理员状态更新参数", required = true)
-                                     @RequestBody AdminUserStatusUpdateRequest request) {
+                                     @Valid @RequestBody AdminUserStatusUpdateRequest request) {
         adminUserService.updateStatus(id, request.getStatus());
         return Result.success();
     }

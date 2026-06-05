@@ -8,6 +8,7 @@ import dto.UserAccountResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import response.Result;
 
@@ -15,6 +16,8 @@ import java.util.List;
 
 /**
  * 用户账户接口。
+ *
+ * <p>提供前端用户查询本人账户列表和账户流水的接口。</p>
  */
 @Tag(name = "用户账户", description = "用户账户相关接口")
 @RestController
@@ -68,7 +71,7 @@ public class UserAccountController {
             @Parameter(description = "当前登录用户 ID", required = true)
             @RequestHeader("X-User-Id") Long userId,
             @Parameter(description = "账户流水分页查询条件", required = true)
-            @RequestBody AccountTransactionPageRequest request) {
+            @Valid @RequestBody AccountTransactionPageRequest request) {
 
         return Result.success(
                 userAccountService.pageMyTransactions(

@@ -3,8 +3,11 @@ package com.eugene.goalhub.match.service.impl;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.eugene.goalhub.match.entity.MatchResultEntity;
+import com.eugene.goalhub.match.entity.SoccerMatchEntity;
 import com.eugene.goalhub.match.mapper.MatchResultMapper;
+import com.eugene.goalhub.match.mapper.SoccerMatchMapper;
 import com.eugene.goalhub.match.service.MatchResultService;
+import com.eugene.goalhub.match.service.support.MatchOperationLogger;
 import dto.*;
 import exception.BusinessException;
 import org.springframework.stereotype.Service;
@@ -14,9 +17,41 @@ import java.time.LocalDateTime;
 
 /**
  * 比赛结果管理服务实现。
+ *
+ * <p>负责后台比赛结果分页查询、赛果保存和赛果审核。</p>
  */
 @Service
 public class MatchResultServiceImpl implements MatchResultService {
+
+    /**
+     * 业务日志模块名称。
+     */
+    private static final String MODULE_NAME = "比赛结果管理";
+
+    /**
+     * 默认页码。
+     */
+    private static final int DEFAULT_PAGE_INDEX = 1;
+
+    /**
+     * 默认和最大每页数量。
+     */
+    private static final int DEFAULT_PAGE_SIZE = 100;
+
+    /**
+     * 已审核状态。
+     */
+    private static final int STATUS_APPROVED = 1;
+
+    /**
+     * 比赛已结束状态。
+     */
+    private static final String MATCH_STATUS_FINISHED = "FINISHED";
+
+    /**
+     * 比赛已取消状态。
+     */
+    private static final String MATCH_STATUS_CANCELLED = "CANCELLED";
 
     /**
      * 比赛结果 Mapper。
@@ -24,13 +59,27 @@ public class MatchResultServiceImpl implements MatchResultService {
     private final MatchResultMapper matchResultMapper;
 
     /**
+     * 比赛 Mapper。
+     */
+    private final SoccerMatchMapper soccerMatchMapper;
+
+    /**
+     * 比赛服务操作日志工具。
+     */
+    private final MatchOperationLogger matchOperationLogger;
+
+    /**
      * 创建比赛结果管理服务实现。
      *
      * @param matchResultMapper 比赛结果 Mapper
      */
     public MatchResultServiceImpl(
-            MatchResultMapper matchResultMapper) {
+            MatchResultMapper matchResultMapper,
+            SoccerMatchMapper soccerMatchMapper,
+            MatchOperationLogger matchOperationLogger) {
         this.matchResultMapper = matchResultMapper;
+        this.soccerMatchMapper = soccerMatchMapper;
+        this.matchOperationLogger = matchOperationLogger;
     }
 
     /**
@@ -42,6 +91,10 @@ public class MatchResultServiceImpl implements MatchResultService {
     @Override
     public PageResponse<AdminMatchResultResponse> page(
             AdminMatchResultPageRequest request) {
+        if (request == null) {
+            request = new AdminMatchResultPageRequest();
+        }
+        initPage(request);
 
         Page<AdminMatchResultResponse> page = new Page<>(
                 request.getPageIndex(),
@@ -51,6 +104,15 @@ public class MatchResultServiceImpl implements MatchResultService {
         Page<AdminMatchResultResponse> result =
                 matchResultMapper.adminPage(page, request);
 
+        matchOperationLogger.sysLog(
+                MODULE_NAME,
+                "MATCH_RESULT_PAGE",
+                "分页查询后台比赛结果，pageIndex=" + request.getPageIndex()
+                        + ", pageSize=" + request.getPageSize()
+                        + ", matchName=" + request.getMatchName()
+                        + ", matchStatus=" + request.getMatchStatus()
+                        + ", total=" + result.getTotal()
+        );
         return new PageResponse<>(
                 result.getTotal(),
                 request.getPageIndex(),
@@ -67,6 +129,8 @@ public class MatchResultServiceImpl implements MatchResultService {
     @Override
     public void save(
             SaveMatchResultRequest request) {
+        requireRequest(request);
+        requireMatchExists(request.getMatchId());
 
         MatchResultEntity entity = matchResultMapper.selectOne(
                 Wrappers.lambdaQuery(MatchResultEntity.class)
@@ -93,6 +157,13 @@ public class MatchResultServiceImpl implements MatchResultService {
         } else {
             matchResultMapper.updateById(entity);
         }
+        matchOperationLogger.adminBizLog(
+                MODULE_NAME,
+                "SAVE_MATCH_RESULT",
+                "保存比赛结果成功，matchResultId=" + entity.getId()
+                        + ", matchId=" + entity.getMatchId()
+                        + ", isNew=" + isNew
+        );
     }
 
     /**
@@ -103,6 +174,9 @@ public class MatchResultServiceImpl implements MatchResultService {
     @Override
     public void approve(
             ApproveMatchResultRequest request) {
+        requireRequest(request);
+        SoccerMatchEntity match = requireMatchExists(request.getMatchId());
+        requireMatchStatusAllowApprove(match);
 
         MatchResultEntity entity = matchResultMapper.selectOne(
                 Wrappers.lambdaQuery(MatchResultEntity.class)
@@ -113,10 +187,24 @@ public class MatchResultServiceImpl implements MatchResultService {
             throw new BusinessException(ResultCode.MATCH_RESULT_NOT_FOUND);
         }
 
-        entity.setStatus(1);
+        if (Integer.valueOf(STATUS_APPROVED).equals(entity.getStatus())) {
+            throw new BusinessException(ResultCode.MATCH_RESULT_APPROVED);
+        }
+
+        requireResultReadyToApprove(entity);
+
+        entity.setStatus(STATUS_APPROVED);
         entity.setApprovedAt(LocalDateTime.now());
 
         matchResultMapper.updateById(entity);
+        match.setStatus(MATCH_STATUS_FINISHED);
+        soccerMatchMapper.updateById(match);
+        matchOperationLogger.adminBizLog(
+                MODULE_NAME,
+                "APPROVE_MATCH_RESULT",
+                "审核比赛结果成功，matchResultId=" + entity.getId()
+                        + ", matchId=" + entity.getMatchId()
+        );
     }
 
     /**
@@ -201,6 +289,66 @@ public class MatchResultServiceImpl implements MatchResultService {
         }
         if (request.getAwayYellowCardCount() != null) {
             entity.setAwayYellowCardCount(request.getAwayYellowCardCount());
+        }
+    }
+
+    /**
+     * 初始化分页参数。
+     */
+    private void initPage(AdminMatchResultPageRequest request) {
+        if (request.getPageIndex() == null || request.getPageIndex() < 1) {
+            request.setPageIndex(DEFAULT_PAGE_INDEX);
+        }
+
+        if (request.getPageSize() == null || request.getPageSize() < 1) {
+            request.setPageSize(DEFAULT_PAGE_SIZE);
+            return;
+        }
+
+        if (request.getPageSize() > DEFAULT_PAGE_SIZE) {
+            request.setPageSize(DEFAULT_PAGE_SIZE);
+        }
+    }
+
+    /**
+     * 校验请求不能为空。
+     */
+    private void requireRequest(Object request) {
+        if (request == null) {
+            throw new BusinessException(ResultCode.PARAM_ERROR);
+        }
+    }
+
+    /**
+     * 校验比赛存在。
+     */
+    private SoccerMatchEntity requireMatchExists(Long matchId) {
+        if (matchId == null) {
+            throw new BusinessException(ResultCode.PARAM_ERROR);
+        }
+
+        SoccerMatchEntity match = soccerMatchMapper.selectById(matchId);
+        if (match == null) {
+            throw new BusinessException(ResultCode.SOCCER_NOT_EXISTS);
+        }
+        return match;
+    }
+
+    /**
+     * 校验赛果达到审核条件。
+     */
+    private void requireResultReadyToApprove(MatchResultEntity entity) {
+        if (entity.getRegularHomeScore() == null || entity.getRegularAwayScore() == null) {
+            throw new BusinessException(ResultCode.PARAM_ERROR);
+        }
+    }
+
+    /**
+     * 校验比赛状态允许审核赛果。
+     */
+    private void requireMatchStatusAllowApprove(SoccerMatchEntity match) {
+        if (MATCH_STATUS_CANCELLED.equals(match.getStatus())) {
+            throw new BusinessException(ResultCode.PARAM_ERROR);
         }
     }
 }

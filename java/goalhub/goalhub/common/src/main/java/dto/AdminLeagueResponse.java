@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 
 /**
  * 后台联赛响应。
+ *
+ * <p>返回联赛基础信息及当前语言下的展示名称。</p>
  */
 @Schema(description = "后台联赛响应")
 @Data
@@ -15,19 +17,19 @@ public class AdminLeagueResponse {
     /**
      * 联赛 ID。
      */
-    @Schema(description = "联赛 ID")
+    @Schema(description = "联赛 ID", example = "1")
     private Long id;
 
     /**
      * 联赛编码。
      */
-    @Schema(description = "联赛编码")
+    @Schema(description = "联赛编码", example = "EPL")
     private String code;
 
     /**
      * 主办国家。
      */
-    @Schema(description = "主办国家")
+    @Schema(description = "主办国家", example = "GB")
     private String hostCountry;
 
     /**
@@ -39,7 +41,7 @@ public class AdminLeagueResponse {
     /**
      * 联赛状态。
      */
-    @Schema(description = "联赛状态")
+    @Schema(description = "联赛状态", example = "1")
     private Integer status;
 
     /**

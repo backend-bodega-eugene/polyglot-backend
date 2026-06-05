@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.eugene.goalhub.admin.entity.AdminMenu;
 import com.eugene.goalhub.admin.mapper.AdminMenuMapper;
 import com.eugene.goalhub.admin.service.AdminMenuService;
+import com.eugene.goalhub.admin.service.support.AdminOperationLogger;
 import dto.AdminMenuCreateRequest;
 import dto.AdminMenuTreeResponse;
 import dto.AdminMenuUpdateRequest;
@@ -21,13 +22,31 @@ import java.util.stream.Collectors;
 
 /**
  * 后台菜单管理服务实现。
+ *
+ * <p>负责后台菜单的树形查询、创建、更新、删除，以及菜单层级关系合法性校验。</p>
  */
 @Service
 public class AdminMenuServiceImpl extends ServiceImpl<AdminMenuMapper, AdminMenu>
         implements AdminMenuService {
 
     /**
+     * 后台操作日志工具。
+     */
+    private final AdminOperationLogger adminOperationLogger;
+
+    /**
+     * 创建后台菜单管理服务实现。
+     *
+     * @param adminOperationLogger 后台操作日志工具
+     */
+    public AdminMenuServiceImpl(AdminOperationLogger adminOperationLogger) {
+        this.adminOperationLogger = adminOperationLogger;
+    }
+
+    /**
      * 查询菜单列表，并按 parentId 组装为前端需要的树形结构。
+     *
+     * <p>父节点不存在的菜单会降级为根节点返回，避免异常数据导致菜单不可见。</p>
      *
      * @return 菜单树列表
      */
@@ -76,10 +95,15 @@ public class AdminMenuServiceImpl extends ServiceImpl<AdminMenuMapper, AdminMenu
      */
     @Override
     public Long create(AdminMenuCreateRequest request) {
+        requireRequest(request);
         checkMenuType(request.getType());
+        requireValidBinaryValue(request.getStatus());
+
+        Long parentId = normalizeParentId(request.getParentId());
+        checkParentMenuExists(parentId);
 
         AdminMenu menu = new AdminMenu();
-        menu.setParentId(request.getParentId() == null ? 0L : request.getParentId());
+        menu.setParentId(parentId);
         menu.setName(request.getName());
         menu.setType(request.getType());
         menu.setPath(request.getPath());
@@ -89,6 +113,11 @@ public class AdminMenuServiceImpl extends ServiceImpl<AdminMenuMapper, AdminMenu
         menu.setDeleted(0);
 
         save(menu);
+        adminOperationLogger.bizLog(
+                "后台菜单管理",
+                "CREATE_MENU",
+                "创建后台菜单成功，menuId=" + menu.getId()
+        );
 
         return menu.getId();
     }
@@ -101,18 +130,22 @@ public class AdminMenuServiceImpl extends ServiceImpl<AdminMenuMapper, AdminMenu
      */
     @Override
     public void update(Long id, AdminMenuUpdateRequest request) {
+        requireRequest(request);
+
         AdminMenu menu = getById(id);
         if (menu == null) {
             throw new BusinessException(ResultCode.MENU_NOT_EXISTS);
         }
 
         checkMenuType(request.getType());
+        requireValidBinaryValue(request.getStatus());
 
-        Long parentId = request.getParentId() == null ? 0L : request.getParentId();
+        Long parentId = normalizeParentId(request.getParentId());
         if (Objects.equals(id, parentId)) {
-           // throw new RuntimeException("父级菜单不能是自己");
             throw new BusinessException(ResultCode.FATHER_NOT_OWN);
         }
+
+        checkParentMenuExists(parentId);
 
         if (isDescendantMenu(parentId, id)) {
             throw new BusinessException(ResultCode.FATHER_NOT_CHILD_CODE);
@@ -127,6 +160,11 @@ public class AdminMenuServiceImpl extends ServiceImpl<AdminMenuMapper, AdminMenu
         menu.setStatus(request.getStatus() == null ? 1 : request.getStatus());
 
         updateById(menu);
+        adminOperationLogger.bizLog(
+                "后台菜单管理",
+                "UPDATE_MENU",
+                "更新后台菜单成功，menuId=" + id
+        );
     }
 
     /**
@@ -140,7 +178,6 @@ public class AdminMenuServiceImpl extends ServiceImpl<AdminMenuMapper, AdminMenu
     public void delete(Long id) {
         AdminMenu menu = getById(id);
         if (menu == null) {
-            //throw new RuntimeException("菜单不存在");
             throw new BusinessException(ResultCode.MENU_NOT_EXISTS);
         }
 
@@ -149,11 +186,15 @@ public class AdminMenuServiceImpl extends ServiceImpl<AdminMenuMapper, AdminMenu
                 .exists();
 
         if (hasChildren) {
-           // throw new RuntimeException("该菜单存在子菜单，不能直接删除");
             throw new BusinessException(ResultCode.MENU_HAVE_CHILDREN);
         }
 
         removeById(id);
+        adminOperationLogger.bizLog(
+                "后台菜单管理",
+                "DELETE_MENU",
+                "删除后台菜单成功，menuId=" + id
+        );
     }
 
     /**
@@ -165,13 +206,62 @@ public class AdminMenuServiceImpl extends ServiceImpl<AdminMenuMapper, AdminMenu
      */
     private void checkMenuType(Integer type) {
         if (type == null) {
-           // throw new RuntimeException("菜单类型不能为空");
             throw new BusinessException(ResultCode.MENU_TYPE_NOT_NULL);
         }
 
         if (type != 1 && type != 2 && type != 3) {
-           // throw new RuntimeException("菜单类型错误");
             throw new BusinessException(ResultCode.MENU_WRONG_TYPE);
+        }
+    }
+
+    /**
+     * 校验请求对象不能为空。
+     *
+     * @param request 请求对象
+     */
+    private void requireRequest(Object request) {
+        if (request == null) {
+            throw new BusinessException(ResultCode.PARAM_ERROR);
+        }
+    }
+
+    /**
+     * 校验二值字段只能为 0 或 1，null 表示使用默认值时允许。
+     *
+     * @param value 二值字段
+     */
+    private void requireValidBinaryValue(Integer value) {
+        if (value != null && value != 0 && value != 1) {
+            throw new BusinessException(ResultCode.PARAM_ERROR);
+        }
+    }
+
+    /**
+     * 规范化父菜单 ID。
+     *
+     * @param parentId 父菜单 ID
+     * @return 规范化后的父菜单 ID
+     */
+    private Long normalizeParentId(Long parentId) {
+        Long normalizedParentId = parentId == null ? 0L : parentId;
+        if (normalizedParentId < 0) {
+            throw new BusinessException(ResultCode.PARAM_ERROR);
+        }
+        return normalizedParentId;
+    }
+
+    /**
+     * 校验父菜单存在，0 表示逻辑根节点。
+     *
+     * @param parentId 父菜单 ID
+     */
+    private void checkParentMenuExists(Long parentId) {
+        if (parentId == null || parentId == 0) {
+            return;
+        }
+
+        if (getById(parentId) == null) {
+            throw new BusinessException(ResultCode.MENU_NOT_EXISTS);
         }
     }
 
@@ -196,6 +286,8 @@ public class AdminMenuServiceImpl extends ServiceImpl<AdminMenuMapper, AdminMenu
 
     /**
      * 判断目标父菜单是否为当前菜单的子孙节点。
+     *
+     * <p>用于防止更新菜单时形成循环引用。</p>
      *
      * @param targetParentId 目标父菜单 ID
      * @param currentMenuId  当前菜单 ID

@@ -5,6 +5,8 @@ import dto.PlaceBetOrderResponse;
 
 /**
  * 前端投注订单服务。
+ *
+ * <p>定义前端用户提交投注订单的业务能力。</p>
  */
 public interface AppBetOrderService {
 

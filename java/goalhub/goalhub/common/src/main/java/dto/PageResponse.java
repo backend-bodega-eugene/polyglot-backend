@@ -8,6 +8,8 @@ import java.util.List;
 /**
  * 通用分页响应。
  *
+ * <p>封装分页查询的总数、页码、每页数量和当前页记录。</p>
+ *
  * @param <T> 分页记录类型
  */
 @Schema(description = "通用分页响应")
@@ -17,7 +19,8 @@ public class PageResponse<T> {
     /**
      * 创建空分页响应。
      */
-    public PageResponse() {}
+    public PageResponse() {
+    }
 
     /**
      * 创建分页响应。
@@ -27,12 +30,13 @@ public class PageResponse<T> {
      * @param pageSize  每页数量
      * @param records   当前页记录列表
      */
-    public PageResponse(Long total,Integer pageIndex,Integer pageSize,List<T>  records) {
+    public PageResponse(Long total, Integer pageIndex, Integer pageSize, List<T> records) {
         this.total = total;
         this.pageIndex = pageIndex;
         this.pageSize = pageSize;
         this.records = records;
     }
+
     /**
      * 总记录数。
      */

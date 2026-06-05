@@ -10,6 +10,8 @@ import response.Result;
 
 /**
  * 后台赛事玩法赔率管理接口。
+ *
+ * <p>维护具体赛事下的玩法选项与赔率数据。</p>
  */
 @Tag(name = "后台赛事玩法赔率管理", description = "后台赛事玩法赔率分页查询、新增、修改和删除接口")
 @RestController

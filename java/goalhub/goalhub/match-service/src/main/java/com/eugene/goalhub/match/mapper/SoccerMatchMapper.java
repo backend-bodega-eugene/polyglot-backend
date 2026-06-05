@@ -15,6 +15,8 @@ import java.util.List;
 
 /**
  * 足球比赛表 Mapper。
+ *
+ * <p>负责足球比赛基础表的通用 CRUD，以及前端比赛列表、详情和热门比赛查询。</p>
  */
 @Mapper
 public interface SoccerMatchMapper extends BaseMapper<SoccerMatchEntity> {

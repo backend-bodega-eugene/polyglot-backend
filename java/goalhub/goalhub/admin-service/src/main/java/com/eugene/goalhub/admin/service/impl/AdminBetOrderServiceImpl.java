@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
  * 后台投注订单管理服务实现。
  * <p>
  * 当前服务通过 Feign 调用 order-service 的内部后台投注订单接口。
+ * 投注订单状态流转和金额计算由 order-service 负责。
  */
 @Service
 public class AdminBetOrderServiceImpl

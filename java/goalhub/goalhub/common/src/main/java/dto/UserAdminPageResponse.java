@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 
 /**
  * 后台应用用户分页响应。
+ *
+ * <p>返回后台用户列表中展示的应用用户基础资料、状态和时间信息。</p>
  */
 @Schema(description = "后台应用用户分页响应")
 @Data

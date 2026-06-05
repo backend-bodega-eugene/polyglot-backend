@@ -5,6 +5,7 @@ import dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import response.Result;
 
@@ -41,7 +42,7 @@ public class InternalAdminMatchResultController {
     @PostMapping("/page")
     public Result<PageResponse<AdminMatchResultResponse>> page(
             @Parameter(description = "比赛结果分页查询参数", required = true)
-            @RequestBody AdminMatchResultPageRequest request) {
+            @Valid @RequestBody AdminMatchResultPageRequest request) {
 
         return Result.success(
                 matchResultService.page(request)
@@ -58,7 +59,7 @@ public class InternalAdminMatchResultController {
     @PostMapping("/save")
     public Result<Void> save(
             @Parameter(description = "比赛结果保存参数", required = true)
-            @RequestBody SaveMatchResultRequest request) {
+            @Valid @RequestBody SaveMatchResultRequest request) {
 
         matchResultService.save(request);
 
@@ -75,7 +76,7 @@ public class InternalAdminMatchResultController {
     @PostMapping("/approve")
     public Result<Void> approve(
             @Parameter(description = "比赛结果审核参数", required = true)
-            @RequestBody ApproveMatchResultRequest request) {
+            @Valid @RequestBody ApproveMatchResultRequest request) {
 
         matchResultService.approve(request);
 

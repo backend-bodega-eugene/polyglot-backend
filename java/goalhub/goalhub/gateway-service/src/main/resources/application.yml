@@ -45,13 +45,14 @@ spring:
                 - Path=/api/soccer/**
               filters:
                 - StripPrefix=1
-            # 后台管理服务路由，/admin/** 转发到 admin-service。
+            # 订单服务路由，/api/order/** 转发到 order-service，并去掉第一段路径。
             - id: order-service
               uri: lb://order-service
               predicates:
                 - Path=/api/order/**
               filters:
                 - StripPrefix=1
+            # 后台管理服务路由，/admin/** 转发到 admin-service。
             - id: admin-service
               uri: lb://admin-service
               predicates:

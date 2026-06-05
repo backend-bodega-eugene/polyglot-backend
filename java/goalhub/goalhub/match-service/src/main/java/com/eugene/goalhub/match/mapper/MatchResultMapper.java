@@ -11,6 +11,8 @@ import org.apache.ibatis.annotations.Select;
 
 /**
  * 比赛结果 Mapper。
+ *
+ * <p>负责比赛结果表的通用 CRUD 和后台比赛结果分页查询。</p>
  */
 @Mapper
 public interface MatchResultMapper extends BaseMapper<MatchResultEntity> {

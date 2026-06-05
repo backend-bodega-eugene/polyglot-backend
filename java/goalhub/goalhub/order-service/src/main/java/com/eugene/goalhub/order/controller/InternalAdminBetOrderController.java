@@ -5,11 +5,14 @@ import dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import response.Result;
 
 /**
  * 内部后台投注订单管理接口。
+ *
+ * <p>提供 admin-service 远程调用的订单查询、明细查询、审核、冻结和结算接口。</p>
  */
 @Tag(name = "内部后台投注订单管理", description = "提供后台投注订单查询、明细查询、审核、冻结和结算接口")
 @RestController
@@ -42,7 +45,7 @@ public class InternalAdminBetOrderController {
     @PostMapping("/page")
     public Result<PageResponse<AdminBetOrderResponse>> orderPage(
             @Parameter(description = "投注订单分页查询条件", required = true)
-            @RequestBody AdminBetOrderPageRequest request) {
+            @Valid @RequestBody AdminBetOrderPageRequest request) {
 
         return Result.success(
                 adminBetOrderService.orderPage(request)
@@ -59,7 +62,7 @@ public class InternalAdminBetOrderController {
     @PostMapping("/item/page")
     public Result<PageResponse<AdminBetOrderItemResponse>> orderItemPage(
             @Parameter(description = "投注订单明细分页查询条件", required = true)
-            @RequestBody AdminBetOrderItemPageRequest request) {
+            @Valid @RequestBody AdminBetOrderItemPageRequest request) {
 
         return Result.success(
                 adminBetOrderService.orderItemPage(request)
@@ -78,7 +81,7 @@ public class InternalAdminBetOrderController {
 //            @RequestHeader("X-Admin-Id") Long adminId,
 //            @RequestHeader("X-Admin-Username") String adminUsername,
             @Parameter(description = "投注订单审核参数", required = true)
-            @RequestBody AdminBetOrderReviewRequest request) {
+            @Valid @RequestBody AdminBetOrderReviewRequest request) {
 
         adminBetOrderService.reviewOrder(
                 request,
@@ -101,7 +104,7 @@ public class InternalAdminBetOrderController {
 //            @RequestHeader("X-Admin-Id") Long adminId,
 //            @RequestHeader("X-Admin-Username") String adminUsername,
             @Parameter(description = "投注订单冻结参数", required = true)
-            @RequestBody AdminBetOrderFreezeRequest request) {
+            @Valid @RequestBody AdminBetOrderFreezeRequest request) {
 
         adminBetOrderService.freezeOrder(
                 request,
@@ -124,7 +127,7 @@ public class InternalAdminBetOrderController {
 //            @RequestHeader("X-Admin-Id") Long adminId,
 //            @RequestHeader("X-Admin-Username") String adminUsername,
             @Parameter(description = "投注订单结算参数", required = true)
-            @RequestBody AdminBetOrderSettleRequest request) {
+            @Valid @RequestBody AdminBetOrderSettleRequest request) {
 
         adminBetOrderService.settleOrder(
                 request,

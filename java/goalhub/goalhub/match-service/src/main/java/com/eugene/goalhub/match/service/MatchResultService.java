@@ -4,6 +4,8 @@ import dto.*;
 
 /**
  * 比赛结果管理服务。
+ *
+ * <p>负责后台比赛结果分页查询、保存和审核。</p>
  */
 public interface MatchResultService {
 

@@ -5,6 +5,8 @@ import lombok.Data;
 
 /**
  * 足球联赛响应。
+ *
+ * <p>返回前端展示联赛所需的基础信息和本地化名称。</p>
  */
 @Schema(description = "足球联赛响应")
 @Data

@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 
 /**
  * 账户流水实体。
+ *
+ * <p>映射 account_transactions 表，记录账户余额变动前后快照、业务类型、业务 ID 和备注。</p>
  */
 @TableName("account_transactions")
 public class AccountTransactionEntity {

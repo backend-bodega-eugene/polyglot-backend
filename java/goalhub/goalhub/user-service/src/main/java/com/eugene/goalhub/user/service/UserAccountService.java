@@ -6,23 +6,25 @@ import java.util.List;
 
 /**
  * 用户账户服务。
+ *
+ * <p>定义前端用户账户查询、账户流水查询和后台账户余额维护能力。</p>
  */
 public interface UserAccountService {
 
     /**
      * 查询当前用户账户列表。
      *
-     * @param userId 用户ID
-     * @return 账户列表
+     * @param userId 用户 ID
+     * @return 当前用户账户列表
      */
     List<UserAccountResponse> getMyAccounts(Long userId);
 
     /**
      * 查询当前用户流水分页。
      *
-     * @param userId 用户ID
+     * @param userId  用户 ID
      * @param request 查询条件
-     * @return 分页结果
+     * @return 当前用户流水分页结果
      */
     PageResponse<AccountTransactionResponse> pageMyTransactions(
             Long userId,

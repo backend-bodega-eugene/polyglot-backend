@@ -12,6 +12,8 @@ import java.util.List;
 
 /**
  * 后台投注玩法管理接口。
+ *
+ * <p>维护投注玩法和玩法选项配置，供后台运营管理使用。</p>
  */
 @Tag(name = "后台投注玩法管理", description = "后台玩法和子玩法管理接口")
 @RestController

@@ -17,6 +17,8 @@ import response.Result;
 
 /**
  * 后台日志查询接口。
+ *
+ * <p>提供业务日志、系统日志和错误日志的只读分页查询能力。</p>
  */
 @Tag(name = "后台日志管理", description = "后台业务日志、系统日志和错误日志查询接口")
 @RestController

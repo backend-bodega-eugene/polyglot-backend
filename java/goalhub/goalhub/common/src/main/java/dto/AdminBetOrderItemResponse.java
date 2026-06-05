@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 
 /**
  * 后台投注订单明细响应。
+ *
+ * <p>返回投注订单中单个投注项的比赛、玩法、赔率、金额和判定结果快照。</p>
  */
 @Data
 @Schema(description = "后台投注订单明细响应")
@@ -16,19 +18,19 @@ public class AdminBetOrderItemResponse {
     /**
      * 订单明细 ID。
      */
-    @Schema(description = "订单明细ID")
+    @Schema(description = "订单明细 ID", example = "1")
     private Long itemId;
 
     /**
      * 订单 ID。
      */
-    @Schema(description = "订单ID")
+    @Schema(description = "订单 ID", example = "10001")
     private Long orderId;
 
     /**
      * 订单号。
      */
-    @Schema(description = "订单号")
+    @Schema(description = "订单号", example = "BO202606040001")
     private String orderNo;
 
     /**

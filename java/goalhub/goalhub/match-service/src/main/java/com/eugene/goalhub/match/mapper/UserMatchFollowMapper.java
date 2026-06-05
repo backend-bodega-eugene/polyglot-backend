@@ -7,6 +7,8 @@ import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 用户赛事关注表 Mapper。
+ *
+ * <p>负责用户赛事关注关系表的通用 CRUD。</p>
  */
 @Mapper
 public interface UserMatchFollowMapper extends BaseMapper<UserMatchFollow> {

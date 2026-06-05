@@ -13,23 +13,25 @@ public interface AdminUserService {
      * @param request 登录参数
      * @return 登录结果，包含 token 和管理员基础信息
      */
-    Object login(AdminLoginRequest request);
+    AdminLoginResponse login(AdminLoginRequest request);
 
     /**
      * 创建管理员账号。
      *
-     * @param request 管理员创建参数
+     * @param request             管理员创建参数
+     * @param operatorAdminUserId 当前操作管理员 ID
      * @return 新管理员 ID
      */
-    Long create(AdminUserCreateRequest request);
+    Long create(AdminUserCreateRequest request, Long operatorAdminUserId);
 
     /**
      * 更新管理员账号基础信息。
      *
      * @param id      管理员 ID
-     * @param request 更新参数
+     * @param operatorAdminUserId 当前操作管理员 ID
+     * @param request             更新参数
      */
-    void update(Long id, AdminUserUpdateRequest request);
+    void update(Long id, Long operatorAdminUserId, AdminUserUpdateRequest request);
 
     /**
      * 删除管理员账号。

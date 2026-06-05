@@ -11,6 +11,8 @@ import org.apache.ibatis.annotations.Select;
 
 /**
  * 赛事玩法赔率 Mapper。
+ *
+ * <p>负责赛事玩法赔率表的通用 CRUD 和后台分页查询。</p>
  */
 @Mapper
 public interface MatchMarketOptionMapper extends BaseMapper<MatchMarketOptionEntity> {

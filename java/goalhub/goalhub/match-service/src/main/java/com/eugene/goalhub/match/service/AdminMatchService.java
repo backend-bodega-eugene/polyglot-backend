@@ -4,6 +4,8 @@ import dto.*;
 
 /**
  * 后台赛事基础数据管理服务。
+ *
+ * <p>负责后台联赛、比赛和球队基础数据的查询与维护。</p>
  */
 public interface AdminMatchService {
 

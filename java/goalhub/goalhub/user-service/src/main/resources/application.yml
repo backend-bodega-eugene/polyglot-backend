@@ -14,12 +14,15 @@ spring:
     redis:
       host: localhost
       port: 6379
+    mongodb:
+      uri: mongodb://root:root123456@localhost:27017/goalhub_logs?authSource=admin
   datasource:
     # 用户服务数据库连接。
     url: jdbc:mysql://127.0.0.1:3306/goalhub_user?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Bangkok
     username: goalhub
     password: goalhub123456
     driver-class-name: com.mysql.cj.jdbc.Driver
+
 springdoc:
   swagger-ui:
     # Swagger UI 访问路径。

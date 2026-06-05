@@ -11,6 +11,8 @@ import org.apache.ibatis.annotations.Select;
 
 /**
  * 足球球队 Mapper。
+ *
+ * <p>负责足球球队基础表的通用 CRUD 和后台球队分页查询。</p>
  */
 @Mapper
 public interface SoccerTeamMapper extends BaseMapper<SoccerTeamEntity> {

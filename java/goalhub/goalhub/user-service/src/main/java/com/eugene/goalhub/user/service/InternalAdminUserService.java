@@ -5,8 +5,8 @@ import dto.*;
 
 /**
  * 后台管理内部用户服务。
- * <p>
- * 该接口供 admin-service 通过内部接口管理应用用户。
+ *
+ * <p>该接口供 admin-service 通过内部接口管理应用用户。</p>
  */
 public interface InternalAdminUserService {
 

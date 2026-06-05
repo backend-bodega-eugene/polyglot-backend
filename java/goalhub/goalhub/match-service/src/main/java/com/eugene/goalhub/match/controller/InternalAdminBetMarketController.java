@@ -5,6 +5,7 @@ import dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import response.Result;
 
@@ -43,7 +44,7 @@ public class InternalAdminBetMarketController {
     @PostMapping("/page")
     public Result<PageResponse<BetMarketResponse>> page(
             @Parameter(description = "玩法分页查询参数", required = true)
-            @RequestBody BetMarketPageRequest request) {
+            @Valid @RequestBody BetMarketPageRequest request) {
 
         return Result.success(
                 betMarketService.page(request)
@@ -60,7 +61,7 @@ public class InternalAdminBetMarketController {
     @PostMapping("/add")
     public Result<Void> add(
             @Parameter(description = "玩法新增参数", required = true)
-            @RequestBody AddBetMarketRequest request) {
+            @Valid @RequestBody AddBetMarketRequest request) {
 
         betMarketService.add(request);
 
@@ -77,7 +78,7 @@ public class InternalAdminBetMarketController {
     @PostMapping("/update")
     public Result<Void> update(
             @Parameter(description = "玩法更新参数", required = true)
-            @RequestBody UpdateBetMarketRequest request) {
+            @Valid @RequestBody UpdateBetMarketRequest request) {
 
         betMarketService.update(request);
 
@@ -94,7 +95,7 @@ public class InternalAdminBetMarketController {
     @PostMapping("/delete")
     public Result<Void> delete(
             @Parameter(description = "玩法删除参数", required = true)
-            @RequestBody DeleteBetMarketRequest request) {
+            @Valid @RequestBody DeleteBetMarketRequest request) {
 
         betMarketService.delete(request);
 
@@ -111,7 +112,7 @@ public class InternalAdminBetMarketController {
     @PostMapping("/option/list")
     public Result<List<BetMarketOptionResponse>> optionList(
             @Parameter(description = "子玩法查询参数", required = true)
-            @RequestBody BetMarketOptionListRequest request) {
+            @Valid @RequestBody BetMarketOptionListRequest request) {
 
         return Result.success(
                 betMarketService.optionList(request)
@@ -128,7 +129,7 @@ public class InternalAdminBetMarketController {
     @PostMapping("/option/add")
     public Result<Void> addOption(
             @Parameter(description = "子玩法新增参数", required = true)
-            @RequestBody AddBetMarketOptionRequest request) {
+            @Valid @RequestBody AddBetMarketOptionRequest request) {
 
         betMarketService.addOption(request);
 
@@ -145,7 +146,7 @@ public class InternalAdminBetMarketController {
     @PostMapping("/option/update")
     public Result<Void> updateOption(
             @Parameter(description = "子玩法更新参数", required = true)
-            @RequestBody UpdateBetMarketOptionRequest request) {
+            @Valid @RequestBody UpdateBetMarketOptionRequest request) {
 
         betMarketService.updateOption(request);
 
@@ -162,7 +163,7 @@ public class InternalAdminBetMarketController {
     @PostMapping("/option/delete")
     public Result<Void> deleteOption(
             @Parameter(description = "子玩法删除参数", required = true)
-            @RequestBody DeleteBetMarketOptionRequest request) {
+            @Valid @RequestBody DeleteBetMarketOptionRequest request) {
 
         betMarketService.deleteOption(request);
 

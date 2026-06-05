@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 
 /**
  * 后台比赛响应。
+ *
+ * <p>返回后台赛事列表和详情所需的比赛基础信息及当前语言展示字段。</p>
  */
 @Schema(description = "后台比赛响应")
 @Data
@@ -15,13 +17,13 @@ public class AdminMatchResponse {
     /**
      * 比赛 ID。
      */
-    @Schema(description = "比赛 ID")
+    @Schema(description = "比赛 ID", example = "1")
     private Long id;
 
     /**
      * 所属联赛 ID。
      */
-    @Schema(description = "所属联赛 ID")
+    @Schema(description = "所属联赛 ID", example = "1")
     private Long leagueId;
 
     /**
@@ -33,7 +35,7 @@ public class AdminMatchResponse {
     /**
      * 比赛编码。
      */
-    @Schema(description = "比赛编码")
+    @Schema(description = "比赛编码", example = "MATCH_20260604_001")
     private String matchCode;
 
     /**
@@ -57,7 +59,7 @@ public class AdminMatchResponse {
     /**
      * 主队 ID。
      */
-    @Schema(description = "主队 ID")
+    @Schema(description = "主队 ID", example = "10")
     private Long homeTeamId;
 
     /**
@@ -69,7 +71,7 @@ public class AdminMatchResponse {
     /**
      * 客队 ID。
      */
-    @Schema(description = "客队 ID")
+    @Schema(description = "客队 ID", example = "11")
     private Long awayTeamId;
 
     /**
@@ -117,7 +119,7 @@ public class AdminMatchResponse {
     /**
      * 比赛状态。
      */
-    @Schema(description = "比赛状态")
+    @Schema(description = "比赛状态", example = "SCHEDULED")
     private String status;
 
     /**

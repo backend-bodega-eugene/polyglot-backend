@@ -4,6 +4,8 @@ import dto.*;
 
 /**
  * 比赛投注选项管理服务。
+ *
+ * <p>负责后台赛事玩法赔率的分页查询、新增、更新和删除。</p>
  */
 public interface MatchMarketOptionService {
 

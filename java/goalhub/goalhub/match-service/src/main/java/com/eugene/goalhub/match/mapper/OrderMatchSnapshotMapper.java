@@ -5,9 +5,21 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+/**
+ * 订单赛事快照查询 Mapper。
+ *
+ * <p>供订单服务下单前查询赛事、玩法、选项和赔率快照。</p>
+ */
 @Mapper
 public interface OrderMatchSnapshotMapper {
 
+    /**
+     * 查询下单用赛事玩法赔率快照。
+     *
+     * @param matchMarketOptionId 赛事玩法赔率 ID
+     * @param langCode            语言编码
+     * @return 下单用赛事玩法赔率快照
+     */
     @Select("""
             SELECT
                 mo.id AS matchMarketOptionId,
@@ -61,6 +73,8 @@ public interface OrderMatchSnapshotMapper {
                AND ati.lang_code = #{langCode}
 
             WHERE mo.id = #{matchMarketOptionId}
+              AND mo.visible = 1
+              AND mo.bet_status = 'OPEN'
             """)
     OrderMatchOptionSnapshotResponse selectOrderSnapshot(
             @Param("matchMarketOptionId") Long matchMarketOptionId,

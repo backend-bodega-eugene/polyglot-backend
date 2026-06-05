@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 
 /**
  * 足球联赛实体，对应 soccer_league 表。
+ *
+ * <p>保存联赛基础编码、主办国家、Logo 和启用状态。</p>
  */
 @TableName("soccer_league")
 public class SoccerLeagueEntity {

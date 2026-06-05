@@ -5,23 +5,43 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+/**
+ * 前端赛事赛果响应。
+ *
+ * <p>返回前端展示赛事赛果所需的比赛、球队、比分和技术统计信息。</p>
+ */
 @Data
 @Schema(description = "前端赛事赛果响应")
 public class AppMatchResultResponse {
 
-    @Schema(description = "赛事ID")
+    /**
+     * 赛事 ID。
+     */
+    @Schema(description = "赛事 ID", example = "1")
     private Long matchId;
 
-    @Schema(description = "赛事编码")
+    /**
+     * 赛事编码。
+     */
+    @Schema(description = "赛事编码", example = "MATCH_20260604_001")
     private String matchCode;
 
+    /**
+     * 赛事名称。
+     */
     @Schema(description = "赛事名称")
     private String matchName;
 
-    @Schema(description = "联盟ID")
+    /**
+     * 联赛 ID。
+     */
+    @Schema(description = "联赛 ID", example = "1")
     private Long leagueId;
 
-    @Schema(description = "联盟名称")
+    /**
+     * 联赛名称。
+     */
+    @Schema(description = "联赛名称")
     private String leagueName;
 
     @Schema(description = "主队ID")

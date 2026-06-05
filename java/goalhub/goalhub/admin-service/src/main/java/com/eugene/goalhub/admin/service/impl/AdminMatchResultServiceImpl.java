@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
  * 后台比赛结果管理服务实现。
  * <p>
  * 当前服务通过 Feign 调用 match-service 的内部比赛结果接口。
+ * 比赛结果保存和审核规则由 match-service 负责。
  */
 @Service
 public class AdminMatchResultServiceImpl

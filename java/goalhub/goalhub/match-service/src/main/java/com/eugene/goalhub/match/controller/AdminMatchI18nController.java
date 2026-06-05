@@ -7,6 +7,7 @@ import dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import response.Result;
 
@@ -60,7 +61,7 @@ public class AdminMatchI18nController {
     @PostMapping("/league/list")
     public Result<List<LeagueI18nResponse>> listLeagueI18n(
             @Parameter(description = "联赛国际化查询参数", required = true)
-            @RequestBody LeagueI18nListRequest request) {
+            @Valid @RequestBody LeagueI18nListRequest request) {
         return Result.success(adminLeagueI18nService.listLeagueI18n(request));
     }
 
@@ -74,7 +75,7 @@ public class AdminMatchI18nController {
     @PostMapping("/league/add")
     public Result<Void> addLeagueI18n(
             @Parameter(description = "联赛国际化新增参数", required = true)
-            @RequestBody AddLeagueI18nRequest request) {
+            @Valid @RequestBody AddLeagueI18nRequest request) {
         adminLeagueI18nService.addLeagueI18n(request);
         return Result.success();
     }
@@ -89,7 +90,7 @@ public class AdminMatchI18nController {
     @PostMapping("/league/update")
     public Result<Void> updateLeagueI18n(
             @Parameter(description = "联赛国际化更新参数", required = true)
-            @RequestBody UpdateLeagueI18nRequest request) {
+            @Valid @RequestBody UpdateLeagueI18nRequest request) {
         adminLeagueI18nService.updateLeagueI18n(request);
         return Result.success();
     }
@@ -104,7 +105,7 @@ public class AdminMatchI18nController {
     @PostMapping("/league/delete")
     public Result<Void> deleteLeagueI18n(
             @Parameter(description = "联赛国际化删除参数", required = true)
-            @RequestBody DeleteLeagueI18nRequest request) {
+            @Valid @RequestBody DeleteLeagueI18nRequest request) {
         adminLeagueI18nService.deleteLeagueI18n(request);
         return Result.success();
     }
@@ -119,7 +120,7 @@ public class AdminMatchI18nController {
     @PostMapping("/match/list")
     public Result<List<MatchI18nResponse>> listMatchI18n(
             @Parameter(description = "比赛国际化查询参数", required = true)
-            @RequestBody MatchI18nListRequest request) {
+            @Valid @RequestBody MatchI18nListRequest request) {
         return Result.success(adminMatchI18nService.listMatchI18n(request));
     }
 
@@ -133,7 +134,7 @@ public class AdminMatchI18nController {
     @PostMapping("/match/add")
     public Result<Void> addMatchI18n(
             @Parameter(description = "比赛国际化新增参数", required = true)
-            @RequestBody AddMatchI18nRequest request) {
+            @Valid @RequestBody AddMatchI18nRequest request) {
         adminMatchI18nService.addMatchI18n(request);
         return Result.success();
     }
@@ -148,7 +149,7 @@ public class AdminMatchI18nController {
     @PostMapping("/match/update")
     public Result<Void> updateMatchI18n(
             @Parameter(description = "比赛国际化更新参数", required = true)
-            @RequestBody UpdateMatchI18nRequest request) {
+            @Valid @RequestBody UpdateMatchI18nRequest request) {
         adminMatchI18nService.updateMatchI18n(request);
         return Result.success();
     }
@@ -163,7 +164,7 @@ public class AdminMatchI18nController {
     @PostMapping("/match/delete")
     public Result<Void> deleteMatchI18n(
             @Parameter(description = "比赛国际化删除参数", required = true)
-            @RequestBody DeleteMatchI18nRequest request) {
+            @Valid @RequestBody DeleteMatchI18nRequest request) {
         adminMatchI18nService.deleteMatchI18n(request);
         return Result.success();
     }
@@ -178,7 +179,7 @@ public class AdminMatchI18nController {
     @PostMapping("/team/list")
     public Result<List<TeamI18nResponse>> listTeamI18n(
             @Parameter(description = "球队国际化查询参数", required = true)
-            @RequestBody TeamI18nListRequest request) {
+            @Valid @RequestBody TeamI18nListRequest request) {
         return Result.success(adminTeamI18nService.listTeamI18n(request));
     }
 
@@ -192,7 +193,7 @@ public class AdminMatchI18nController {
     @PostMapping("/team/add")
     public Result<Void> addTeamI18n(
             @Parameter(description = "球队国际化新增参数", required = true)
-            @RequestBody AddTeamI18nRequest request) {
+            @Valid @RequestBody AddTeamI18nRequest request) {
         adminTeamI18nService.addTeamI18n(request);
         return Result.success();
     }
@@ -207,7 +208,7 @@ public class AdminMatchI18nController {
     @PostMapping("/team/update")
     public Result<Void> updateTeamI18n(
             @Parameter(description = "球队国际化更新参数", required = true)
-            @RequestBody UpdateTeamI18nRequest request) {
+            @Valid @RequestBody UpdateTeamI18nRequest request) {
         adminTeamI18nService.updateTeamI18n(request);
         return Result.success();
     }
@@ -222,7 +223,7 @@ public class AdminMatchI18nController {
     @PostMapping("/team/delete")
     public Result<Void> deleteTeamI18n(
             @Parameter(description = "球队国际化删除参数", required = true)
-            @RequestBody DeleteTeamI18nRequest request) {
+            @Valid @RequestBody DeleteTeamI18nRequest request) {
         adminTeamI18nService.deleteTeamI18n(request);
         return Result.success();
     }

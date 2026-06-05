@@ -6,13 +6,14 @@ import dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import response.Result;
 
 /**
  * 后台管理内部用户接口。
- * <p>
- * 这些接口面向 admin-service 调用，用于在后台管理应用用户。
+ *
+ * <p>这些接口面向 admin-service 调用，用于在后台管理应用用户。</p>
  */
 @Tag(name = "后台内部应用用户管理", description = "面向 admin-service 的应用用户内部管理接口")
 @RestController
@@ -43,7 +44,7 @@ public class InternalAdminUserController {
     @PostMapping("/page")
     public Result<PageResponse<UserAdminPageResponse>> page(
             @Parameter(description = "应用用户分页查询参数", required = true)
-            @RequestBody UserAdminPageRequest request) {
+            @Valid @RequestBody UserAdminPageRequest request) {
         return Result.success(internalAdminUserService.page(request));
     }
 
@@ -56,7 +57,7 @@ public class InternalAdminUserController {
     @Operation(summary = "创建应用用户", description = "面向后台管理创建新的应用用户。")
     @PostMapping
     public Result<Long> create(@Parameter(description = "应用用户创建参数", required = true)
-                               @RequestBody UserAdminCreateRequest request) {
+                               @Valid @RequestBody UserAdminCreateRequest request) {
         return Result.success(internalAdminUserService.create(request));
     }
 
@@ -72,7 +73,7 @@ public class InternalAdminUserController {
     public Result<Void> update(@Parameter(description = "应用用户 ID", required = true)
                                @PathVariable("id") Long id,
                                @Parameter(description = "应用用户更新参数", required = true)
-                               @RequestBody UserAdminUpdateRequest request) {
+                               @Valid @RequestBody UserAdminUpdateRequest request) {
         internalAdminUserService.update(id, request);
         return Result.success();
     }
@@ -103,7 +104,7 @@ public class InternalAdminUserController {
     public Result<Void> updatePassword(@Parameter(description = "应用用户 ID", required = true)
                                        @PathVariable("id") Long id,
                                        @Parameter(description = "应用用户密码更新参数", required = true)
-                                       @RequestBody UserAdminPasswordUpdateRequest request) {
+                                       @Valid @RequestBody UserAdminPasswordUpdateRequest request) {
         internalAdminUserService.updatePassword(id, request);
         return Result.success();
     }

@@ -6,6 +6,8 @@ import java.util.List;
 
 /**
  * 后台比赛国际化配置管理服务。
+ *
+ * <p>负责比赛多语言配置的查询、新增、更新和删除。</p>
  */
 public interface AdminMatchI18nService {
 

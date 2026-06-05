@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 用户表 Mapper。
+ *
+ * <p>负责 users 表的基础 CRUD。</p>
  */
 @Mapper
 public interface UserMapper extends BaseMapper<UserEntity> {

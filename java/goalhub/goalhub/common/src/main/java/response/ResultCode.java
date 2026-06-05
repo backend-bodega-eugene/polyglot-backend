@@ -1,5 +1,10 @@
 package response;
 
+/**
+ * 统一响应码枚举。
+ *
+ * <p>用于定义接口返回的业务状态码和国际化消息 key。</p>
+ */
 public enum ResultCode {
     SUCCESS(200, "success"),
     BAD_REQUEST(400, "bad.request"),
@@ -78,20 +83,45 @@ public enum ResultCode {
     ORDER_ACCOUNT_FEIGN_RESULT_NULL(10069,"order.account.feign.result.null"),
     ORDER_ACCOUNT_FEIGN_RESULT_FAIL(10070,"order.account.feign.result.fail"),
     ORDER_ACCOUNT_DEDUCT_RESULT_NULL(10071,"order.account.deduct.result.null"),
-
+    FEIGN_RESULT_NULL(10072,"feign.result.null"),
     FATHER_NOT_OWN(10100,"father.not.own");
 
-   // SOCCER_NOT_EXISTS(10009,"没有关注");
-
+    /**
+     * 业务状态码。
+     */
     private final int code;
+
+    /**
+     * 响应消息 key。
+     */
     private final String message;
 
+    /**
+     * 创建响应码枚举。
+     *
+     * @param code    业务状态码
+     * @param message 响应消息 key
+     */
     ResultCode(int code, String message) {
         this.code = code;
         this.message = message;
     }
 
-    public int getCode() { return code; }
+    /**
+     * 获取业务状态码。
+     *
+     * @return 业务状态码
+     */
+    public int getCode() {
+        return code;
+    }
 
-    public String getMessage() { return message; }
+    /**
+     * 获取响应消息 key。
+     *
+     * @return 响应消息 key
+     */
+    public String getMessage() {
+        return message;
+    }
 }

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.eugene.goalhub.match.entity.SoccerMatchEntity;
 import com.eugene.goalhub.match.mapper.SoccerMatchMapper;
 import com.eugene.goalhub.match.service.SoccerMatchService;
+import com.eugene.goalhub.match.service.support.MatchOperationLogger;
 import dto.*;
 import exception.BusinessException;
 import org.springframework.stereotype.Service;
@@ -19,11 +20,18 @@ import java.util.List;
 
 /**
  * 足球比赛查询服务实现。
+ *
+ * <p>负责前端足球比赛分页、详情、今日、即将开始、已结束和热门比赛查询。</p>
  */
 @Service
 public class SoccerMatchServiceImpl
         extends ServiceImpl<SoccerMatchMapper, SoccerMatchEntity>
         implements SoccerMatchService {
+
+    /**
+     * 系统日志模块名称。
+     */
+    private static final String MODULE_NAME = "足球比赛查询";
 
     /**
      * 未开始状态编码。
@@ -36,10 +44,34 @@ public class SoccerMatchServiceImpl
     private static final String STATUS_FINISHED = "FINISHED";
 
     /**
+     * 默认页码。
+     */
+    private static final int DEFAULT_PAGE_INDEX = 1;
+
+    /**
+     * 默认和最大每页数量。
+     */
+    private static final int DEFAULT_PAGE_SIZE = 100;
+
+    /**
      * 数据库查询使用的 UTC 时间字符串格式。
      */
     private static final DateTimeFormatter DATE_TIME_FORMATTER =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    /**
+     * 比赛服务操作日志工具。
+     */
+    private final MatchOperationLogger matchOperationLogger;
+
+    /**
+     * 创建足球比赛查询服务实现。
+     *
+     * @param matchOperationLogger 比赛服务操作日志工具
+     */
+    public SoccerMatchServiceImpl(MatchOperationLogger matchOperationLogger) {
+        this.matchOperationLogger = matchOperationLogger;
+    }
 
     /**
      * 分页查询足球比赛。
@@ -49,14 +81,11 @@ public class SoccerMatchServiceImpl
      */
     @Override
     public PageResponse<SoccerMatchListResponse> pageMatches(SoccerMatchPageRequest request) {
-
-        if (request.getPageIndex() == null) {
-            throw new BusinessException(ResultCode.PAGEINDEX_NOT_NULL);
+        if (request == null) {
+            request = new SoccerMatchPageRequest();
         }
 
-        if (request.getPageSize() == null) {
-            throw new BusinessException(ResultCode.PAGESIZE_NOT_NULL);
-        }
+        initPageIfNecessary(request);
 
         if (!StringUtils.hasText(request.getLangCode())) {
             request.setLangCode("en-US");
@@ -75,6 +104,15 @@ public class SoccerMatchServiceImpl
         response.setPageSize(request.getPageSize());
         response.setRecords(result.getRecords());
 
+        matchOperationLogger.sysLog(
+                MODULE_NAME,
+                "PAGE_MATCHES",
+                "分页查询足球比赛，pageIndex=" + request.getPageIndex()
+                        + ", pageSize=" + request.getPageSize()
+                        + ", langCode=" + request.getLangCode()
+                        + ", status=" + request.getStatus()
+                        + ", total=" + result.getTotal()
+        );
         return response;
     }
 
@@ -94,7 +132,15 @@ public class SoccerMatchServiceImpl
             langCode = request.getLangCode();
         }
 
-        return baseMapper.selectMatchDetail(id, langCode);
+        SoccerMatchDetailResponse response = baseMapper.selectMatchDetail(id, langCode);
+        matchOperationLogger.sysLog(
+                MODULE_NAME,
+                "GET_MATCH_DETAIL",
+                "查询足球比赛详情，matchId=" + id
+                        + ", langCode=" + langCode
+                        + ", found=" + (response != null)
+        );
+        return response;
     }
 
     /**
@@ -105,6 +151,9 @@ public class SoccerMatchServiceImpl
      */
     @Override
     public PageResponse<SoccerMatchListResponse> pageTodayMatches(SoccerMatchPageRequest request) {
+        if (request == null) {
+            request = new SoccerMatchPageRequest();
+        }
         initPageIfNecessary(request);
 
         LocalDate todayUtc = LocalDate.now(ZoneOffset.UTC);
@@ -128,6 +177,9 @@ public class SoccerMatchServiceImpl
      */
     @Override
     public PageResponse<SoccerMatchListResponse> pageUpcomingMatches(SoccerMatchPageRequest request) {
+        if (request == null) {
+            request = new SoccerMatchPageRequest();
+        }
         initPageIfNecessary(request);
 
         LocalDate todayUtc = LocalDate.now(ZoneOffset.UTC);
@@ -150,6 +202,9 @@ public class SoccerMatchServiceImpl
      */
     @Override
     public PageResponse<SoccerMatchListResponse> pageFinishedMatches(SoccerMatchPageRequest request) {
+        if (request == null) {
+            request = new SoccerMatchPageRequest();
+        }
         initPageIfNecessary(request);
 
         request.setStatus(STATUS_FINISHED);
@@ -196,7 +251,15 @@ public class SoccerMatchServiceImpl
             request.setLimit(50);
         }
 
-        return baseMapper.selectHotMatches(request);
+        List<SoccerMatchListResponse> responses = baseMapper.selectHotMatches(request);
+        matchOperationLogger.sysLog(
+                MODULE_NAME,
+                "LIST_HOT_MATCHES",
+                "查询热门比赛，langCode=" + request.getLangCode()
+                        + ", limit=" + request.getLimit()
+                        + ", resultCount=" + responses.size()
+        );
+        return responses;
     }
 
     /**
@@ -205,12 +268,17 @@ public class SoccerMatchServiceImpl
      * @param request 分页查询请求
      */
     private void initPageIfNecessary(SoccerMatchPageRequest request) {
-        if (request.getPageIndex() == null) {
-            request.setPageIndex(1);
+        if (request.getPageIndex() == null || request.getPageIndex() < 1) {
+            request.setPageIndex(DEFAULT_PAGE_INDEX);
         }
 
-        if (request.getPageSize() == null) {
-            request.setPageSize(10);
+        if (request.getPageSize() == null || request.getPageSize() < 1) {
+            request.setPageSize(DEFAULT_PAGE_SIZE);
+            return;
+        }
+
+        if (request.getPageSize() > DEFAULT_PAGE_SIZE) {
+            request.setPageSize(DEFAULT_PAGE_SIZE);
         }
     }
 }

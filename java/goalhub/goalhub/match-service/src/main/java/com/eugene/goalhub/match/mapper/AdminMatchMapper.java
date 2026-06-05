@@ -11,6 +11,8 @@ import org.apache.ibatis.annotations.Select;
 
 /**
  * 后台赛事基础数据查询 Mapper。
+ *
+ * <p>负责后台联赛和比赛列表的多表分页查询。</p>
  */
 @Mapper
 public interface AdminMatchMapper {
@@ -98,7 +100,10 @@ public interface AdminMatchMapper {
                AND ati.lang_code = #{req.langCode}
             WHERE 1 = 1
             <if test="req.keyword != null and req.keyword != ''">
-                AND mi.match_name LIKE CONCAT('%', #{req.keyword}, '%')
+                AND (
+                mi.match_name LIKE CONCAT('%', #{req.keyword}, '%')
+                OR m.match_code LIKE CONCAT('%', #{req.keyword}, '%')
+                )
             </if>
             ORDER BY m.scheduled_start_time_utc DESC, m.id DESC
             </script>

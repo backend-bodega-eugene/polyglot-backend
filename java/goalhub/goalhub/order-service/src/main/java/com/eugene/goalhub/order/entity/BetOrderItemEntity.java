@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 
 /**
  * 投注订单明细实体。
+ *
+ * <p>映射 bet_order_item 表，保存单个投注选项的赛事、玩法、赔率、投注金额和赛果快照信息。</p>
  */
 @TableName("bet_order_item")
 public class BetOrderItemEntity {

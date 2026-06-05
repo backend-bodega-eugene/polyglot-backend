@@ -7,9 +7,21 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+/**
+ * 前端赛事赛果查询 Mapper。
+ *
+ * <p>查询已审核赛事赛果，并按前端展示结构返回分页数据。</p>
+ */
 @Mapper
 public interface AppMatchResultMapper {
 
+    /**
+     * 分页查询前端赛事赛果。
+     *
+     * @param page    分页参数
+     * @param request 赛事赛果查询条件
+     * @return 前端赛事赛果分页数据
+     */
     @Select("""
             <script>
             SELECT

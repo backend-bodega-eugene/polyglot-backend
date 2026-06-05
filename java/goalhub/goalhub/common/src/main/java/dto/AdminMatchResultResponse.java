@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 
 /**
  * 后台赛事结果响应。
+ *
+ * <p>返回后台审核和查看比赛结果时需要的比分、赛果状态和技术统计信息。</p>
  */
 @Data
 @Schema(description = "后台赛事结果响应")
@@ -15,7 +17,7 @@ public class AdminMatchResultResponse {
     /**
      * 赛事 ID。
      */
-    @Schema(description = "赛事ID")
+    @Schema(description = "赛事 ID", example = "1")
     private Long matchId;
 
     /**
@@ -69,13 +71,13 @@ public class AdminMatchResultResponse {
     /**
      * 结果 ID。
      */
-    @Schema(description = "结果ID")
+    @Schema(description = "结果 ID", example = "1")
     private Long resultId;
 
     /**
      * 结果状态：0 未审核，1 已审核。
      */
-    @Schema(description = "结果状态:0未审核,1已审核")
+    @Schema(description = "结果状态：0 未审核，1 已审核", example = "0")
     private Integer resultStatus;
 
     /**

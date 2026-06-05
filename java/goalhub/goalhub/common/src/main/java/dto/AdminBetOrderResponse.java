@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 
 /**
  * 后台投注订单响应。
+ *
+ * <p>返回后台投注订单主表信息，包含下注金额、余额快照、审核与结算信息。</p>
  */
 @Data
 @Schema(description = "后台投注订单响应")
@@ -16,25 +18,25 @@ public class AdminBetOrderResponse {
     /**
      * 订单 ID。
      */
-    @Schema(description = "订单ID")
+    @Schema(description = "订单 ID", example = "10001")
     private Long orderId;
 
     /**
      * 订单号。
      */
-    @Schema(description = "订单号")
+    @Schema(description = "订单号", example = "BO202606040001")
     private String orderNo;
 
     /**
      * 用户 ID。
      */
-    @Schema(description = "用户ID")
+    @Schema(description = "用户 ID", example = "10001")
     private Long userId;
 
     /**
      * 账户 ID。
      */
-    @Schema(description = "账户ID")
+    @Schema(description = "账户 ID", example = "20001")
     private Long accountId;
 
     /**
@@ -58,7 +60,7 @@ public class AdminBetOrderResponse {
     /**
      * 币种编码。
      */
-    @Schema(description = "币种编码")
+    @Schema(description = "币种编码", example = "USDT")
     private String currencyCode;
 
     /**
@@ -76,7 +78,7 @@ public class AdminBetOrderResponse {
     /**
      * 订单状态。
      */
-    @Schema(description = "订单状态")
+    @Schema(description = "订单状态", example = "PENDING")
     private String status;
 
     /**

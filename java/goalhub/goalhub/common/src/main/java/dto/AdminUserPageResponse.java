@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 
 /**
  * 后台管理员分页响应。
+ *
+ * <p>返回后台管理员列表展示所需的账号、昵称、状态和超级管理员标识。</p>
  */
 @Schema(description = "后台管理员分页响应")
 @Data

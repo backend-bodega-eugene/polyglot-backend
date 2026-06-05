@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 
 /**
  * 账户流水响应。
+ *
+ * <p>返回当前用户账户流水的金额变动、余额快照和业务来源信息。</p>
  */
 @Data
 @Schema(description = "账户流水响应")
@@ -16,19 +18,19 @@ public class AccountTransactionResponse {
     /**
      * 流水 ID。
      */
-    @Schema(description = "流水ID")
+    @Schema(description = "流水 ID", example = "1")
     private Long id;
 
     /**
      * 货币类型。
      */
-    @Schema(description = "货币类型")
+    @Schema(description = "货币类型", example = "USDT")
     private String currencyCode;
 
     /**
      * 业务类型。
      */
-    @Schema(description = "业务类型")
+    @Schema(description = "业务类型", example = "BET")
     private String bizType;
 
     /**

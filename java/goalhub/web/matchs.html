@@ -105,7 +105,12 @@
                                             <div class="col-12 col-md-6"><label class="form-label">主队<span class="text-danger">*</span></label><select class="form-select" id="e-homeTeamId" data-option-key="teams" required><option value="">请选择</option></select></div>
                                             <div class="col-12 col-md-6"><label class="form-label">客队<span class="text-danger">*</span></label><select class="form-select" id="e-awayTeamId" data-option-key="teams" required><option value="">请选择</option></select></div>
                                             <div class="col-12 col-md-6"><label class="form-label">主办国家</label><input type="text" class="form-control" id="e-hostCountry"></div>
-                                            <div class="col-12 col-md-6"><label class="form-label">状态</label><select class="form-select" id="e-status"><option value="SCHEDULED">SCHEDULED</option><option value="LIVE">LIVE</option><option value="FINISHED">FINISHED</option><option value="CANCELLED">CANCELLED</option><option value="POSTPONED">POSTPONED</option></select></div>
+                                            <div class="col-12 col-md-6"><label class="form-label">状态</label><select class="form-select" id="e-status">
+                                                <option value="NOT_STARTED">NOT_STARTED</option>
+                                                <option value="LIVE">LIVE</option>
+                                                <option value="FINISHED">FINISHED</option>
+                                                <option value="CANCELLED">CANCELLED</option>
+                                                <option value="POSTPONED">POSTPONED</option></select></div>
                                         </div>
                                     </div>
                                     <div class="modal-footer"><button class="btn btn-secondary" type="button" data-bs-dismiss="modal">取消</button><button class="btn btn-primary" type="submit"><i class="bi bi-check2-circle me-1"></i>保存</button></div>

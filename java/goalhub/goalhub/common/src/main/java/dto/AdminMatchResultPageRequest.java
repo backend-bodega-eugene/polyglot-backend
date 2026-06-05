@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 
 /**
  * 后台赛事结果分页查询请求。
+ *
+ * <p>用于后台按赛事、球队、语言、状态和时间范围分页查询赛果。</p>
  */
 @Data
 @Schema(description = "后台赛事结果分页查询请求")
@@ -27,13 +29,13 @@ public class AdminMatchResultPageRequest {
     /**
      * 语言编码。
      */
-    @Schema(description = "语言编码")
+    @Schema(description = "语言编码", example = "zh_CN")
     private String langCode;
 
     /**
      * 赛事状态筛选条件。
      */
-    @Schema(description = "赛事状态")
+    @Schema(description = "赛事状态", example = "FINISHED")
     private String matchStatus;
 
     /**
@@ -51,12 +53,12 @@ public class AdminMatchResultPageRequest {
     /**
      * 页码。
      */
-    @Schema(description = "页码")
+    @Schema(description = "页码", example = "1")
     private Integer pageIndex;
 
     /**
      * 每页数量。
      */
-    @Schema(description = "每页数量")
+    @Schema(description = "每页数量", example = "20")
     private Integer pageSize;
 }

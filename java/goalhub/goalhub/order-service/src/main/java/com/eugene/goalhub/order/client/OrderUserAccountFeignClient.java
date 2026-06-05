@@ -35,6 +35,12 @@ public interface OrderUserAccountFeignClient {
     Result<Void> subBalance(
             @RequestBody AdminAccountBalanceChangeRequest request);
 
+    /**
+     * 扣减用户默认 USDT 账户余额。
+     *
+     * @param request 默认账户扣款参数
+     * @return 默认账户扣款结果
+     */
     @PostMapping("/internal/order/account/deductdefaultusdt")
     Result<DeductDefaultAccountResponse> deductDefaultUsdt(
             @RequestBody DeductDefaultAccountRequest request);

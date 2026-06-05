@@ -7,9 +7,20 @@ import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
+/**
+ * 前端赛事赔率查询 Mapper。
+ *
+ * <p>查询前端可见且开放投注的赛事玩法赔率。</p>
+ */
 @Mapper
 public interface AppMatchOddsMapper {
 
+    /**
+     * 查询指定赛事下可展示的赔率列表。
+     *
+     * @param matchId 赛事 ID
+     * @return 赛事赔率平铺列表
+     */
     @Select("""
             SELECT
                 mo.id,

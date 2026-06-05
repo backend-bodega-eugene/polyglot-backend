@@ -5,19 +5,36 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * 前端赛事玩法响应。
+ *
+ * <p>返回赛事下某个玩法及其可投注选项列表。</p>
+ */
 @Data
 @Schema(description = "前端赛事玩法响应")
 public class AppMatchMarketResponse {
 
-    @Schema(description = "玩法ID")
+    /**
+     * 玩法 ID。
+     */
+    @Schema(description = "玩法 ID", example = "1")
     private Long marketId;
 
-    @Schema(description = "玩法编码")
+    /**
+     * 玩法编码。
+     */
+    @Schema(description = "玩法编码", example = "MATCH_WINNER")
     private String marketCode;
 
-    @Schema(description = "玩法名称")
+    /**
+     * 玩法名称。
+     */
+    @Schema(description = "玩法名称", example = "胜平负")
     private String marketName;
 
+    /**
+     * 玩法选项列表。
+     */
     @Schema(description = "玩法选项列表")
     private List<AppMatchMarketOptionResponse> options;
 }

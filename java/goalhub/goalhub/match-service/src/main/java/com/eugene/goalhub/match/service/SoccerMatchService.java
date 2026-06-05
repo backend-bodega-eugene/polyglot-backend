@@ -6,6 +6,8 @@ import java.util.List;
 
 /**
  * 足球比赛查询服务。
+ *
+ * <p>负责前端比赛分页、详情、今日、即将开始、已结束和热门比赛查询。</p>
  */
 public interface SoccerMatchService {
 

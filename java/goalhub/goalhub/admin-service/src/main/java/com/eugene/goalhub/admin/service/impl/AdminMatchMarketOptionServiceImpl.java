@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
  * 后台赛事玩法赔率管理服务实现。
  * <p>
  * 当前服务通过 Feign 调用 match-service 的内部赛事玩法赔率接口。
+ * 赔率数据的实际持久化和业务校验由 match-service 完成。
  */
 @Service
 public class AdminMatchMarketOptionServiceImpl implements AdminMatchMarketOptionService {

@@ -6,6 +6,8 @@ import java.util.List;
 
 /**
  * 投注玩法管理服务。
+ *
+ * <p>负责后台投注玩法和投注玩法选项的查询与维护。</p>
  */
 public interface BetMarketService {
 

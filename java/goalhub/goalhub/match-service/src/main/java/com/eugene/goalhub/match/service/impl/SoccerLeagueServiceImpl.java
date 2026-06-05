@@ -6,6 +6,7 @@ import com.eugene.goalhub.match.entity.SoccerLeagueI18nEntity;
 import com.eugene.goalhub.match.mapper.SoccerLeagueI18nMapper;
 import com.eugene.goalhub.match.mapper.SoccerLeagueMapper;
 import com.eugene.goalhub.match.service.SoccerLeagueService;
+import com.eugene.goalhub.match.service.support.MatchOperationLogger;
 import dto.SoccerLeagueResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -14,6 +15,8 @@ import java.util.List;
 
 /**
  * 足球联赛查询服务实现。
+ *
+ * <p>负责查询启用联赛，并按指定语言组装前端联赛展示数据。</p>
  */
 @Service
 public class SoccerLeagueServiceImpl
@@ -21,17 +24,29 @@ public class SoccerLeagueServiceImpl
         implements SoccerLeagueService {
 
     /**
+     * 系统日志模块名称。
+     */
+    private static final String MODULE_NAME = "足球联赛查询";
+
+    /**
      * 联赛多语言 Mapper。
      */
     private final SoccerLeagueI18nMapper soccerLeagueI18nMapper;
+
+    /**
+     * 比赛服务操作日志工具。
+     */
+    private final MatchOperationLogger matchOperationLogger;
 
     /**
      * 创建足球联赛查询服务实现。
      *
      * @param soccerLeagueI18nMapper 联赛多语言 Mapper
      */
-    public SoccerLeagueServiceImpl(SoccerLeagueI18nMapper soccerLeagueI18nMapper) {
+    public SoccerLeagueServiceImpl(SoccerLeagueI18nMapper soccerLeagueI18nMapper,
+                                   MatchOperationLogger matchOperationLogger) {
         this.soccerLeagueI18nMapper = soccerLeagueI18nMapper;
+        this.matchOperationLogger = matchOperationLogger;
     }
 
     /**
@@ -51,10 +66,18 @@ public class SoccerLeagueServiceImpl
                 .orderByAsc(SoccerLeagueEntity::getId)
                 .list();
 
-        return leagues.stream()
+        List<SoccerLeagueResponse> responses = leagues.stream()
                 .map(league -> buildResponse(league, keyword, finalLangCode))
                 .filter(response -> response != null)
                 .toList();
+        matchOperationLogger.sysLog(
+                MODULE_NAME,
+                "LIST_LEAGUES",
+                "查询联赛列表，keyword=" + keyword
+                        + ", langCode=" + finalLangCode
+                        + ", resultCount=" + responses.size()
+        );
+        return responses;
     }
 
     /**

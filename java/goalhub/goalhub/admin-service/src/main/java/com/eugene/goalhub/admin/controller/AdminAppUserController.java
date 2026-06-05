@@ -11,6 +11,8 @@ import response.Result;
 
 /**
  * 后台应用用户管理接口。
+ *
+ * <p>提供面向后台运营的应用用户查询、创建、更新、删除和密码修改能力。</p>
  */
 @Tag(name = "后台应用用户管理", description = "后台应用用户分页查询、创建、更新、删除和改密接口")
 @RestController

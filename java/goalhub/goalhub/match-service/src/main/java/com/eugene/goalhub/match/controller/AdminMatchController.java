@@ -5,6 +5,7 @@ import dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import response.Result;
 
@@ -40,7 +41,7 @@ public class AdminMatchController {
     @PostMapping("/league/page")
     public Result<PageResponse<AdminLeagueResponse>> leaguePage(
             @Parameter(description = "联赛分页查询参数", required = true)
-            @RequestBody LeaguePageRequest request) {
+            @Valid @RequestBody LeaguePageRequest request) {
 
         return Result.success(
                 adminMatchService.leaguePage(request)
@@ -57,7 +58,7 @@ public class AdminMatchController {
     @PostMapping("/league/add")
     public Result<Void> addLeague(
             @Parameter(description = "联赛新增参数", required = true)
-            @RequestBody AddLeagueRequest request) {
+            @Valid @RequestBody AddLeagueRequest request) {
 
         adminMatchService.addLeague(request);
 
@@ -74,7 +75,7 @@ public class AdminMatchController {
     @PostMapping("/league/update")
     public Result<Void> updateLeague(
             @Parameter(description = "联赛更新参数", required = true)
-            @RequestBody UpdateLeagueRequest request) {
+            @Valid @RequestBody UpdateLeagueRequest request) {
 
         adminMatchService.updateLeague(request);
 
@@ -91,7 +92,7 @@ public class AdminMatchController {
     @PostMapping("/league/delete")
     public Result<Void> deleteLeague(
             @Parameter(description = "联赛删除参数", required = true)
-            @RequestBody DeleteLeagueRequest request) {
+            @Valid @RequestBody DeleteLeagueRequest request) {
 
         adminMatchService.deleteLeague(request);
 
@@ -108,7 +109,7 @@ public class AdminMatchController {
     @PostMapping("/match/page")
     public Result<PageResponse<AdminMatchResponse>> matchPage(
             @Parameter(description = "比赛分页查询参数", required = true)
-            @RequestBody MatchPageRequest request) {
+            @Valid @RequestBody MatchPageRequest request) {
 
         return Result.success(
                 adminMatchService.matchPage(request)
@@ -125,7 +126,7 @@ public class AdminMatchController {
     @PostMapping("/match/add")
     public Result<Void> addMatch(
             @Parameter(description = "比赛新增参数", required = true)
-            @RequestBody AddMatchRequest request) {
+            @Valid @RequestBody AddMatchRequest request) {
 
         adminMatchService.addMatch(request);
 
@@ -142,7 +143,7 @@ public class AdminMatchController {
     @PostMapping("/match/update")
     public Result<Void> updateMatch(
             @Parameter(description = "比赛更新参数", required = true)
-            @RequestBody UpdateMatchRequest request) {
+            @Valid @RequestBody UpdateMatchRequest request) {
 
         adminMatchService.updateMatch(request);
 
@@ -159,7 +160,7 @@ public class AdminMatchController {
     @PostMapping("/match/delete")
     public Result<Void> deleteMatch(
             @Parameter(description = "比赛删除参数", required = true)
-            @RequestBody DeleteMatchRequest request) {
+            @Valid @RequestBody DeleteMatchRequest request) {
 
         adminMatchService.deleteMatch(request);
 
@@ -176,7 +177,7 @@ public class AdminMatchController {
     @PostMapping("/match/team/page")
     public Result<PageResponse<AdminTeamResponse>> teamPage(
             @Parameter(description = "球队分页查询参数", required = true)
-            @RequestBody TeamPageRequest request) {
+            @Valid @RequestBody TeamPageRequest request) {
 
         return Result.success(adminMatchService.teamPage(request));
     }
@@ -191,7 +192,7 @@ public class AdminMatchController {
     @PostMapping("/match/team/add")
     public Result<Void> addTeam(
             @Parameter(description = "球队新增参数", required = true)
-            @RequestBody AddTeamRequest request) {
+            @Valid @RequestBody AddTeamRequest request) {
 
         adminMatchService.addTeam(request);
 
@@ -208,7 +209,7 @@ public class AdminMatchController {
     @PostMapping("/match/team/update")
     public Result<Void> updateTeam(
             @Parameter(description = "球队更新参数", required = true)
-            @RequestBody UpdateTeamRequest request) {
+            @Valid @RequestBody UpdateTeamRequest request) {
 
         adminMatchService.updateTeam(request);
 
@@ -225,7 +226,7 @@ public class AdminMatchController {
     @PostMapping("/match/team/delete")
     public Result<Void> deleteTeam(
             @Parameter(description = "球队删除参数", required = true)
-            @RequestBody DeleteTeamRequest request) {
+            @Valid @RequestBody DeleteTeamRequest request) {
 
         adminMatchService.deleteTeam(request);
 

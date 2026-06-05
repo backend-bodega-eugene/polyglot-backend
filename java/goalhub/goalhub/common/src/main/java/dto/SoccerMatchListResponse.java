@@ -5,6 +5,8 @@ import lombok.Data;
 
 /**
  * 足球比赛列表响应。
+ *
+ * <p>返回比赛列表页展示所需的比赛名称、双方球队、开赛时间和状态。</p>
  */
 @Schema(description = "足球比赛列表响应")
 @Data

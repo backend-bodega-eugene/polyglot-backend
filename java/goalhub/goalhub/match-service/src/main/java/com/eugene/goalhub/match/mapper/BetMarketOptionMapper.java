@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 投注子玩法 Mapper。
+ *
+ * <p>负责投注玩法选项表的通用 CRUD。</p>
  */
 @Mapper
 public interface BetMarketOptionMapper extends BaseMapper<BetMarketOptionEntity> {

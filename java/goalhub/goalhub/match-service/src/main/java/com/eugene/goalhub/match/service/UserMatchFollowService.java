@@ -9,6 +9,8 @@ import java.util.List;
 
 /**
  * 用户赛事关注服务。
+ *
+ * <p>负责用户关注赛事、取消关注、关注状态判断和关注列表查询。</p>
  */
 public interface UserMatchFollowService extends IService<UserMatchFollow> {
 

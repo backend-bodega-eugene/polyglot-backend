@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 
 /**
  * 后台用户账户响应。
+ *
+ * <p>返回后台查看用户账户时需要的余额、冻结金额、可用金额和账户状态。</p>
  */
 @Data
 @Schema(description = "后台用户账户响应")
@@ -16,25 +18,25 @@ public class AdminUserAccountResponse {
     /**
      * 账户 ID。
      */
-    @Schema(description = "账户ID")
+    @Schema(description = "账户 ID", example = "20001")
     private Long accountId;
 
     /**
      * 用户 ID。
      */
-    @Schema(description = "用户ID")
+    @Schema(description = "用户 ID", example = "10001")
     private Long userId;
 
     /**
      * 用户名。
      */
-    @Schema(description = "用户名")
+    @Schema(description = "用户名", example = "zhangsan")
     private String username;
 
     /**
      * 货币类型。
      */
-    @Schema(description = "货币类型")
+    @Schema(description = "货币类型", example = "USDT")
     private String currencyCode;
 
     /**
@@ -58,7 +60,7 @@ public class AdminUserAccountResponse {
     /**
      * 账户状态。
      */
-    @Schema(description = "账户状态")
+    @Schema(description = "账户状态：1 正常，0 禁用", example = "1")
     private Integer status;
 
     /**

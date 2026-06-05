@@ -8,6 +8,8 @@ import java.util.List;
 
 /**
  * 后台菜单树节点响应。
+ *
+ * <p>返回后台菜单树节点及其子节点列表。</p>
  */
 @Schema(description = "后台菜单树节点响应")
 @Data

@@ -11,6 +11,8 @@ import org.apache.ibatis.annotations.Select;
 
 /**
  * 账户流水 Mapper。
+ *
+ * <p>负责账户流水表的基础 CRUD，以及后台账户流水分页查询。</p>
  */
 @Mapper
 public interface AccountTransactionMapper extends BaseMapper<AccountTransactionEntity> {

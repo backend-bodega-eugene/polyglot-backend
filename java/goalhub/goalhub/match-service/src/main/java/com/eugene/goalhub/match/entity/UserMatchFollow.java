@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 
 /**
  * 用户赛事关注实体，对应 user_match_follow 表。
+ *
+ * <p>记录用户和足球赛事之间的关注关系。</p>
  */
 @TableName("user_match_follow")
 public class UserMatchFollow {

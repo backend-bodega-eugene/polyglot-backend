@@ -7,6 +7,7 @@ import com.eugene.goalhub.match.entity.BetMarketOptionEntity;
 import com.eugene.goalhub.match.mapper.BetMarketMapper;
 import com.eugene.goalhub.match.mapper.BetMarketOptionMapper;
 import com.eugene.goalhub.match.service.BetMarketService;
+import com.eugene.goalhub.match.service.support.MatchOperationLogger;
 import dto.*;
 import exception.BusinessException;
 import org.springframework.beans.BeanUtils;
@@ -17,9 +18,26 @@ import java.util.List;
 
 /**
  * 投注玩法管理服务实现。
+ *
+ * <p>负责投注玩法和投注玩法选项的分页查询、列表查询、新增、更新和删除。</p>
  */
 @Service
 public class BetMarketServiceImpl implements BetMarketService {
+
+    /**
+     * 业务日志模块名称。
+     */
+    private static final String MODULE_NAME = "投注玩法管理";
+
+    /**
+     * 默认页码。
+     */
+    private static final int DEFAULT_PAGE_INDEX = 1;
+
+    /**
+     * 默认和最大每页数量。
+     */
+    private static final int DEFAULT_PAGE_SIZE = 100;
 
     /**
      * 投注玩法 Mapper。
@@ -32,6 +50,11 @@ public class BetMarketServiceImpl implements BetMarketService {
     private final BetMarketOptionMapper betMarketOptionMapper;
 
     /**
+     * 比赛服务操作日志工具。
+     */
+    private final MatchOperationLogger matchOperationLogger;
+
+    /**
      * 创建投注玩法管理服务实现。
      *
      * @param betMarketMapper       投注玩法 Mapper
@@ -39,9 +62,11 @@ public class BetMarketServiceImpl implements BetMarketService {
      */
     public BetMarketServiceImpl(
             BetMarketMapper betMarketMapper,
-            BetMarketOptionMapper betMarketOptionMapper) {
+            BetMarketOptionMapper betMarketOptionMapper,
+            MatchOperationLogger matchOperationLogger) {
         this.betMarketMapper = betMarketMapper;
         this.betMarketOptionMapper = betMarketOptionMapper;
+        this.matchOperationLogger = matchOperationLogger;
     }
 
     /**
@@ -53,6 +78,14 @@ public class BetMarketServiceImpl implements BetMarketService {
     @Override
     public PageResponse<BetMarketResponse> page(
             BetMarketPageRequest request) {
+        if (request == null) {
+            request = new BetMarketPageRequest();
+        }
+        initPage(request);
+        String keyword = request.getKeyword();
+        String status = request.getStatus();
+        boolean hasKeyword = keyword != null && !keyword.isBlank();
+        boolean hasStatus = status != null && !status.isBlank();
 
         Page<BetMarketEntity> page = new Page<>(
                 request.getPageIndex(),
@@ -62,16 +95,14 @@ public class BetMarketServiceImpl implements BetMarketService {
         Page<BetMarketEntity> result = betMarketMapper.selectPage(
                 page,
                 Wrappers.lambdaQuery(BetMarketEntity.class)
-                        .like(request.getKeyword() != null && !request.getKeyword().isBlank(),
-                                BetMarketEntity::getName,
-                                request.getKeyword())
-                        .or(request.getKeyword() != null && !request.getKeyword().isBlank())
-                        .like(request.getKeyword() != null && !request.getKeyword().isBlank(),
-                                BetMarketEntity::getCode,
-                                request.getKeyword())
-                        .eq(request.getStatus() != null && !request.getStatus().isBlank(),
+                        .and(hasKeyword,
+                                wrapper -> wrapper
+                                        .like(BetMarketEntity::getName, keyword)
+                                        .or()
+                                        .like(BetMarketEntity::getCode, keyword))
+                        .eq(hasStatus,
                                 BetMarketEntity::getStatus,
-                                request.getStatus())
+                                status)
                         .orderByAsc(BetMarketEntity::getSortOrder)
                         .orderByDesc(BetMarketEntity::getCreatedAt)
         );
@@ -81,6 +112,15 @@ public class BetMarketServiceImpl implements BetMarketService {
                 .map(this::toBetMarketResponse)
                 .toList();
 
+        matchOperationLogger.sysLog(
+                MODULE_NAME,
+                "BET_MARKET_PAGE",
+                "分页查询投注玩法，pageIndex=" + request.getPageIndex()
+                        + ", pageSize=" + request.getPageSize()
+                        + ", keyword=" + request.getKeyword()
+                        + ", status=" + request.getStatus()
+                        + ", total=" + result.getTotal()
+        );
         return new PageResponse<>(
                 result.getTotal(),
                 request.getPageIndex(),
@@ -115,6 +155,11 @@ public class BetMarketServiceImpl implements BetMarketService {
         entity.setSortOrder(defaultSortOrder(request.getSortOrder()));
 
         betMarketMapper.insert(entity);
+        matchOperationLogger.adminBizLog(
+                MODULE_NAME,
+                "ADD_BET_MARKET",
+                "新增投注玩法成功，marketId=" + entity.getId() + ", code=" + entity.getCode()
+        );
     }
 
     /**
@@ -149,6 +194,11 @@ public class BetMarketServiceImpl implements BetMarketService {
         entity.setSortOrder(defaultSortOrder(request.getSortOrder()));
 
         betMarketMapper.updateById(entity);
+        matchOperationLogger.adminBizLog(
+                MODULE_NAME,
+                "UPDATE_BET_MARKET",
+                "更新投注玩法成功，marketId=" + entity.getId() + ", code=" + entity.getCode()
+        );
     }
 
     /**
@@ -176,6 +226,11 @@ public class BetMarketServiceImpl implements BetMarketService {
         }
 
         betMarketMapper.deleteById(request.getId());
+        matchOperationLogger.adminBizLog(
+                MODULE_NAME,
+                "DELETE_BET_MARKET",
+                "删除投注玩法成功，marketId=" + request.getId() + ", code=" + entity.getCode()
+        );
     }
 
     /**
@@ -198,9 +253,17 @@ public class BetMarketServiceImpl implements BetMarketService {
                         .orderByDesc(BetMarketOptionEntity::getCreatedAt)
         );
 
-        return list.stream()
+        List<BetMarketOptionResponse> responses = list.stream()
                 .map(this::toBetMarketOptionResponse)
                 .toList();
+        matchOperationLogger.sysLog(
+                MODULE_NAME,
+                "BET_MARKET_OPTION_LIST",
+                "查询投注玩法选项列表，marketId=" + request.getMarketId()
+                        + ", status=" + request.getStatus()
+                        + ", resultCount=" + responses.size()
+        );
+        return responses;
     }
 
     /**
@@ -237,6 +300,13 @@ public class BetMarketServiceImpl implements BetMarketService {
         entity.setSortOrder(defaultSortOrder(request.getSortOrder()));
 
         betMarketOptionMapper.insert(entity);
+        matchOperationLogger.adminBizLog(
+                MODULE_NAME,
+                "ADD_BET_MARKET_OPTION",
+                "新增投注玩法选项成功，optionId=" + entity.getId()
+                        + ", marketId=" + entity.getMarketId()
+                        + ", code=" + entity.getCode()
+        );
     }
 
     /**
@@ -280,6 +350,13 @@ public class BetMarketServiceImpl implements BetMarketService {
         entity.setSortOrder(defaultSortOrder(request.getSortOrder()));
 
         betMarketOptionMapper.updateById(entity);
+        matchOperationLogger.adminBizLog(
+                MODULE_NAME,
+                "UPDATE_BET_MARKET_OPTION",
+                "更新投注玩法选项成功，optionId=" + entity.getId()
+                        + ", marketId=" + entity.getMarketId()
+                        + ", code=" + entity.getCode()
+        );
     }
 
     /**
@@ -299,6 +376,13 @@ public class BetMarketServiceImpl implements BetMarketService {
         }
 
         betMarketOptionMapper.deleteById(request.getId());
+        matchOperationLogger.adminBizLog(
+                MODULE_NAME,
+                "DELETE_BET_MARKET_OPTION",
+                "删除投注玩法选项成功，optionId=" + request.getId()
+                        + ", marketId=" + entity.getMarketId()
+                        + ", code=" + entity.getCode()
+        );
     }
 
     /**
@@ -359,5 +443,25 @@ public class BetMarketServiceImpl implements BetMarketService {
         }
 
         return sortOrder;
+    }
+
+    /**
+     * 初始化分页参数。
+     *
+     * @param request 分页请求
+     */
+    private void initPage(BetMarketPageRequest request) {
+        if (request.getPageIndex() == null || request.getPageIndex() < 1) {
+            request.setPageIndex(DEFAULT_PAGE_INDEX);
+        }
+
+        if (request.getPageSize() == null || request.getPageSize() < 1) {
+            request.setPageSize(DEFAULT_PAGE_SIZE);
+            return;
+        }
+
+        if (request.getPageSize() > DEFAULT_PAGE_SIZE) {
+            request.setPageSize(DEFAULT_PAGE_SIZE);
+        }
     }
 }

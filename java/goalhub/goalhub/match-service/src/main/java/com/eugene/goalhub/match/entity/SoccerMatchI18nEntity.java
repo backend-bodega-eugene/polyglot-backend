@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 
 /**
  * 足球比赛多语言实体，对应 soccer_match_i18n 表。
+ *
+ * <p>保存比赛在不同语言下的名称、阶段、城市和场馆信息。</p>
  */
 @TableName("soccer_match_i18n")
 public class SoccerMatchI18nEntity {

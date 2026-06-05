@@ -27,7 +27,7 @@ public class CorsConfig {
 
         // 保留你的后台管理系统端口
         config.addAllowedOrigin("http://localhost:5173");
-
+        config.addAllowedOrigin("http://127.0.0.1:5173");
         // 添加这些来支持前端
         config.addAllowedOrigin("http://localhost");      // 不带端口
         config.addAllowedOrigin("http://localhost:80");   // 明确指定端口 80

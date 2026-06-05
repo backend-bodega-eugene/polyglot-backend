@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 
 /**
  * 投注玩法选项实体，对应 bet_market_option 表。
+ *
+ * <p>保存投注玩法下的选项配置，包括选项编码、名称、状态和排序。</p>
  */
 @TableName("bet_market_option")
 public class BetMarketOptionEntity {

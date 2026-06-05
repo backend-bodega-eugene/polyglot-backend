@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Mapper;
 
 /**
  * 足球联赛表 Mapper。
+ *
+ * <p>负责足球联赛基础表的通用 CRUD。</p>
  */
 @Mapper
 public interface SoccerLeagueMapper extends BaseMapper<SoccerLeagueEntity> {

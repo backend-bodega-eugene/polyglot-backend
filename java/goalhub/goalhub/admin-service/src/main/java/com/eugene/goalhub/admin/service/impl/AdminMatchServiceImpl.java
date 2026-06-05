@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
  * 后台赛事基础数据管理服务实现。
  * <p>
  * 当前服务通过 Feign 调用 match-service 的内部联赛、比赛和球队接口。
+ * 本类只负责后台服务编排和远程调用结果校验，不直接操作赛事数据表。
  */
 @Service
 public class AdminMatchServiceImpl implements AdminMatchService {

@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 
 /**
  * 足球比赛实体，对应 soccer_match 表。
+ *
+ * <p>保存比赛基础信息、参赛球队、开赛时间、结束时间、主办国家和比赛状态。</p>
  */
 @TableName("soccer_match")
 public class SoccerMatchEntity {
