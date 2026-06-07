@@ -103,4 +103,23 @@ public class OrderUserAccountServiceImpl
             throw new BusinessException(result.getCode(), result.getMessage());
         }
     }
+    @Override
+    public void addDefaultUsdt(DefaultAccountBalanceChangeRequest request) {
+        checkSuccess(orderUserAccountFeignClient.addDefaultUsdt(request));
+    }
+
+    @Override
+    public void freezeDefaultUsdt(DefaultAccountBalanceChangeRequest request) {
+        checkSuccess(orderUserAccountFeignClient.freezeDefaultUsdt(request));
+    }
+
+    @Override
+    public void confirmFrozenDefaultUsdt(DefaultAccountBalanceChangeRequest request) {
+        checkSuccess(orderUserAccountFeignClient.confirmFrozenDefaultUsdt(request));
+    }
+
+    @Override
+    public void unfreezeDefaultUsdt(DefaultAccountBalanceChangeRequest request) {
+        checkSuccess(orderUserAccountFeignClient.unfreezeDefaultUsdt(request));
+    }
 }

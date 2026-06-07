@@ -1,8 +1,7 @@
 package com.eugene.goalhub.order.controller;
 
 import com.eugene.goalhub.order.service.AppBetOrderService;
-import dto.PlaceBetOrderRequest;
-import dto.PlaceBetOrderResponse;
+import dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -52,6 +51,40 @@ public class AppBetOrderController {
 
         return Result.success(
                 appBetOrderService.placeOrder(userId, request)
+        );
+    }
+    @Operation(summary = "查询未结算投注订单", description = "分页查询当前登录用户已下单但未结算的投注订单。")
+    @GetMapping("/unsettled")
+    public Result<PageResponse<AppBetOrderResponse>> pageUnsettledOrders(
+            @Parameter(description = "当前登录用户ID", required = true)
+            @RequestHeader("X-User-Id") Long userId,
+            @RequestBody AppBetOrderPageRequest request) {
+
+        return Result.success(
+                appBetOrderService.pageUnsettledOrders(userId, request)
+        );
+    }
+
+    @Operation(summary = "查询已结算投注订单", description = "分页查询当前登录用户已经结算的投注订单。")
+    @GetMapping("/settled")
+    public Result<PageResponse<AppBetOrderResponse>> pageSettledOrders(
+            @Parameter(description = "当前登录用户ID", required = true)
+            @RequestHeader("X-User-Id") Long userId,
+            @RequestBody AppBetOrderPageRequest request) {
+
+        return Result.success(
+                appBetOrderService.pageSettledOrders(userId, request)
+        );
+    }
+    @Operation(summary = "查询我的投注订单", description = "分页查询当前登录用户全部投注订单，支持订单号、玩法、选项关键字和下单时间筛选。")
+    @PostMapping("/page")
+    public Result<PageResponse<AppBetOrderResponse>> pageMyOrders(
+            @Parameter(description = "当前登录用户ID", required = true)
+            @RequestHeader("X-User-Id") Long userId,
+            @RequestBody AppBetOrderPageRequest request) {
+
+        return Result.success(
+                appBetOrderService.pageMyOrders(userId, request)
         );
     }
 }

@@ -349,7 +349,7 @@
             }
 
             function buildPageBody() {
-                const body = { pageIndex: state.pageIndex - 1, pageSize: state.pageSize };
+                const body = { pageIndex: state.pageIndex, pageSize: state.pageSize };
                 Object.entries(state.filters).forEach(([key, value]) => {
                     if (value !== '' && value !== null && value !== undefined) body[key] = value;
                 });

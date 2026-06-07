@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>交易记录 - GoalHub</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+    <div class="container app-shell">
+        <header class="app-page-header">
+            <a class="app-back" href="myprofile.html">‹</a>
+            <h1 class="app-title">交易记录</h1>
+            <span class="balance">💰 0.00</span>
+        </header>
+
+        <nav class="app-tabs" id="transactionTabs">
+            <button class="app-tab active" type="button" data-flow="all">全部</button>
+            <button class="app-tab" type="button" data-flow="income">进账</button>
+            <button class="app-tab" type="button" data-flow="expense">出账</button>
+            <button class="transaction-refresh" id="transactionRefreshBtn" type="button">刷新</button>
+        </nav>
+
+        <main class="app-content">
+            <div class="app-section transaction-summary">
+                <span id="transactionSummary">USDT 流水</span>
+                <span id="transactionTotal">共 0 条</span>
+            </div>
+            <div id="transactionList" class="transaction-list"></div>
+            <div class="app-empty" id="transactionEmpty" style="display:none;">
+                <div class="app-empty-icon">🗂️</div>
+                <div id="transactionEmptyText">暂无流水记录</div>
+            </div>
+            <button class="order-load-more" id="transactionsLoadMoreBtn" type="button" style="display:none;">加载更多</button>
+        </main>
+
+        <div class="index-footer">
+            <a class="footer-item" href="tutorial.html"><span class="footer-icon">📋</span><span>盘口教程</span></a>
+            <a class="footer-item" href="service.html"><span class="footer-icon">⚙️</span><span>客服页面</span></a>
+            <a class="footer-item" href="bettings.html#open"><span class="footer-icon">📋</span><span>未结注单</span></a>
+            <a class="footer-item" href="bettings.html#settled"><span class="footer-icon">✔️</span><span>已结注单</span></a>
+            <a class="footer-item active" href="myprofile.html"><span class="footer-icon">👤</span><span>我的</span></a>
+        </div>
+    </div>
+    <script src="js/app.js"></script>
+    <script src="js/transactions.js"></script>
+</body>
+</html>

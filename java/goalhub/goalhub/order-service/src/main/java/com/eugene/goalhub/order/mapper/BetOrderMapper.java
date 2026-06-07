@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.eugene.goalhub.order.entity.BetOrderEntity;
 import dto.AdminBetOrderPageRequest;
 import dto.AdminBetOrderResponse;
+import dto.AppBetOrderPageRequest;
+import dto.AppBetOrderResponse;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -99,5 +101,87 @@ public interface BetOrderMapper extends BaseMapper<BetOrderEntity> {
             """)
     BetOrderEntity selectByIdForUpdate(
             @Param("orderId") Long orderId
+    );
+    @Select("""
+        <script>
+        SELECT
+            id AS orderId,
+            order_no AS orderNo,
+            total_bet_amount AS totalBetAmount,
+            total_expected_profit AS totalExpectedProfit,
+            total_expected_return AS totalExpectedReturn,
+            currency_code AS currencyCode,
+            status,
+            system_result AS systemResult,
+            review_result AS reviewResult,
+            settle_amount AS settleAmount,
+            settle_remark AS settleRemark,
+            settled_at AS settledAt,
+            created_at AS createdAt
+        FROM bet_order
+        WHERE user_id = #{userId}
+        <choose>
+            <when test="settled == true">
+                AND settled_at IS NOT NULL
+            </when>
+            <otherwise>
+                AND settled_at IS NULL
+            </otherwise>
+        </choose>
+        ORDER BY created_at DESC, id DESC
+        </script>
+        """)
+    Page<AppBetOrderResponse> selectAppOrderPage(
+            Page<AppBetOrderResponse> page,
+            @Param("userId") Long userId,
+            @Param("settled") Boolean settled
+    );
+    @Select("""
+        <script>
+        SELECT
+            id AS orderId,
+            order_no AS orderNo,
+            total_bet_amount AS totalBetAmount,
+            total_expected_profit AS totalExpectedProfit,
+            total_expected_return AS totalExpectedReturn,
+            currency_code AS currencyCode,
+            status,
+            system_result AS systemResult,
+            review_result AS reviewResult,
+            settle_amount AS settleAmount,
+            settle_remark AS settleRemark,
+            settled_at AS settledAt,
+            created_at AS createdAt
+        FROM bet_order
+        WHERE user_id = #{userId}
+        <if test="req.keywords != null and req.keywords != ''">
+            AND (
+                order_no LIKE CONCAT('%', #{req.keywords}, '%')
+                OR EXISTS (
+                    SELECT 1
+                    FROM bet_order_item i
+                    WHERE i.order_id = bet_order.id
+                      AND (
+                          i.play_name LIKE CONCAT('%', #{req.keywords}, '%')
+                          OR i.option_name LIKE CONCAT('%', #{req.keywords}, '%')
+                          OR i.play_code LIKE CONCAT('%', #{req.keywords}, '%')
+                          OR i.option_code LIKE CONCAT('%', #{req.keywords}, '%')
+                      )
+                )
+            )
+        </if>
+        <if test="req.startTime != null">
+            AND created_at &gt;= #{req.startTime}
+        </if>
+        <if test="req.endTime != null">
+            AND created_at &lt;= #{req.endTime}
+        </if>
+        ORDER BY created_at DESC, id DESC
+        </script>
+        """)
+    Page<AppBetOrderResponse> selectAppMyOrderPage(
+            Page<AppBetOrderResponse> page,
+            @Param("userId") Long userId,
+            @Param("req") AppBetOrderPageRequest request
     );
 }

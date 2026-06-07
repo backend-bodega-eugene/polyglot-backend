@@ -44,4 +44,19 @@ public interface OrderUserAccountFeignClient {
     @PostMapping("/internal/order/account/deductdefaultusdt")
     Result<DeductDefaultAccountResponse> deductDefaultUsdt(
             @RequestBody DeductDefaultAccountRequest request);
+    @PostMapping("/internal/order/account/adddefaultusdt")
+    Result<Void> addDefaultUsdt(
+            @RequestBody DefaultAccountBalanceChangeRequest request);
+
+    @PostMapping("/internal/order/account/freezedefaultusdt")
+    Result<Void> freezeDefaultUsdt(
+            @RequestBody DefaultAccountBalanceChangeRequest request);
+
+    @PostMapping("/internal/order/account/confirmfrozendefaultusdt")
+    Result<Void> confirmFrozenDefaultUsdt(
+            @RequestBody DefaultAccountBalanceChangeRequest request);
+
+    @PostMapping("/internal/order/account/unfreezedefaultusdt")
+    Result<Void> unfreezeDefaultUsdt(
+            @RequestBody DefaultAccountBalanceChangeRequest request);
 }

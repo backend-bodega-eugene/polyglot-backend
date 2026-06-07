@@ -9,6 +9,7 @@ import com.eugene.goalhub.user.mapper.UserMapper;
 import com.eugene.goalhub.user.service.CaptchaService;
 import com.eugene.goalhub.user.service.RateLimitService;
 import com.eugene.goalhub.user.service.UserService;
+import dto.ChangePasswordRequest;
 import dto.LoginRequest;
 import dto.LoginResponse;
 import dto.RegisterRequest;
@@ -246,5 +247,38 @@ public class UserServiceImpl
                         + ", clientIp=" + clientIp
         );
         return response;
+    }
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void changePassword(Long userId, ChangePasswordRequest request) {
+
+        UserEntity user = getById(userId);
+
+        if (user == null) {
+            throw new BusinessException(ResultCode.USER_NOT_FOUND);
+        }
+
+        boolean matched = passwordEncoder.matches(
+                request.getOldPassword(),
+                user.getPasswordHash()
+        );
+
+        if (!matched) {
+            throw new BusinessException(ResultCode.PASSWORD_ERROR);
+        }
+
+        user.setPasswordHash(
+                passwordEncoder.encode(request.getNewPassword())
+        );
+
+        updateById(user);
+
+        goalhubLogService.bizLog(
+                MODULE_NAME,
+                "CHANGE_PASSWORD",
+                user.getId(),
+                user.getUsername(),
+                "用户修改密码成功，userId=" + user.getId()
+        );
     }
 }

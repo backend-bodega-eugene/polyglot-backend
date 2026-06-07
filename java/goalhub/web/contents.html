@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>GoalHub | 内容管理</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <link rel="preload" href="css/adminlte.css" as="style" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css" crossorigin="anonymous" media="print" onload="this.media='all'" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="./css/adminlte.css" />
+    <script src="js/auth.js"></script>
+    <style>
+        .app-sidebar .sidebar-menu .nav-link { display: flex; align-items: center; }
+        .app-sidebar .sidebar-menu .nav-link p { margin: 0 0 0 .5rem; white-space: nowrap; }
+        .content-cover { width: 56px; height: 38px; object-fit: cover; border-radius: 6px; background: var(--bs-tertiary-bg); }
+        .content-summary { max-width: 360px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .content-table th,
+        .content-table td { vertical-align: middle; }
+    </style>
+</head>
+
+<body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
+    <div class="app-wrapper">
+        <nav class="app-header navbar navbar-expand bg-body">
+            <div class="container-fluid">
+                <ul class="navbar-nav"><li class="nav-item"><a class="nav-link" data-lte-toggle="sidebar" href="#" role="button"><i class="bi bi-list"></i></a></li></ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#" data-lte-toggle="fullscreen"><i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i><i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i></a></li>
+                    <li class="nav-item dropdown user-menu">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><img id="user-avatar" src="assets/img/default-avatar.jpg" class="user-image rounded-circle shadow" alt="用户头像" /><span id="user-name" class="d-none d-md-inline">管理员</span></a>
+                        <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
+                            <li class="user-header text-bg-primary"><img id="user-avatar-large" src="assets/img/default-avatar.jpg" class="rounded-circle shadow" alt="用户头像" /><p id="user-title">管理员 - Admin<small id="user-since">今日登录</small></p></li>
+                            <li class="user-footer d-flex gap-2"><a id="btn-profile" href="profile.html" class="btn btn-default btn-flat flex-fill">个人资料</a><button id="btn-signout" class="btn btn-default btn-flat flex-fill">退出登录</button></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+            <div class="sidebar-brand"><a href="index.html" class="brand-link"><img src="assets/img/goalhub-logo.png" alt="GoalHub Logo" class="brand-image opacity-75 shadow" /><span class="brand-text fw-light">GoalHub</span></a></div>
+            <div class="sidebar-wrapper"><nav class="mt-2"><ul class="nav nav-pills nav-sidebar flex-column sidebar-menu" data-lte-toggle="treeview" role="menu" aria-label="主导航" data-accordion="false" id="navigation"></ul></nav></div>
+        </aside>
+
+        <main class="app-main">
+            <div class="app-content-header">
+                <div class="container-fluid">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header d-flex align-items-center justify-content-between">
+                                    <h3 class="card-title mb-0"><i class="bi bi-newspaper me-2"></i>公告和文章</h3>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-outline-secondary btn-sm" id="btn-refresh"><i class="bi bi-arrow-clockwise me-1"></i>刷新</button>
+                                        <a class="btn btn-primary btn-sm" href="contentedit.html"><i class="bi bi-plus-lg me-1"></i>新增内容</a>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <form id="filter-form" class="row g-2">
+                                        <div class="col-12 col-md-4">
+                                            <label class="form-label">关键词</label>
+                                            <input type="text" class="form-control" id="f-keyword" placeholder="标题 / 摘要">
+                                        </div>
+                                        <div class="col-6 col-md-2">
+                                            <label class="form-label">类型</label>
+                                            <select class="form-select" id="f-type">
+                                                <option value="">全部</option>
+                                                <option value="ANNOUNCEMENT">公告</option>
+                                                <option value="ARTICLE">文章</option>
+                                                <option value="MESSAGE">消息</option>
+                                                <option value="HANDICAP_TUTORIAL">盘口教程</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-6 col-md-2">
+                                            <label class="form-label">状态</label>
+                                            <select class="form-select" id="f-status">
+                                                <option value="">全部</option>
+                                                <option value="DRAFT">草稿</option>
+                                                <option value="PUBLISHED">已发布</option>
+                                                <option value="OFFLINE">已下架</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-6 col-md-1">
+                                            <label class="form-label">每页</label>
+                                            <select class="form-select" id="f-pageSize"><option>10</option><option>20</option><option>50</option></select>
+                                        </div>
+                                        <div class="col-6 col-md-2 d-flex align-items-end">
+                                            <button type="submit" class="btn btn-dark w-100"><i class="bi bi-search me-1"></i>查询</button>
+                                        </div>
+                                        <div class="col-12 col-md-1 d-flex align-items-end">
+                                            <button type="button" class="btn btn-outline-secondary w-100" id="btn-reset"><i class="bi bi-x-circle"></i></button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-striped mb-0 content-table">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th style="width: 80px;">ID</th>
+                                                    <th style="width: 80px;">封面</th>
+                                                    <th>标题</th>
+                                                    <th style="width: 150px;">类型</th>
+                                                    <th style="width: 110px;">状态</th>
+                                                    <th style="width: 90px;">排序</th>
+                                                    <th style="width: 170px;">发布时间</th>
+                                                    <th style="width: 170px;">更新时间</th>
+                                                    <th style="width: 210px;" class="text-end pe-3">操作</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="contents-tbody"><tr><td colspan="9" class="text-center py-4">加载中...</td></tr></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div><span id="contents-total">0</span> 条记录</div>
+                                        <nav><ul class="pagination pagination-sm mb-0" id="contents-pager"></ul></nav>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="app-footer"><div class="float-end d-none d-sm-inline">GoalHub 管理后台</div><strong>Copyright &copy; 2026&nbsp;<span class="text-decoration-none">GoalHub</span>.</strong> All rights reserved.</footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="./js/adminlte.js"></script>
+    <script src="./js/page-common.js"></script>
+    <script>
+        (function () {
+            const auth = window.GoalHubAuth;
+            const API = '/admin/contents';
+            const state = { pageIndex: 1, pageSize: 10, total: 0, records: [] };
+
+            const typeText = { ANNOUNCEMENT: '公告', ARTICLE: '文章', MESSAGE: '消息', HANDICAP_TUTORIAL: '盘口教程' };
+            const statusText = { DRAFT: '草稿', PUBLISHED: '已发布', OFFLINE: '已下架' };
+            const statusClass = { DRAFT: 'text-bg-secondary', PUBLISHED: 'text-bg-success', OFFLINE: 'text-bg-warning' };
+
+            const $form = document.getElementById('filter-form');
+            const $tbody = document.getElementById('contents-tbody');
+            const $total = document.getElementById('contents-total');
+            const $pager = document.getElementById('contents-pager');
+
+            function escapeHtml(value) {
+                return String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+            }
+
+            function formatDate(value) {
+                if (!value) return '-';
+                const date = new Date(value);
+                if (Number.isNaN(date.getTime())) return escapeHtml(value);
+                return date.toLocaleString();
+            }
+
+            function withEmbedded(url) {
+                if (window.self === window.top && new URLSearchParams(location.search).get('embedded') !== '1') return url;
+                return `${url}${url.includes('?') ? '&' : '?'}embedded=1`;
+            }
+
+            async function request(path, options = {}) {
+                const res = await auth.authFetch(path, options);
+                const json = await res.json().catch(() => ({}));
+                if (!res.ok || ![0, 200, undefined].includes(json.code)) {
+                    throw new Error(json.message || '请求失败');
+                }
+                return json.data;
+            }
+
+            function readFilters() {
+                return {
+                    pageIndex: state.pageIndex,
+                    pageSize: Number(document.getElementById('f-pageSize').value || 10),
+                    type: document.getElementById('f-type').value || undefined,
+                    status: document.getElementById('f-status').value || undefined,
+                    keyword: document.getElementById('f-keyword').value.trim() || undefined,
+                };
+            }
+
+            async function loadContents() {
+                $tbody.innerHTML = '<tr><td colspan="9" class="text-center py-4">加载中...</td></tr>';
+                try {
+                    const page = await request(`${API}/page`, { method: 'POST', body: JSON.stringify(readFilters()) });
+                    state.total = Number(page?.total || 0);
+                    state.pageIndex = Number(page?.pageIndex || state.pageIndex);
+                    state.pageSize = Number(page?.pageSize || readFilters().pageSize);
+                    state.records = Array.isArray(page?.records) ? page.records : [];
+                    renderTable();
+                    renderPager();
+                } catch (error) {
+                    $tbody.innerHTML = `<tr><td colspan="9" class="text-center text-danger py-4">${escapeHtml(error.message || '加载失败')}</td></tr>`;
+                }
+            }
+
+            function renderTable() {
+                $total.textContent = state.total;
+                if (!state.records.length) {
+                    $tbody.innerHTML = '<tr><td colspan="9" class="text-center py-4">暂无数据</td></tr>';
+                    return;
+                }
+
+                $tbody.innerHTML = state.records.map((item) => {
+                    const editUrl = withEmbedded(`contentedit.html?id=${encodeURIComponent(item.id)}`);
+                    const cover = item.coverUrl
+                        ? `<img class="content-cover" src="${escapeHtml(item.coverUrl)}" alt="封面">`
+                        : '<span class="text-muted">-</span>';
+                    const status = item.status || '';
+                    return `
+                        <tr data-id="${escapeHtml(item.id)}">
+                            <td>${escapeHtml(item.id)}</td>
+                            <td>${cover}</td>
+                            <td>
+                                <div class="fw-semibold">${escapeHtml(item.title || '-')}</div>
+                                <div class="text-muted small content-summary">${escapeHtml(item.summary || '')}</div>
+                            </td>
+                            <td>${escapeHtml(typeText[item.type] || item.type || '-')}</td>
+                            <td><span class="badge ${escapeHtml(statusClass[status] || 'text-bg-light')}">${escapeHtml(statusText[status] || status || '-')}</span></td>
+                            <td>${escapeHtml(item.sort ?? 0)}</td>
+                            <td>${formatDate(item.publishTime)}</td>
+                            <td>${formatDate(item.updatedAt)}</td>
+                            <td class="text-end pe-3">
+                                <a class="btn btn-outline-primary btn-sm" href="${editUrl}"><i class="bi bi-pencil-square me-1"></i>编辑</a>
+                                <button class="btn btn-outline-danger btn-sm" data-op="delete"><i class="bi bi-trash me-1"></i>删除</button>
+                            </td>
+                        </tr>`;
+                }).join('');
+            }
+
+            function renderPager() {
+                const pages = Math.max(1, Math.ceil(state.total / state.pageSize));
+                const cur = Math.min(state.pageIndex, pages);
+                const items = [];
+                const add = (page, label, disabled = false, active = false) => {
+                    items.push(`<li class="page-item${disabled ? ' disabled' : ''}${active ? ' active' : ''}"><a class="page-link" href="#" data-page="${page}">${label}</a></li>`);
+                };
+                add(cur - 1, '&laquo;', cur <= 1);
+                const start = Math.max(1, cur - 2);
+                const end = Math.min(pages, cur + 2);
+                for (let p = start; p <= end; p += 1) add(p, p, false, p === cur);
+                add(cur + 1, '&raquo;', cur >= pages);
+                $pager.innerHTML = items.join('');
+            }
+
+            $form.addEventListener('submit', (event) => {
+                event.preventDefault();
+                state.pageIndex = 1;
+                loadContents();
+            });
+
+            document.getElementById('btn-reset').addEventListener('click', () => {
+                $form.reset();
+                state.pageIndex = 1;
+                loadContents();
+            });
+
+            document.getElementById('btn-refresh').addEventListener('click', () => loadContents());
+
+            $pager.addEventListener('click', (event) => {
+                const link = event.target.closest('[data-page]');
+                if (!link || link.parentElement.classList.contains('disabled') || link.parentElement.classList.contains('active')) return;
+                event.preventDefault();
+                const page = Number(link.dataset.page);
+                if (!Number.isFinite(page) || page < 1) return;
+                state.pageIndex = page;
+                loadContents();
+            });
+
+            $tbody.addEventListener('click', async (event) => {
+                const button = event.target.closest('[data-op="delete"]');
+                if (!button) return;
+                const id = button.closest('tr')?.dataset.id;
+                if (!id || !confirm('确定删除这篇内容？此操作不可恢复。')) return;
+                button.disabled = true;
+                try {
+                    await request(`${API}/${encodeURIComponent(id)}`, { method: 'DELETE' });
+                    loadContents();
+                } catch (error) {
+                    alert(error.message || '删除失败');
+                    button.disabled = false;
+                }
+            });
+
+            loadContents();
+        })();
+    </script>
+</body>
+
+</html>

@@ -4,19 +4,19 @@
 const API_BASE_URL = 'http://localhost:8000';
 const RESULT_API_URL = 'http://localhost:8000/api/soccer/matches/results/page';
 const BET_ORDER_API_URL = 'http://localhost:8000/api/order/bet/orders/place';
+const FOLLOW_API_URL = `${API_BASE_URL}/api/soccer/follow`;
 const DEFAULT_LANG_CODE = 'en-US';
 const PAGE_SIZE = 10;
 const BET_PRESET_AMOUNTS = [10, 50, 100, 500, 1000];
+const BALANCE_CACHE_KEY = 'defaultBalanceText';
 
 // DOM 元素
 const navTabs = document.querySelectorAll('.nav-tab');
-const leagueItems = document.querySelectorAll('.league-item');
-const footerItems = document.querySelectorAll('.footer-item');
-const backBtn = document.querySelector('.back-btn');
 const leaguesList = document.getElementById('leaguesList');
 const matchesList = document.getElementById('matchesList');
 const statusFilter = document.querySelector('.status-filter');
 const balanceEl = document.querySelector('.balance');
+const sportsNav = document.querySelector('.sports-nav');
 
 // 当前状态
 let currentTab = 'today';
@@ -25,6 +25,8 @@ let currentLangCode = DEFAULT_LANG_CODE;
 let authToken = null;
 let currentPageIndex = 1;
 let selectedBet = null;
+let showingFollowedMatches = false;
+const followedMatchIds = new Set();
 
 /**
  * 兼容分页接口和普通数组接口
@@ -32,6 +34,10 @@ let selectedBet = null;
 function getRecords(payload) {
     if (Array.isArray(payload?.data?.records)) {
         return payload.data.records;
+    }
+
+    if (Array.isArray(payload?.data?.list)) {
+        return payload.data.list;
     }
 
     if (Array.isArray(payload?.data)) {
@@ -43,6 +49,18 @@ function getRecords(payload) {
     }
 
     return [];
+}
+
+function getMatchId(match) {
+    return match?.matchId || match?.id || match?.soccerMatchId || match?.footballMatchId || '';
+}
+
+function normalizeFollowRecord(record) {
+    return record?.match || record?.soccerMatch || record?.footballMatch || record?.matchInfo || record;
+}
+
+function getFollowRecordMatchId(record, match) {
+    return getMatchId(match) || record?.matchId || record?.soccerMatchId || record?.footballMatchId || '';
 }
 
 /**
@@ -65,6 +83,13 @@ function formatBalance(value) {
     }
 
     return amount.toFixed(2);
+}
+
+function renderCachedBalance() {
+    const cachedBalanceText = localStorage.getItem(BALANCE_CACHE_KEY);
+    if (balanceEl && cachedBalanceText) {
+        balanceEl.textContent = cachedBalanceText;
+    }
 }
 
 function escapeHtml(value) {
@@ -101,10 +126,15 @@ async function loadDefaultBalance() {
 
         const data = await response.json();
         const availableBalance = data?.data?.availableBalance;
-        balanceEl.textContent = `💰 ${formatBalance(availableBalance)}`;
+        const balanceText = `💰 ${formatBalance(availableBalance)}`;
+        balanceEl.textContent = balanceText;
+        localStorage.setItem(BALANCE_CACHE_KEY, balanceText);
     } catch (error) {
         console.error('加载余额失败:', error);
-        balanceEl.textContent = '💰 0.00';
+        renderCachedBalance();
+        if (!balanceEl.textContent.trim()) {
+            balanceEl.textContent = '💰 0.00';
+        }
     }
 }
 
@@ -187,6 +217,8 @@ function selectLeague(leagueId, element) {
 
     // 更新当前联盟ID
     currentLeagueId = leagueId;
+    showingFollowedMatches = false;
+    document.querySelectorAll('.sports-nav .nav-item').forEach(navItem => navItem.classList.remove('active'));
 
     console.log('选择联盟:', leagueId);
 
@@ -195,11 +227,67 @@ function selectLeague(leagueId, element) {
     loadMatches();
 }
 
+function setLoadMoreVisible(visible) {
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
+    if (loadMoreBtn) {
+        loadMoreBtn.style.display = visible ? 'block' : 'none';
+    }
+}
+
+async function loadFollowedMatches() {
+    try {
+        showingFollowedMatches = true;
+        currentPageIndex = 1;
+        if (statusFilter) {
+            statusFilter.textContent = '关注';
+        }
+        setLoadMoreVisible(false);
+        matchesList.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">关注赛事加载中...</div>';
+
+        const response = await fetch(`${FOLLOW_API_URL}/my`, {
+            method: 'GET',
+            headers: getAuthHeaders()
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('关注赛事响应错误:', response.status, errorText);
+            throw new Error(`HTTP ${response.status}: ${errorText}`);
+        }
+
+        const data = await response.json();
+        const records = getRecords(data);
+        followedMatchIds.clear();
+        matchesList.innerHTML = '';
+
+        if (!records.length) {
+            matchesList.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">暂无关注赛事</div>';
+            return;
+        }
+
+        records.forEach(record => {
+            const match = normalizeFollowRecord(record);
+            const matchId = getFollowRecordMatchId(record, match);
+            if (matchId) {
+                followedMatchIds.add(String(matchId));
+            }
+
+            const matchItem = createMatchElement(match, matchId);
+            matchesList.appendChild(matchItem);
+            loadMatchOdds(match, matchItem);
+        });
+    } catch (error) {
+        console.error('加载关注赛事失败:', error);
+        matchesList.innerHTML = `<div style="padding: 10px; color: #e74c3c;">加载关注赛事失败: ${error.message}</div>`;
+    }
+}
+
 /**
  * 加载赛事列表
  */
 async function loadMatches() {
     try {
+        showingFollowedMatches = false;
         if (currentTab === 'results') {
             await loadMatchResults();
             return;
@@ -276,14 +364,13 @@ async function loadMatches() {
             });
 
             // 显示/隐藏加载更多按钮
-            const loadMoreBtn = document.getElementById('loadMoreBtn');
-            if (records.length === PAGE_SIZE) {
-                loadMoreBtn.style.display = 'block';
+            if (currentTab !== 'hot' && records.length === PAGE_SIZE) {
+                setLoadMoreVisible(true);
             } else {
-                loadMoreBtn.style.display = 'none';
+                setLoadMoreVisible(false);
             }
         } else {
-            document.getElementById('loadMoreBtn').style.display = 'none';
+            setLoadMoreVisible(false);
             matchesList.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">暂无赛事</div>';
         }
     } catch (error) {
@@ -355,11 +442,12 @@ async function loadMatchResults() {
 /**
  * 创建赛事DOM元素
  */
-function createMatchElement(match) {
+function createMatchElement(match, fallbackMatchId = '') {
     const matchItem = document.createElement('div');
     matchItem.className = 'match-item';
-    const matchId = match.matchId || match.id;
+    const matchId = getMatchId(match) || fallbackMatchId;
     matchItem.dataset.matchId = matchId || '';
+    const isFollowed = followedMatchIds.has(String(matchId));
 
     // 获取队伍信息
     const homeTeam = match.homeTeam?.name || match.homeTeamName || '主队';
@@ -386,6 +474,10 @@ function createMatchElement(match) {
     }
 
     matchItem.innerHTML = `
+        <button class="follow-match-btn${isFollowed ? ' followed' : ''}" type="button" data-match-id="${escapeHtml(matchId)}" aria-label="${isFollowed ? '取消关注赛事' : '关注赛事'}" title="${isFollowed ? '取消关注' : '关注'}">
+            <span class="follow-star">${isFollowed ? '★' : '☆'}</span>
+            <span class="follow-text">${isFollowed ? '已关注' : '关注'}</span>
+        </button>
         <div class="match-time">${escapeHtml(timeText)}${matchName ? ` · ${escapeHtml(matchName)}` : ''}</div>
         <div class="match-teams">
             <div class="team">${escapeHtml(homeTeam)}</div>
@@ -409,7 +501,7 @@ function createMatchElement(match) {
  * 加载单场赛事玩法和赔率
  */
 async function loadMatchOdds(match, matchItem) {
-    const matchId = match.matchId || match.id;
+    const matchId = matchItem?.dataset?.matchId || getMatchId(match);
     const oddsContainer = matchItem.querySelector('.odds-options');
 
     if (!matchId) {
@@ -439,6 +531,57 @@ async function loadMatchOdds(match, matchItem) {
         console.error('加载赔率失败:', error);
         oddsContainer.innerHTML = '<div class="odds-empty odds-error">赔率加载失败</div>';
     }
+}
+
+async function toggleFollowMatch(button) {
+    const matchId = button.dataset.matchId;
+    if (!matchId) {
+        return;
+    }
+
+    const isFollowed = followedMatchIds.has(String(matchId)) || button.classList.contains('followed');
+    const method = isFollowed ? 'DELETE' : 'POST';
+
+    try {
+        button.disabled = true;
+        const response = await fetch(`${FOLLOW_API_URL}/${encodeURIComponent(matchId)}`, {
+            method,
+            headers: getAuthHeaders()
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('关注操作响应错误:', response.status, errorText);
+            throw new Error(`HTTP ${response.status}: ${errorText}`);
+        }
+
+        const nextFollowed = !isFollowed;
+        updateFollowButton(button, nextFollowed);
+        if (nextFollowed) {
+            followedMatchIds.add(String(matchId));
+        } else {
+            followedMatchIds.delete(String(matchId));
+            if (showingFollowedMatches) {
+                button.closest('.match-item')?.remove();
+                if (!matchesList.querySelector('.match-item')) {
+                    matchesList.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">暂无关注赛事</div>';
+                }
+            }
+        }
+    } catch (error) {
+        console.error('关注操作失败:', error);
+        alert(`关注操作失败: ${error.message}`);
+    } finally {
+        button.disabled = false;
+    }
+}
+
+function updateFollowButton(button, isFollowed) {
+    button.classList.toggle('followed', isFollowed);
+    button.title = isFollowed ? '取消关注' : '关注';
+    button.setAttribute('aria-label', isFollowed ? '取消关注赛事' : '关注赛事');
+    button.querySelector('.follow-star').textContent = isFollowed ? '★' : '☆';
+    button.querySelector('.follow-text').textContent = isFollowed ? '已关注' : '关注';
 }
 
 function renderMatchOdds(container, markets) {
@@ -762,6 +905,8 @@ navTabs.forEach(tab => {
     tab.addEventListener('click', () => {
         navTabs.forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
+        document.querySelectorAll('.sports-nav .nav-item').forEach(navItem => navItem.classList.remove('active'));
+        showingFollowedMatches = false;
         
         currentTab = tab.dataset.tab;
         currentPageIndex = 1;
@@ -774,39 +919,32 @@ navTabs.forEach(tab => {
     });
 });
 
-// 底部菜单项切换
-footerItems.forEach(item => {
-    item.addEventListener('click', () => {
-        const text = item.querySelector('span:last-child').textContent;
-        console.log('点击:', text);
-        
-        // 处理各个菜单项
-        switch(text) {
-            case '盘口教程':
-                alert('盘口教程页面（待开发）');
-                break;
-            case '设置菜单':
-                alert('设置页面（待开发）');
-                break;
-            case '未结注单':
-                alert('未结注单列表（待开发）');
-                break;
-            case '已结注单':
-                alert('已结注单列表（待开发）');
-                break;
-            case '刷新':
-                loadDefaultBalance();
-                currentPageIndex = 1;
-                loadMatches();
-                break;
+if (sportsNav) {
+    sportsNav.addEventListener('click', event => {
+        const item = event.target.closest('.nav-item');
+        if (!item || !sportsNav.contains(item)) {
+            return;
         }
-    });
-});
 
-// 返回按钮
-if (backBtn) {
-    backBtn.addEventListener('click', () => {
-        window.history.back();
+        if (item.dataset.action === 'followed') {
+            document.querySelectorAll('.sports-nav .nav-item').forEach(navItem => navItem.classList.remove('active'));
+            item.classList.add('active');
+            loadFollowedMatches();
+            return;
+        }
+
+        if (item.dataset.action === 'hot') {
+            document.querySelectorAll('.sports-nav .nav-item').forEach(navItem => navItem.classList.remove('active'));
+            navTabs.forEach(tab => tab.classList.remove('active'));
+            item.classList.add('active');
+            currentTab = 'hot';
+            currentPageIndex = 1;
+            showingFollowedMatches = false;
+            if (statusFilter) {
+                statusFilter.textContent = '热门';
+            }
+            loadMatches();
+        }
     });
 }
 
@@ -821,6 +959,14 @@ if (loadMoreBtn) {
 
 if (matchesList) {
     matchesList.addEventListener('click', event => {
+        const followButton = event.target.closest('.follow-match-btn');
+        if (followButton && matchesList.contains(followButton)) {
+            event.preventDefault();
+            event.stopPropagation();
+            toggleFollowMatch(followButton);
+            return;
+        }
+
         const oddElement = event.target.closest('.odd');
         if (!oddElement || !matchesList.contains(oddElement)) {
             return;
@@ -833,6 +979,7 @@ if (matchesList) {
 // 页面加载时初始化
 window.addEventListener('load', () => {
     console.log('页面加载中...');
+    renderCachedBalance();
     
     // 检查认证状态
     if (!checkAuth()) {
@@ -851,8 +998,10 @@ window.addEventListener('load', () => {
 
     initBetModal();
 
-    // 加载用户余额
-    loadDefaultBalance();
+    // 首次没有缓存时才请求余额，页面间切换直接复用右上角缓存。
+    if (!localStorage.getItem(BALANCE_CACHE_KEY)) {
+        loadDefaultBalance();
+    }
 
     // 加载联盟列表
     loadLeagues();

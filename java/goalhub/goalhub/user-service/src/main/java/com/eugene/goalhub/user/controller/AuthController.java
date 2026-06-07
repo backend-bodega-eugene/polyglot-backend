@@ -2,10 +2,7 @@ package com.eugene.goalhub.user.controller;
 
 import com.eugene.goalhub.user.service.CaptchaService;
 import com.eugene.goalhub.user.service.UserService;
-import dto.CaptchaResponse;
-import dto.LoginRequest;
-import dto.LoginResponse;
-import dto.RegisterRequest;
+import dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -97,6 +94,16 @@ public class AuthController {
         return Result.success(
                 userService.login(request, clientIp)
         );
+    }
+    @Operation(summary = "修改密码", description = "用户修改登录密码")
+    @PostMapping("/change-password")
+    public Result<Void> changePassword(
+            @RequestHeader("X-User-Id") Long userId,
+            @Valid @RequestBody ChangePasswordRequest request) {
+
+        userService.changePassword(userId, request);
+
+        return Result.success();
     }
 
     /**

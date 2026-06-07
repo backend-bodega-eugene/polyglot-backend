@@ -1,7 +1,6 @@
 package com.eugene.goalhub.order.service;
 
-import dto.PlaceBetOrderRequest;
-import dto.PlaceBetOrderResponse;
+import dto.*;
 
 /**
  * 前端投注订单服务。
@@ -20,4 +19,14 @@ public interface AppBetOrderService {
     PlaceBetOrderResponse placeOrder(
             Long userId,
             PlaceBetOrderRequest request);
+    PageResponse<AppBetOrderResponse> pageUnsettledOrders(
+            Long userId,
+            AppBetOrderPageRequest request);
+
+    PageResponse<AppBetOrderResponse> pageSettledOrders(
+            Long userId,
+            AppBetOrderPageRequest request);
+    PageResponse<AppBetOrderResponse> pageMyOrders(
+            Long userId,
+            AppBetOrderPageRequest request);
 }

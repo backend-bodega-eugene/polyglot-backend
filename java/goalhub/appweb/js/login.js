@@ -20,6 +20,8 @@ let captchaKey = '';
 // API 配置
 const CAPTCHA_URL = 'http://localhost:8000/api/user/captcha';
 const LOGIN_URL = 'http://localhost:8000/api/user/login';
+const CURRENT_USERNAME_KEY = 'currentUsername';
+const CURRENT_NICKNAME_KEY = 'currentNickname';
 
 // 验证函数
 function validateAccount(account) {
@@ -77,6 +79,43 @@ function showMessage(message, type = 'success') {
     setTimeout(() => {
         messageDiv.remove();
     }, 3000);
+}
+
+function getLoginUserPayload(data) {
+    return data?.data?.user || data?.data?.userInfo || data?.data || data?.user || data?.userInfo || {};
+}
+
+function isSuccessCode(code) {
+    return code === 0 || code === 200 || code === '0' || code === '200';
+}
+
+function getLoginToken(data) {
+    return data?.data?.token || data?.data?.accessToken || data?.token || data?.accessToken || '';
+}
+
+function getLoginUserId(data) {
+    return data?.data?.userId || data?.data?.id || data?.userId || data?.id || '';
+}
+
+function clearLoginState() {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userId');
+    localStorage.removeItem(CURRENT_USERNAME_KEY);
+    localStorage.removeItem(CURRENT_NICKNAME_KEY);
+}
+
+function saveLoginUser(data, account) {
+    const user = getLoginUserPayload(data);
+    const username = user.username || user.account || user.loginName || data?.username || data?.account || account;
+    const nickname = user.nickname || user.nickName || user.displayName || data?.nickname || data?.nickName || '';
+
+    localStorage.setItem(CURRENT_USERNAME_KEY, username);
+
+    if (nickname) {
+        localStorage.setItem(CURRENT_NICKNAME_KEY, nickname);
+    } else {
+        localStorage.removeItem(CURRENT_NICKNAME_KEY);
+    }
 }
 
 // 获取验证码
@@ -215,7 +254,14 @@ async function submitLogin(account, password, captchaCode, rememberMe) {
         const data = await response.json();
         console.log('响应数据:', data);
         
-        if (response.ok) {
+        if (response.ok && isSuccessCode(data.code)) {
+            const token = getLoginToken(data);
+            const userId = getLoginUserId(data);
+
+            if (!token) {
+                throw new Error('登录响应缺少token');
+            }
+
             // 登录成功
             showMessage('登录成功！正在跳转...', 'success');
             
@@ -227,22 +273,16 @@ async function submitLogin(account, password, captchaCode, rememberMe) {
             }
             
             // 保存登录信息到 localStorage
-            // 注意：需要确认后端返回的字段名
-            const token = data.token || data.data?.token;
-            const userId = data.userId || data.data?.userId;
-            
             console.log('保存token:', token);
             console.log('保存userId:', userId);
             
-            if (token) {
-                localStorage.setItem('authToken', token);
-            } else {
-                console.warn('未获取到token');
-            }
+            localStorage.setItem('authToken', token);
             
             if (userId) {
                 localStorage.setItem('userId', userId);
             }
+
+            saveLoginUser(data, account);
             
             // 清空表单
             loginForm.reset();
@@ -258,6 +298,7 @@ async function submitLogin(account, password, captchaCode, rememberMe) {
             // 登录失败
             const errorMessage = data.message || data.error || `登录失败 (HTTP ${response.status})`;
             console.error('登录错误:', errorMessage);
+            clearLoginState();
             showError(formError, errorMessage);
             showMessage(errorMessage, 'error');
             
@@ -266,9 +307,11 @@ async function submitLogin(account, password, captchaCode, rememberMe) {
         }
     } catch (error) {
         console.error('登录请求失败:', error);
-        const errorMessage = '网络错误，请检查服务器是否运行或网络连接';
+        clearLoginState();
+        const errorMessage = error.message || '网络错误，请检查服务器是否运行或网络连接';
         showError(formError, errorMessage);
         showMessage(errorMessage, 'error');
+        loadCaptcha();
     } finally {
         // 恢复提交按钮状态
         submitBtn.disabled = false;

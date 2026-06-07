@@ -41,12 +41,14 @@ const server = http.createServer((req, res) => {
         return;
     }
 
+    const requestUrl = new URL(req.url, `http://${req.headers.host || HOSTNAME}`);
+
     // 获取请求的文件路径
     let filePath;
-    if (req.url === '/' || req.url === '') {
+    if (requestUrl.pathname === '/' || requestUrl.pathname === '') {
         filePath = path.join(__dirname, '/register.html');
     } else {
-        filePath = path.join(__dirname, req.url);
+        filePath = path.join(__dirname, requestUrl.pathname);
     }
 
     // 防止目录遍历攻击
@@ -63,7 +65,7 @@ const server = http.createServer((req, res) => {
         if (err) {
             if (err.code === 'ENOENT') {
                 res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
-                res.end('<h1>404 Not Found</h1><p>文件未找到：' + req.url + '</p>');
+                res.end('<h1>404 Not Found</h1><p>文件未找到：' + requestUrl.pathname + '</p>');
             } else {
                 res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
                 res.end('500 Internal Server Error');

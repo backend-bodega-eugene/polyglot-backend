@@ -33,6 +33,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             "/user/captcha",
             "/internal/admin/users/**",
             "/internal/admin/account/**",
+            "/internal/admin/usercomments/**",
             "/internal/order/**",
             // Swagger/OpenAPI 文档路径。
             "/swagger-ui.html",

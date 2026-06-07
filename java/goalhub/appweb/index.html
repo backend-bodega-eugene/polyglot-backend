@@ -12,7 +12,6 @@
         <!-- 头部 - 标题和余额 -->
         <div class="index-header">
             <div class="header-top">
-                <span class="back-btn">&lt;</span>
                 <span class="balance">💰 0.00</span>
             </div>
 
@@ -31,14 +30,13 @@
         <!-- 体育分类导航 -->
         <div class="sports-nav">
             <!-- <div class="nav-item active">🏀 主播</div> -->
-            <div class="nav-item">⭐ 收藏</div>
-            <div class="nav-item">📋 注单</div>
-            <div class="nav-item">🔥 热门</div>
-            <div class="nav-item">⚽ 足球</div>
+            <div class="nav-item" data-action="followed">⭐ 关注</div>
+            <a class="nav-item" href="bettings.html">📋 注单</a>
+            <div class="nav-item" data-action="hot">🔥 热门</div>
             <!-- <div class="nav-item" style="opacity: 0.4;">🏀 篮球</div>
             <div class="nav-item" style="opacity: 0.4;">🥎 VR体育</div> -->
             <div class="nav-item">
-                <input type="search" placeholder="🔍" class="search-input">
+                <input type="search" placeholder="搜索赛事 / 联赛" class="search-input">
             </div>
         </div>
 
@@ -72,26 +70,26 @@
 
         <!-- 底部菜单栏 -->
         <div class="index-footer">
-            <div class="footer-item active">
+            <a class="footer-item active" href="tutorial.html">
                 <span class="footer-icon">📋</span>
                 <span>盘口教程</span>
-            </div>
-            <div class="footer-item">
+            </a>
+            <a class="footer-item" href="service.html">
                 <span class="footer-icon">⚙️</span>
-                <span>设置菜单</span>
-            </div>
-            <div class="footer-item">
+                <span>客服页面</span>
+            </a>
+            <a class="footer-item" href="bettings.html#open">
                 <span class="footer-icon">📋</span>
                 <span>未结注单</span>
-            </div>
-            <div class="footer-item">
+            </a>
+            <a class="footer-item" href="bettings.html#settled">
                 <span class="footer-icon">✔️</span>
                 <span>已结注单</span>
-            </div>
-            <div class="footer-item">
-                <span class="footer-icon">🔄</span>
-                <span>刷新</span>
-            </div>
+            </a>
+            <a class="footer-item" href="myprofile.html">
+                <span class="footer-icon">👤</span>
+                <span>我的</span>
+            </a>
         </div>
     </div>
 

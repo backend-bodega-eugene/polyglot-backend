@@ -1,5 +1,6 @@
 package com.eugene.goalhub.order.service.impl;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.eugene.goalhub.boot.logs.service.GoalhubLogService;
 import com.eugene.goalhub.order.client.OrderMatchFeignClient;
 import com.eugene.goalhub.order.client.OrderUserAccountFeignClient;
@@ -17,7 +18,10 @@ import response.ResultCode;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * 前端投注订单服务实现。
@@ -210,7 +214,104 @@ public class AppBetOrderServiceImpl
 
         return response;
     }
+    @Override
+    public PageResponse<AppBetOrderResponse> pageUnsettledOrders(
+            Long userId,
+            AppBetOrderPageRequest request) {
 
+        return pageOrders(userId, request, false);
+    }
+
+    @Override
+    public PageResponse<AppBetOrderResponse> pageSettledOrders(
+            Long userId,
+            AppBetOrderPageRequest request) {
+
+        return pageOrders(userId, request, true);
+    }
+    @Override
+    public PageResponse<AppBetOrderResponse> pageMyOrders(
+            Long userId,
+            AppBetOrderPageRequest request) {
+
+        return pageOrders(userId, request, null);
+    }
+    private PageResponse<AppBetOrderResponse> pageOrders(
+            Long userId,
+            AppBetOrderPageRequest request,
+            Boolean settled) {
+
+        if (userId == null) {
+            throw new BusinessException(ResultCode.USER_ID_NOT_NULL);
+        }
+
+        if (request == null) {
+            request = new AppBetOrderPageRequest();
+        }
+
+        int pageIndex = request.getPageIndex() == null || request.getPageIndex() <= 0
+                ? 1
+                : request.getPageIndex();
+
+        int pageSize = request.getPageSize() == null || request.getPageSize() <= 0
+                ? 10
+                : request.getPageSize();
+
+        Page<AppBetOrderResponse> page = new Page<>(pageIndex, pageSize);
+
+        Page<AppBetOrderResponse> resultPage;
+
+        if (settled == null) {
+            resultPage = betOrderMapper.selectAppMyOrderPage(page, userId, request);
+        } else {
+            resultPage = betOrderMapper.selectAppOrderPage(page, userId, settled);
+        }
+
+        List<AppBetOrderResponse> orders = resultPage.getRecords();
+
+        if (orders == null || orders.isEmpty()) {
+            return  new PageResponse<>(
+                    resultPage.getTotal(),
+                    Math.toIntExact(resultPage.getCurrent()),
+                    Math.toIntExact(resultPage.getSize()),
+                    orders
+            );
+        }
+
+        List<Long> orderIds = orders.stream()
+                .map(AppBetOrderResponse::getOrderId)
+                .toList();
+
+        String langCode = request.getLangCode();
+        if (langCode == null || langCode.isBlank()) {
+            langCode = "zh-CN";
+        }
+
+        List<AppBetOrderItemResponse> items =
+                betOrderItemMapper.selectAppOrderItemsByOrderIds(
+                        orderIds,
+                        langCode
+                );
+
+        Map<Long, List<AppBetOrderItemResponse>> itemMap =
+                items.stream()
+                        .collect(Collectors.groupingBy(
+                                AppBetOrderItemResponse::getOrderId
+                        ));
+
+        for (AppBetOrderResponse order : orders) {
+            order.setItems(
+                    itemMap.getOrDefault(order.getOrderId(), List.of())
+            );
+        }
+
+        return  new PageResponse<>(
+                resultPage.getCurrent(),
+                Math.toIntExact(resultPage.getSize()),
+                Math.toIntExact(resultPage.getTotal()),
+                orders
+        );
+    }
     /**
      * 校验投注下单请求。
      *

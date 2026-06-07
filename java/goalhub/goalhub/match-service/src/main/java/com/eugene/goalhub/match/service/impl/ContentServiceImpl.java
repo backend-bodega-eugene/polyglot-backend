@@ -1,0 +1,169 @@
+package com.eugene.goalhub.match.service.impl;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.eugene.goalhub.match.entity.content.ContentEntity;
+import com.eugene.goalhub.match.entity.content.constant.ContentStatus;
+import com.eugene.goalhub.match.entity.content.constant.ContentType;
+import com.eugene.goalhub.match.mapper.ContentMapper;
+import com.eugene.goalhub.match.service.ContentService;
+import dto.*;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Service
+public class ContentServiceImpl extends ServiceImpl<ContentMapper, ContentEntity> implements ContentService {
+
+    @Override
+    public Long create(AdminContentCreateRequest request) {
+        ContentEntity entity = new ContentEntity();
+        entity.setType(request.getType());
+        entity.setTitle(request.getTitle());
+        entity.setSummary(request.getSummary());
+        entity.setCoverUrl(request.getCoverUrl());
+        entity.setContentHtml(request.getContentHtml());
+        entity.setStatus(request.getStatus() == null ? ContentStatus.DRAFT : request.getStatus());
+        entity.setSort(request.getSort() == null ? 0 : request.getSort());
+        entity.setPublishTime(request.getPublishTime());
+
+        save(entity);
+        return entity.getId();
+    }
+
+    @Override
+    public void update(Long id, AdminContentUpdateRequest request) {
+        checkExists(id);
+
+        lambdaUpdate()
+                .eq(ContentEntity::getId, id)
+                .set(ContentEntity::getType, request.getType())
+                .set(ContentEntity::getTitle, request.getTitle())
+                .set(ContentEntity::getSummary, request.getSummary())
+                .set(ContentEntity::getCoverUrl, request.getCoverUrl())
+                .set(ContentEntity::getContentHtml, request.getContentHtml())
+                .set(ContentEntity::getStatus, request.getStatus())
+                .set(ContentEntity::getSort, request.getSort())
+                .set(ContentEntity::getPublishTime, request.getPublishTime())
+                .update();
+    }
+
+    @Override
+    public void delete(Long id) {
+        checkExists(id);
+        removeById(id);
+    }
+
+    @Override
+    public ContentResponse getAdminDetail(Long id) {
+        ContentEntity entity = getById(id);
+        if (entity == null) {
+            return null;
+        }
+        return toResponse(entity);
+    }
+
+    @Override
+    public PageResponse<ContentResponse> adminPage(AdminContentPageRequest request) {
+        Page<ContentEntity> page = lambdaQuery()
+                .eq(request.getType() != null && !request.getType().isBlank(), ContentEntity::getType, request.getType())
+                .eq(request.getStatus() != null && !request.getStatus().isBlank(), ContentEntity::getStatus, request.getStatus())
+                .like(request.getKeyword() != null && !request.getKeyword().isBlank(), ContentEntity::getTitle, request.getKeyword())
+                .orderByDesc(ContentEntity::getSort)
+                .orderByDesc(ContentEntity::getId)
+                .page(new Page<>(request.getPageIndex(), request.getPageSize()));
+
+        return new PageResponse<ContentResponse> (
+                page.getTotal(),
+                Math.toIntExact(page.getCurrent()),
+                Math.toIntExact(page.getSize()),
+                page.getRecords().stream().map(this::toResponse).toList()
+        );
+    }
+
+    @Override
+    public ContentResponse getAppDetail(Long id) {
+        ContentEntity entity = lambdaQuery()
+                .eq(ContentEntity::getId, id)
+                .eq(ContentEntity::getStatus, ContentStatus.PUBLISHED)
+                .le(ContentEntity::getPublishTime, LocalDateTime.now())
+                .one();
+
+        if (entity == null) {
+            return null;
+        }
+        return toResponse(entity);
+    }
+
+    @Override
+    public ContentResponse getHandicapTutorial() {
+        ContentEntity entity = lambdaQuery()
+                .eq(ContentEntity::getType, ContentType.HANDICAP_TUTORIAL)
+                .eq(ContentEntity::getStatus, ContentStatus.PUBLISHED)
+               // .le(ContentEntity::getPublishTime, LocalDateTime.now())
+                .orderByDesc(ContentEntity::getSort)
+                .orderByDesc(ContentEntity::getId)
+                .last("LIMIT 1")
+                .one();
+
+        if (entity == null) {
+            return null;
+        }
+        return toResponse(entity);
+    }
+
+    @Override
+    public PageResponse<ContentResponse> appArticlePage(AppContentPageRequest request) {
+        return appPage(request, ContentType.ARTICLE);
+    }
+
+    @Override
+    public PageResponse<ContentResponse> appMessagePage(AppContentPageRequest request) {
+        return appPage(request, ContentType.MESSAGE);
+    }
+
+    private PageResponse<ContentResponse> appPage(AppContentPageRequest request, String type) {
+        Page<ContentEntity> page = lambdaQuery()
+                .eq(ContentEntity::getType, type)
+                .eq(ContentEntity::getStatus, ContentStatus.PUBLISHED)
+                .le(ContentEntity::getPublishTime, LocalDateTime.now())
+                .orderByDesc(ContentEntity::getSort)
+                .orderByDesc(ContentEntity::getId)
+                .page(new Page<>(request.getPageIndex(), request.getPageSize()));
+
+        List<ContentResponse> records = page.getRecords()
+                .stream()
+                .map(this::toResponse)
+                .toList();
+
+        return new PageResponse<ContentResponse> (
+                page.getTotal(),
+                Math.toIntExact(page.getCurrent()),
+                Math.toIntExact(page.getSize()),
+                page.getRecords().stream().map(this::toResponse).toList()
+        );
+    }
+
+    private void checkExists(Long id) {
+        if (getById(id) == null) {
+            throw new RuntimeException("内容不存在");
+        }
+    }
+
+    private ContentResponse toResponse(ContentEntity entity) {
+        ContentResponse response = new ContentResponse();
+        response.setId(entity.getId());
+        response.setType(entity.getType());
+        response.setTitle(entity.getTitle());
+        response.setSummary(entity.getSummary());
+        response.setCoverUrl(entity.getCoverUrl());
+        response.setContentHtml(entity.getContentHtml());
+        response.setStatus(entity.getStatus());
+        response.setSort(entity.getSort());
+        response.setPublishTime(entity.getPublishTime());
+        response.setCreatedAt(entity.getCreatedAt());
+        response.setUpdatedAt(entity.getUpdatedAt());
+        return response;
+    }
+}

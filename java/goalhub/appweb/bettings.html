@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>投注记录 - GoalHub</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+    <div class="container app-shell">
+        <header class="app-page-header">
+            <a class="app-back" href="index.html">‹</a>
+            <h1 class="app-title" id="pageTitle">投注记录</h1>
+            <span class="balance">💰 0.00</span>
+        </header>
+
+        <main class="app-content">
+            <form class="order-filters" id="orderFilterForm">
+                <input class="order-filter-input" id="keywordsInput" type="search" placeholder="订单号 / 玩法 / 选项">
+                <div class="order-date-row">
+                    <input class="order-filter-input" id="startTimeInput" type="datetime-local" aria-label="开始时间">
+                    <input class="order-filter-input" id="endTimeInput" type="datetime-local" aria-label="结束时间">
+                </div>
+                <div class="order-filter-actions">
+                    <button class="order-filter-btn primary" type="submit">查询</button>
+                    <button class="order-filter-btn" id="resetFilterBtn" type="button">重置</button>
+                </div>
+            </form>
+            <div id="ordersList"></div>
+            <button class="order-load-more" id="ordersLoadMoreBtn" type="button" style="display:none;">加载更多</button>
+            <div class="app-empty" id="ordersEmpty">
+                <div class="app-empty-icon">📊</div>
+                <div id="emptyText">暂无投注记录</div>
+            </div>
+        </main>
+
+        <div class="index-footer">
+            <a class="footer-item" href="tutorial.html"><span class="footer-icon">📋</span><span>盘口教程</span></a>
+            <a class="footer-item" href="service.html"><span class="footer-icon">⚙️</span><span>客服页面</span></a>
+            <a class="footer-item active" id="openFooter" href="bettings.html"><span class="footer-icon">📋</span><span>注单</span></a>
+            <a class="footer-item" id="settledFooter" href="bettings.html"><span class="footer-icon">✔️</span><span>已结注单</span></a>
+            <a class="footer-item" href="myprofile.html"><span class="footer-icon">👤</span><span>我的</span></a>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script src="js/bettings.js"></script>
+</body>
+</html>

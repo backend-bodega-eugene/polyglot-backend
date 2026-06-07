@@ -4,6 +4,7 @@
   if (!auth) return;
 
   const state = { pageIndex: 1, pageSize: 10, total: 0, list: [], currentOrder: null, action: null };
+  const ORDER_COLSPAN = 25;
   const $ = (id) => document.getElementById(id);
   const esc = (s) => (s == null ? '' : String(s)).replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
   const ok = (data) => data && (data.code === 200 || data.code === 0 || data.success === true);
@@ -81,6 +82,14 @@
     return `<span class="badge ${cls}">${esc(text)}</span>`;
   }
 
+  function orderCell(row, keys, type = 'text') {
+    const value = pick(row, keys, '');
+    if (type === 'money') return money(value);
+    if (type === 'time') return esc(time(value));
+    if (type === 'badge') return badge(value);
+    return esc(value === '' ? '-' : value);
+  }
+
   function readFilters() {
     const num = (id) => {
       const value = $(id)?.value.trim();
@@ -109,14 +118,12 @@
   function renderRows() {
     const tbody = $('orders-tbody');
     if (!state.list.length) {
-      tbody.innerHTML = '<tr><td colspan="11" class="text-center py-4 text-muted">暂无数据</td></tr>';
+      tbody.innerHTML = `<tr><td colspan="${ORDER_COLSPAN}" class="text-center py-4 text-muted">暂无数据</td></tr>`;
       return;
     }
     tbody.innerHTML = state.list.map((row) => {
       const id = pick(row, ['id', 'orderId'], '');
       const orderNo = pick(row, ['orderNo', 'orderNumber'], '');
-      const amount = pick(row, ['betAmount', 'stakeAmount', 'orderAmount', 'amount', 'totalAmount'], '');
-      const payout = pick(row, ['settleAmount', 'payoutAmount', 'winAmount', 'profitAmount'], '');
       const actions = config.history ? `
         <button class="btn btn-outline-primary btn-sm" data-op="detail">明细</button>
       ` : `
@@ -127,17 +134,31 @@
       `;
       return `
         <tr data-id="${esc(id)}" data-order-no="${esc(orderNo)}">
-          <td>${esc(id)}</td>
-          <td>${esc(orderNo)}</td>
-          <td>${esc(pick(row, ['userId', 'appUserId']))}</td>
-          <td>${esc(pick(row, ['currencyCode', 'currency']))}</td>
-          <td>${money(amount)}</td>
-          <td>${money(payout)}</td>
-          <td>${badge(pick(row, ['status']))}</td>
-          <td>${badge(pick(row, ['systemResult']))}</td>
-          <td>${badge(pick(row, ['reviewResult']))}</td>
-          <td>${esc(time(pick(row, ['createdTime', 'createTime', 'createdAt'], '')))}</td>
-          <td class="text-end pe-3">${actions}</td>
+          <td>${orderCell(row, ['id', 'orderId'])}</td>
+          <td>${orderCell(row, ['orderNo', 'orderNumber'])}</td>
+          <td>${orderCell(row, ['userId', 'appUserId'])}</td>
+          <td>${orderCell(row, ['accountId'])}</td>
+          <td>${orderCell(row, ['status'], 'badge')}</td>
+          <td>${orderCell(row, ['totalBetAmount', 'betAmount', 'stakeAmount', 'orderAmount', 'amount', 'totalAmount'], 'money')}</td>
+          <td>${orderCell(row, ['totalExpectedProfit'], 'money')}</td>
+          <td>${orderCell(row, ['totalExpectedReturn'], 'money')}</td>
+          <td>${orderCell(row, ['currencyCode', 'currency'])}</td>
+          <td>${orderCell(row, ['balanceBefore'], 'money')}</td>
+          <td>${orderCell(row, ['balanceAfter'], 'money')}</td>
+          <td>${orderCell(row, ['systemResult'], 'badge')}</td>
+          <td>${orderCell(row, ['reviewResult'], 'badge')}</td>
+          <td>${orderCell(row, ['reviewAdminId'])}</td>
+          <td>${orderCell(row, ['reviewAdminName'])}</td>
+          <td>${orderCell(row, ['reviewRemark'])}</td>
+          <td>${orderCell(row, ['reviewedAt'], 'time')}</td>
+          <td>${orderCell(row, ['settleAmount', 'payoutAmount', 'winAmount', 'profitAmount'], 'money')}</td>
+          <td>${orderCell(row, ['settleAdminId'])}</td>
+          <td>${orderCell(row, ['settleAdminName'])}</td>
+          <td>${orderCell(row, ['settleRemark'])}</td>
+          <td>${orderCell(row, ['settledAt'], 'time')}</td>
+          <td>${orderCell(row, ['createdTime', 'createTime', 'createdAt'], 'time')}</td>
+          <td>${orderCell(row, ['updatedAt', 'updateTime'], 'time')}</td>
+          <td class="orders-action-cell text-end pe-3">${actions}</td>
         </tr>`;
     }).join('');
   }
@@ -157,7 +178,7 @@
 
   async function reload() {
     try {
-      $('orders-tbody').innerHTML = '<tr><td colspan="11" class="text-center py-4">加载中...</td></tr>';
+      $('orders-tbody').innerHTML = `<tr><td colspan="${ORDER_COLSPAN}" class="text-center py-4">加载中...</td></tr>`;
       const page = unwrapPage(await request(config.pageApi, pageBody()));
       state.list = page.list;
       state.total = page.total;
@@ -167,7 +188,7 @@
       renderPager();
     } catch (error) {
       console.error(error);
-      $('orders-tbody').innerHTML = `<tr><td colspan="11" class="text-center py-4 text-danger">${esc(error.message || '加载失败')}</td></tr>`;
+      $('orders-tbody').innerHTML = `<tr><td colspan="${ORDER_COLSPAN}" class="text-center py-4 text-danger">${esc(error.message || '加载失败')}</td></tr>`;
     }
   }
 

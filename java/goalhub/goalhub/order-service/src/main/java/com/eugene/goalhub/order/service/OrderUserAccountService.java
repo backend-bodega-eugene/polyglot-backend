@@ -23,5 +23,12 @@ public interface OrderUserAccountService {
      * @param request 账户余额扣减参数
      */
     void subBalance(AdminAccountBalanceChangeRequest request);
+    void addDefaultUsdt(DefaultAccountBalanceChangeRequest request);
+
+    void freezeDefaultUsdt(DefaultAccountBalanceChangeRequest request);
+
+    void confirmFrozenDefaultUsdt(DefaultAccountBalanceChangeRequest request);
+
+    void unfreezeDefaultUsdt(DefaultAccountBalanceChangeRequest request);
 
 }

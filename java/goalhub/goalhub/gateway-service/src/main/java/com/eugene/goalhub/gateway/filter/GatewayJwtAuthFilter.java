@@ -48,6 +48,7 @@ public class GatewayJwtAuthFilter implements GlobalFilter, Ordered {
             "/api/user/register",
             "/api/user/captcha",
             "/admin/auth/login",
+           "/api/soccer/contents/**",
            // "/admin/test/ping",
 
             // Swagger/OpenAPI 文档路径。
