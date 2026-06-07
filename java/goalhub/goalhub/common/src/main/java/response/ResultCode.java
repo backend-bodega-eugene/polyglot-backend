@@ -84,6 +84,9 @@ public enum ResultCode {
     ORDER_ACCOUNT_FEIGN_RESULT_FAIL(10070,"order.account.feign.result.fail"),
     ORDER_ACCOUNT_DEDUCT_RESULT_NULL(10071,"order.account.deduct.result.null"),
     FEIGN_RESULT_NULL(10072,"feign.result.null"),
+    CONTENT_NOT_FOUND(10073,"content.not.found"),
+    USER_COMMENT_NOT_FOUND(10074,"user.comment.not.found"),
+    USER_COMMENT_TOO_FREQUENT(10075,"user.comment.too.frequent"),
     FATHER_NOT_OWN(10100,"father.not.own");
 
     /**

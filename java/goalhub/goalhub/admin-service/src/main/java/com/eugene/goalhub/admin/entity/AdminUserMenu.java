@@ -38,45 +38,93 @@ public class AdminUserMenu {
      */
     private LocalDateTime updatedAt;
 
+    /**
+     * 获取关系主键 ID。
+     *
+     * @return 关系主键 ID
+     */
     public Long getId() {
         return id;
     }
 
+    /**
+     * 设置关系主键 ID。
+     *
+     * @param id 关系主键 ID
+     */
     public void setId(Long id) {
         this.id = id;
     }
 
+    /**
+     * 获取管理员 ID。
+     *
+     * @return 管理员 ID
+     */
     public Long getAdminUserId() {
         return adminUserId;
     }
 
+    /**
+     * 设置管理员 ID。
+     *
+     * @param adminUserId 管理员 ID
+     */
     public void setAdminUserId(Long adminUserId) {
         this.adminUserId = adminUserId;
     }
 
+    /**
+     * 获取菜单 ID。
+     *
+     * @return 菜单 ID
+     */
     public Long getMenuId() {
         return menuId;
     }
 
+    /**
+     * 设置菜单 ID。
+     *
+     * @param menuId 菜单 ID
+     */
     public void setMenuId(Long menuId) {
         this.menuId = menuId;
     }
 
+    /**
+     * 获取创建时间。
+     *
+     * @return 创建时间
+     */
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
+    /**
+     * 设置创建时间。
+     *
+     * @param createdAt 创建时间
+     */
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
+    /**
+     * 获取更新时间。
+     *
+     * @return 更新时间
+     */
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
+    /**
+     * 设置更新时间。
+     *
+     * @param updatedAt 更新时间
+     */
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
-
-
 }

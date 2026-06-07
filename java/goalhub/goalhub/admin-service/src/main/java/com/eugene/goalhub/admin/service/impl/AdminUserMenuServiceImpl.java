@@ -267,7 +267,8 @@ public class AdminUserMenuServiceImpl
     /**
      * 根据菜单 ID 查询菜单。
      *
-     * @param menuIds 菜单 ID 集合
+     * @param menuIds     菜单 ID 集合
+     * @param enabledOnly 是否只查询启用菜单
      * @return 菜单列表
      */
     private List<AdminMenu> findMenus(Set<Long> menuIds, boolean enabledOnly) {
@@ -287,7 +288,8 @@ public class AdminUserMenuServiceImpl
     /**
      * 查询菜单并补齐父级菜单。
      *
-     * @param menuIds 菜单 ID 列表
+     * @param menuIds     菜单 ID 列表
+     * @param enabledOnly 是否只查询启用菜单
      * @return 菜单及父级菜单列表
      */
     private List<AdminMenu> findMenusWithAncestors(List<Long> menuIds, boolean enabledOnly) {

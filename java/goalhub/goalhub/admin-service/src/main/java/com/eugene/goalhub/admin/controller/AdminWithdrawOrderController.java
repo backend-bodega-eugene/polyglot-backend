@@ -16,8 +16,16 @@ import response.Result;
 @RequestMapping("/admin/withdraworder")
 public class AdminWithdrawOrderController {
 
+    /**
+     * 后台提现订单服务。
+     */
     private final AdminWithdrawOrderService adminWithdrawOrderService;
 
+    /**
+     * 创建后台提现订单管理接口实例。
+     *
+     * @param adminWithdrawOrderService 后台提现订单服务
+     */
     public AdminWithdrawOrderController(
             AdminWithdrawOrderService adminWithdrawOrderService) {
 
@@ -25,6 +33,12 @@ public class AdminWithdrawOrderController {
                 adminWithdrawOrderService;
     }
 
+    /**
+     * 分页查询提现订单。
+     *
+     * @param request 提现订单分页查询条件
+     * @return 提现订单分页数据
+     */
     @Operation(summary = "分页查询提现订单", description = "后台分页查询提现订单。")
     @PostMapping("/page")
     public Result<PageResponse<AdminWithdrawOrderResponse>> page(
@@ -36,6 +50,12 @@ public class AdminWithdrawOrderController {
         );
     }
 
+    /**
+     * 查询提现订单详情。
+     *
+     * @param request 提现订单详情查询参数
+     * @return 提现订单详情
+     */
     @Operation(summary = "查询提现订单详情", description = "根据ID查询提现订单详情。")
     @PostMapping("/detail")
     public Result<AdminWithdrawOrderResponse> detail(
@@ -47,6 +67,14 @@ public class AdminWithdrawOrderController {
         );
     }
 
+    /**
+     * 审核提现订单。
+     *
+     * @param adminId  当前管理员 ID
+     * @param username 当前管理员用户名
+     * @param request  提现订单审核参数
+     * @return 空结果
+     */
     @Operation(summary = "审核提现订单", description = "审核提现订单，通过或拒绝后由 order-service 负责走账。")
     @PostMapping("/audit")
     public Result<Void> audit(

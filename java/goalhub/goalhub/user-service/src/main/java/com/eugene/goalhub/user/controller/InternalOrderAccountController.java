@@ -21,13 +21,27 @@ import response.Result;
 @RequestMapping("/internal/order/account")
 public class InternalOrderAccountController {
 
+    /**
+     * 订单内部账户服务。
+     */
     private final InternalOrderAccountService internalOrderAccountService;
 
+    /**
+     * 创建订单内部账户接口。
+     *
+     * @param internalOrderAccountService 订单内部账户服务
+     */
     public InternalOrderAccountController(
             InternalOrderAccountService internalOrderAccountService) {
         this.internalOrderAccountService = internalOrderAccountService;
     }
 
+    /**
+     * 扣减默认 USDT 账户余额。
+     *
+     * @param request 扣减默认账户请求
+     * @return 扣减后的账户余额信息
+     */
     @Operation(summary = "扣减默认USDT账户", description = "供 order-service 下单时扣减用户默认 USDT 账户余额。")
     @PostMapping("/deductdefaultusdt")
     public Result<DeductDefaultAccountResponse> deductDefaultUsdt(
@@ -39,6 +53,12 @@ public class InternalOrderAccountController {
         );
     }
 
+    /**
+     * 增加默认 USDT 账户余额。
+     *
+     * @param request 默认账户余额变更请求
+     * @return 空结果
+     */
     @Operation(summary = "增加默认USDT账户余额", description = "供 order-service 充值审核通过时增加用户默认 USDT 账户余额。")
     @PostMapping("/adddefaultusdt")
     public Result<Void> addDefaultUsdt(
@@ -50,6 +70,12 @@ public class InternalOrderAccountController {
         return Result.success();
     }
 
+    /**
+     * 冻结默认 USDT 账户余额。
+     *
+     * @param request 默认账户余额变更请求
+     * @return 空结果
+     */
     @Operation(summary = "冻结默认USDT账户余额", description = "供 order-service 提现申请时冻结用户默认 USDT 账户余额。")
     @PostMapping("/freezedefaultusdt")
     public Result<Void> freezeDefaultUsdt(
@@ -61,6 +87,12 @@ public class InternalOrderAccountController {
         return Result.success();
     }
 
+    /**
+     * 确认扣减默认 USDT 冻结余额。
+     *
+     * @param request 默认账户余额变更请求
+     * @return 空结果
+     */
     @Operation(summary = "确认扣减默认USDT冻结余额", description = "供 order-service 提现审核通过时扣减用户默认 USDT 冻结余额。")
     @PostMapping("/confirmfrozendefaultusdt")
     public Result<Void> confirmFrozenDefaultUsdt(
@@ -72,6 +104,12 @@ public class InternalOrderAccountController {
         return Result.success();
     }
 
+    /**
+     * 解冻默认 USDT 账户余额。
+     *
+     * @param request 默认账户余额变更请求
+     * @return 空结果
+     */
     @Operation(summary = "解冻默认USDT账户余额", description = "供 order-service 提现审核拒绝时解冻用户默认 USDT 账户余额。")
     @PostMapping("/unfreezedefaultusdt")
     public Result<Void> unfreezeDefaultUsdt(

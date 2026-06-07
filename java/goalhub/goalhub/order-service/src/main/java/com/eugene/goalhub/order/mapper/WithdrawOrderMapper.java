@@ -11,9 +11,21 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+/**
+ * 提现订单 Mapper。
+ *
+ * <p>负责提现订单表的基础 CRUD，以及前台、后台提现订单分页查询。</p>
+ */
 @Mapper
 public interface WithdrawOrderMapper extends BaseMapper<WithdrawOrderEntity> {
 
+    /**
+     * 分页查询后台提现订单。
+     *
+     * @param page    分页参数
+     * @param request 提现订单查询条件
+     * @return 后台提现订单分页结果
+     */
     @Select("""
             <script>
             SELECT
@@ -66,6 +78,12 @@ public interface WithdrawOrderMapper extends BaseMapper<WithdrawOrderEntity> {
             @Param("req") AdminWithdrawOrderPageRequest request
     );
 
+    /**
+     * 根据提现订单 ID 查询订单并加行锁。
+     *
+     * @param id 提现订单 ID
+     * @return 提现订单实体
+     */
     @Select("""
             SELECT *
             FROM user_withdraw_order
@@ -73,6 +91,15 @@ public interface WithdrawOrderMapper extends BaseMapper<WithdrawOrderEntity> {
             FOR UPDATE
             """)
     WithdrawOrderEntity selectByIdForUpdate(@Param("id") Long id);
+
+    /**
+     * 分页查询当前用户的提现订单。
+     *
+     * @param page    分页参数
+     * @param userId  用户 ID
+     * @param request 提现订单查询条件
+     * @return 前端提现订单分页结果
+     */
     @Select("""
         <script>
         SELECT

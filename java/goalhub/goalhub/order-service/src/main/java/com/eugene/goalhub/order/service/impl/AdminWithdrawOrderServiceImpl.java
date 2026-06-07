@@ -15,25 +15,67 @@ import response.ResultCode;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * 后台提现订单服务实现。
+ *
+ * <p>负责后台提现订单分页查询、详情查询、审核扣减或解冻余额，并记录审核日志。</p>
+ */
 @Service
 public class AdminWithdrawOrderServiceImpl
         implements AdminWithdrawOrderService {
 
+    /**
+     * 业务日志模块名称。
+     */
     private static final String MODULE_NAME = "提现订单管理";
 
+    /**
+     * 待审核订单状态。
+     */
     private static final String STATUS_PENDING = "PENDING";
+
+    /**
+     * 审核通过订单状态。
+     */
     private static final String STATUS_APPROVED = "APPROVED";
+
+    /**
+     * 审核拒绝订单状态。
+     */
     private static final String STATUS_REJECTED = "REJECTED";
 
+    /**
+     * 默认页码。
+     */
     private static final int DEFAULT_PAGE_INDEX = 1;
+
+    /**
+     * 默认最大每页数量。
+     */
     private static final int DEFAULT_PAGE_SIZE = 100;
 
+    /**
+     * 提现订单 Mapper。
+     */
     private final WithdrawOrderMapper withdrawOrderMapper;
 
+    /**
+     * 订单账户服务。
+     */
     private final OrderUserAccountService orderUserAccountService;
 
+    /**
+     * 业务日志服务。
+     */
     private final GoalhubLogService goalhubLogService;
 
+    /**
+     * 创建后台提现订单服务实例。
+     *
+     * @param withdrawOrderMapper     提现订单 Mapper
+     * @param orderUserAccountService 订单账户服务
+     * @param goalhubLogService       业务日志服务
+     */
     public AdminWithdrawOrderServiceImpl(
             WithdrawOrderMapper withdrawOrderMapper,
             OrderUserAccountService orderUserAccountService,
@@ -44,6 +86,12 @@ public class AdminWithdrawOrderServiceImpl
         this.goalhubLogService = goalhubLogService;
     }
 
+    /**
+     * 分页查询后台提现订单。
+     *
+     * @param request 提现订单分页查询参数
+     * @return 提现订单分页结果
+     */
     @Override
     public PageResponse<AdminWithdrawOrderResponse> page(
             AdminWithdrawOrderPageRequest request) {
@@ -68,6 +116,12 @@ public class AdminWithdrawOrderServiceImpl
         );
     }
 
+    /**
+     * 查询提现订单详情。
+     *
+     * @param request 提现订单详情查询参数
+     * @return 提现订单详情
+     */
     @Override
     public AdminWithdrawOrderResponse detail(
             AdminWithdrawOrderDetailRequest request) {
@@ -86,6 +140,15 @@ public class AdminWithdrawOrderServiceImpl
         return toResponse(entity);
     }
 
+    /**
+     * 审核提现订单。
+     *
+     * <p>审核通过时确认扣减冻结余额，审核拒绝时解冻用户余额。</p>
+     *
+     * @param request       提现订单审核参数
+     * @param adminId       审核管理员 ID
+     * @param adminUsername 审核管理员用户名
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void audit(
@@ -164,6 +227,11 @@ public class AdminWithdrawOrderServiceImpl
         );
     }
 
+    /**
+     * 校验审核状态。
+     *
+     * @param auditStatus 审核状态
+     */
     private void validateAuditStatus(String auditStatus) {
         if (STATUS_APPROVED.equals(auditStatus)
                 || STATUS_REJECTED.equals(auditStatus)) {
@@ -173,6 +241,11 @@ public class AdminWithdrawOrderServiceImpl
         throw new BusinessException(ResultCode.PARAM_ERROR);
     }
 
+    /**
+     * 初始化后台分页参数。
+     *
+     * @param request 提现订单分页查询参数
+     */
     private void initPage(AdminWithdrawOrderPageRequest request) {
         if (request.getPageIndex() == null || request.getPageIndex() < 1) {
             request.setPageIndex(DEFAULT_PAGE_INDEX);
@@ -188,6 +261,12 @@ public class AdminWithdrawOrderServiceImpl
         }
     }
 
+    /**
+     * 转换后台提现订单响应。
+     *
+     * @param entity 提现订单实体
+     * @return 后台提现订单响应
+     */
     private AdminWithdrawOrderResponse toResponse(WithdrawOrderEntity entity) {
         AdminWithdrawOrderResponse response = new AdminWithdrawOrderResponse();
         response.setId(entity.getId());

@@ -16,8 +16,16 @@ import response.Result;
 @RequestMapping("/admin/depositorder")
 public class AdminDepositOrderController {
 
+    /**
+     * 后台充值订单服务。
+     */
     private final AdminDepositOrderService adminDepositOrderService;
 
+    /**
+     * 创建后台充值订单管理接口实例。
+     *
+     * @param adminDepositOrderService 后台充值订单服务
+     */
     public AdminDepositOrderController(
             AdminDepositOrderService adminDepositOrderService) {
 
@@ -25,6 +33,12 @@ public class AdminDepositOrderController {
                 adminDepositOrderService;
     }
 
+    /**
+     * 分页查询充值订单。
+     *
+     * @param request 充值订单分页查询条件
+     * @return 充值订单分页数据
+     */
     @Operation(summary = "分页查询充值订单", description = "后台分页查询充值订单。")
     @PostMapping("/page")
     public Result<PageResponse<AdminDepositOrderResponse>> page(
@@ -36,6 +50,12 @@ public class AdminDepositOrderController {
         );
     }
 
+    /**
+     * 查询充值订单详情。
+     *
+     * @param request 充值订单详情查询参数
+     * @return 充值订单详情
+     */
     @Operation(summary = "查询充值订单详情", description = "根据ID查询充值订单详情。")
     @PostMapping("/detail")
     public Result<AdminDepositOrderResponse> detail(
@@ -47,6 +67,14 @@ public class AdminDepositOrderController {
         );
     }
 
+    /**
+     * 审核充值订单。
+     *
+     * @param adminId  当前管理员 ID
+     * @param username 当前管理员用户名
+     * @param request  充值订单审核参数
+     * @return 空结果
+     */
     @Operation(summary = "审核充值订单", description = "审核充值订单，通过后由 order-service 负责走账。")
     @PostMapping("/audit")
     public Result<Void> audit(

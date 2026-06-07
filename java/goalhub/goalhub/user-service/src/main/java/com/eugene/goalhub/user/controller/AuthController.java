@@ -95,10 +95,20 @@ public class AuthController {
                 userService.login(request, clientIp)
         );
     }
+
+    /**
+     * 修改当前用户登录密码。
+     *
+     * @param userId  当前登录用户 ID
+     * @param request 修改密码参数
+     * @return 空结果
+     */
     @Operation(summary = "修改密码", description = "用户修改登录密码")
     @PostMapping("/change-password")
     public Result<Void> changePassword(
+            @Parameter(description = "当前登录用户 ID", required = true)
             @RequestHeader("X-User-Id") Long userId,
+            @Parameter(description = "修改密码参数", required = true)
             @Valid @RequestBody ChangePasswordRequest request) {
 
         userService.changePassword(userId, request);

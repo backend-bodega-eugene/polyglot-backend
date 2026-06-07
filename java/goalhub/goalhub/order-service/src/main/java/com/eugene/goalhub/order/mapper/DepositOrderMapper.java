@@ -11,9 +11,21 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+/**
+ * 充值订单 Mapper。
+ *
+ * <p>负责充值订单表的基础 CRUD，以及前台、后台充值订单分页查询。</p>
+ */
 @Mapper
 public interface DepositOrderMapper extends BaseMapper<DepositOrderEntity> {
 
+    /**
+     * 分页查询后台充值订单。
+     *
+     * @param page    分页参数
+     * @param request 充值订单查询条件
+     * @return 后台充值订单分页结果
+     */
     @Select("""
             <script>
             SELECT
@@ -61,6 +73,12 @@ public interface DepositOrderMapper extends BaseMapper<DepositOrderEntity> {
             @Param("req") AdminDepositOrderPageRequest request
     );
 
+    /**
+     * 根据充值订单 ID 查询订单并加行锁。
+     *
+     * @param id 充值订单 ID
+     * @return 充值订单实体
+     */
     @Select("""
             SELECT *
             FROM user_deposit_order
@@ -68,6 +86,15 @@ public interface DepositOrderMapper extends BaseMapper<DepositOrderEntity> {
             FOR UPDATE
             """)
     DepositOrderEntity selectByIdForUpdate(@Param("id") Long id);
+
+    /**
+     * 分页查询当前用户的充值订单。
+     *
+     * @param page    分页参数
+     * @param userId  用户 ID
+     * @param request 充值订单查询条件
+     * @return 前端充值订单分页结果
+     */
     @Select("""
         <script>
         SELECT

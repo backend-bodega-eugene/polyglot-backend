@@ -16,26 +16,62 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.UUID;
 
+/**
+ * 前端提现订单服务实现。
+ *
+ * <p>负责创建提现申请、冻结用户余额、校验提现参数并查询用户提现订单列表。</p>
+ */
 @Service
 public class AppWithdrawOrderServiceImpl
         implements AppWithdrawOrderService {
 
+    /**
+     * 业务日志模块名称。
+     */
     private static final String MODULE_NAME = "前端提现订单";
 
+    /**
+     * 默认提现币种编码。
+     */
     private static final String DEFAULT_CURRENCY_CODE = "USDT";
 
+    /**
+     * 待审核订单状态。
+     */
     private static final String STATUS_PENDING = "PENDING";
 
+    /**
+     * 默认页码。
+     */
     private static final int DEFAULT_PAGE_INDEX = 1;
 
+    /**
+     * 默认每页数量。
+     */
     private static final int DEFAULT_PAGE_SIZE = 20;
 
+    /**
+     * 提现订单 Mapper。
+     */
     private final WithdrawOrderMapper withdrawOrderMapper;
 
+    /**
+     * 订单账户服务。
+     */
     private final OrderUserAccountService orderUserAccountService;
 
+    /**
+     * 业务日志服务。
+     */
     private final GoalhubLogService goalhubLogService;
 
+    /**
+     * 创建前端提现订单服务实例。
+     *
+     * @param withdrawOrderMapper     提现订单 Mapper
+     * @param orderUserAccountService 订单账户服务
+     * @param goalhubLogService       业务日志服务
+     */
     public AppWithdrawOrderServiceImpl(
             WithdrawOrderMapper withdrawOrderMapper,
             OrderUserAccountService orderUserAccountService,
@@ -45,6 +81,13 @@ public class AppWithdrawOrderServiceImpl
         this.goalhubLogService = goalhubLogService;
     }
 
+    /**
+     * 创建提现订单并冻结用户默认账户余额。
+     *
+     * @param userId  用户 ID
+     * @param request 提现申请参数
+     * @return 创建后的提现订单
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public AppWithdrawOrderResponse create(
@@ -119,6 +162,13 @@ public class AppWithdrawOrderServiceImpl
         return toResponse(order);
     }
 
+    /**
+     * 分页查询当前用户提现订单。
+     *
+     * @param userId  用户 ID
+     * @param request 提现订单分页查询参数
+     * @return 提现订单分页结果
+     */
     @Override
     public PageResponse<AppWithdrawOrderResponse> page(
             Long userId,
@@ -146,12 +196,22 @@ public class AppWithdrawOrderServiceImpl
         );
     }
 
+    /**
+     * 校验用户 ID。
+     *
+     * @param userId 用户 ID
+     */
     private void checkUserId(Long userId) {
         if (userId == null) {
             throw new BusinessException(ResultCode.USER_ID_NOT_NULL);
         }
     }
 
+    /**
+     * 校验提现金额。
+     *
+     * @param amount 提现金额
+     */
     private void checkAmount(BigDecimal amount) {
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new BusinessException(ResultCode.PARAM_ERROR);
@@ -162,6 +222,12 @@ public class AppWithdrawOrderServiceImpl
         }
     }
 
+    /**
+     * 规范化币种编码。
+     *
+     * @param currencyCode 原始币种编码
+     * @return 规范化后的币种编码
+     */
     private String normalizeCurrencyCode(String currencyCode) {
         if (currencyCode == null || currencyCode.isBlank()) {
             return DEFAULT_CURRENCY_CODE;
@@ -170,6 +236,11 @@ public class AppWithdrawOrderServiceImpl
         return currencyCode.trim().toUpperCase();
     }
 
+    /**
+     * 初始化分页参数。
+     *
+     * @param request 提现订单分页查询参数
+     */
     private void initPage(AppWithdrawOrderPageRequest request) {
         if (request.getPageIndex() == null || request.getPageIndex() < 1) {
             request.setPageIndex(DEFAULT_PAGE_INDEX);
@@ -180,10 +251,21 @@ public class AppWithdrawOrderServiceImpl
         }
     }
 
+    /**
+     * 生成提现订单号。
+     *
+     * @return 提现订单号
+     */
     private String generateOrderNo() {
         return "WD" + UUID.randomUUID().toString().replace("-", "");
     }
 
+    /**
+     * 转换提现订单响应。
+     *
+     * @param entity 提现订单实体
+     * @return 前端提现订单响应
+     */
     private AppWithdrawOrderResponse toResponse(WithdrawOrderEntity entity) {
         AppWithdrawOrderResponse response = new AppWithdrawOrderResponse();
         response.setId(entity.getId());

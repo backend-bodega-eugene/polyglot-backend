@@ -8,40 +8,93 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * 用户充值订单实体。
+ *
+ * <p>映射用户充值订单表，记录充值金额、链路信息、审核信息和时间信息。</p>
+ */
 @TableName("user_deposit_order")
 public class DepositOrderEntity {
 
+    /**
+     * 主键 ID。
+     */
     @TableId(type = IdType.AUTO)
     private Long id;
 
+    /**
+     * 充值订单号。
+     */
     private String orderNo;
 
+    /**
+     * 用户 ID。
+     */
     private Long userId;
 
+    /**
+     * 币种编码。
+     */
     private String currencyCode;
 
+    /**
+     * 用户提交的充值金额。
+     */
     private BigDecimal amount;
 
+    /**
+     * 实际入账金额。
+     */
     private BigDecimal actualAmount;
 
+    /**
+     * 订单状态。
+     */
     private String status;
 
+    /**
+     * 区块链网络类型。
+     */
     private String chainType;
 
+    /**
+     * 链上交易哈希。
+     */
     private String txHash;
 
+    /**
+     * 用户备注。
+     */
     private String remark;
 
+    /**
+     * 审核备注。
+     */
     private String auditRemark;
 
+    /**
+     * 审核管理员 ID。
+     */
     private Long auditAdminId;
 
+    /**
+     * 审核管理员名称。
+     */
     private String auditAdminName;
 
+    /**
+     * 审核时间。
+     */
     private LocalDateTime auditTime;
 
+    /**
+     * 创建时间。
+     */
     private LocalDateTime createdAt;
 
+    /**
+     * 更新时间。
+     */
     private LocalDateTime updatedAt;
     public Long getId() {
         return id;

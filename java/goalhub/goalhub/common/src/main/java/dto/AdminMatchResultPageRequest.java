@@ -29,7 +29,7 @@ public class AdminMatchResultPageRequest {
     /**
      * 语言编码。
      */
-    @Schema(description = "语言编码", example = "zh_CN")
+    @Schema(description = "语言编码", example = "zh-CN")
     private String langCode;
 
     /**

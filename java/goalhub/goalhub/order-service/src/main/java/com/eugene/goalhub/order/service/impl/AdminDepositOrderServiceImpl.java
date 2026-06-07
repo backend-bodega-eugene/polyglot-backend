@@ -15,25 +15,67 @@ import response.ResultCode;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * 后台充值订单服务实现。
+ *
+ * <p>负责后台充值订单分页查询、详情查询、审核入账和审核日志记录。</p>
+ */
 @Service
 public class AdminDepositOrderServiceImpl
         implements AdminDepositOrderService {
 
+    /**
+     * 业务日志模块名称。
+     */
     private static final String MODULE_NAME = "充值订单管理";
 
+    /**
+     * 待审核订单状态。
+     */
     private static final String STATUS_PENDING = "PENDING";
+
+    /**
+     * 审核通过订单状态。
+     */
     private static final String STATUS_APPROVED = "APPROVED";
+
+    /**
+     * 审核拒绝订单状态。
+     */
     private static final String STATUS_REJECTED = "REJECTED";
 
+    /**
+     * 默认页码。
+     */
     private static final int DEFAULT_PAGE_INDEX = 1;
+
+    /**
+     * 默认最大每页数量。
+     */
     private static final int DEFAULT_PAGE_SIZE = 100;
 
+    /**
+     * 充值订单 Mapper。
+     */
     private final DepositOrderMapper depositOrderMapper;
 
+    /**
+     * 订单账户服务。
+     */
     private final OrderUserAccountService orderUserAccountService;
 
+    /**
+     * 业务日志服务。
+     */
     private final GoalhubLogService goalhubLogService;
 
+    /**
+     * 创建后台充值订单服务实例。
+     *
+     * @param depositOrderMapper      充值订单 Mapper
+     * @param orderUserAccountService 订单账户服务
+     * @param goalhubLogService       业务日志服务
+     */
     public AdminDepositOrderServiceImpl(
             DepositOrderMapper depositOrderMapper,
             OrderUserAccountService orderUserAccountService,
@@ -44,6 +86,12 @@ public class AdminDepositOrderServiceImpl
         this.goalhubLogService = goalhubLogService;
     }
 
+    /**
+     * 分页查询后台充值订单。
+     *
+     * @param request 充值订单分页查询参数
+     * @return 充值订单分页结果
+     */
     @Override
     public PageResponse<AdminDepositOrderResponse> page(
             AdminDepositOrderPageRequest request) {
@@ -68,6 +116,12 @@ public class AdminDepositOrderServiceImpl
         );
     }
 
+    /**
+     * 查询充值订单详情。
+     *
+     * @param request 充值订单详情查询参数
+     * @return 充值订单详情
+     */
     @Override
     public AdminDepositOrderResponse detail(
             AdminDepositOrderDetailRequest request) {
@@ -86,6 +140,15 @@ public class AdminDepositOrderServiceImpl
         return toResponse(entity);
     }
 
+    /**
+     * 审核充值订单。
+     *
+     * <p>审核通过时向用户默认账户入账，审核拒绝时仅更新订单审核状态。</p>
+     *
+     * @param request       充值订单审核参数
+     * @param adminId       审核管理员 ID
+     * @param adminUsername 审核管理员用户名
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void audit(
@@ -157,6 +220,11 @@ public class AdminDepositOrderServiceImpl
         );
     }
 
+    /**
+     * 校验审核状态。
+     *
+     * @param auditStatus 审核状态
+     */
     private void validateAuditStatus(String auditStatus) {
         if (STATUS_APPROVED.equals(auditStatus)
                 || STATUS_REJECTED.equals(auditStatus)) {
@@ -166,6 +234,11 @@ public class AdminDepositOrderServiceImpl
         throw new BusinessException(ResultCode.PARAM_ERROR);
     }
 
+    /**
+     * 初始化后台分页参数。
+     *
+     * @param request 充值订单分页查询参数
+     */
     private void initPage(AdminDepositOrderPageRequest request) {
         if (request.getPageIndex() == null || request.getPageIndex() < 1) {
             request.setPageIndex(DEFAULT_PAGE_INDEX);
@@ -181,6 +254,12 @@ public class AdminDepositOrderServiceImpl
         }
     }
 
+    /**
+     * 转换后台充值订单响应。
+     *
+     * @param entity 充值订单实体
+     * @return 后台充值订单响应
+     */
     private AdminDepositOrderResponse toResponse(DepositOrderEntity entity) {
         AdminDepositOrderResponse response = new AdminDepositOrderResponse();
         response.setId(entity.getId());

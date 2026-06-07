@@ -47,6 +47,6 @@ public class AdminBetOrderItemPageRequest {
      * 语言编码。
      */
     @Size(max = 16, message = "语言编码长度不能超过16")
-    @Schema(description = "语言编码", example = "zh_CN")
+    @Schema(description = "语言编码", example = "zh-CN")
     private String langCode;
 }

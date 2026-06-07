@@ -28,10 +28,11 @@ public interface UserService {
      * @return 登录结果
      */
     LoginResponse login(LoginRequest request, String clientIp);
+
     /**
      * 修改密码。
      *
-     * @param userId 用户ID
+     * @param userId  用户 ID
      * @param request 修改密码参数
      */
     void changePassword(Long userId, ChangePasswordRequest request);

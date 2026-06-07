@@ -77,7 +77,8 @@ public class AdminUserController {
     /**
      * 创建管理员账号。
      *
-     * @param request 创建参数
+     * @param request             创建参数
+     * @param operatorAdminUserId 当前管理员 ID
      * @return 新管理员 ID
      */
     @Operation(summary = "创建管理员账号", description = "创建一个新的后台管理员账号。")
@@ -92,8 +93,9 @@ public class AdminUserController {
     /**
      * 更新管理员账号基础信息。
      *
-     * @param id      管理员 ID
-     * @param request 更新参数
+     * @param id                  管理员 ID
+     * @param operatorAdminUserId 当前管理员 ID
+     * @param request             更新参数
      * @return 空结果
      */
     @Operation(summary = "更新管理员账号", description = "根据管理员 ID 更新管理员基础信息。")

@@ -120,7 +120,8 @@ public class AdminUserServiceImpl extends ServiceImpl<AdminUserMapper, AdminUser
     /**
      * 创建管理员账号。
      *
-     * @param request 管理员创建参数
+     * @param request             管理员创建参数
+     * @param operatorAdminUserId 当前操作管理员 ID
      * @return 新管理员 ID
      */
     @Override
@@ -161,8 +162,9 @@ public class AdminUserServiceImpl extends ServiceImpl<AdminUserMapper, AdminUser
     /**
      * 更新管理员基础信息。
      *
-     * @param id      管理员 ID
-     * @param request 更新参数
+     * @param id                  管理员 ID
+     * @param operatorAdminUserId 当前操作管理员 ID
+     * @param request             更新参数
      */
     @Override
     public void update(Long id, Long operatorAdminUserId, AdminUserUpdateRequest request) {

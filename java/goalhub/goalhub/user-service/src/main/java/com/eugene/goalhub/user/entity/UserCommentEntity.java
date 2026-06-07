@@ -7,24 +7,53 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.time.LocalDateTime;
 
+/**
+ * 用户客服留言实体。
+ *
+ * <p>映射客服留言表，记录用户联系方式、留言内容、回复内容和时间信息。</p>
+ */
 @TableName("customer_service_message")
 public class UserCommentEntity {
 
+    /**
+     * 主键 ID。
+     */
     @TableId(type = IdType.AUTO)
     private Long id;
 
+    /**
+     * 用户 ID。
+     */
     private Long userId;
 
+    /**
+     * 用户联系方式。
+     */
     private String contact;
 
+    /**
+     * 用户留言内容。
+     */
     private String message;
 
+    /**
+     * 后台回复内容。
+     */
     private String replyContent;
 
+    /**
+     * 回复时间。
+     */
     private LocalDateTime replyTime;
 
+    /**
+     * 创建时间。
+     */
     private LocalDateTime createdAt;
 
+    /**
+     * 更新时间。
+     */
     private LocalDateTime updatedAt;
 
     public Long getId() {

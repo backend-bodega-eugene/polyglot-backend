@@ -27,7 +27,7 @@ public interface AdminUserService {
     /**
      * 更新管理员账号基础信息。
      *
-     * @param id      管理员 ID
+     * @param id                  管理员 ID
      * @param operatorAdminUserId 当前操作管理员 ID
      * @param request             更新参数
      */

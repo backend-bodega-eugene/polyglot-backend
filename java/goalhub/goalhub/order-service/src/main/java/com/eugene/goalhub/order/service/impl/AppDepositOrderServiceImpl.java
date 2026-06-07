@@ -15,24 +15,56 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.UUID;
 
+/**
+ * 前端充值订单服务实现。
+ *
+ * <p>负责创建用户充值申请、规范化充值币种、校验金额并查询用户充值订单列表。</p>
+ */
 @Service
 public class AppDepositOrderServiceImpl
         implements AppDepositOrderService {
 
+    /**
+     * 业务日志模块名称。
+     */
     private static final String MODULE_NAME = "前端充值订单";
 
+    /**
+     * 默认充值币种编码。
+     */
     private static final String DEFAULT_CURRENCY_CODE = "USDT";
 
+    /**
+     * 待审核订单状态。
+     */
     private static final String STATUS_PENDING = "PENDING";
 
+    /**
+     * 默认页码。
+     */
     private static final int DEFAULT_PAGE_INDEX = 1;
 
+    /**
+     * 默认每页数量。
+     */
     private static final int DEFAULT_PAGE_SIZE = 20;
 
+    /**
+     * 充值订单 Mapper。
+     */
     private final DepositOrderMapper depositOrderMapper;
 
+    /**
+     * 业务日志服务。
+     */
     private final GoalhubLogService goalhubLogService;
 
+    /**
+     * 创建前端充值订单服务实例。
+     *
+     * @param depositOrderMapper 充值订单 Mapper
+     * @param goalhubLogService  业务日志服务
+     */
     public AppDepositOrderServiceImpl(
             DepositOrderMapper depositOrderMapper,
             GoalhubLogService goalhubLogService) {
@@ -40,6 +72,13 @@ public class AppDepositOrderServiceImpl
         this.goalhubLogService = goalhubLogService;
     }
 
+    /**
+     * 创建充值订单。
+     *
+     * @param userId  用户 ID
+     * @param request 充值申请参数
+     * @return 创建后的充值订单
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public AppDepositOrderResponse create(
@@ -80,6 +119,13 @@ public class AppDepositOrderServiceImpl
         return toResponse(order);
     }
 
+    /**
+     * 分页查询当前用户充值订单。
+     *
+     * @param userId  用户 ID
+     * @param request 充值订单分页查询参数
+     * @return 充值订单分页结果
+     */
     @Override
     public PageResponse<AppDepositOrderResponse> page(
             Long userId,
@@ -107,12 +153,22 @@ public class AppDepositOrderServiceImpl
         );
     }
 
+    /**
+     * 校验用户 ID。
+     *
+     * @param userId 用户 ID
+     */
     private void checkUserId(Long userId) {
         if (userId == null) {
             throw new BusinessException(ResultCode.USER_ID_NOT_NULL);
         }
     }
 
+    /**
+     * 校验充值金额。
+     *
+     * @param amount 充值金额
+     */
     private void checkAmount(BigDecimal amount) {
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new BusinessException(ResultCode.PARAM_ERROR);
@@ -123,6 +179,12 @@ public class AppDepositOrderServiceImpl
         }
     }
 
+    /**
+     * 规范化币种编码。
+     *
+     * @param currencyCode 原始币种编码
+     * @return 规范化后的币种编码
+     */
     private String normalizeCurrencyCode(String currencyCode) {
         if (currencyCode == null || currencyCode.isBlank()) {
             return DEFAULT_CURRENCY_CODE;
@@ -131,6 +193,11 @@ public class AppDepositOrderServiceImpl
         return currencyCode.trim().toUpperCase();
     }
 
+    /**
+     * 初始化分页参数。
+     *
+     * @param request 充值订单分页查询参数
+     */
     private void initPage(AppDepositOrderPageRequest request) {
         if (request.getPageIndex() == null || request.getPageIndex() < 1) {
             request.setPageIndex(DEFAULT_PAGE_INDEX);
@@ -141,10 +208,21 @@ public class AppDepositOrderServiceImpl
         }
     }
 
+    /**
+     * 生成充值订单号。
+     *
+     * @return 充值订单号
+     */
     private String generateOrderNo() {
         return "DP" + UUID.randomUUID().toString().replace("-", "");
     }
 
+    /**
+     * 转换充值订单响应。
+     *
+     * @param entity 充值订单实体
+     * @return 前端充值订单响应
+     */
     private AppDepositOrderResponse toResponse(DepositOrderEntity entity) {
         AppDepositOrderResponse response = new AppDepositOrderResponse();
         response.setId(entity.getId());
