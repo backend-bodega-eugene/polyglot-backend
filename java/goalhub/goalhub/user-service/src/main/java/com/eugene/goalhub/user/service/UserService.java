@@ -1,9 +1,6 @@
 package com.eugene.goalhub.user.service;
 
-import dto.ChangePasswordRequest;
-import dto.LoginRequest;
-import dto.LoginResponse;
-import dto.RegisterRequest;
+import dto.*;
 
 /**
  * 用户账号服务。
@@ -36,4 +33,13 @@ public interface UserService {
      * @param request 修改密码参数
      */
     void changePassword(Long userId, ChangePasswordRequest request);
+
+    UserProfileResponse getProfile(Long userId);
+
+    void updateProfile(Long userId, UserProfileUpdateRequest request);
+
+    void setFundPassword(Long userId, SetFundPasswordRequest request);
+
+    void changeFundPassword(Long userId, ChangeFundPasswordRequest request);
+    void verifyFundPassword(Long userId, String fundPassword);
 }

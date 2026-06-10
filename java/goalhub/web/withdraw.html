@@ -111,14 +111,14 @@
                                     <div class="col-md-2"><label class="form-label">链类型</label><div class="form-control bg-body-tertiary" id="d-chainType"></div></div>
                                     <div class="col-md-8"><label class="form-label">TxHash</label><div class="form-control detail-value bg-body-tertiary" id="d-txHash"></div></div>
                                     <div class="col-12" data-withdraw-only><label class="form-label">提现地址</label><div class="form-control detail-value bg-body-tertiary" id="d-withdrawAddress"></div></div>
+                                    <div class="col-md-3"><label class="form-label">审核结果</label><select class="form-select" id="audit-status"><option value="">请选择</option><option value="APPROVED">通过</option><option value="REJECTED">拒绝</option></select></div>
+                                    <div class="col-12"><label class="form-label">审核备注</label><textarea class="form-control" id="audit-remark" rows="3"></textarea></div>
                                     <div class="col-12"><label class="form-label">用户备注</label><div class="form-control detail-value bg-body-tertiary" id="d-remark" style="min-height: 72px;"></div></div>
                                     <div class="col-12"><label class="form-label">历史审核备注</label><div class="form-control detail-value bg-body-tertiary" id="d-auditRemark" style="min-height: 72px;"></div></div>
                                     <div class="col-md-3"><label class="form-label">审核人</label><div class="form-control bg-body-tertiary" id="d-auditAdmin"></div></div>
                                     <div class="col-md-3"><label class="form-label">审核时间</label><div class="form-control bg-body-tertiary" id="d-auditTime"></div></div>
                                     <div class="col-md-3"><label class="form-label">创建时间</label><div class="form-control bg-body-tertiary" id="d-createdAt"></div></div>
                                     <div class="col-md-3"><label class="form-label">更新时间</label><div class="form-control bg-body-tertiary" id="d-updatedAt"></div></div>
-                                    <div class="col-md-3"><label class="form-label">审核结果</label><select class="form-select" id="audit-status"><option value="APPROVED">通过</option><option value="REJECTED">拒绝</option></select></div>
-                                    <div class="col-12"><label class="form-label">审核备注</label><textarea class="form-control" id="audit-remark" rows="4"></textarea></div>
                                 </div>
                             </div>
                             <div class="modal-footer"><button class="btn btn-secondary" type="button" data-bs-dismiss="modal">关闭</button><button class="btn btn-primary" type="submit" id="btn-audit-save"><i class="bi bi-check2-circle me-1"></i>提交审核</button></div>

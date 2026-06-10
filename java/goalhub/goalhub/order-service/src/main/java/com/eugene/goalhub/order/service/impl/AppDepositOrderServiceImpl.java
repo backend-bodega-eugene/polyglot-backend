@@ -50,6 +50,11 @@ public class AppDepositOrderServiceImpl
     private static final int DEFAULT_PAGE_SIZE = 20;
 
     /**
+     * USDT 金额统一保留 4 位小数。
+     */
+    private static final int MONEY_SCALE = 4;
+
+    /**
      * 充值订单 Mapper。
      */
     private final DepositOrderMapper depositOrderMapper;
@@ -90,8 +95,11 @@ public class AppDepositOrderServiceImpl
 
         String currencyCode = normalizeCurrencyCode(request.getCurrencyCode());
 
-        BigDecimal amount = request.getAmount()
-                .setScale(2, RoundingMode.DOWN);
+        BigDecimal amount = normalizeMoney(request.getAmount());
+
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BusinessException(ResultCode.PARAM_ERROR);
+        }
 
         DepositOrderEntity order = new DepositOrderEntity();
         order.setOrderNo(generateOrderNo());
@@ -145,6 +153,10 @@ public class AppDepositOrderServiceImpl
         Page<AppDepositOrderResponse> resultPage =
                 depositOrderMapper.selectAppPage(page, userId, request);
 
+        if (resultPage.getRecords() != null) {
+            resultPage.getRecords().forEach(this::normalizeResponse);
+        }
+
         return new PageResponse<>(
                 resultPage.getTotal(),
                 request.getPageIndex(),
@@ -173,10 +185,16 @@ public class AppDepositOrderServiceImpl
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new BusinessException(ResultCode.PARAM_ERROR);
         }
+    }
 
-        if (amount.stripTrailingZeros().scale() > 2) {
-            throw new BusinessException(ResultCode.PARAM_ERROR);
-        }
+    /**
+     * 规范化 USDT 金额，小数位不足时补 0。
+     *
+     * @param amount 原始金额
+     * @return 4 位小数金额
+     */
+    private BigDecimal normalizeMoney(BigDecimal amount) {
+        return amount.setScale(MONEY_SCALE, RoundingMode.DOWN);
     }
 
     /**
@@ -228,8 +246,8 @@ public class AppDepositOrderServiceImpl
         response.setId(entity.getId());
         response.setOrderNo(entity.getOrderNo());
         response.setCurrencyCode(entity.getCurrencyCode());
-        response.setAmount(entity.getAmount());
-        response.setActualAmount(entity.getActualAmount());
+        response.setAmount(normalizeNullableMoney(entity.getAmount()));
+        response.setActualAmount(normalizeNullableMoney(entity.getActualAmount()));
         response.setStatus(entity.getStatus());
         response.setChainType(entity.getChainType());
         response.setTxHash(entity.getTxHash());
@@ -239,5 +257,22 @@ public class AppDepositOrderServiceImpl
         response.setCreatedAt(entity.getCreatedAt());
         response.setUpdatedAt(entity.getUpdatedAt());
         return response;
+    }
+
+    private void normalizeResponse(
+            AppDepositOrderResponse response) {
+
+        response.setAmount(normalizeNullableMoney(response.getAmount()));
+        response.setActualAmount(normalizeNullableMoney(response.getActualAmount()));
+    }
+
+    private BigDecimal normalizeNullableMoney(
+            BigDecimal amount) {
+
+        if (amount == null) {
+            return null;
+        }
+
+        return normalizeMoney(amount);
     }
 }

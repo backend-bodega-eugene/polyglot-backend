@@ -98,6 +98,12 @@
     return Number.isNaN(date.getTime()) ? '' : date.toISOString();
   }
 
+  function clampPageIndex() {
+    const pages = Math.max(1, Math.ceil(state.total / state.pageSize));
+    state.pageIndex = Math.min(Math.max(1, Number(state.pageIndex) || 1), pages);
+    return pages;
+  }
+
   function statusBadge(value) {
     if (value === 1 || value === '1') return '<span class="badge bg-success">启用</span>';
     if (value === 0 || value === '0') return '<span class="badge bg-secondary">禁用</span>';
@@ -161,8 +167,8 @@
   }
 
   function renderPager() {
-    const pages = Math.max(1, Math.ceil(state.total / state.pageSize));
-    const cur = Math.min(state.pageIndex, pages);
+    const pages = clampPageIndex();
+    const cur = state.pageIndex;
     const item = (p, txt, disabled = false, active = false) =>
       `<li class="page-item ${disabled ? 'disabled' : ''} ${active ? 'active' : ''}"><a href="#" class="page-link" data-page="${p}">${txt}</a></li>`;
     const items = [item(cur - 1, '&laquo;', cur <= 1)];
@@ -236,6 +242,7 @@
       state.total = page.total;
       state.pageIndex = page.pageIndex;
       state.pageSize = page.pageSize;
+      clampPageIndex();
       renderRows(state.list);
       renderPager();
     } catch (error) {

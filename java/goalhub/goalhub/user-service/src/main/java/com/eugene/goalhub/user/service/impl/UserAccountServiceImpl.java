@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import response.ResultCode;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,6 +44,11 @@ public class UserAccountServiceImpl
      * 默认和最大每页数量。
      */
     private static final int DEFAULT_PAGE_SIZE = 100;
+
+    /**
+     * USDT 金额统一保留 4 位小数。
+     */
+    private static final int MONEY_SCALE = 4;
 
     /**
      * 用户账户 Mapper。
@@ -104,7 +110,7 @@ public class UserAccountServiceImpl
             response.setBalance(balance);
             response.setFrozenBalance(frozenBalance);
             response.setStatus(account.getStatus());
-            response.setAvailableBalance(balance.subtract(frozenBalance));
+            response.setAvailableBalance(normalizeMoney(balance.subtract(frozenBalance)));
 
             return response;
 
@@ -198,7 +204,7 @@ public class UserAccountServiceImpl
                             response.setCurrencyCode(item.getCurrencyCode());
                             response.setBizType(item.getBizType());
                             response.setBizId(item.getBizId());
-                            response.setChangeAmount(item.getChangeAmount());
+                            response.setChangeAmount(safeAmount(item.getChangeAmount()));
                             response.setBeforeBalance(safeAmount(item.getBeforeBalance()));
                             response.setAfterBalance(safeAmount(item.getAfterBalance()));
                             response.setRemark(item.getRemark());
@@ -247,6 +253,14 @@ public class UserAccountServiceImpl
         Page<AdminUserAccountResponse> result =
                 userAccountMapper.adminAccountPage(page, request);
 
+        if (result.getRecords() != null) {
+            result.getRecords().forEach(response -> {
+                response.setBalance(safeAmount(response.getBalance()));
+                response.setFrozenBalance(safeAmount(response.getFrozenBalance()));
+                response.setAvailableBalance(safeAmount(response.getAvailableBalance()));
+            });
+        }
+
         goalhubLogService.sysLog(
                 MODULE_NAME,
                 "ADMIN_ACCOUNT_PAGE",
@@ -286,6 +300,14 @@ public class UserAccountServiceImpl
 
         Page<AdminAccountTransactionResponse> result =
                 accountTransactionMapper.adminTransactionPage(page, request);
+
+        if (result.getRecords() != null) {
+            result.getRecords().forEach(response -> {
+                response.setChangeAmount(safeAmount(response.getChangeAmount()));
+                response.setBeforeBalance(safeAmount(response.getBeforeBalance()));
+                response.setAfterBalance(safeAmount(response.getAfterBalance()));
+            });
+        }
 
         goalhubLogService.sysLog(
                 MODULE_NAME,
@@ -436,8 +458,14 @@ public class UserAccountServiceImpl
             return;
         }
 
+        BigDecimal normalizedChangeAmount = normalizeMoney(changeAmount);
+
+        if (normalizedChangeAmount.compareTo(BigDecimal.ZERO) == 0) {
+            throw new BusinessException(ResultCode.PARAM_ERROR);
+        }
+
         BigDecimal beforeBalance = safeAmount(account.getBalance());
-        BigDecimal afterBalance = beforeBalance.add(changeAmount);
+        BigDecimal afterBalance = normalizeMoney(beforeBalance.add(normalizedChangeAmount));
 
         if (afterBalance.compareTo(BigDecimal.ZERO) < 0) {
             throw new BusinessException(ResultCode.BALANCE_NOT_ENOUGH);
@@ -459,7 +487,7 @@ public class UserAccountServiceImpl
         transaction.setCurrencyCode(account.getCurrencyCode());
         transaction.setBizType(bizType);
         transaction.setBizId(finalBizId);
-        transaction.setChangeAmount(changeAmount);
+        transaction.setChangeAmount(normalizedChangeAmount);
         transaction.setBeforeBalance(beforeBalance);
         transaction.setAfterBalance(afterBalance);
         transaction.setRemark(remark);
@@ -486,7 +514,7 @@ public class UserAccountServiceImpl
                 null,
                 "调整账户余额成功，accountId=" + account.getId()
                         + ", bizType=" + bizType
-                        + ", changeAmount=" + changeAmount
+                        + ", changeAmount=" + normalizedChangeAmount
                         + ", beforeBalance=" + beforeBalance
                         + ", afterBalance=" + afterBalance
         );
@@ -591,9 +619,19 @@ public class UserAccountServiceImpl
      */
     private BigDecimal safeAmount(BigDecimal amount) {
         if (amount == null) {
-            return BigDecimal.ZERO;
+            return BigDecimal.ZERO.setScale(MONEY_SCALE, RoundingMode.DOWN);
         }
 
-        return amount;
+        return normalizeMoney(amount);
+    }
+
+    /**
+     * 规范化 USDT 金额，小数位不足时补 0。
+     *
+     * @param amount 原始金额
+     * @return 4 位小数金额
+     */
+    private BigDecimal normalizeMoney(BigDecimal amount) {
+        return amount.setScale(MONEY_SCALE, RoundingMode.DOWN);
     }
 }

@@ -22,8 +22,13 @@ const formError = document.getElementById('formError');
 let captchaKey = '';
 
 // API 配置
-const CAPTCHA_URL = 'http://localhost:8000/api/user/captcha';
-const REGISTER_URL = 'http://localhost:8000/api/user/register';
+const API_BASE_URL = window.GoalHubConfig?.API_BASE_URL || 'http://localhost:8000';
+const CAPTCHA_URL = `${API_BASE_URL}/api/user/captcha`;
+const REGISTER_URL = `${API_BASE_URL}/api/user/register`;
+
+function isSuccessCode(code) {
+    return code === 0 || code === 200 || code === '0' || code === '200';
+}
 
 // 验证函数
 function validateUsername(username) {
@@ -270,7 +275,7 @@ async function submitRegister(username, password, nickname, captchaCode) {
         
         const data = await response.json();
         
-        if (response.ok) {
+        if (response.ok && isSuccessCode(data.code)) {
             // 注册成功
             showMessage('注册成功！正在跳转...', 'success');
             
@@ -287,7 +292,7 @@ async function submitRegister(username, password, nickname, captchaCode) {
             }, 2000);
         } else {
             // 注册失败
-            const errorMessage = data.message || data.error || '注册失败，请重试';
+            const errorMessage = data.message || data.error || `注册失败 (HTTP ${response.status})`;
             showError(formError, errorMessage);
             showMessage(errorMessage, 'error');
         }

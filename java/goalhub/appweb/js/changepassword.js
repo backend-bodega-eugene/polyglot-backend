@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = window.GoalHubConfig?.API_BASE_URL || 'http://localhost:8000';
 const CHANGE_PASSWORD_URL = `${API_BASE_URL}/api/user/change-password`;
 
 const changePasswordForm = document.getElementById('changePasswordForm');
@@ -7,14 +7,7 @@ const newPasswordInput = document.getElementById('newPassword');
 const confirmPasswordInput = document.getElementById('confirmPassword');
 const passwordMessage = document.getElementById('passwordMessage');
 const changePasswordBtn = document.getElementById('changePasswordBtn');
-
-function getAuthHeaders() {
-    const authToken = localStorage.getItem('authToken') || '';
-    return {
-        'Authorization': `Bearer ${authToken}`,
-        'Content-Type': 'application/json'
-    };
-}
+const { apiFetch } = window.GoalHubApp;
 
 function setPasswordMessage(message, type = '') {
     passwordMessage.textContent = message;
@@ -67,24 +60,13 @@ async function submitChangePassword(event) {
         changePasswordBtn.textContent = '提交中...';
         setPasswordMessage('');
 
-        const response = await fetch(CHANGE_PASSWORD_URL, {
+        const payload = await apiFetch(CHANGE_PASSWORD_URL, {
             method: 'POST',
-            headers: getAuthHeaders(),
             body: JSON.stringify({
                 oldPassword,
                 newPassword
             })
         });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`HTTP ${response.status}: ${errorText}`);
-        }
-
-        const payload = await response.json();
-        if (payload.code !== 0 && payload.code !== 200) {
-            throw new Error(payload.message || '修改密码失败');
-        }
 
         changePasswordForm.reset();
         setPasswordMessage(payload.message || '密码修改成功', 'success');

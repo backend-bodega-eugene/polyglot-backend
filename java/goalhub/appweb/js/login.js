@@ -18,8 +18,9 @@ const formError = document.getElementById('formError');
 let captchaKey = '';
 
 // API 配置
-const CAPTCHA_URL = 'http://localhost:8000/api/user/captcha';
-const LOGIN_URL = 'http://localhost:8000/api/user/login';
+const API_BASE_URL = window.GoalHubConfig?.API_BASE_URL || 'http://localhost:8000';
+const CAPTCHA_URL = `${API_BASE_URL}/api/user/captcha`;
+const LOGIN_URL = `${API_BASE_URL}/api/user/login`;
 const CURRENT_USERNAME_KEY = 'currentUsername';
 const CURRENT_NICKNAME_KEY = 'currentNickname';
 
@@ -236,7 +237,6 @@ async function submitLogin(account, password, captchaCode, rememberMe) {
     submitBtn.classList.add('loading');
     
     try {
-        console.log('发送登录请求...');
         const response = await fetch(LOGIN_URL, {
             method: 'POST',
             headers: {
@@ -250,9 +250,7 @@ async function submitLogin(account, password, captchaCode, rememberMe) {
             })
         });
         
-        console.log('响应状态:', response.status);
         const data = await response.json();
-        console.log('响应数据:', data);
         
         if (response.ok && isSuccessCode(data.code)) {
             const token = getLoginToken(data);
@@ -273,9 +271,6 @@ async function submitLogin(account, password, captchaCode, rememberMe) {
             }
             
             // 保存登录信息到 localStorage
-            console.log('保存token:', token);
-            console.log('保存userId:', userId);
-            
             localStorage.setItem('authToken', token);
             
             if (userId) {
@@ -290,14 +285,14 @@ async function submitLogin(account, password, captchaCode, rememberMe) {
             // 重新加载验证码
             loadCaptcha();
             
-            // 2秒后跳转到首页
+            // 2秒后跳转到来源页面或首页
             setTimeout(() => {
-                window.location.href = '/index.html';
+                const next = new URLSearchParams(window.location.search).get('next');
+                window.location.href = next || '/index.html';
             }, 2000);
         } else {
             // 登录失败
             const errorMessage = data.message || data.error || `登录失败 (HTTP ${response.status})`;
-            console.error('登录错误:', errorMessage);
             clearLoginState();
             showError(formError, errorMessage);
             showMessage(errorMessage, 'error');
@@ -306,7 +301,6 @@ async function submitLogin(account, password, captchaCode, rememberMe) {
             loadCaptcha();
         }
     } catch (error) {
-        console.error('登录请求失败:', error);
         clearLoginState();
         const errorMessage = error.message || '网络错误，请检查服务器是否运行或网络连接';
         showError(formError, errorMessage);

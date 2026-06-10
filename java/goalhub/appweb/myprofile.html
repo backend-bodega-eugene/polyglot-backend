@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -41,7 +41,7 @@
                 <a class="app-row" href="bettings.html#open"><span class="app-row-left"><span>🧾</span>投注记录</span><span class="app-chevron">›</span></a>
                 <a class="app-row" href="setting.html"><span class="app-row-left"><span>⚙️</span>设置</span><span class="app-chevron">›</span></a>
                 <a class="app-row" href="changepassword.html"><span class="app-row-left"><span>?</span>修改密码</span><span class="app-chevron">›</span></a>
-                <a class="app-row" href="tutorial.html"><span class="app-row-left"><span>ℹ</span>关于</span><span class="app-chevron">›</span></a>
+                <a class="app-row" href="about.html"><span class="app-row-left"><span>ℹ</span>关于</span><span class="app-chevron">›</span></a>
                 <a class="app-row" href="login.html" id="logoutLink" style="justify-content:center; color:#e74c3c; font-weight:700;">退出或者重新登陆</a>
             </nav>
         </main>
@@ -55,17 +55,13 @@
         </div>
     </div>
 
+    <script src="js/config.js"></script>
     <script src="js/app.js"></script>
     <script>
         const username = localStorage.getItem('currentNickname') || localStorage.getItem('currentUsername') || '用户';
         document.getElementById('profileName').textContent = username;
         document.getElementById('avatarText').textContent = username.slice(0, 1).toUpperCase();
-        document.getElementById('logoutLink').addEventListener('click', () => {
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('defaultBalanceText');
-            localStorage.removeItem('currentUsername');
-            localStorage.removeItem('currentNickname');
-        });
     </script>
 </body>
 </html>
+

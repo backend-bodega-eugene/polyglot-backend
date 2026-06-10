@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = window.GoalHubConfig?.API_BASE_URL || 'http://localhost:8000';
 const TUTORIAL_API_URL = `${API_BASE_URL}/api/soccer/contents/articles/handicaptutorial`;
 
 const tutorialContent = document.getElementById('tutorialContent');

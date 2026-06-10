@@ -39,6 +39,12 @@
     return num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 8 });
   }
 
+  function clampPageIndex() {
+    const pages = Math.max(1, Math.ceil(state.total / state.pageSize));
+    state.pageIndex = Math.min(Math.max(1, Number(state.pageIndex) || 1), pages);
+    return pages;
+  }
+
   async function request(path, body) {
     const res = await auth.authFetch(path, { method: 'POST', body: JSON.stringify(body || {}) });
     const json = await res.json().catch(() => ({}));
@@ -80,6 +86,7 @@
       state.total = Number(page?.total || 0);
       state.pageIndex = Number(page?.pageIndex || state.pageIndex);
       state.pageSize = Number(page?.pageSize || readFilters().pageSize);
+      clampPageIndex();
       state.records = Array.isArray(page?.records) ? page.records : [];
       renderTable();
       renderPager();
@@ -124,8 +131,8 @@
   }
 
   function renderPager() {
-    const pages = Math.max(1, Math.ceil(state.total / state.pageSize));
-    const cur = Math.min(state.pageIndex, pages);
+    const pages = clampPageIndex();
+    const cur = state.pageIndex;
     const items = [];
     const add = (page, label, disabled = false, active = false) => {
       items.push(`<li class="page-item${disabled ? ' disabled' : ''}${active ? ' active' : ''}"><a class="page-link" href="#" data-page="${page}">${label}</a></li>`);
@@ -145,8 +152,8 @@
 
   function fillDetail(item) {
     document.getElementById('audit-id').value = item.id ?? '';
-    document.getElementById('audit-status').value = 'APPROVED';
-    document.getElementById('audit-remark').value = item.auditRemark || '';
+    document.getElementById('audit-status').value = item.status === 'PENDING' ? '' : (item.status || '');
+    document.getElementById('audit-remark').value = item.status === 'PENDING' ? '' : (item.auditRemark || '');
     document.getElementById('audit-status').disabled = item.status !== 'PENDING';
     document.getElementById('audit-remark').disabled = item.status !== 'PENDING';
     $auditSave.classList.toggle('d-none', item.status !== 'PENDING');
@@ -182,6 +189,9 @@
       const item = await request(`${config.apiBase}/detail`, { id: Number(id) });
       fillDetail(item || {});
       auditModal.show();
+      if (item?.status === 'PENDING') {
+        setTimeout(() => document.getElementById('audit-status')?.focus(), 150);
+      }
     } catch (error) {
       alert(error.message || '详情加载失败');
     } finally {
@@ -227,7 +237,17 @@
     const id = Number(document.getElementById('audit-id').value || 0);
     const auditStatus = document.getElementById('audit-status').value;
     const auditRemark = document.getElementById('audit-remark').value.trim();
-    if (!id || !auditStatus) return;
+    if (!id) return;
+    if (!auditStatus) {
+      alert('请选择审核结果');
+      return;
+    }
+    if (auditStatus === 'REJECTED' && !auditRemark) {
+      alert('拒绝时必须填写审核备注');
+      return;
+    }
+    const auditStatusText = statusText[auditStatus] || auditStatus;
+    if (!confirm(`确定要将该${config.title}提交为「${auditStatusText}」吗？`)) return;
 
     $auditSave.disabled = true;
     try {

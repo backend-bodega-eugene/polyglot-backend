@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = window.GoalHubConfig?.API_BASE_URL || 'http://localhost:8000';
 const ORDER_PAGE_API_URL = `${API_BASE_URL}/api/order/bet/orders/page`;
 const DEFAULT_LANG_CODE = 'en-US';
 const PAGE_SIZE = 10;
@@ -13,19 +13,13 @@ const startTimeInput = document.getElementById('startTimeInput');
 const endTimeInput = document.getElementById('endTimeInput');
 const resetFilterBtn = document.getElementById('resetFilterBtn');
 const ordersLoadMoreBtn = document.getElementById('ordersLoadMoreBtn');
+const { apiFetch } = window.GoalHubApp;
 
 let currentPageIndex = 1;
 let totalOrders = 0;
 let loadedOrders = 0;
 let isLoading = false;
 let currentLangCode = localStorage.getItem('langCode') || DEFAULT_LANG_CODE;
-
-function getAuthHeaders() {
-    return {
-        Authorization: `Bearer ${localStorage.getItem('authToken') || ''}`,
-        'Content-Type': 'application/json'
-    };
-}
 
 function escapeHtml(value) {
     return String(value ?? '')
@@ -235,21 +229,10 @@ async function loadOrders({ append = false } = {}) {
     renderLoading(firstPage);
 
     try {
-        const response = await fetch(ORDER_PAGE_API_URL, {
+        const data = await apiFetch(ORDER_PAGE_API_URL, {
             method: 'POST',
-            headers: getAuthHeaders(),
             body: JSON.stringify(buildRequestBody())
         });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`HTTP ${response.status}: ${errorText}`);
-        }
-
-        const data = await response.json();
-        if (data.code && data.code !== 200) {
-            throw new Error(data.message || '查询失败');
-        }
 
         const records = getRecords(data);
         totalOrders = getTotal(data, records);

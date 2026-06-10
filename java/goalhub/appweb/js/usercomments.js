@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = window.GoalHubConfig?.API_BASE_URL || 'http://localhost:8000';
 const COMMENTS_PAGE_URL = `${API_BASE_URL}/api/user/usercomments/page`;
 const COMMENTS_ADD_URL = `${API_BASE_URL}/api/user/usercomments/add`;
 const COMMENTS_PAGE_SIZE = 10;
@@ -11,18 +11,11 @@ const commentMessageTip = document.getElementById('commentMessageTip');
 const commentList = document.getElementById('commentList');
 const commentsLoadMoreBtn = document.getElementById('commentsLoadMoreBtn');
 const commentRefreshBtn = document.getElementById('commentRefreshBtn');
+const { apiFetch } = window.GoalHubApp;
 
 let currentPageIndex = 1;
 let totalComments = 0;
 let loadedComments = 0;
-
-function getAuthHeaders() {
-    const authToken = localStorage.getItem('authToken') || '';
-    return {
-        'Authorization': `Bearer ${authToken}`,
-        'Content-Type': 'application/json'
-    };
-}
 
 function escapeHtml(value) {
     return String(value ?? '')
@@ -123,21 +116,13 @@ async function loadComments(reset = false) {
     }
 
     try {
-        const response = await fetch(COMMENTS_PAGE_URL, {
+        const payload = await apiFetch(COMMENTS_PAGE_URL, {
             method: 'POST',
-            headers: getAuthHeaders(),
             body: JSON.stringify({
                 pageIndex: currentPageIndex,
                 pageSize: COMMENTS_PAGE_SIZE
             })
         });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`HTTP ${response.status}: ${errorText}`);
-        }
-
-        const payload = await response.json();
         const records = getRecords(payload);
         totalComments = Number(payload?.data?.total ?? records.length) || 0;
 
@@ -184,21 +169,10 @@ async function submitComment(event) {
         commentSubmitBtn.textContent = '提交中...';
         setTip('');
 
-        const response = await fetch(COMMENTS_ADD_URL, {
+        const payload = await apiFetch(COMMENTS_ADD_URL, {
             method: 'POST',
-            headers: getAuthHeaders(),
             body: JSON.stringify({ contact, message })
         });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`HTTP ${response.status}: ${errorText}`);
-        }
-
-        const payload = await response.json();
-        if (payload.code !== 0 && payload.code !== 200) {
-            throw new Error(payload.message || '提交失败');
-        }
 
         commentForm.reset();
         setTip('留言提交成功', 'success');

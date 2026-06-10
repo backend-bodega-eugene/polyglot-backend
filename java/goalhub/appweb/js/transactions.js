@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = window.GoalHubConfig?.API_BASE_URL || 'http://localhost:8000';
 const TRANSACTIONS_API_URL = `${API_BASE_URL}/api/user/account/me/transactions`;
 const PAGE_SIZE = 20;
 const DEFAULT_CURRENCY_CODE = 'USDT';
@@ -11,6 +11,7 @@ const transactionEmpty = document.getElementById('transactionEmpty');
 const transactionEmptyText = document.getElementById('transactionEmptyText');
 const transactionsLoadMoreBtn = document.getElementById('transactionsLoadMoreBtn');
 const transactionRefreshBtn = document.getElementById('transactionRefreshBtn');
+const { apiFetch } = window.GoalHubApp;
 
 let currentPageIndex = 1;
 let currentFlow = 'all';
@@ -18,13 +19,6 @@ let totalTransactions = 0;
 let loadedTransactions = 0;
 let loadedRawTransactions = 0;
 let isLoading = false;
-
-function getAuthHeaders() {
-    return {
-        Authorization: `Bearer ${localStorage.getItem('authToken') || ''}`,
-        'Content-Type': 'application/json'
-    };
-}
 
 function escapeHtml(value) {
     return String(value ?? '')
@@ -219,21 +213,10 @@ async function loadTransactions({ append = false } = {}) {
     renderLoading(firstPage);
 
     try {
-        const response = await fetch(TRANSACTIONS_API_URL, {
+        const data = await apiFetch(TRANSACTIONS_API_URL, {
             method: 'POST',
-            headers: getAuthHeaders(),
             body: JSON.stringify(buildRequestBody())
         });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`HTTP ${response.status}: ${errorText}`);
-        }
-
-        const data = await response.json();
-        if (!isSuccessCode(data.code)) {
-            throw new Error(data.message || '查询流水失败');
-        }
 
         const rawRecords = getRecords(data);
         const records = filterByFlow(rawRecords);

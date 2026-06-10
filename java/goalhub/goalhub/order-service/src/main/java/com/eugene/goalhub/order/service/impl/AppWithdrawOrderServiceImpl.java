@@ -2,6 +2,7 @@ package com.eugene.goalhub.order.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.eugene.goalhub.boot.logs.service.GoalhubLogService;
+import com.eugene.goalhub.order.client.OrderUserSecurityClient;
 import com.eugene.goalhub.order.entity.WithdrawOrderEntity;
 import com.eugene.goalhub.order.mapper.WithdrawOrderMapper;
 import com.eugene.goalhub.order.service.AppWithdrawOrderService;
@@ -10,6 +11,7 @@ import dto.*;
 import exception.BusinessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import response.Result;
 import response.ResultCode;
 
 import java.math.BigDecimal;
@@ -51,6 +53,11 @@ public class AppWithdrawOrderServiceImpl
     private static final int DEFAULT_PAGE_SIZE = 20;
 
     /**
+     * USDT 金额统一保留 4 位小数。
+     */
+    private static final int MONEY_SCALE = 4;
+
+    /**
      * 提现订单 Mapper。
      */
     private final WithdrawOrderMapper withdrawOrderMapper;
@@ -64,6 +71,7 @@ public class AppWithdrawOrderServiceImpl
      * 业务日志服务。
      */
     private final GoalhubLogService goalhubLogService;
+    private final OrderUserSecurityClient orderUserSecurityClient;
 
     /**
      * 创建前端提现订单服务实例。
@@ -75,9 +83,11 @@ public class AppWithdrawOrderServiceImpl
     public AppWithdrawOrderServiceImpl(
             WithdrawOrderMapper withdrawOrderMapper,
             OrderUserAccountService orderUserAccountService,
+            OrderUserSecurityClient orderUserSecurityClient,
             GoalhubLogService goalhubLogService) {
         this.withdrawOrderMapper = withdrawOrderMapper;
         this.orderUserAccountService = orderUserAccountService;
+        this.orderUserSecurityClient = orderUserSecurityClient;
         this.goalhubLogService = goalhubLogService;
     }
 
@@ -99,25 +109,35 @@ public class AppWithdrawOrderServiceImpl
         if (request == null) {
             throw new BusinessException(ResultCode.PARAM_ERROR);
         }
-
         checkAmount(request.getAmount());
 
         if (request.getWithdrawAddress() == null
                 || request.getWithdrawAddress().isBlank()) {
             throw new BusinessException(ResultCode.PARAM_ERROR);
         }
+        VerifyFundPasswordRequest verifyFundPasswordRequest = new VerifyFundPasswordRequest();
+        verifyFundPasswordRequest.setUserId(userId);
+        verifyFundPasswordRequest.setFundPassword(request.getFundPassword());
 
+        Result<Void> verifyResult = orderUserSecurityClient.verifyFundPassword(verifyFundPasswordRequest);
+        if (verifyResult == null || verifyResult.getCode() != ResultCode.SUCCESS.getCode()) {
+            throw new BusinessException(ResultCode.FUND_PASSWORD_ERROR);
+        }
         String currencyCode = normalizeCurrencyCode(request.getCurrencyCode());
 
         if (!DEFAULT_CURRENCY_CODE.equals(currencyCode)) {
             throw new BusinessException(ResultCode.PARAM_ERROR);
         }
 
-        BigDecimal amount = request.getAmount()
-                .setScale(2, RoundingMode.DOWN);
+        BigDecimal amount = normalizeMoney(request.getAmount());
 
-        BigDecimal feeAmount = BigDecimal.ZERO.setScale(2, RoundingMode.DOWN);
-        BigDecimal actualAmount = amount.subtract(feeAmount);
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BusinessException(ResultCode.PARAM_ERROR);
+        }
+
+        BigDecimal feeAmount = BigDecimal.ZERO.setScale(MONEY_SCALE, RoundingMode.DOWN);
+        BigDecimal actualAmount = amount.subtract(feeAmount)
+                .setScale(MONEY_SCALE, RoundingMode.DOWN);
 
         if (actualAmount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new BusinessException(ResultCode.PARAM_ERROR);
@@ -188,6 +208,10 @@ public class AppWithdrawOrderServiceImpl
         Page<AppWithdrawOrderResponse> resultPage =
                 withdrawOrderMapper.selectAppPage(page, userId, request);
 
+        if (resultPage.getRecords() != null) {
+            resultPage.getRecords().forEach(this::normalizeResponse);
+        }
+
         return new PageResponse<>(
                 resultPage.getTotal(),
                 request.getPageIndex(),
@@ -216,10 +240,16 @@ public class AppWithdrawOrderServiceImpl
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new BusinessException(ResultCode.PARAM_ERROR);
         }
+    }
 
-        if (amount.stripTrailingZeros().scale() > 2) {
-            throw new BusinessException(ResultCode.PARAM_ERROR);
-        }
+    /**
+     * 规范化 USDT 金额，小数位不足时补 0。
+     *
+     * @param amount 原始金额
+     * @return 4 位小数金额
+     */
+    private BigDecimal normalizeMoney(BigDecimal amount) {
+        return amount.setScale(MONEY_SCALE, RoundingMode.DOWN);
     }
 
     /**
@@ -271,9 +301,9 @@ public class AppWithdrawOrderServiceImpl
         response.setId(entity.getId());
         response.setOrderNo(entity.getOrderNo());
         response.setCurrencyCode(entity.getCurrencyCode());
-        response.setAmount(entity.getAmount());
-        response.setActualAmount(entity.getActualAmount());
-        response.setFeeAmount(entity.getFeeAmount());
+        response.setAmount(normalizeNullableMoney(entity.getAmount()));
+        response.setActualAmount(normalizeNullableMoney(entity.getActualAmount()));
+        response.setFeeAmount(normalizeNullableMoney(entity.getFeeAmount()));
         response.setStatus(entity.getStatus());
         response.setChainType(entity.getChainType());
         response.setWithdrawAddress(entity.getWithdrawAddress());
@@ -284,5 +314,23 @@ public class AppWithdrawOrderServiceImpl
         response.setCreatedAt(entity.getCreatedAt());
         response.setUpdatedAt(entity.getUpdatedAt());
         return response;
+    }
+
+    private void normalizeResponse(
+            AppWithdrawOrderResponse response) {
+
+        response.setAmount(normalizeNullableMoney(response.getAmount()));
+        response.setActualAmount(normalizeNullableMoney(response.getActualAmount()));
+        response.setFeeAmount(normalizeNullableMoney(response.getFeeAmount()));
+    }
+
+    private BigDecimal normalizeNullableMoney(
+            BigDecimal amount) {
+
+        if (amount == null) {
+            return null;
+        }
+
+        return normalizeMoney(amount);
     }
 }

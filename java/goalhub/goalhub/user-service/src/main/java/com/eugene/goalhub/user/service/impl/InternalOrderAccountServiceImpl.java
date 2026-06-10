@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import response.ResultCode;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * 订单内部账户服务实现。
@@ -30,6 +31,8 @@ public class InternalOrderAccountServiceImpl
     private static final String MODULE_NAME = "订单内部账户";
 
     private static final String DEFAULT_CURRENCY_CODE = "USDT";
+
+    private static final int MONEY_SCALE = 4;
 
     private static final String BIZ_TYPE_BET_ORDER = "BET_ORDER";
 
@@ -75,8 +78,8 @@ public class InternalOrderAccountServiceImpl
 
             response.setAccountId(account.getId());
             response.setCurrencyCode(account.getCurrencyCode());
-            response.setBalanceBefore(exists.getBeforeBalance());
-            response.setBalanceAfter(exists.getAfterBalance());
+            response.setBalanceBefore(safeAmount(exists.getBeforeBalance()));
+            response.setBalanceAfter(safeAmount(exists.getAfterBalance()));
 
             goalhubLogService.sysLog(
                     MODULE_NAME,
@@ -87,8 +90,14 @@ public class InternalOrderAccountServiceImpl
             return response;
         }
 
+        BigDecimal amount = normalizeMoney(request.getAmount());
+
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BusinessException(ResultCode.PARAM_ERROR);
+        }
+
         BigDecimal beforeBalance = safeAmount(account.getBalance());
-        BigDecimal afterBalance = beforeBalance.subtract(request.getAmount());
+        BigDecimal afterBalance = normalizeMoney(beforeBalance.subtract(amount));
 
         if (afterBalance.compareTo(BigDecimal.ZERO) < 0) {
             throw new BusinessException(ResultCode.BALANCE_NOT_ENOUGH);
@@ -102,7 +111,7 @@ public class InternalOrderAccountServiceImpl
                 account,
                 BIZ_TYPE_BET_ORDER,
                 request.getBizId(),
-                request.getAmount().negate(),
+                amount.negate(),
                 beforeBalance,
                 afterBalance,
                 request.getRemark()
@@ -123,7 +132,7 @@ public class InternalOrderAccountServiceImpl
                 null,
                 "订单扣减默认 USDT 账户成功，accountId=" + account.getId()
                         + ", bizId=" + request.getBizId()
-                        + ", amount=" + request.getAmount()
+                        + ", amount=" + amount
                         + ", beforeBalance=" + beforeBalance
                         + ", afterBalance=" + afterBalance
         );
@@ -151,8 +160,14 @@ public class InternalOrderAccountServiceImpl
             return;
         }
 
+        BigDecimal amount = normalizeMoney(request.getAmount());
+
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BusinessException(ResultCode.PARAM_ERROR);
+        }
+
         BigDecimal beforeBalance = safeAmount(account.getBalance());
-        BigDecimal afterBalance = beforeBalance.add(request.getAmount());
+        BigDecimal afterBalance = normalizeMoney(beforeBalance.add(amount));
 
         account.setBalance(afterBalance);
 
@@ -162,7 +177,7 @@ public class InternalOrderAccountServiceImpl
                 account,
                 BIZ_TYPE_DEPOSIT_SUCCESS,
                 request.getBizId(),
-                request.getAmount(),
+                amount,
                 beforeBalance,
                 afterBalance,
                 request.getRemark()
@@ -175,7 +190,7 @@ public class InternalOrderAccountServiceImpl
                 null,
                 "充值加款默认 USDT 账户成功，accountId=" + account.getId()
                         + ", bizId=" + request.getBizId()
-                        + ", amount=" + request.getAmount()
+                        + ", amount=" + amount
                         + ", beforeBalance=" + beforeBalance
                         + ", afterBalance=" + afterBalance
         );
@@ -201,16 +216,22 @@ public class InternalOrderAccountServiceImpl
             return;
         }
 
+        BigDecimal amount = normalizeMoney(request.getAmount());
+
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BusinessException(ResultCode.PARAM_ERROR);
+        }
+
         BigDecimal balance = safeAmount(account.getBalance());
         BigDecimal frozenBalance = safeAmount(account.getFrozenBalance());
-        BigDecimal availableBefore = balance.subtract(frozenBalance);
+        BigDecimal availableBefore = normalizeMoney(balance.subtract(frozenBalance));
 
-        if (availableBefore.compareTo(request.getAmount()) < 0) {
+        if (availableBefore.compareTo(amount) < 0) {
             throw new BusinessException(ResultCode.BALANCE_NOT_ENOUGH);
         }
 
-        BigDecimal frozenAfter = frozenBalance.add(request.getAmount());
-        BigDecimal availableAfter = balance.subtract(frozenAfter);
+        BigDecimal frozenAfter = normalizeMoney(frozenBalance.add(amount));
+        BigDecimal availableAfter = normalizeMoney(balance.subtract(frozenAfter));
 
         account.setFrozenBalance(frozenAfter);
 
@@ -220,7 +241,7 @@ public class InternalOrderAccountServiceImpl
                 account,
                 BIZ_TYPE_WITHDRAW_FREEZE,
                 request.getBizId(),
-                request.getAmount().negate(),
+                amount.negate(),
                 availableBefore,
                 availableAfter,
                 request.getRemark()
@@ -233,7 +254,7 @@ public class InternalOrderAccountServiceImpl
                 null,
                 "提现冻结默认 USDT 账户成功，accountId=" + account.getId()
                         + ", bizId=" + request.getBizId()
-                        + ", amount=" + request.getAmount()
+                        + ", amount=" + amount
                         + ", availableBefore=" + availableBefore
                         + ", availableAfter=" + availableAfter
                         + ", frozenAfter=" + frozenAfter
@@ -260,15 +281,21 @@ public class InternalOrderAccountServiceImpl
             return;
         }
 
+        BigDecimal amount = normalizeMoney(request.getAmount());
+
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BusinessException(ResultCode.PARAM_ERROR);
+        }
+
         BigDecimal beforeBalance = safeAmount(account.getBalance());
         BigDecimal beforeFrozenBalance = safeAmount(account.getFrozenBalance());
 
-        if (beforeFrozenBalance.compareTo(request.getAmount()) < 0) {
+        if (beforeFrozenBalance.compareTo(amount) < 0) {
             throw new BusinessException(ResultCode.BALANCE_NOT_ENOUGH);
         }
 
-        BigDecimal afterBalance = beforeBalance.subtract(request.getAmount());
-        BigDecimal afterFrozenBalance = beforeFrozenBalance.subtract(request.getAmount());
+        BigDecimal afterBalance = normalizeMoney(beforeBalance.subtract(amount));
+        BigDecimal afterFrozenBalance = normalizeMoney(beforeFrozenBalance.subtract(amount));
 
         if (afterBalance.compareTo(BigDecimal.ZERO) < 0
                 || afterFrozenBalance.compareTo(BigDecimal.ZERO) < 0) {
@@ -284,7 +311,7 @@ public class InternalOrderAccountServiceImpl
                 account,
                 BIZ_TYPE_WITHDRAW_SUCCESS,
                 request.getBizId(),
-                request.getAmount().negate(),
+                amount.negate(),
                 beforeBalance,
                 afterBalance,
                 request.getRemark()
@@ -297,7 +324,7 @@ public class InternalOrderAccountServiceImpl
                 null,
                 "提现审核通过扣减冻结余额成功，accountId=" + account.getId()
                         + ", bizId=" + request.getBizId()
-                        + ", amount=" + request.getAmount()
+                        + ", amount=" + amount
                         + ", beforeBalance=" + beforeBalance
                         + ", afterBalance=" + afterBalance
                         + ", beforeFrozenBalance=" + beforeFrozenBalance
@@ -325,16 +352,22 @@ public class InternalOrderAccountServiceImpl
             return;
         }
 
+        BigDecimal amount = normalizeMoney(request.getAmount());
+
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BusinessException(ResultCode.PARAM_ERROR);
+        }
+
         BigDecimal balance = safeAmount(account.getBalance());
         BigDecimal beforeFrozenBalance = safeAmount(account.getFrozenBalance());
 
-        if (beforeFrozenBalance.compareTo(request.getAmount()) < 0) {
+        if (beforeFrozenBalance.compareTo(amount) < 0) {
             throw new BusinessException(ResultCode.BALANCE_NOT_ENOUGH);
         }
 
-        BigDecimal availableBefore = balance.subtract(beforeFrozenBalance);
-        BigDecimal afterFrozenBalance = beforeFrozenBalance.subtract(request.getAmount());
-        BigDecimal availableAfter = balance.subtract(afterFrozenBalance);
+        BigDecimal availableBefore = normalizeMoney(balance.subtract(beforeFrozenBalance));
+        BigDecimal afterFrozenBalance = normalizeMoney(beforeFrozenBalance.subtract(amount));
+        BigDecimal availableAfter = normalizeMoney(balance.subtract(afterFrozenBalance));
 
         account.setFrozenBalance(afterFrozenBalance);
 
@@ -344,7 +377,7 @@ public class InternalOrderAccountServiceImpl
                 account,
                 BIZ_TYPE_WITHDRAW_UNFREEZE,
                 request.getBizId(),
-                request.getAmount(),
+                amount,
                 availableBefore,
                 availableAfter,
                 request.getRemark()
@@ -357,7 +390,7 @@ public class InternalOrderAccountServiceImpl
                 null,
                 "提现拒绝解冻默认 USDT 账户成功，accountId=" + account.getId()
                         + ", bizId=" + request.getBizId()
-                        + ", amount=" + request.getAmount()
+                        + ", amount=" + amount
                         + ", availableBefore=" + availableBefore
                         + ", availableAfter=" + availableAfter
                         + ", afterFrozenBalance=" + afterFrozenBalance
@@ -413,9 +446,9 @@ public class InternalOrderAccountServiceImpl
         transaction.setCurrencyCode(account.getCurrencyCode());
         transaction.setBizType(bizType);
         transaction.setBizId(bizId);
-        transaction.setChangeAmount(changeAmount);
-        transaction.setBeforeBalance(beforeBalance);
-        transaction.setAfterBalance(afterBalance);
+        transaction.setChangeAmount(normalizeMoney(changeAmount));
+        transaction.setBeforeBalance(safeAmount(beforeBalance));
+        transaction.setAfterBalance(safeAmount(afterBalance));
         transaction.setRemark(remark);
 
         try {
@@ -465,9 +498,15 @@ public class InternalOrderAccountServiceImpl
             BigDecimal amount) {
 
         if (amount == null) {
-            return BigDecimal.ZERO;
+            return BigDecimal.ZERO.setScale(MONEY_SCALE, RoundingMode.DOWN);
         }
 
-        return amount;
+        return normalizeMoney(amount);
+    }
+
+    private BigDecimal normalizeMoney(
+            BigDecimal amount) {
+
+        return amount.setScale(MONEY_SCALE, RoundingMode.DOWN);
     }
 }

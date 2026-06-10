@@ -31,6 +31,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             "/user/register",
             "/user/login",
             "/user/captcha",
+            "/user/forgotpassword/**",
             "/internal/admin/users/**",
             "/internal/admin/account/**",
             "/internal/admin/usercomments/**",

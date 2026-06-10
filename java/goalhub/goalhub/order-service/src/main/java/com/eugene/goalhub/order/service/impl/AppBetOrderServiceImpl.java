@@ -68,6 +68,11 @@ public class AppBetOrderServiceImpl
     private static final String BIZ_REMARK_PLACE_BET = "用户下注扣款";
 
     /**
+     * USDT 金额统一保留 4 位小数。
+     */
+    private static final int MONEY_SCALE = 4;
+
+    /**
      * 投注订单 Mapper。
      */
     private final BetOrderMapper betOrderMapper;
@@ -136,16 +141,19 @@ public class AppBetOrderServiceImpl
 
         checkSnapshot(snapshot);
 
-        BigDecimal betAmount = request.getAmount()
-                .setScale(2, RoundingMode.DOWN);
+        BigDecimal betAmount = normalizeMoney(request.getAmount());
+
+        if (betAmount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BusinessException(ResultCode.BET_AMOUNT_INVALID);
+        }
 
         BigDecimal expectedReturn = betAmount
                 .multiply(snapshot.getOdds())
-                .setScale(2, RoundingMode.DOWN);
+                .setScale(MONEY_SCALE, RoundingMode.DOWN);
 
         BigDecimal expectedProfit = expectedReturn
                 .subtract(betAmount)
-                .setScale(2, RoundingMode.DOWN);
+                .setScale(MONEY_SCALE, RoundingMode.DOWN);
 
         String orderNo = generateOrderNo();
 
@@ -300,9 +308,13 @@ public class AppBetOrderServiceImpl
                         ));
 
         for (AppBetOrderResponse order : orders) {
-            order.setItems(
-                    itemMap.getOrDefault(order.getOrderId(), List.of())
-            );
+            normalizeOrderResponse(order);
+
+            List<AppBetOrderItemResponse> orderItems =
+                    itemMap.getOrDefault(order.getOrderId(), List.of());
+
+            orderItems.forEach(this::normalizeOrderItemResponse);
+            order.setItems(orderItems);
         }
 
         return  new PageResponse<>(
@@ -338,10 +350,45 @@ public class AppBetOrderServiceImpl
                 || request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
             throw new BusinessException(ResultCode.BET_AMOUNT_INVALID);
         }
+    }
 
-        if (request.getAmount().stripTrailingZeros().scale() > 2) {
-            throw new BusinessException(ResultCode.BET_AMOUNT_INVALID);
+    /**
+     * 规范化 USDT 金额，小数位不足时补 0，超过时由上游校验拦截。
+     *
+     * @param amount 原始金额
+     * @return 4 位小数金额
+     */
+    private BigDecimal normalizeMoney(
+            BigDecimal amount) {
+
+        return amount.setScale(MONEY_SCALE, RoundingMode.DOWN);
+    }
+
+    private void normalizeOrderResponse(
+            AppBetOrderResponse response) {
+
+        response.setTotalBetAmount(normalizeNullableMoney(response.getTotalBetAmount()));
+        response.setTotalExpectedProfit(normalizeNullableMoney(response.getTotalExpectedProfit()));
+        response.setTotalExpectedReturn(normalizeNullableMoney(response.getTotalExpectedReturn()));
+        response.setSettleAmount(normalizeNullableMoney(response.getSettleAmount()));
+    }
+
+    private void normalizeOrderItemResponse(
+            AppBetOrderItemResponse response) {
+
+        response.setBetAmount(normalizeNullableMoney(response.getBetAmount()));
+        response.setExpectedProfit(normalizeNullableMoney(response.getExpectedProfit()));
+        response.setExpectedReturn(normalizeNullableMoney(response.getExpectedReturn()));
+    }
+
+    private BigDecimal normalizeNullableMoney(
+            BigDecimal amount) {
+
+        if (amount == null) {
+            return null;
         }
+
+        return normalizeMoney(amount);
     }
 
     /**

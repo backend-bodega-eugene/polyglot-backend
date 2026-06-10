@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = window.GoalHubConfig?.API_BASE_URL || 'http://localhost:8000';
 const HISTORY_TYPE = document.body.dataset.historyType || 'deposit';
 const HISTORY_PAGE_URL = `${API_BASE_URL}/api/order/${HISTORY_TYPE === 'withdraw' ? 'withdraworder' : 'depositorder'}/page`;
 const PAGE_SIZE = 10;
@@ -8,18 +8,12 @@ const historyList = document.getElementById('historyList');
 const historyEmpty = document.getElementById('historyEmpty');
 const historyLoadMoreBtn = document.getElementById('historyLoadMoreBtn');
 const historyRefreshBtn = document.getElementById('historyRefreshBtn');
+const { apiFetch } = window.GoalHubApp;
 
 let currentPageIndex = 1;
 let totalOrders = 0;
 let loadedOrders = 0;
 let isLoading = false;
-
-function getAuthHeaders() {
-    return {
-        Authorization: `Bearer ${localStorage.getItem('authToken') || ''}`,
-        'Content-Type': 'application/json'
-    };
-}
 
 function isSuccessCode(code) {
     return code === 0 || code === 200 || code === '0' || code === '200';
@@ -209,21 +203,10 @@ async function loadOrders({ append = false } = {}) {
     renderLoading(firstPage);
 
     try {
-        const response = await fetch(HISTORY_PAGE_URL, {
+        const payload = await apiFetch(HISTORY_PAGE_URL, {
             method: 'POST',
-            headers: getAuthHeaders(),
             body: JSON.stringify(buildRequestBody())
         });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`HTTP ${response.status}: ${errorText}`);
-        }
-
-        const payload = await response.json();
-        if (!isSuccessCode(payload.code)) {
-            throw new Error(payload.message || '查询失败');
-        }
 
         const records = getRecords(payload);
         totalOrders = getTotal(payload, records);

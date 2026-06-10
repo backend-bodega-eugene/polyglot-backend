@@ -25,7 +25,9 @@ import java.util.List;
 public class CaptchaRateLimitFilter implements GlobalFilter, Ordered {
 
     private static final List<String> CAPTCHA_PATHS = List.of(
-            "/api/user/captcha"
+            "/api/user/captcha",
+           "/api/user/forgotpassword/sendcode",
+            "/api/user/forgotpassword/reset"
            // "/admin/auth/captcha"
     );
 

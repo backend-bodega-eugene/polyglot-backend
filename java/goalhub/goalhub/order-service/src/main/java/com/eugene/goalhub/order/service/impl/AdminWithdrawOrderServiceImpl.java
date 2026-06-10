@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import response.ResultCode;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 
 /**
@@ -53,6 +54,11 @@ public class AdminWithdrawOrderServiceImpl
      * 默认最大每页数量。
      */
     private static final int DEFAULT_PAGE_SIZE = 100;
+
+    /**
+     * USDT 金额统一保留 4 位小数。
+     */
+    private static final int MONEY_SCALE = 4;
 
     /**
      * 提现订单 Mapper。
@@ -107,6 +113,10 @@ public class AdminWithdrawOrderServiceImpl
 
         Page<AdminWithdrawOrderResponse> resultPage =
                 withdrawOrderMapper.selectAdminPage(page, request);
+
+        if (resultPage.getRecords() != null) {
+            resultPage.getRecords().forEach(this::normalizeResponse);
+        }
 
         return new PageResponse<>(
                 resultPage.getTotal(),
@@ -178,6 +188,8 @@ public class AdminWithdrawOrderServiceImpl
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new BusinessException(ResultCode.PARAM_ERROR);
         }
+
+        amount = normalizeMoney(amount);
 
         if (STATUS_APPROVED.equals(request.getAuditStatus())) {
             DefaultAccountBalanceChangeRequest balanceRequest =
@@ -273,9 +285,9 @@ public class AdminWithdrawOrderServiceImpl
         response.setOrderNo(entity.getOrderNo());
         response.setUserId(entity.getUserId());
         response.setCurrencyCode(entity.getCurrencyCode());
-        response.setAmount(entity.getAmount());
-        response.setActualAmount(entity.getActualAmount());
-        response.setFeeAmount(entity.getFeeAmount());
+        response.setAmount(normalizeNullableMoney(entity.getAmount()));
+        response.setActualAmount(normalizeNullableMoney(entity.getActualAmount()));
+        response.setFeeAmount(normalizeNullableMoney(entity.getFeeAmount()));
         response.setStatus(entity.getStatus());
         response.setChainType(entity.getChainType());
         response.setWithdrawAddress(entity.getWithdrawAddress());
@@ -288,5 +300,29 @@ public class AdminWithdrawOrderServiceImpl
         response.setCreatedAt(entity.getCreatedAt());
         response.setUpdatedAt(entity.getUpdatedAt());
         return response;
+    }
+
+    private void normalizeResponse(
+            AdminWithdrawOrderResponse response) {
+
+        response.setAmount(normalizeNullableMoney(response.getAmount()));
+        response.setActualAmount(normalizeNullableMoney(response.getActualAmount()));
+        response.setFeeAmount(normalizeNullableMoney(response.getFeeAmount()));
+    }
+
+    private BigDecimal normalizeNullableMoney(
+            BigDecimal amount) {
+
+        if (amount == null) {
+            return null;
+        }
+
+        return normalizeMoney(amount);
+    }
+
+    private BigDecimal normalizeMoney(
+            BigDecimal amount) {
+
+        return amount.setScale(MONEY_SCALE, RoundingMode.DOWN);
     }
 }

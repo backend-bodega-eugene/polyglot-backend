@@ -2,7 +2,6 @@ package dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -28,8 +27,7 @@ public class PlaceBetOrderRequest {
      * 下注金额。
      */
     @NotNull(message = "下注金额不能为空")
-    @DecimalMin(value = "0.01", message = "下注金额必须大于0")
-    @Digits(integer = 18, fraction = 2, message = "下注金额最多保留2位小数")
-    @Schema(description = "下注金额", example = "50.00")
+    @DecimalMin(value = "0.0", inclusive = false, message = "下注金额必须大于0")
+    @Schema(description = "下注金额", example = "50.0000")
     private BigDecimal amount;
 }

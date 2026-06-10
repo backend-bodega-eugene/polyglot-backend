@@ -35,7 +35,7 @@ public class PlaceBetOrderResponse {
     /**
      * 下注金额。
      */
-    @Schema(description = "下注金额", example = "50.00")
+    @Schema(description = "下注金额", example = "50.0000")
     private BigDecimal betAmount;
 
     /**
@@ -47,18 +47,18 @@ public class PlaceBetOrderResponse {
     /**
      * 预计盈利。
      */
-    @Schema(description = "预计盈利", example = "42.50")
+    @Schema(description = "预计盈利", example = "42.5000")
     private BigDecimal expectedProfit;
 
     /**
      * 预计返还。
      */
-    @Schema(description = "预计返还", example = "92.50")
+    @Schema(description = "预计返还", example = "92.5000")
     private BigDecimal expectedReturn;
 
     /**
      * 下注后余额。
      */
-    @Schema(description = "下注后余额", example = "950.00")
+    @Schema(description = "下注后余额", example = "950.0000")
     private BigDecimal balanceAfter;
 }

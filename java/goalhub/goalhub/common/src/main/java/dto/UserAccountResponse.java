@@ -29,19 +29,19 @@ public class UserAccountResponse {
     /**
      * 账户余额。
      */
-    @Schema(description = "账户余额", example = "1000.00")
+    @Schema(description = "账户余额", example = "1000.0000")
     private BigDecimal balance;
 
     /**
      * 冻结余额。
      */
-    @Schema(description = "冻结余额", example = "100.00")
+    @Schema(description = "冻结余额", example = "100.0000")
     private BigDecimal frozenBalance;
 
     /**
      * 可用余额。
      */
-    @Schema(description = "可用余额", example = "900.00")
+    @Schema(description = "可用余额", example = "900.0000")
     private BigDecimal availableBalance;
 
     /**

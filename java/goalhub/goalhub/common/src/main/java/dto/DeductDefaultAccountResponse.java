@@ -29,12 +29,12 @@ public class DeductDefaultAccountResponse {
     /**
      * 扣减前余额。
      */
-    @Schema(description = "扣减前余额", example = "100.00")
+    @Schema(description = "扣减前余额", example = "100.0000")
     private BigDecimal balanceBefore;
 
     /**
      * 扣减后余额。
      */
-    @Schema(description = "扣减后余额", example = "50.00")
+    @Schema(description = "扣减后余额", example = "50.0000")
     private BigDecimal balanceAfter;
 }

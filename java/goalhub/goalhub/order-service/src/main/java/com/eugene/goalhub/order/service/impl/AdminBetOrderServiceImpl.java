@@ -1,10 +1,8 @@
 package com.eugene.goalhub.order.service.impl;
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.eugene.goalhub.boot.logs.service.GoalhubLogService;
 import com.eugene.goalhub.order.entity.BetOrderEntity;
-import com.eugene.goalhub.order.entity.BetOrderItemEntity;
 import com.eugene.goalhub.order.mapper.BetOrderItemMapper;
 import com.eugene.goalhub.order.mapper.BetOrderMapper;
 import com.eugene.goalhub.order.service.AdminBetOrderService;
@@ -18,7 +16,6 @@ import response.ResultCode;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * 后台投注订单管理服务实现。
@@ -83,6 +80,11 @@ public class AdminBetOrderServiceImpl
      * 默认和最大每页数量。
      */
     private static final int DEFAULT_PAGE_SIZE = 100;
+
+    /**
+     * USDT 金额统一保留 4 位小数。
+     */
+    private static final int MONEY_SCALE = 4;
 
     /**
      * 投注订单 Mapper。
@@ -151,6 +153,10 @@ public class AdminBetOrderServiceImpl
                         request
                 );
 
+        if (resultPage.getRecords() != null) {
+            resultPage.getRecords().forEach(this::normalizeOrderResponse);
+        }
+
         goalhubLogService.sysLog(
                 MODULE_NAME,
                 "ORDER_PAGE",
@@ -202,6 +208,10 @@ public class AdminBetOrderServiceImpl
                         page,
                         request
                 );
+
+        if (resultPage.getRecords() != null) {
+            resultPage.getRecords().forEach(this::normalizeOrderItemResponse);
+        }
 
         goalhubLogService.sysLog(
                 MODULE_NAME,
@@ -393,12 +403,12 @@ public class AdminBetOrderServiceImpl
         }
 
         if (STATUS_WIN.equals(order.getStatus())) {
-            return calculateWinSettleAmount(order.getId());
+            return requireValidAmount(order.getTotalExpectedReturn());
         }
 
         if (STATUS_REFUNDED.equals(order.getStatus())
                 || STATUS_CANCELLED.equals(order.getStatus())) {
-            return order.getTotalBetAmount();
+            return requireValidAmount(order.getTotalBetAmount());
         }
 
         throw new BusinessException(ResultCode.BET_ORDER_STATUS_NOT_ALLOW_SETTLE);
@@ -503,53 +513,6 @@ public class AdminBetOrderServiceImpl
     }
 
     /**
-     * 根据订单明细快照计算赢单结算金额。
-     *
-     * @param orderId 订单 ID
-     * @return 赢单结算金额
-     */
-    private BigDecimal calculateWinSettleAmount(
-            Long orderId) {
-
-        List<BetOrderItemEntity> items =
-                betOrderItemMapper.selectList(
-                        Wrappers.lambdaQuery(BetOrderItemEntity.class)
-                                .eq(BetOrderItemEntity::getOrderId, orderId)
-                );
-
-        if (items == null || items.isEmpty()) {
-            throw new BusinessException(ResultCode.BET_ORDER_NOT_FOUND);
-        }
-
-        BigDecimal settleAmount = BigDecimal.ZERO;
-
-        for (BetOrderItemEntity item : items) {
-            BigDecimal betAmount = item.getBetAmount();
-            BigDecimal odds = item.getOdds();
-
-            if (betAmount == null
-                    || odds == null
-                    || betAmount.compareTo(BigDecimal.ZERO) <= 0
-                    || odds.compareTo(BigDecimal.ZERO) <= 0) {
-                throw new BusinessException(ResultCode.BET_ORDER_SETTLE_AMOUNT_INVALID);
-            }
-
-            BigDecimal profit = betAmount
-                    .multiply(odds)
-                    .subtract(betAmount)
-                    .setScale(2, RoundingMode.DOWN);
-
-            if (profit.compareTo(BigDecimal.ZERO) < 0) {
-                throw new BusinessException(ResultCode.BET_ORDER_SETTLE_AMOUNT_INVALID);
-            }
-
-            settleAmount = settleAmount.add(profit);
-        }
-
-        return settleAmount.setScale(2, RoundingMode.DOWN);
-    }
-
-    /**
      * 校验人工审核结果是否合法。
      *
      * @param reviewResult 人工审核结果
@@ -571,5 +534,56 @@ public class AdminBetOrderServiceImpl
         }
 
         throw new BusinessException(ResultCode.BET_ORDER_SYSTEM_RESULT_UNKNOWN);
+    }
+
+    /**
+     * 校验结算金额快照是否合法。
+     *
+     * @param amount 金额快照
+     * @return 4 位小数金额快照
+     */
+    private BigDecimal requireValidAmount(
+            BigDecimal amount) {
+
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) < 0) {
+            throw new BusinessException(ResultCode.BET_ORDER_SETTLE_AMOUNT_INVALID);
+        }
+
+        return normalizeMoney(amount);
+    }
+
+    private void normalizeOrderResponse(
+            AdminBetOrderResponse response) {
+
+        response.setTotalBetAmount(normalizeNullableMoney(response.getTotalBetAmount()));
+        response.setTotalExpectedProfit(normalizeNullableMoney(response.getTotalExpectedProfit()));
+        response.setTotalExpectedReturn(normalizeNullableMoney(response.getTotalExpectedReturn()));
+        response.setBalanceBefore(normalizeNullableMoney(response.getBalanceBefore()));
+        response.setBalanceAfter(normalizeNullableMoney(response.getBalanceAfter()));
+        response.setSettleAmount(normalizeNullableMoney(response.getSettleAmount()));
+    }
+
+    private void normalizeOrderItemResponse(
+            AdminBetOrderItemResponse response) {
+
+        response.setBetAmount(normalizeNullableMoney(response.getBetAmount()));
+        response.setExpectedProfit(normalizeNullableMoney(response.getExpectedProfit()));
+        response.setExpectedReturn(normalizeNullableMoney(response.getExpectedReturn()));
+    }
+
+    private BigDecimal normalizeNullableMoney(
+            BigDecimal amount) {
+
+        if (amount == null) {
+            return null;
+        }
+
+        return normalizeMoney(amount);
+    }
+
+    private BigDecimal normalizeMoney(
+            BigDecimal amount) {
+
+        return amount.setScale(MONEY_SCALE, RoundingMode.DOWN);
     }
 }

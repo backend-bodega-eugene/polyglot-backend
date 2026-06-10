@@ -2,9 +2,11 @@ const http = require('node:http');
 const path = require('node:path');
 const fs = require('node:fs');
 const { exec } = require('node:child_process');
+const os = require('node:os');
 
 const root = __dirname;
 const port = Number(process.env.PORT) || 5173;
+const host = process.env.HOST || '0.0.0.0';
 const startPage = process.argv[2] || 'login.html';
 const mimeTypes = {
   '.css': 'text/css; charset=utf-8',
@@ -45,12 +47,21 @@ const server = http.createServer((req, res) => {
   });
 });
 
-server.listen(port, () => {
-  const url = `http://localhost:${port}/${startPage}`;
-  console.log(`Static site is running at ${url}`);
+function getLanAddresses() {
+  return Object.values(os.networkInterfaces())
+    .flat()
+    .filter((item) => item && item.family === 'IPv4' && !item.internal)
+    .map((item) => item.address);
+}
+
+server.listen(port, host, () => {
+  const localUrl = `http://localhost:${port}/${startPage}`;
+  const lanUrls = getLanAddresses().map((address) => `http://${address}:${port}/${startPage}`);
+  console.log(`Static site is running at ${localUrl}`);
+  lanUrls.forEach((url) => console.log(`LAN: ${url}`));
   console.log('Press Ctrl+C to stop.');
 
   if (process.env.OPEN_BROWSER === '1') {
-    exec(`start "" "${url}"`);
+    exec(`start "" "${localUrl}"`);
   }
 });

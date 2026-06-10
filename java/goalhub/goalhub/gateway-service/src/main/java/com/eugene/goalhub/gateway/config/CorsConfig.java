@@ -1,5 +1,6 @@
 package com.eugene.goalhub.gateway.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -11,6 +12,13 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
  */
 @Configuration
 public class CorsConfig {
+
+    private final String allowedOriginPatterns;
+
+    public CorsConfig(
+            @Value("${gateway.cors.allowed-origin-patterns}") String allowedOriginPatterns) {
+        this.allowedOriginPatterns = allowedOriginPatterns;
+    }
 
     /**
      * 注册全局 CORS 过滤器。
@@ -25,17 +33,12 @@ public class CorsConfig {
         // 允许跨域请求携带 Cookie 或认证信息。
         config.setAllowCredentials(true);
 
-        // 保留你的后台管理系统端口
-        config.addAllowedOrigin("http://localhost:5173");
-        config.addAllowedOrigin("http://127.0.0.1:5173");
-        // 添加这些来支持前端
-        config.addAllowedOrigin("http://localhost");      // 不带端口
-        config.addAllowedOrigin("http://localhost:80");   // 明确指定端口 80
-        config.addAllowedOrigin("http://127.0.0.1");      // IP 形式
-        config.addAllowedOrigin("http://127.0.0.1:80");
-
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
+        for (String originPattern : allowedOriginPatterns.split(",")) {
+            String trimmedPattern = originPattern.trim();
+            if (!trimmedPattern.isEmpty()) {
+                config.addAllowedOriginPattern(trimmedPattern);
+            }
+        }
 
         // 允许所有请求头。
         config.addAllowedHeader("*");

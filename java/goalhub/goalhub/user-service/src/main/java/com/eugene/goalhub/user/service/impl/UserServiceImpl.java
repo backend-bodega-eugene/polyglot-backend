@@ -9,10 +9,7 @@ import com.eugene.goalhub.user.mapper.UserMapper;
 import com.eugene.goalhub.user.service.CaptchaService;
 import com.eugene.goalhub.user.service.RateLimitService;
 import com.eugene.goalhub.user.service.UserService;
-import dto.ChangePasswordRequest;
-import dto.LoginRequest;
-import dto.LoginResponse;
-import dto.RegisterRequest;
+import dto.*;
 import exception.BusinessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -280,5 +277,208 @@ public class UserServiceImpl
                 user.getUsername(),
                 "用户修改密码成功，userId=" + user.getId()
         );
+    }
+    @Override
+    public UserProfileResponse getProfile(Long userId) {
+
+        UserEntity user = getById(userId);
+
+        if (user == null) {
+            throw new BusinessException(ResultCode.USER_NOT_FOUND);
+        }
+
+        return toProfileResponse(user);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateProfile(Long userId, UserProfileUpdateRequest request) {
+
+        UserEntity user = getById(userId);
+
+        if (user == null) {
+            throw new BusinessException(ResultCode.USER_NOT_FOUND);
+        }
+
+        String email = trimToNull(request.getEmail());
+        String phone = trimToNull(request.getPhone());
+
+        if (email != null) {
+            Long count = lambdaQuery()
+                    .eq(UserEntity::getEmail, email)
+                    .ne(UserEntity::getId, userId)
+                    .count();
+
+            if (count > 0) {
+                throw new BusinessException(ResultCode.EMAIL_EXISTS);
+            }
+
+            user.setEmail(email);
+        }
+
+        if (phone != null) {
+            Long count = lambdaQuery()
+                    .eq(UserEntity::getPhone, phone)
+                    .ne(UserEntity::getId, userId)
+                    .count();
+
+            if (count > 0) {
+                throw new BusinessException(ResultCode.PHONE_EXISTS);
+            }
+
+            user.setPhone(phone);
+        }
+
+        user.setNickname(request.getNickname());
+        user.setAvatarUrl(request.getAvatarUrl());
+
+        updateById(user);
+
+        goalhubLogService.bizLog(
+                MODULE_NAME,
+                "UPDATE_PROFILE",
+                user.getId(),
+                user.getUsername(),
+                "用户修改资料成功，userId=" + user.getId()
+        );
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void setFundPassword(Long userId, SetFundPasswordRequest request) {
+
+        UserEntity user = getById(userId);
+
+        if (user == null) {
+            throw new BusinessException(ResultCode.USER_NOT_FOUND);
+        }
+
+        if (user.getFundPasswordHash() != null && !user.getFundPasswordHash().isBlank()) {
+            throw new BusinessException(ResultCode.FUND_PASSWORD_ALREADY_SET);
+        }
+
+        String fundPassword = trimToNull(request.getFundPassword());
+
+        if (fundPassword == null) {
+            throw new BusinessException(ResultCode.FUND_PASSWORD_NOT_NULL);
+        }
+
+        user.setFundPasswordHash(passwordEncoder.encode(fundPassword));
+
+        updateById(user);
+
+        goalhubLogService.bizLog(
+                MODULE_NAME,
+                "SET_FUND_PASSWORD",
+                user.getId(),
+                user.getUsername(),
+                "用户设置资金密码成功，userId=" + user.getId()
+        );
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void changeFundPassword(Long userId, ChangeFundPasswordRequest request) {
+
+        UserEntity user = getById(userId);
+
+        if (user == null) {
+            throw new BusinessException(ResultCode.USER_NOT_FOUND);
+        }
+
+        if (user.getFundPasswordHash() == null || user.getFundPasswordHash().isBlank()) {
+            throw new BusinessException(ResultCode.FUND_PASSWORD_NOT_SET);
+        }
+
+        String oldFundPassword = trimToNull(request.getOldFundPassword());
+        String newFundPassword = trimToNull(request.getNewFundPassword());
+
+        if (oldFundPassword == null || newFundPassword == null) {
+            throw new BusinessException(ResultCode.FUND_PASSWORD_NOT_NULL);
+        }
+
+        boolean matched = passwordEncoder.matches(
+                oldFundPassword,
+                user.getFundPasswordHash()
+        );
+
+        if (!matched) {
+            throw new BusinessException(ResultCode.FUND_PASSWORD_ERROR);
+        }
+
+        user.setFundPasswordHash(passwordEncoder.encode(newFundPassword));
+
+        updateById(user);
+
+        goalhubLogService.bizLog(
+                MODULE_NAME,
+                "CHANGE_FUND_PASSWORD",
+                user.getId(),
+                user.getUsername(),
+                "用户修改资金密码成功，userId=" + user.getId()
+        );
+    }
+    @Override
+    public void verifyFundPassword(Long userId, String fundPassword) {
+
+        if (userId == null) {
+            throw new BusinessException(ResultCode.USER_ID_NOT_NULL);
+        }
+
+        UserEntity user = getById(userId);
+
+        if (user == null) {
+            throw new BusinessException(ResultCode.USER_NOT_FOUND);
+        }
+
+        if (user.getFundPasswordHash() == null || user.getFundPasswordHash().isBlank()) {
+            throw new BusinessException(ResultCode.FUND_PASSWORD_NOT_SET);
+        }
+
+        if (fundPassword == null || fundPassword.trim().isEmpty()) {
+            throw new BusinessException(ResultCode.FUND_PASSWORD_NOT_NULL);
+        }
+
+        boolean matched = passwordEncoder.matches(
+                fundPassword,
+                user.getFundPasswordHash()
+        );
+
+        if (!matched) {
+            throw new BusinessException(ResultCode.FUND_PASSWORD_ERROR);
+        }
+    }
+    private UserProfileResponse toProfileResponse(UserEntity user) {
+
+        UserProfileResponse response = new UserProfileResponse();
+        response.setId(user.getId());
+        response.setUsername(user.getUsername());
+        response.setEmail(user.getEmail());
+        response.setPhone(user.getPhone());
+        response.setNickname(user.getNickname());
+        response.setAvatarUrl(user.getAvatarUrl());
+        response.setStatus(user.getStatus());
+        response.setHasFundPassword(
+                user.getFundPasswordHash() != null && !user.getFundPasswordHash().isBlank()
+        );
+        response.setCreatedAt(user.getCreatedAt());
+        response.setUpdatedAt(user.getUpdatedAt());
+
+        return response;
+    }
+
+    private String trimToNull(String value) {
+
+        if (value == null) {
+            return null;
+        }
+
+        String trimmed = value.trim();
+
+        if (trimmed.isEmpty()) {
+            return null;
+        }
+
+        return trimmed;
     }
 }

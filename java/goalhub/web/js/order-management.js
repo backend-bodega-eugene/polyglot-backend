@@ -59,6 +59,12 @@
     return Number.isNaN(date.getTime()) ? '' : date.toISOString();
   }
 
+  function clampPageIndex() {
+    const pages = Math.max(1, Math.ceil(state.total / state.pageSize));
+    state.pageIndex = Math.min(Math.max(1, Number(state.pageIndex) || 1), pages);
+    return pages;
+  }
+
   function badge(value) {
     const labels = {
       PENDING: '待判定',
@@ -164,8 +170,8 @@
   }
 
   function renderPager() {
-    const pages = Math.max(1, Math.ceil(state.total / state.pageSize));
-    const cur = Math.min(state.pageIndex, pages);
+    const pages = clampPageIndex();
+    const cur = state.pageIndex;
     const item = (p, txt, disabled = false, active = false) => `<li class="page-item ${disabled ? 'disabled' : ''} ${active ? 'active' : ''}"><a href="#" class="page-link" data-page="${p}">${txt}</a></li>`;
     const start = Math.max(1, cur - 3);
     const end = Math.min(pages, start + 6);
@@ -184,6 +190,7 @@
       state.total = page.total;
       state.pageIndex = page.pageIndex;
       state.pageSize = page.pageSize;
+      clampPageIndex();
       renderRows();
       renderPager();
     } catch (error) {

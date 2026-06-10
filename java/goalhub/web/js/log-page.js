@@ -57,6 +57,12 @@
     return Number.isNaN(date.getTime()) ? '' : date.toISOString();
   }
 
+  function clampPageIndex() {
+    const pages = Math.max(1, Math.ceil(state.total / state.pageSize));
+    state.pageIndex = Math.min(Math.max(1, Number(state.pageIndex) || 1), pages);
+    return pages;
+  }
+
   async function readJson(res) {
     const text = await res.text();
     if (!text) return {};
@@ -221,8 +227,8 @@
     const total = document.getElementById('logs-total');
     if (!pager || !total) return;
 
-    const pages = Math.max(1, Math.ceil(state.total / state.pageSize));
-    const cur = Math.min(state.pageIndex, pages);
+    const pages = clampPageIndex();
+    const cur = state.pageIndex;
     const item = (page, text, disabled = false, active = false) =>
       `<li class="page-item ${disabled ? 'disabled' : ''} ${active ? 'active' : ''}">
         <a href="#" class="page-link" data-page="${page}">${text}</a>
@@ -247,6 +253,7 @@
       state.total = page.total;
       state.pageIndex = page.pageIndex;
       state.pageSize = page.pageSize;
+      clampPageIndex();
       renderRows(state.list);
       renderPager();
     } catch (error) {

@@ -9,6 +9,7 @@ import dto.AppUserBalanceResponse;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * 前端用户账户服务实现。
@@ -27,6 +28,11 @@ public class AppUserAccountServiceImpl implements AppUserAccountService {
      * 默认账户币种编码。
      */
     private static final String DEFAULT_CURRENCY_CODE = "USDT";
+
+    /**
+     * USDT 金额统一保留 4 位小数。
+     */
+    private static final int MONEY_SCALE = 4;
 
     /**
      * 用户账户 Mapper。
@@ -70,9 +76,9 @@ public class AppUserAccountServiceImpl implements AppUserAccountService {
         if (account == null) {
             AppUserBalanceResponse response = new AppUserBalanceResponse();
             response.setCurrencyCode(DEFAULT_CURRENCY_CODE);
-            response.setBalance(BigDecimal.ZERO);
-            response.setFrozenBalance(BigDecimal.ZERO);
-            response.setAvailableBalance(BigDecimal.ZERO);
+            response.setBalance(zeroMoney());
+            response.setFrozenBalance(zeroMoney());
+            response.setAvailableBalance(zeroMoney());
             response.setStatus(1);
             goalhubLogService.sysLog(
                     MODULE_NAME,
@@ -90,7 +96,9 @@ public class AppUserAccountServiceImpl implements AppUserAccountService {
         response.setCurrencyCode(account.getCurrencyCode());
         response.setBalance(balance);
         response.setFrozenBalance(frozenBalance);
-        response.setAvailableBalance(balance.subtract(frozenBalance));
+       // response.setAvailableBalance(balance.subtract(frozenBalance));
+        //目前没有总资金概念,账户Balance字段就是可用金额,也许将来这里要改,回复扣减后才是可用金额
+        response.setAvailableBalance(balance);
         response.setStatus(account.getStatus());
 
         goalhubLogService.sysLog(
@@ -111,9 +119,18 @@ public class AppUserAccountServiceImpl implements AppUserAccountService {
             BigDecimal amount) {
 
         if (amount == null) {
-            return BigDecimal.ZERO;
+            return zeroMoney();
         }
 
-        return amount;
+        return amount.setScale(MONEY_SCALE, RoundingMode.DOWN);
+    }
+
+    /**
+     * 返回 4 位小数零金额。
+     *
+     * @return 0.0000
+     */
+    private BigDecimal zeroMoney() {
+        return BigDecimal.ZERO.setScale(MONEY_SCALE, RoundingMode.DOWN);
     }
 }

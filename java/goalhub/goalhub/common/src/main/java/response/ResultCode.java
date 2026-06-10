@@ -87,6 +87,16 @@ public enum ResultCode {
     CONTENT_NOT_FOUND(10073,"content.not.found"),
     USER_COMMENT_NOT_FOUND(10074,"user.comment.not.found"),
     USER_COMMENT_TOO_FREQUENT(10075,"user.comment.too.frequent"),
+    EMAIL_EXISTS(10076,"email.exists"),
+    PHONE_EXISTS(10077,"phone.exists"),
+    FUND_PASSWORD_ALREADY_SET(10078,"fund.password.already.set"),
+    FUND_PASSWORD_NOT_NULL(10079,"fund.password.not.null"),
+    FUND_PASSWORD_NOT_SET(10080,"fund.password.not.set"),
+    FUND_PASSWORD_ERROR(10081,"fund.password.error"),
+    EMAIL_NOT_NULL(10082,"email.not.null"),
+    EMAIL_CODE_EXPIRED(10083,"email.code.expired"),
+    EMAIL_CODE_ERROR(10084,"email.code.error"),
+    EMAIL_CODE_SEND_TOO_FREQUENT(10085,"email.code.too.frequent"),
     FATHER_NOT_OWN(10100,"father.not.own");
 
     /**

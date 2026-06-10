@@ -161,6 +161,22 @@ public class ContentServiceImpl extends ServiceImpl<ContentMapper, ContentEntity
         }
         return toResponse(entity);
     }
+    @Override
+    public ContentResponse about() {
+        ContentEntity entity = lambdaQuery()
+                .eq(ContentEntity::getType, ContentType.ABOUT)
+                .eq(ContentEntity::getStatus, ContentStatus.PUBLISHED)
+                // .le(ContentEntity::getPublishTime, LocalDateTime.now())
+                .orderByDesc(ContentEntity::getSort)
+                .orderByDesc(ContentEntity::getId)
+                .last("LIMIT 1")
+                .one();
+
+        if (entity == null) {
+            return null;
+        }
+        return toResponse(entity);
+    }
 
     /**
      * 分页查询 App 文章内容。

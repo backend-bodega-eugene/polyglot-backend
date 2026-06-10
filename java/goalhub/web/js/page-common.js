@@ -45,6 +45,15 @@
   const auth = window.GoalHubAuth;
   if (!auth) return;
 
+  function escapeHtml(value) {
+    return String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   async function fetchMenus() {
     const res = await auth.authFetch('/admin/auth/menus');
     if (!res.ok) throw new Error('菜单加载失败');
@@ -66,17 +75,17 @@
         const page = node.path || '#';
         const href = page === '#' ? '#' : `index.html?page=${encodeURIComponent(page)}`;
         li.innerHTML = `
-          <a href="${href}" class="nav-link${location.pathname.endsWith('/' + page) ? ' active' : ''}">
-            <i class="nav-icon ${node.icon || 'bi bi-speedometer'}"></i>
-            <p>${node.name}</p>
+          <a href="${escapeHtml(href)}" class="nav-link${location.pathname.endsWith('/' + page) ? ' active' : ''}">
+            <i class="nav-icon ${escapeHtml(node.icon || 'bi bi-speedometer')}"></i>
+            <p>${escapeHtml(node.name || '')}</p>
           </a>`;
         return li;
       }
 
       li.innerHTML = `
         <a href="#" class="nav-link">
-          <i class="nav-icon ${node.icon || 'bi bi-folder'}"></i>
-          <p>${node.name} <i class="nav-arrow bi bi-chevron-right"></i></p>
+          <i class="nav-icon ${escapeHtml(node.icon || 'bi bi-folder')}"></i>
+          <p>${escapeHtml(node.name || '')} <i class="nav-arrow bi bi-chevron-right"></i></p>
         </a>`;
       const ul = document.createElement('ul');
       ul.className = 'nav nav-treeview';
@@ -106,7 +115,7 @@
       : '今日登录';
 
     if ($name) $name.textContent = n;
-    if ($title) $title.innerHTML = `${n} - ${role} <small id="user-since">${sinceTxt}</small>`;
+    if ($title) $title.innerHTML = `${escapeHtml(n)} - ${escapeHtml(role)} <small id="user-since">${escapeHtml(sinceTxt)}</small>`;
 
     const avatar = p.avatarUrl || p.avatar || 'assets/img/default-avatar.jpg';
     if ($av1) $av1.src = avatar;

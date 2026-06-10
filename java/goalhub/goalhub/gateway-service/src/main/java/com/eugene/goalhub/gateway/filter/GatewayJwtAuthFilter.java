@@ -47,6 +47,7 @@ public class GatewayJwtAuthFilter implements GlobalFilter, Ordered {
             "/api/user/login",
             "/api/user/register",
             "/api/user/captcha",
+            "/api/user/forgotpassword/**",
             "/admin/auth/login",
            "/api/soccer/contents/**",
            // "/admin/test/ping",

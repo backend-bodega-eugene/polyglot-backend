@@ -1,14 +1,15 @@
 // ========== 首页交互逻辑 ==========
 
 // API 基础配置
-const API_BASE_URL = 'http://localhost:8000';
-const RESULT_API_URL = 'http://localhost:8000/api/soccer/matches/results/page';
-const BET_ORDER_API_URL = 'http://localhost:8000/api/order/bet/orders/place';
+const API_BASE_URL = window.GoalHubConfig?.API_BASE_URL || 'http://localhost:8000';
+const RESULT_API_URL = `${API_BASE_URL}/api/soccer/matches/results/page`;
+const BET_ORDER_API_URL = `${API_BASE_URL}/api/order/bet/orders/place`;
 const FOLLOW_API_URL = `${API_BASE_URL}/api/soccer/follow`;
 const DEFAULT_LANG_CODE = 'en-US';
 const PAGE_SIZE = 10;
 const BET_PRESET_AMOUNTS = [10, 50, 100, 500, 1000];
 const BALANCE_CACHE_KEY = 'defaultBalanceText';
+const { apiFetch, refreshBalance, renderCachedBalance } = window.GoalHubApp;
 
 // DOM 元素
 const navTabs = document.querySelectorAll('.nav-tab');
@@ -22,7 +23,6 @@ const sportsNav = document.querySelector('.sports-nav');
 let currentTab = 'today';
 let currentLeagueId = null;
 let currentLangCode = DEFAULT_LANG_CODE;
-let authToken = null;
 let currentPageIndex = 1;
 let selectedBet = null;
 let showingFollowedMatches = false;
@@ -63,19 +63,6 @@ function getFollowRecordMatchId(record, match) {
     return getMatchId(match) || record?.matchId || record?.soccerMatchId || record?.footballMatchId || '';
 }
 
-/**
- * 获取认证header
- */
-function getAuthHeaders() {
-    authToken = localStorage.getItem('authToken') || '';
-    console.log('当前token:', authToken ? '已获取' : '未找到');
-    
-    return {
-        'Authorization': `Bearer ${authToken}`,
-        'Content-Type': 'application/json'
-    };
-}
-
 function formatBalance(value) {
     const amount = Number(value);
     if (Number.isNaN(amount)) {
@@ -83,13 +70,6 @@ function formatBalance(value) {
     }
 
     return amount.toFixed(2);
-}
-
-function renderCachedBalance() {
-    const cachedBalanceText = localStorage.getItem(BALANCE_CACHE_KEY);
-    if (balanceEl && cachedBalanceText) {
-        balanceEl.textContent = cachedBalanceText;
-    }
 }
 
 function escapeHtml(value) {
@@ -111,26 +91,12 @@ async function loadDefaultBalance() {
 
     try {
         const url = `${API_BASE_URL}/api/user/account/me/defaultbalance`;
-        console.log('请求余额URL:', url);
-
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: getAuthHeaders()
-        });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('余额响应错误:', response.status, errorText);
-            throw new Error(`HTTP ${response.status}: ${errorText}`);
-        }
-
-        const data = await response.json();
+        const data = await apiFetch(url);
         const availableBalance = data?.data?.availableBalance;
         const balanceText = `💰 ${formatBalance(availableBalance)}`;
         balanceEl.textContent = balanceText;
         localStorage.setItem(BALANCE_CACHE_KEY, balanceText);
     } catch (error) {
-        console.error('加载余额失败:', error);
         renderCachedBalance();
         if (!balanceEl.textContent.trim()) {
             balanceEl.textContent = '💰 0.00';
@@ -144,9 +110,8 @@ async function loadDefaultBalance() {
 function checkAuth() {
     const token = localStorage.getItem('authToken');
     if (!token) {
-        console.error('未找到认证token，请先登陆');
-        leaguesList.innerHTML = '<div style="padding: 10px; color: #e74c3c;">请先<a href="/login.html" style="color: #2196F3;">登陆</a>继续</div>';
-        matchesList.innerHTML = '<div style="padding: 10px; color: #e74c3c;">请先<a href="/login.html" style="color: #2196F3;">登陆</a>继续</div>';
+        leaguesList.innerHTML = '<div style="padding: 10px; color: #e74c3c;">请先<a href="/login.html" style="color: #2196F3;">登录</a>继续</div>';
+        matchesList.innerHTML = '<div style="padding: 10px; color: #e74c3c;">请先<a href="/login.html" style="color: #2196F3;">登录</a>继续</div>';
         return false;
     }
     return true;
@@ -158,23 +123,7 @@ function checkAuth() {
 async function loadLeagues() {
     try {
         const url = `${API_BASE_URL}/api/soccer/leagues?langCode=${currentLangCode}`;
-        console.log('请求URL:', url);
-        
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: getAuthHeaders()
-        });
-
-        console.log('响应状态:', response.status);
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('响应错误:', response.status, errorText);
-            throw new Error(`HTTP ${response.status}: ${errorText}`);
-        }
-
-        const data = await response.json();
-        console.log('联盟列表:', data);
+        const data = await apiFetch(url);
 
         // 清空现有联盟列表
         leaguesList.innerHTML = '';
@@ -197,8 +146,6 @@ async function loadLeagues() {
             leaguesList.appendChild(leagueItem);
         });
     } catch (error) {
-        console.error('获取联盟列表失败:', error);
-        // 显示错误提示
         leaguesList.innerHTML = `<div style="padding: 10px; color: #e74c3c;">加载失败: ${error.message}</div>`;
     }
 }
@@ -219,8 +166,6 @@ function selectLeague(leagueId, element) {
     currentLeagueId = leagueId;
     showingFollowedMatches = false;
     document.querySelectorAll('.sports-nav .nav-item').forEach(navItem => navItem.classList.remove('active'));
-
-    console.log('选择联盟:', leagueId);
 
     // 重新加载对应联盟的赛事
     currentPageIndex = 1;
@@ -244,18 +189,7 @@ async function loadFollowedMatches() {
         setLoadMoreVisible(false);
         matchesList.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">关注赛事加载中...</div>';
 
-        const response = await fetch(`${FOLLOW_API_URL}/my`, {
-            method: 'GET',
-            headers: getAuthHeaders()
-        });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('关注赛事响应错误:', response.status, errorText);
-            throw new Error(`HTTP ${response.status}: ${errorText}`);
-        }
-
-        const data = await response.json();
+        const data = await apiFetch(`${FOLLOW_API_URL}/my`);
         const records = getRecords(data);
         followedMatchIds.clear();
         matchesList.innerHTML = '';
@@ -277,7 +211,6 @@ async function loadFollowedMatches() {
             loadMatchOdds(match, matchItem);
         });
     } catch (error) {
-        console.error('加载关注赛事失败:', error);
         matchesList.innerHTML = `<div style="padding: 10px; color: #e74c3c;">加载关注赛事失败: ${error.message}</div>`;
     }
 }
@@ -331,23 +264,7 @@ async function loadMatches() {
                 break;
         }
 
-        console.log('请求赛事URL:', url);
-
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: getAuthHeaders()
-        });
-
-        console.log('赛事响应状态:', response.status);
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('赛事响应错误:', response.status, errorText);
-            throw new Error(`HTTP ${response.status}: ${errorText}`);
-        }
-
-        const data = await response.json();
-        console.log('赛事列表:', data);
+        const data = await apiFetch(url);
         const records = getRecords(data);
 
         // 清空赛事列表（第一页时）
@@ -374,7 +291,6 @@ async function loadMatches() {
             matchesList.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">暂无赛事</div>';
         }
     } catch (error) {
-        console.error('加载赛事失败:', error);
         matchesList.innerHTML = `<div style="padding: 10px; color: #e74c3c;">加载赛事失败: ${error.message}</div>`;
     }
 }
@@ -398,24 +314,10 @@ async function loadMatchResults() {
             requestBody.leagueId = currentLeagueId;
         }
 
-        console.log('请求赛果URL:', RESULT_API_URL, requestBody);
-
-        const response = await fetch(RESULT_API_URL, {
+        const data = await apiFetch(RESULT_API_URL, {
             method: 'POST',
-            headers: getAuthHeaders(),
             body: JSON.stringify(requestBody)
         });
-
-        console.log('赛果响应状态:', response.status);
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('赛果响应错误:', response.status, errorText);
-            throw new Error(`HTTP ${response.status}: ${errorText}`);
-        }
-
-        const data = await response.json();
-        console.log('赛果列表:', data);
         const records = getRecords(data);
 
         if (currentPageIndex === 1) {
@@ -434,7 +336,6 @@ async function loadMatchResults() {
             matchesList.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">暂无赛果</div>';
         }
     } catch (error) {
-        console.error('加载赛果失败:', error);
         matchesList.innerHTML = `<div style="padding: 10px; color: #e74c3c;">加载赛果失败: ${error.message}</div>`;
     }
 }
@@ -511,24 +412,10 @@ async function loadMatchOdds(match, matchItem) {
 
     try {
         const url = `${API_BASE_URL}/api/soccer/matches/${matchId}/odds`;
-        console.log('请求赔率URL:', url);
-
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: getAuthHeaders()
-        });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('赔率响应错误:', response.status, errorText);
-            throw new Error(`HTTP ${response.status}: ${errorText}`);
-        }
-
-        const data = await response.json();
+        const data = await apiFetch(url);
         const markets = Array.isArray(data?.data?.markets) ? data.data.markets : [];
         renderMatchOdds(oddsContainer, markets);
     } catch (error) {
-        console.error('加载赔率失败:', error);
         oddsContainer.innerHTML = '<div class="odds-empty odds-error">赔率加载失败</div>';
     }
 }
@@ -544,16 +431,7 @@ async function toggleFollowMatch(button) {
 
     try {
         button.disabled = true;
-        const response = await fetch(`${FOLLOW_API_URL}/${encodeURIComponent(matchId)}`, {
-            method,
-            headers: getAuthHeaders()
-        });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('关注操作响应错误:', response.status, errorText);
-            throw new Error(`HTTP ${response.status}: ${errorText}`);
-        }
+        await apiFetch(`${FOLLOW_API_URL}/${encodeURIComponent(matchId)}`, { method });
 
         const nextFollowed = !isFollowed;
         updateFollowButton(button, nextFollowed);
@@ -569,7 +447,6 @@ async function toggleFollowMatch(button) {
             }
         }
     } catch (error) {
-        console.error('关注操作失败:', error);
         alert(`关注操作失败: ${error.message}`);
     } finally {
         button.disabled = false;
@@ -780,23 +657,14 @@ async function submitBetOrder() {
         submitBtn.textContent = '提交中...';
         messageEl.textContent = '';
 
-        const response = await fetch(BET_ORDER_API_URL, {
+        const data = await apiFetch(BET_ORDER_API_URL, {
             method: 'POST',
-            headers: getAuthHeaders(),
             body: JSON.stringify({
                 matchMarketOptionId: selectedBet.matchMarketOptionId,
                 amount
             })
         });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('下单响应错误:', response.status, errorText);
-            throw new Error(`HTTP ${response.status}: ${errorText}`);
-        }
-
-        const data = await response.json();
-        if (data.code !== 200 && data.code !== 10061) {
+        if (data.code !== 0 && data.code !== 200 && data.code !== '0' && data.code !== '200') {
             throw new Error(data.message || '下单失败');
         }
 
@@ -807,9 +675,8 @@ async function submitBetOrder() {
             ${order.expectedReturn != null ? `｜预计返还 ${formatBalance(order.expectedReturn)} USDT` : ''}
         `;
         submitBtn.textContent = '已提交';
-        loadDefaultBalance();
+        refreshBalance();
     } catch (error) {
-        console.error('提交订单失败:', error);
         messageEl.textContent = `下单失败: ${error.message}`;
         messageEl.className = 'bet-message error';
         submitBtn.disabled = false;
@@ -914,7 +781,6 @@ navTabs.forEach(tab => {
             statusFilter.textContent = currentTab === 'results' ? '赛果' : '进行中';
         }
         
-        console.log('切换到:', currentTab);
         loadMatches();
     });
 });
@@ -978,12 +844,10 @@ if (matchesList) {
 
 // 页面加载时初始化
 window.addEventListener('load', () => {
-    console.log('页面加载中...');
     renderCachedBalance();
     
     // 检查认证状态
     if (!checkAuth()) {
-        console.error('需要先登陆');
         return;
     }
 
@@ -993,15 +857,7 @@ window.addEventListener('load', () => {
         currentLangCode = savedLangCode;
     }
 
-    console.log('使用语言编码:', currentLangCode);
-    console.log('使用token:', localStorage.getItem('authToken') ? '已设置' : '未设置');
-
     initBetModal();
-
-    // 首次没有缓存时才请求余额，页面间切换直接复用右上角缓存。
-    if (!localStorage.getItem(BALANCE_CACHE_KEY)) {
-        loadDefaultBalance();
-    }
 
     // 加载联盟列表
     loadLeagues();

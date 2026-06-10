@@ -2,8 +2,9 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const PORT = 80;
-const HOSTNAME = 'localhost';
+const PORT = Number(process.env.PORT || 80);
+const HOSTNAME = process.env.HOST || '0.0.0.0';
+const DISPLAY_HOST = HOSTNAME === '0.0.0.0' ? '192.168.1.104' : HOSTNAME;
 
 // 获取文件的 MIME 类型
 function getMimeType(filePath) {
@@ -85,7 +86,8 @@ server.listen(PORT, HOSTNAME, () => {
 ║      GoalHub - 用户注册界面服务器       ║
 ╚════════════════════════════════════════╝
 
-📍 服务器地址: http://${HOSTNAME}:${PORT}
+📍 本机访问: http://localhost:${PORT}
+📱 内网访问: http://${DISPLAY_HOST}:${PORT}
 🌐 打开浏览器访问上述地址即可
 
 按 Ctrl+C 停止服务器

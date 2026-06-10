@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import response.ResultCode;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 
 /**
@@ -53,6 +54,11 @@ public class AdminDepositOrderServiceImpl
      * 默认最大每页数量。
      */
     private static final int DEFAULT_PAGE_SIZE = 100;
+
+    /**
+     * USDT 金额统一保留 4 位小数。
+     */
+    private static final int MONEY_SCALE = 4;
 
     /**
      * 充值订单 Mapper。
@@ -107,6 +113,10 @@ public class AdminDepositOrderServiceImpl
 
         Page<AdminDepositOrderResponse> resultPage =
                 depositOrderMapper.selectAdminPage(page, request);
+
+        if (resultPage.getRecords() != null) {
+            resultPage.getRecords().forEach(this::normalizeResponse);
+        }
 
         return new PageResponse<>(
                 resultPage.getTotal(),
@@ -182,6 +192,8 @@ public class AdminDepositOrderServiceImpl
         if (actualAmount == null || actualAmount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new BusinessException(ResultCode.PARAM_ERROR);
         }
+
+        actualAmount = normalizeMoney(actualAmount);
 
         if (STATUS_APPROVED.equals(request.getAuditStatus())) {
             DefaultAccountBalanceChangeRequest balanceRequest =
@@ -266,8 +278,8 @@ public class AdminDepositOrderServiceImpl
         response.setOrderNo(entity.getOrderNo());
         response.setUserId(entity.getUserId());
         response.setCurrencyCode(entity.getCurrencyCode());
-        response.setAmount(entity.getAmount());
-        response.setActualAmount(entity.getActualAmount());
+        response.setAmount(normalizeNullableMoney(entity.getAmount()));
+        response.setActualAmount(normalizeNullableMoney(entity.getActualAmount()));
         response.setStatus(entity.getStatus());
         response.setChainType(entity.getChainType());
         response.setTxHash(entity.getTxHash());
@@ -279,5 +291,28 @@ public class AdminDepositOrderServiceImpl
         response.setCreatedAt(entity.getCreatedAt());
         response.setUpdatedAt(entity.getUpdatedAt());
         return response;
+    }
+
+    private void normalizeResponse(
+            AdminDepositOrderResponse response) {
+
+        response.setAmount(normalizeNullableMoney(response.getAmount()));
+        response.setActualAmount(normalizeNullableMoney(response.getActualAmount()));
+    }
+
+    private BigDecimal normalizeNullableMoney(
+            BigDecimal amount) {
+
+        if (amount == null) {
+            return null;
+        }
+
+        return normalizeMoney(amount);
+    }
+
+    private BigDecimal normalizeMoney(
+            BigDecimal amount) {
+
+        return amount.setScale(MONEY_SCALE, RoundingMode.DOWN);
     }
 }

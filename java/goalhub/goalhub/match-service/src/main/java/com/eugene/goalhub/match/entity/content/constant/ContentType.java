@@ -24,6 +24,7 @@ public class ContentType {
      * 让球教程。
      */
     public static final String HANDICAP_TUTORIAL = "HANDICAP_TUTORIAL";
+    public static final String ABOUT = "about";
 
     /**
      * 工具类构造器。

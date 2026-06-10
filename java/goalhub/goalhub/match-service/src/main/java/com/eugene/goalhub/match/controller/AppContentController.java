@@ -50,6 +50,17 @@ public class AppContentController {
     }
 
     /**
+     * 关于。
+     *
+     * @return 关于
+     */
+    @Operation(summary = "关于", description = "查询 App 端展示的关于内容。")
+    @GetMapping("/articles/about")
+    public Result<ContentResponse> about() {
+        return Result.success(contentService.about());
+    }
+
+    /**
      * 分页查询文章。
      *
      * @param request 内容分页查询参数

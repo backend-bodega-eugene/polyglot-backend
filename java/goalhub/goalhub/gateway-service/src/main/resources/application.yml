@@ -1,6 +1,13 @@
 server:
   # 网关服务端口。
-  port: 8000
+  port: ${GATEWAY_PORT:8000}
+
+gateway:
+  cors:
+    # 局域网测试默认允许 localhost、127.0.0.1 和常见私网网段来源。
+    # 注意：浏览器访问 80 端口时，Origin 通常是不带 :80 的，例如 http://192.168.1.104。
+    # 生产环境请通过 GATEWAY_CORS_ALLOWED_ORIGIN_PATTERNS 收窄为真实前端域名。
+    allowed-origin-patterns: ${GATEWAY_CORS_ALLOWED_ORIGIN_PATTERNS:http://localhost,http://localhost:*,http://127.0.0.1,http://127.0.0.1:*,http://192.168.*,http://192.168.*:*,http://10.*,http://10.*:*,http://172.*,http://172.*:*}
 
 spring:
   application:
@@ -8,16 +15,16 @@ spring:
     name: gateway-service
   data:
     redis:
-      host: 127.0.0.1
-      port: 6379
-      password:
-      database: 0
-      timeout: 3000ms
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      database: ${REDIS_DATABASE:0}
+      timeout: ${REDIS_TIMEOUT:3000ms}
   cloud:
     nacos:
       discovery:
         # Nacos 服务发现地址。
-        server-addr: 127.0.0.1:8848
+        server-addr: ${NACOS_SERVER_ADDR:127.0.0.1:8848}
 
     gateway:
       server:

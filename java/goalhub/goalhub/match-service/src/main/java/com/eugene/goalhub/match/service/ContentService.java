@@ -78,4 +78,5 @@ public interface ContentService {
      * @return 消息分页数据
      */
     PageResponse<ContentResponse> appMessagePage(AppContentPageRequest request);
+    ContentResponse about();
 }

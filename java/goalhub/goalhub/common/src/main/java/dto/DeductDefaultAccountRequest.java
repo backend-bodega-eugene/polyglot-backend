@@ -2,7 +2,6 @@ package dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -30,9 +29,8 @@ public class DeductDefaultAccountRequest {
      * 扣减金额。
      */
     @NotNull(message = "扣减金额不能为空")
-    @DecimalMin(value = "0.01", message = "扣减金额必须大于0")
-    @Digits(integer = 18, fraction = 2, message = "扣减金额最多保留2位小数")
-    @Schema(description = "扣减金额", example = "50.00")
+    @DecimalMin(value = "0.0", inclusive = false, message = "扣减金额必须大于0")
+    @Schema(description = "扣减金额", example = "50.0000")
     private BigDecimal amount;
 
     /**

@@ -87,6 +87,19 @@ public class UserEntity {
      * 最后登录IP。
      */
     private String lastLoginIp;
+    /**
+     * BCrypt 加密后的资金密码。
+     */
+    private String fundPasswordHash;
+
+    public String getFundPasswordHash() {
+        return fundPasswordHash;
+    }
+
+    public UserEntity setFundPasswordHash(String fundPasswordHash) {
+        this.fundPasswordHash = fundPasswordHash;
+        return this;
+    }
 
     public String getInviteCode() {
         return inviteCode;

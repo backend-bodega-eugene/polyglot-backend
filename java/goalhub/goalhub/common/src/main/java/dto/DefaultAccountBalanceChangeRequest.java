@@ -2,7 +2,6 @@ package dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -28,10 +27,9 @@ public class DefaultAccountBalanceChangeRequest {
     /**
      * 变更金额。
      */
-    @Schema(description = "变更金额", example = "100.00")
+    @Schema(description = "变更金额", example = "100.0000")
     @NotNull(message = "金额不能为空")
-    @DecimalMin(value = "0.01", message = "金额必须大于0")
-    @Digits(integer = 18, fraction = 2, message = "金额最多保留2位小数")
+    @DecimalMin(value = "0.0", inclusive = false, message = "金额必须大于0")
     private BigDecimal amount;
 
     /**
