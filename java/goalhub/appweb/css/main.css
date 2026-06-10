@@ -14,6 +14,12 @@ body {
     padding: 20px;
 }
 
+@supports (height: 100dvh) {
+    body {
+        min-height: 100dvh;
+    }
+}
+
 .container {
     width: 100%;
     max-width: 600px;
@@ -336,6 +342,7 @@ body.app-home .container,
     body.app-home,
     body.app-page {
         padding: 0;
+        overflow: hidden;
     }
 
     body.app-home .container,
@@ -343,9 +350,16 @@ body.app-home .container,
         width: 100vw;
         max-width: none;
         min-height: 100vh;
-        padding: 10px;
+        padding: calc(10px + env(safe-area-inset-top)) calc(10px + env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) calc(10px + env(safe-area-inset-left));
         border-radius: 0;
         box-shadow: none;
+    }
+
+    @supports (height: 100dvh) {
+        body.app-home .container,
+        .container.app-shell {
+            min-height: 100dvh;
+        }
     }
 
     .header {
@@ -411,7 +425,7 @@ body.app-home .container,
 
     body.app-home .container,
     .container.app-shell {
-        padding: 8px;
+        padding: calc(8px + env(safe-area-inset-top)) calc(8px + env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) calc(8px + env(safe-area-inset-left));
     }
 
     .header {

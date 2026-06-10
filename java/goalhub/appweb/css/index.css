@@ -12,6 +12,13 @@ body.app-home .container {
     max-height: calc(100vh - 48px);
 }
 
+@supports (height: 100dvh) {
+    body.app-home .container {
+        height: calc(100dvh - 48px);
+        max-height: calc(100dvh - 48px);
+    }
+}
+
 /* 头部样式 */
 .index-header {
     background: white;
@@ -742,7 +749,7 @@ body.app-home .container {
     justify-content: space-around;
     background: white;
     border-top: 1px solid #e0e0e0;
-    padding: 8px 0;
+    padding: 8px 0 max(8px, env(safe-area-inset-bottom));
     margin-top: auto;
     flex-shrink: 0;
 }
@@ -778,6 +785,13 @@ body.app-home .container {
     body.app-home .container {
         height: 100vh;
         max-height: 100vh;
+    }
+
+    @supports (height: 100dvh) {
+        body.app-home .container {
+            height: 100dvh;
+            max-height: 100dvh;
+        }
     }
 
     .content-wrapper {

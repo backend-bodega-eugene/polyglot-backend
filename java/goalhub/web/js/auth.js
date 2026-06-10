@@ -1,6 +1,7 @@
 (function () {
-  const API_BASE = localStorage.getItem('API_BASE') || 'http://localhost:8000';
-  const LOGIN_PAGE = 'login.html';
+  const config = window.GoalHubConfig || {};
+  const API_BASE = String(config.apiBase ?? '').replace(/\/+$/, '');
+  const LOGIN_PAGE = config.loginPage || 'login.html';
 
   function getToken() {
     return localStorage.getItem('authToken') || sessionStorage.getItem('authToken');

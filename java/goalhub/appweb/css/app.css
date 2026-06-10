@@ -8,6 +8,12 @@
     overflow: hidden;
 }
 
+@supports (height: 100dvh) {
+    .app-shell {
+        height: calc(100dvh - 48px);
+    }
+}
+
 .app-page-header {
     display: grid;
     grid-template-columns: 42px 1fr 96px;
@@ -872,6 +878,12 @@ button.app-tab {
 @media (max-width: 600px) {
     .app-shell {
         height: 100vh;
+    }
+
+    @supports (height: 100dvh) {
+        .app-shell {
+            height: 100dvh;
+        }
     }
 
     .password-form,
