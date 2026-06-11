@@ -15,11 +15,27 @@ const resetFilterBtn = document.getElementById('resetFilterBtn');
 const ordersLoadMoreBtn = document.getElementById('ordersLoadMoreBtn');
 const { apiFetch } = window.GoalHubApp;
 
-let currentPageIndex = 1;
-let totalOrders = 0;
+let nextPageIndex = 1;
+let totalApiOrders = 0;
 let loadedOrders = 0;
 let isLoading = false;
+let activeRequestId = 0;
+let filteredOrderBuffer = [];
 let currentLangCode = localStorage.getItem('langCode') || DEFAULT_LANG_CODE;
+
+function isSettledView() {
+    return window.location.hash === '#settled';
+}
+
+function updateViewText() {
+    pageTitle.textContent = '投注记录';
+    emptyText.textContent = isSettledView() ? '暂无已结注单' : '暂无未结注单';
+}
+
+function isOrderInCurrentView(order) {
+    const isSettled = Boolean(order.settledAt);
+    return isSettledView() ? isSettled : !isSettled;
+}
 
 function escapeHtml(value) {
     return String(value ?? '')
@@ -85,9 +101,9 @@ function getTotal(payload, records) {
     return Number.isFinite(total) ? total : records.length;
 }
 
-function buildRequestBody() {
+function buildRequestBody(pageIndex) {
     const body = {
-        pageIndex: currentPageIndex,
+        pageIndex,
         pageSize: PAGE_SIZE,
         langCode: currentLangCode
     };
@@ -134,7 +150,7 @@ function renderError(message) {
 }
 
 function updateLoadMore() {
-    const hasMore = loadedOrders < totalOrders;
+    const hasMore = filteredOrderBuffer.length > 0 || nextPageIndex <= Math.ceil(totalApiOrders / PAGE_SIZE);
     ordersLoadMoreBtn.style.display = hasMore ? 'block' : 'none';
     ordersLoadMoreBtn.disabled = false;
     ordersLoadMoreBtn.textContent = '加载更多';
@@ -218,30 +234,63 @@ function getResultText(result) {
 }
 
 async function loadOrders({ append = false } = {}) {
-    if (isLoading) {
+    if (append && isLoading) {
         return;
     }
 
-    const firstPage = currentPageIndex === 1 && !append;
+    const requestId = activeRequestId + 1;
+    activeRequestId = requestId;
+    const firstPage = !append;
+    if (firstPage) {
+        nextPageIndex = 1;
+        totalApiOrders = 0;
+        filteredOrderBuffer = [];
+    }
+
     isLoading = true;
-    pageTitle.textContent = '投注记录';
-    emptyText.textContent = '暂无投注记录';
+    updateViewText();
     renderLoading(firstPage);
 
     try {
-        const data = await apiFetch(ORDER_PAGE_API_URL, {
-            method: 'POST',
-            body: JSON.stringify(buildRequestBody())
-        });
+        const filteredRecords = filteredOrderBuffer.splice(0, PAGE_SIZE);
 
-        const records = getRecords(data);
-        totalOrders = getTotal(data, records);
-        loadedOrders = append ? loadedOrders + records.length : records.length;
-        renderOrders(records, append);
+        while (filteredRecords.length < PAGE_SIZE) {
+            const data = await apiFetch(ORDER_PAGE_API_URL, {
+                method: 'POST',
+                body: JSON.stringify(buildRequestBody(nextPageIndex))
+            });
+
+            if (requestId !== activeRequestId) {
+                return;
+            }
+
+            const records = getRecords(data);
+            totalApiOrders = getTotal(data, records);
+            nextPageIndex += 1;
+            filteredRecords.push(...records.filter(isOrderInCurrentView));
+
+            const totalApiPages = Math.ceil(totalApiOrders / PAGE_SIZE);
+            if (!records.length || nextPageIndex > totalApiPages) {
+                break;
+            }
+        }
+
+        const recordsToRender = filteredRecords.slice(0, PAGE_SIZE);
+        filteredOrderBuffer = filteredRecords.slice(PAGE_SIZE);
+        loadedOrders = append ? loadedOrders + recordsToRender.length : recordsToRender.length;
+        renderOrders(recordsToRender, append);
     } catch (error) {
+        if (requestId !== activeRequestId) {
+            return;
+        }
+
         console.error('查询注单失败:', error);
         renderError(`查询失败: ${error.message}`);
     } finally {
+        if (requestId !== activeRequestId) {
+            return;
+        }
+
         isLoading = false;
         if (ordersLoadMoreBtn.style.display !== 'none') {
             updateLoadMore();
@@ -251,7 +300,8 @@ async function loadOrders({ append = false } = {}) {
 
 orderFilterForm.addEventListener('submit', event => {
     event.preventDefault();
-    currentPageIndex = 1;
+    nextPageIndex = 1;
+    filteredOrderBuffer = [];
     loadedOrders = 0;
     loadOrders();
 });
@@ -260,14 +310,29 @@ resetFilterBtn.addEventListener('click', () => {
     keywordsInput.value = '';
     startTimeInput.value = '';
     endTimeInput.value = '';
-    currentPageIndex = 1;
+    nextPageIndex = 1;
+    filteredOrderBuffer = [];
     loadedOrders = 0;
     loadOrders();
 });
 
 ordersLoadMoreBtn.addEventListener('click', () => {
-    currentPageIndex += 1;
     loadOrders({ append: true });
 });
+
+window.addEventListener('hashchange', () => {
+    nextPageIndex = 1;
+    loadedOrders = 0;
+    totalApiOrders = 0;
+    filteredOrderBuffer = [];
+    if (window.GoalHubApp?.renderFooter) {
+        window.GoalHubApp.renderFooter();
+    }
+    loadOrders();
+});
+
+if (!window.location.hash) {
+    window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}#open`);
+}
 
 loadOrders();

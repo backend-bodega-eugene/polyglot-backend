@@ -26,9 +26,9 @@ public class CaptchaRateLimitFilter implements GlobalFilter, Ordered {
 
     private static final List<String> CAPTCHA_PATHS = List.of(
             "/api/user/captcha",
-           "/api/user/forgotpassword/sendcode",
+            "/api/user/forgotpassword/sendcode",
             "/api/user/forgotpassword/reset"
-           // "/admin/auth/captcha"
+            // "/admin/auth/captcha"
     );
 
     private static final int MINUTE_LIMIT = 10;
@@ -88,16 +88,22 @@ public class CaptchaRateLimitFilter implements GlobalFilter, Ordered {
 
     private String getClientIp(ServerHttpRequest request) {
 
-        String ip = request.getHeaders().getFirst("X-Forwarded-For");
+        String ip = request.getHeaders().getFirst("CF-Connecting-IP");
 
         if (ip != null && !ip.isBlank()) {
-            return ip.split(",")[0].trim();
+            return ip.trim();
         }
 
         ip = request.getHeaders().getFirst("X-Real-IP");
 
         if (ip != null && !ip.isBlank()) {
-            return ip;
+            return ip.trim();
+        }
+
+        ip = request.getHeaders().getFirst("X-Forwarded-For");
+
+        if (ip != null && !ip.isBlank()) {
+            return ip.split(",")[0].trim();
         }
 
         if (request.getRemoteAddress() != null
