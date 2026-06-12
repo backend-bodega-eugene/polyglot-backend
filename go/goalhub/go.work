@@ -1,0 +1,10 @@
+go 1.26.4
+
+use (
+    ./common
+    ./gateway-service
+    ./user-service
+    ./match-service
+    ./order-service
+    ./admin-service
+)
