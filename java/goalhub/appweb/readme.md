@@ -1,329 +1,173 @@
-# GoalHub 注册界面项目
+# GoalHub App Web
 
-## 项目结构
+GoalHub App Web 是面向用户端的移动优先 Web 应用，使用原生 HTML、CSS、JavaScript 实现，不依赖前端框架。项目主要承载注册登录、赛事投注、订单记录、钱包资金、客服反馈、设置和 CMS 内容展示等功能。
 
-```
-appweb/
-├── server.js           # Node.js 服务器（端口 80）
-├── register.html       # 注册页面
-├── login.html          # 登录页面（占位符）
-├── css/
-│   └── main.css        # 主样式表
-├── js/
-│   └── register.js     # 注册页面脚本
-└── README.md           # 项目说明
-```
+## 运行方式
 
-## 最近更新
-
-### 目录结构优化
-- ✅ CSS 文件移至 `css/` 文件夹
-- ✅ JS 文件移至 `js/` 文件夹
-- ✅ 品牌更换为 GoalHub
-- ✅ 合作伙伴区域已移除
-- ✅ 文件名标准化（register.html）
-- ✅ 页面重新排版
-
-## 功能特性
-
-### ✅ 已实现的功能
-
-1. **界面设计**
-   - GoalHub 品牌标识
-   - 清洁简约的注册表单
-   - 完全响应式设计（手机+平板+桌面）
-
-2. **表单字段**
-   - 用户名输入框
-   - 密码输入框
-   - 确认密码输入框
-   - 昵称输入框
-   - 服务条款同意复选框
-
-3. **表单验证**
-   - 用户名：3-20字符，只能包含字母、数字、下划线
-   - 密码：6-50字符
-   - 密码确认：必须与密码一致
-   - 昵称：2-30字符
-   - 必须同意服务条款
-
-4. **用户交互**
-   - 实时错误提示（失焦时验证）
-   - 表单提交时完整验证
-   - 加载动画
-   - 消息提示（成功/失败）
-
-5. **底部导航**
-   - 前往登录
-   - 游客进入
-   - 客服帮助
-
-## API 集成
-
-**端点**：`POST http://localhost:8000/api/user/register`
-
-**请求体**：
-```json
-{
-  "username": "zhangsan",
-  "password": "123456",
-  "nickname": "张三"
-}
-```
-
-## 使用方法
-
-### 启动服务器
 ```bash
 cd d:\Eugene\polyglot-backend\java\goalhub\appweb
 node server.js
 ```
 
-服务器将在 `http://localhost` （端口 80）启动
+默认监听：
 
-### 访问页面
-- 注册页面：`http://localhost/register.html` 或 `http://localhost`
-- 登录页面：`http://localhost/login.html`
+- 本机：`http://localhost:80`
+- 局域网：`http://192.168.1.104:80`
 
-## 文件说明
+可通过环境变量覆盖：
 
-### server.js
-- Node.js HTTP 服务器
-- 静态文件服务
-- CORS 跨域支持
-- 端口 80
+```bash
+$env:PORT=8080
+$env:HOST="0.0.0.0"
+node server.js
+```
 
-### register.html
-- 注册界面主文件
-- 包含表单和导航按钮
-- 引入 CSS 和 JS 资源
+## 后端地址
 
-### css/main.css
-- 响应式样式表
-- 蓝色主题色
-- 支持移动端和桌面端
-- 动画效果
+接口基础地址在 [js/config.js](d:/Eugene/polyglot-backend/java/goalhub/appweb/js/config.js) 配置：
 
-### js/register.js
-- 表单验证逻辑
-- API 请求处理
-- 事件监听
-- 错误提示和消息显示
-
-### login.html
-- 登录页面占位符
-- 待实现功能
-
-## 技术栈
-
-- HTML5
-- CSS3（响应式、渐变、动画）
-- 纯 JavaScript ES6
-- Node.js HTTP 服务器
-- Fetch API
-
-## 浏览器兼容性
-
-- Chrome 60+
-- Firefox 55+
-- Safari 10.1+
-- Edge 79+
-- 移动浏览器
-
-## 响应式断点
-
-- 桌面：600px+
-- 平板：600px - 400px
-- 手机：< 400px
-
-## 自定义配置
-
-### 修改主题色
-编辑 `css/main.css`，查找并替换：
-- `#1e3c72` 和 `#2a5298`
-
-### 修改 API 地址
-编辑 `js/register.js`，修改：
 ```javascript
-const API_URL = 'http://localhost:8000/api/user/register';
+window.GoalHubConfig = {
+    API_BASE_URL: 'http://192.168.1.104:8000'
+};
 ```
 
-### 修改服务器端口
-编辑 `server.js`，修改：
-```javascript
-const PORT = 80;
+如果没有加载该配置，脚本会回退到 `http://localhost:8000`。
+
+## 项目结构
+
+```text
+appweb/
+├── *.html          # 各业务页面
+├── css/
+│   ├── main.css    # 注册、登录等基础页面样式
+│   ├── index.css   # 首页赛事和底部布局样式
+│   └── app.css     # App 内页通用样式
+├── js/
+│   ├── config.js   # API_BASE_URL 配置
+│   ├── app.js      # 登录态、鉴权请求、底部导航、余额公共逻辑
+│   └── *.js        # 各页面业务脚本
+└── server.js       # 静态文件服务器
 ```
 
-### 修改品牌信息
-编辑 `register.html`，修改：
-```html
-<div class="logo">GoalHub</div>
-<div class="subtitle">让每个目标都闪闪发光</div>
-```
+## 页面功能
 
-## 问题排查
+| 页面 | 功能 |
+| --- | --- |
+| `register.html` | 用户注册、验证码、表单校验 |
+| `login.html` | 用户登录、验证码、登录态写入 |
+| `forgotpassword.html` | 忘记密码、发送验证码、重置密码 |
+| `index.html` | 赛事列表、筛选、关注、赔率弹层、下注 |
+| `tutorial.html` | CMS 盘口教程展示 |
+| `service.html` | 客服入口 |
+| `usercomments.html` | 用户留言提交和历史回复 |
+| `bettings.html` | 未结注单、已结注单查询 |
+| `myprofile.html` | 我的页面、钱包入口、个人中心入口 |
+| `setting.html` | 设置入口：资料、密码、资金密码、关于、退出 |
+| `about.html` | CMS 关于内容展示 |
+| `editprofile.html` | 修改昵称等个人资料 |
+| `changepassword.html` | 修改登录密码 |
+| `fundpassword.html` | 设置或修改资金密码 |
+| `deposit.html` / `withdraw.html` | 存款、取款申请 |
+| `deposithistory.html` / `withdrawhistory.html` | 存取款记录 |
+| `transactions.html` | 账户流水查询 |
 
-### 端口 80 权限不足
-- 使用管理员身份运行
-- 或修改为其他端口（如 3000、8080）
+## 公共机制
 
-### 注册请求失败
-- 确保后端服务运行在 `http://localhost:8000`
-- 检查浏览器开发者工具（F12）的网络选项卡
-- 检查 CORS 配置
+[js/app.js](d:/Eugene/polyglot-backend/java/goalhub/appweb/js/app.js) 是所有 App 内页的公共入口，负责：
 
-### 样式未应用
-- 清除浏览器缓存
-- 确保 CSS 文件路径正确
+- 维护登录态：`authToken`、`userId`、`currentUsername`、`currentNickname`
+- 非公开页面自动校验登录，未登录跳转 `login.html`
+- 提供 `GoalHubApp.apiFetch()`，自动拼接 API 地址、附带 Bearer Token、处理 401
+- 渲染底部导航并根据当前页面设置 active 状态
+- 缓存和刷新默认钱包余额
+- 绑定退出登录按钮
 
-## 许可
+公开页面包括：
 
-本项目仅供学习和参考使用。
+- `login.html`
+- `register.html`
+- `forgotpassword.html`
 
-2. **表单字段**
-   - 用户名输入框
-   - 密码输入框
-   - 确认密码输入框
-   - 昵称输入框
-   - 服务条款同意复选框
+其他页面默认需要登录。
 
-3. **表单验证**
-   - 用户名：3-20字符，只能包含字母、数字、下划线
-   - 密码：6-50字符
-   - 密码确认：必须与密码一致
-   - 昵称：2-30字符
-   - 必须同意服务条款
+## 主要接口
 
-4. **用户交互**
-   - 实时错误提示（失焦时验证）
-   - 表单提交时完整验证
-   - 加载动画
-   - 消息提示（成功/失败）
+### 用户
 
-5. **底部导航**
-   - 前往登录
-   - 游客进入
-   - 在线客服
+- `POST /api/user/register`
+- `POST /api/user/login`
+- `GET /api/user/captcha`
+- `GET /api/user/profile/me`
+- `PUT /api/user/profile/me`
+- `POST /api/user/change-password`
+- `POST /api/user/forgotpassword/sendcode`
+- `POST /api/user/forgotpassword/reset`
+- `POST /api/user/security/fundpassword/set`
+- `POST /api/user/security/fundpassword/change`
 
-6. **响应式设计**
-   - 完全适配手机屏幕
-   - 在600px、400px处有断点
+### 钱包和资金
 
-### 🔗 API 集成
-- **端点**：`POST http://localhost:8000/api/user/register`
-- **请求体**：
-  ```json
-  {
-    "username": "zhangsan",
-    "password": "123456",
-    "nickname": "张三"
-  }
-  ```
+- `GET /api/user/account/me/defaultbalance`
+- `GET /api/user/account/me/transactions`
+- `POST /api/order/depositorder/create`
+- `POST /api/order/depositorder/page`
+- `POST /api/order/withdraworder/create`
+- `POST /api/order/withdraworder/page`
 
-## 使用方法
+### 赛事和投注
 
-### 1. 本地测试
-1. 将 `index.html` 文件在浏览器中打开
-2. 或使用本地服务器（如 Python 的 `http.server`）：
-   ```bash
-   # 在 appweb 目录下运行
-   python -m http.server 3000
-   # 然后访问 http://localhost:3000
-   ```
+- `GET /api/soccer/leagues`
+- `GET /api/soccer/matches`
+- `GET /api/soccer/matches/today`
+- `GET /api/soccer/matches/upcoming`
+- `GET /api/soccer/matches/hot`
+- `POST /api/soccer/matches/results/page`
+- `GET /api/soccer/matches/{matchId}/odds`
+- `GET /api/soccer/follow/my`
+- `POST /api/soccer/follow/{matchId}`
+- `DELETE /api/soccer/follow/{matchId}`
+- `POST /api/order/bet/orders/place`
+- `POST /api/order/bet/orders/page`
 
-### 2. 确保后端服务运行
-- 确保后端服务运行在 `http://localhost:8000`
-- 确保 `/api/user/register` 接口可用
+### 内容和客服
 
-### 3. 配置跨域（如果需要）
-如果后端和前端不在同一端口，需要配置 CORS：
-- 确保后端返回适当的 CORS 头
-- 或在前端代码中添加代理
+- `GET /api/soccer/contents/articles/handicaptutorial`
+- `GET /api/soccer/contents/articles/about`
+- `POST /api/user/usercomments/add`
+- `POST /api/user/usercomments/page`
 
-## 文件说明
+## CMS 内容说明
 
-### index.html
-- HTML 结构
-- 包含表单、导航按钮等元素
-- 引入 styles.css 和 script.js
+`tutorial.html` 和 `about.html` 都从内容管理系统读取 HTML 正文：
 
-### styles.css
-- 响应式设计
-- 蓝色主题色：#1e3c72 和 #2a5298
-- 支持移动端和桌面端
-- 包含加载动画和消息提示样式
+- 盘口教程：`/api/soccer/contents/articles/handicaptutorial`
+- 关于：`/api/soccer/contents/articles/about`
 
-### script.js
-- 表单验证逻辑
-- API 请求处理
-- 事件监听
-- 错误提示和消息显示
-- 不依赖任何框架（纯 JavaScript）
+App 前端不向“关于”接口传参数。后台发布内容时，需要由后台管理前端保存正确的内容类型；App 只负责展示接口返回的 `data.contentHtml`。
 
-## 技术栈
+## 开发约定
 
-- **HTML5**：语义化标签
-- **CSS3**：渐变、动画、网格布局
-- **纯 JavaScript ES6**：无框架依赖
-- **Fetch API**：用于 HTTP 请求
+- 新增 App 内页时，引入顺序保持为 `js/config.js`、`js/app.js`、页面脚本。
+- 需要登录的接口优先使用 `GoalHubApp.apiFetch()`。
+- 页面内金额显示优先复用公共余额缓存和 `refreshBalance()`。
+- 底部导航由 `app.js` 统一渲染，页面 HTML 中的 `.index-footer` 会被替换。
+- 当前项目边界是 `appweb`；后台管理前端在同级 `web` 项目，后端在 `goalhub` 项目。
 
-## 浏览器兼容性
+## 常见问题
 
-- Chrome 60+
-- Firefox 55+
-- Safari 10.1+
-- Edge 79+
+### 页面跳到登录页
 
-## 自定义选项
+非公开页面需要 `localStorage.authToken`。登录过期或接口返回 401 时，公共脚本会清理登录态并跳转登录页。
 
-### 修改主题色
-在 `styles.css` 中搜索 `#1e3c72` 或 `#2a5298`，替换为你想要的颜色。
+### 接口请求到错误环境
 
-### 修改 API 地址
-在 `script.js` 中修改：
-```javascript
-const API_URL = 'http://localhost:8000/api/user/register';
-```
+检查 [js/config.js](d:/Eugene/polyglot-backend/java/goalhub/appweb/js/config.js) 的 `API_BASE_URL` 是否指向当前后端。
 
-### 修改验证规则
-在 `script.js` 中编辑各个 `validate*` 函数。
+### 端口 80 启动失败
 
-### 修改合作伙伴卡片
-在 `index.html` 中编辑 `.partners-section` 内的内容。
+Windows 下端口 80 可能需要管理员权限。可以用 `PORT=8080` 启动，或关闭占用端口的程序。
 
-## 注意事项
+### 关于或盘口教程显示为空
 
-1. **跨域问题**：如果前端和后端不在同一端口，需要配置 CORS
-2. **本地资源**：所有资源都是本地的，没有外部依赖
-3. **安全性**：密码在传输前进行了客户端验证，但生产环境应使用 HTTPS
-4. **错误处理**：所有错误都会显示用户友好的提示信息
-
-## 如何改进
-
-如果你需要添加以下功能，请告诉我：
-1. 真实的 Logo 图片替换 K8
-2. 真实的合作伙伴 Logo 图片
-3. 实际的条款和隐私政策链接
-4. 邮箱验证功能
-5. 验证码功能
-6. 第三方登录集成
-7. 数据库持久化
-
-## 问题排查
-
-### 注册请求失败
-- 检查后端服务是否运行在 `http://localhost:8000`
-- 检查浏览器控制台的网络请求
-- 确保请求数据格式正确
-
-### 样式未应用
-- 确保 styles.css 文件在正确的位置
-- 检查浏览器缓存（使用 Ctrl+Shift+Delete 清除）
-
-### JavaScript 错误
-- 打开浏览器开发者工具（F12）查看控制台
-- 检查 script.js 文件是否加载成功
-
-## 许可
-
-本项目仅供学习和参考使用。
+先确认后台 CMS 已发布对应内容，并且接口返回的 `data.contentHtml` 不为空。App 前端只展示接口返回内容。

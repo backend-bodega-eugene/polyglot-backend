@@ -54,6 +54,26 @@
       .replace(/'/g, '&#39;');
   }
 
+  function normalizePage(page) {
+    const raw = String(page || '').trim();
+    if (!raw || raw === '#') return '';
+    if (/^([a-z][a-z\d+.-]*:)?\/\//i.test(raw) || raw.startsWith('/')) {
+      try {
+        const url = new URL(raw, location.href);
+        if (url.origin !== location.origin) return '';
+        const basePath = location.pathname.replace(/[^/]*$/, '');
+        const path = url.pathname.startsWith(basePath)
+          ? url.pathname.slice(basePath.length)
+          : url.pathname.replace(/^\/+/, '');
+        return `${path}${url.search}${url.hash}`.replace(/^\.?\//, '');
+      } catch (_) {
+        return '';
+      }
+    }
+    if (/^[a-z][a-z\d+.-]*:/i.test(raw)) return '';
+    return raw.replace(/^\.?\//, '');
+  }
+
   async function fetchMenus() {
     const res = await auth.authFetch('/admin/auth/menus');
     if (!res.ok) throw new Error('菜单加载失败');
@@ -72,10 +92,10 @@
       li.className = 'nav-item';
 
       if (!hasChildren) {
-        const page = node.path || '#';
-        const href = page === '#' ? '#' : `index.html?page=${encodeURIComponent(page)}`;
+        const page = normalizePage(node.path);
+        const href = page ? `index.html?page=${encodeURIComponent(page)}` : '#';
         li.innerHTML = `
-          <a href="${escapeHtml(href)}" class="nav-link${location.pathname.endsWith('/' + page) ? ' active' : ''}">
+          <a href="${escapeHtml(href)}" class="nav-link${page && location.pathname.endsWith('/' + page) ? ' active' : ''}">
             <i class="nav-icon ${escapeHtml(node.icon || 'bi bi-speedometer')}"></i>
             <p>${escapeHtml(node.name || '')}</p>
           </a>`;

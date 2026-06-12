@@ -30,14 +30,30 @@
   function normalizePage(page) {
     const raw = String(page || '').trim();
     if (!raw || raw === '#') return '';
-    if (/^(https?:)?\/\//i.test(raw)) return '';
+    if (/^([a-z][a-z\d+.-]*:)?\/\//i.test(raw) || raw.startsWith('/')) {
+      try {
+        const url = new URL(raw, location.href);
+        if (url.origin !== location.origin) return '';
+        const basePath = location.pathname.replace(/[^/]*$/, '');
+        const path = url.pathname.startsWith(basePath)
+          ? url.pathname.slice(basePath.length)
+          : url.pathname.replace(/^\/+/, '');
+        return `${path}${url.search}${url.hash}`.replace(/^\.?\//, '');
+      } catch (_) {
+        return '';
+      }
+    }
+    if (/^[a-z][a-z\d+.-]*:/i.test(raw)) return '';
     return raw.replace(/^\.?\//, '');
   }
 
   function pageUrl(page) {
     const normalized = normalizePage(page);
     if (!normalized) return '';
-    return `${normalized}${normalized.includes('?') ? '&' : '?'}embedded=1`;
+    const params = new URLSearchParams();
+    params.set('embedded', '1');
+    params.set('_v', String(Date.now()));
+    return `${normalized}${normalized.includes('?') ? '&' : '?'}${params.toString()}`;
   }
 
   function getInitialPage() {
@@ -98,6 +114,7 @@
 
     frameWrap?.classList.add('is-loading');
     frame.src = url;
+    console.log('[GoalHub] iframe load', { page, normalized, url, resolved: frame.src });
     setActive(normalized);
 
     if (options.push !== false) {

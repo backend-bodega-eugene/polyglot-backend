@@ -4,10 +4,6 @@ const ABOUT_API_URL = `${API_BASE_URL}/api/soccer/contents/articles/about`;
 const aboutTitle = document.getElementById('aboutTitle');
 const aboutContent = document.getElementById('aboutContent');
 
-function isSuccessCode(code) {
-    return code === 0 || code === 200 || code === '0' || code === '200';
-}
-
 async function loadAbout() {
     if (!aboutContent) {
         return;
@@ -22,11 +18,7 @@ async function loadAbout() {
         }
 
         const payload = await response.json();
-        if (!isSuccessCode(payload.code)) {
-            throw new Error(payload.message || '加载关于内容失败');
-        }
-
-        const article = payload.data || {};
+        const article = payload?.data || {};
         const title = article.title || '关于';
         const contentHtml = article.contentHtml || article.content_html || '';
 

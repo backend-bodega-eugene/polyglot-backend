@@ -232,6 +232,7 @@
     crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
   <script src="./js/adminlte.js"></script>
+  <script src="./js/page-common.js"></script>
 
   <script>
     const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';
@@ -246,106 +247,6 @@
     });
   </script>
 
-  <script>
-    (function () {
-      const auth = window.GoalHubAuth;
-
-      async function fetchMenus() {
-        const res = await auth.authFetch('/admin/auth/menus');
-        if (!res.ok) throw new Error('菜单加载失败');
-        const data = await res.json();
-        return Array.isArray(data) ? data : (data.data || []);
-      }
-
-      // ★ 关键：只往“侧边栏里的”#navigation 塞节点，防止同名 id 抢占
-      function renderMenus(menus) {
-        const root = document.querySelector('aside.app-sidebar #navigation'); // ★
-        if (!root) return;
-        root.innerHTML = '';
-
-        const createItem = (node) => {
-          const hasChildren = Array.isArray(node.children) && node.children.length > 0;
-          const li = document.createElement('li');
-          li.className = 'nav-item';
-
-          if (!hasChildren) {
-            const path = node.path || '#';
-            li.innerHTML = `
-              <a href="${path}" class="nav-link${location.pathname.endsWith('/' + path) ? ' active' : ''}">
-                <i class="nav-icon ${node.icon || 'bi bi-speedometer'}"></i>
-                <p>${node.name}</p>
-              </a>`;
-            return li;
-          }
-
-          li.innerHTML = `
-            <a href="#" class="nav-link">
-              <i class="nav-icon ${node.icon || 'bi bi-folder'}"></i>
-              <p>${node.name} <i class="nav-arrow bi bi-chevron-right"></i></p>
-            </a>`;
-          const ul = document.createElement('ul');
-          ul.className = 'nav nav-treeview';
-          node.children.forEach(ch => ul.appendChild(createItem(ch)));
-          li.appendChild(ul);
-          return li;
-        };
-
-        menus.forEach(m => root.appendChild(createItem(m)));
-      }
-      // ★ END
-
-      fetchMenus()
-        .then(m => { renderMenus(m || []); })
-        .catch(e => { console.warn(e); });
-    })();
-  </script>
-  <script>
-    (function () {
-      // —— 取 token（跟你菜单那套一致）
-      const auth = window.GoalHubAuth;
-      const token = auth.getToken();
-      const AUTH_HEADERS = token ? { 'Authorization': 'Bearer ' + token } : {};
-
-      // —— DOM
-      const $name = document.getElementById('user-name');
-      const $title = document.getElementById('user-title');
-      const $since = document.getElementById('user-since');
-      const $av1 = document.getElementById('user-avatar');
-      const $av2 = document.getElementById('user-avatar-large');
-      const $out = document.getElementById('btn-signout');
-
-      function setProfile(p = {}) {
-        const n = p.nickname || p.fullName || p.realName || p.username || '管理员';
-        const role = Number(p.isSuperAdmin) === 1 ? 'Super Admin' : 'Admin';
-        const sinceTxt = p.memberSince
-          ? `登录时间 ${new Date(p.memberSince).toLocaleDateString()}`
-          : '今日登录';
-
-        if ($name) $name.textContent = n;
-        if ($title) {
-          $title.innerHTML = `${n} - ${role} <small id="user-since">${sinceTxt}</small>`;
-        }
-        if ($since) $since.textContent = sinceTxt;
-
-        // 头像：优先接口返回，否则用默认头像
-        const avatar = p.avatarUrl || p.avatar || 'assets/img/default-avatar.jpg';
-        if ($av1) $av1.src = avatar;
-        if ($av2) $av2.src = avatar;
-      }
-
-      // —— 拉你自己的用户接口：优先 /api/me，退化到 /api/user/info
-      async function loadProfile() {
-        setProfile(auth.getAdminUser() || {});
-      }
-
-      // —— 退出登录
-      $out?.addEventListener('click', () => {
-        auth.toLogin();
-      });
-
-      loadProfile();
-    })();
-  </script>
   <script>
     (function () {
       const auth = window.GoalHubAuth;
