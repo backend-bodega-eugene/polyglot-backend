@@ -907,3 +907,375 @@ button.app-tab {
         padding: 7px 12px;
     }
 }
+
+.champion-shell {
+    padding-bottom: 0;
+}
+
+.champion-layout {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 190px minmax(0, 1fr);
+    background: #f9f9f9;
+    border: 1px solid #f0f0f0;
+    border-bottom: none;
+    overflow: hidden;
+}
+
+.champion-leagues {
+    min-width: 0;
+    background: white;
+    border-right: 1px solid #e8e8e8;
+    overflow-y: auto;
+}
+
+.champion-side-title {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    padding: 12px;
+    background: #f5f5f5;
+    color: #555;
+    font-size: 13px;
+    font-weight: 700;
+    border-bottom: 1px solid #e8e8e8;
+}
+
+.champion-league-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.champion-league-item {
+    width: 100%;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    border: none;
+    border-bottom: 1px solid #f0f0f0;
+    background: white;
+    color: #555;
+    font-size: 13px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.champion-league-item.active {
+    background: #eaf5ff;
+    color: #2196F3;
+    font-weight: 700;
+    box-shadow: inset 3px 0 0 #2196F3;
+}
+
+.champion-league-item-logo,
+.champion-league-logo,
+.champion-team-logo {
+    flex-shrink: 0;
+    object-fit: contain;
+    background: #f7f7f7;
+}
+
+.champion-league-item-logo {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+}
+
+.champion-league-state {
+    padding: 14px 12px;
+    color: #999;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.champion-main {
+    min-width: 0;
+    overflow-y: auto;
+    background: #f9f9f9;
+}
+
+.champion-toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 58px;
+    padding: 10px 14px;
+    background: white;
+    border-bottom: 1px solid #e8e8e8;
+}
+
+.champion-toolbar-title {
+    color: #333;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.champion-toolbar-subtitle {
+    margin-top: 3px;
+    color: #999;
+    font-size: 12px;
+}
+
+.champion-refresh {
+    height: 32px;
+    padding: 0 12px;
+    border: 1px solid #dceeff;
+    border-radius: 6px;
+    background: #f7fbff;
+    color: #2196F3;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.champion-refresh:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.champion-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.champion-group {
+    margin: 12px;
+    border: 1px solid #ededed;
+    border-radius: 8px;
+    background: white;
+    overflow: hidden;
+}
+
+.champion-group-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    background: #fbfbfb;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.champion-league-logo {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}
+
+.champion-logo-fallback {
+    display: inline-grid;
+    place-items: center;
+    color: #2196F3;
+    font-weight: 800;
+}
+
+.champion-group-title {
+    color: #333;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.champion-group-subtitle {
+    margin-top: 2px;
+    color: #999;
+    font-size: 12px;
+}
+
+.champion-team-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.champion-team-row {
+    min-width: 0;
+    min-height: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 12px;
+    border: none;
+    border-right: 1px solid #f4f4f4;
+    border-bottom: 1px solid #f4f4f4;
+    background: white;
+    color: #333;
+    text-align: left;
+    cursor: pointer;
+}
+
+.champion-team-row:hover {
+    background: #f8fcff;
+}
+
+.champion-team-row.closed {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.champion-team-main {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.champion-team-logo {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+.champion-team-name {
+    min-width: 0;
+    color: #333;
+    font-size: 13px;
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.champion-odds-box {
+    flex-shrink: 0;
+    min-width: 68px;
+    min-height: 34px;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 9px;
+    border-radius: 6px;
+    background: #eef6ff;
+}
+
+.champion-odds {
+    color: #2196F3;
+    font-size: 16px;
+    font-weight: 900;
+    line-height: 1.1;
+}
+
+.champion-status {
+    margin-top: 2px;
+    color: #999;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.champion-load-more {
+    display: block;
+}
+
+.champion-state {
+    color: #999;
+    text-align: center;
+}
+
+.champion-error {
+    color: #e74c3c;
+}
+
+.champion-bet-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: none;
+}
+
+.champion-bet-modal.active {
+    display: block;
+}
+
+.champion-bet-mask {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+}
+
+.champion-bet-sheet {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: min(100%, 600px);
+    max-height: 92vh;
+    overflow-y: auto;
+    transform: translateX(-50%);
+    padding: 22px 26px 24px;
+    border-radius: 24px 24px 0 0;
+    background: white;
+    box-shadow: 0 -12px 30px rgba(0, 0, 0, 0.16);
+}
+
+.champion-bet-close {
+    position: absolute;
+    top: -42px;
+    right: 14px;
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    color: #777;
+    font-size: 24px;
+    line-height: 28px;
+    cursor: pointer;
+}
+
+@media (max-width: 700px) {
+    .champion-layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto minmax(0, 1fr);
+    }
+
+    .champion-leagues {
+        border-right: none;
+        border-bottom: 1px solid #e8e8e8;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+
+    .champion-side-title {
+        display: none;
+    }
+
+    .champion-league-list {
+        flex-direction: row;
+    }
+
+    .champion-league-item {
+        width: auto;
+        min-width: 94px;
+        justify-content: center;
+        border-right: 1px solid #f0f0f0;
+        border-bottom: none;
+        white-space: nowrap;
+    }
+
+    .champion-league-item.active {
+        box-shadow: inset 0 -3px 0 #2196F3;
+    }
+
+    .champion-main {
+        min-height: 0;
+    }
+}
+
+@media (max-width: 520px) {
+    .champion-team-list {
+        grid-template-columns: 1fr;
+    }
+
+    .champion-toolbar {
+        align-items: flex-start;
+    }
+
+    .champion-bet-sheet {
+        padding: 18px 16px 20px;
+    }
+}

@@ -20,55 +20,19 @@ import utils.JwtUtil;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-/**
- * 用户账号服务实现。
- *
- * <p>负责前端用户注册、登录、验证码校验、登录限流、密码校验和默认账户创建。</p>
- */
 @Service
 public class UserServiceImpl
         extends ServiceImpl<UserMapper, UserEntity>
         implements UserService {
 
-    /**
-     * 业务日志模块名称。
-     */
     private static final String MODULE_NAME = "用户账号";
 
-    /**
-     * 密码加密与校验组件。
-     */
     private final PasswordEncoder passwordEncoder;
-
-    /**
-     * 用户账户 Mapper。
-     */
     private final UserAccountMapper userAccountMapper;
-
-    /**
-     * 图形验证码服务。
-     */
     private final CaptchaService captchaService;
-
-    /**
-     * 限流服务。
-     */
     private final RateLimitService rateLimitService;
-
-    /**
-     * 日志写入服务。
-     */
     private final GoalhubLogService goalhubLogService;
 
-    /**
-     * 创建用户账号服务实现。
-     *
-     * @param passwordEncoder   密码加密与校验组件
-     * @param userAccountMapper 用户账户 Mapper
-     * @param captchaService    图形验证码服务
-     * @param rateLimitService  限流服务
-     * @param goalhubLogService 日志写入服务
-     */
     public UserServiceImpl(PasswordEncoder passwordEncoder,
                            UserAccountMapper userAccountMapper,
                            CaptchaService captchaService,
@@ -81,14 +45,6 @@ public class UserServiceImpl
         this.goalhubLogService = goalhubLogService;
     }
 
-    /**
-     * 注册前端应用用户。
-     *
-     * <p>注册时会进行 IP 限流、验证码校验、用户名唯一性校验，并创建默认 USDT 账户。</p>
-     *
-     * @param request  用户注册参数
-     * @param clientIp 客户端 IP
-     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void register(RegisterRequest request, String clientIp) {
@@ -100,38 +56,52 @@ public class UserServiceImpl
                 request.getCaptchaCode()
         );
 
-        String username = request.getUsername();
+        String username = trimToNull(request.getUsername());
+        String password = trimToNull(request.getPassword());
+        String email = trimToNull(request.getEmail());
+        String phone = trimToNull(request.getPhone());
 
-        if (username == null || username.trim().isEmpty()) {
+        if (username == null) {
             throw new BusinessException(ResultCode.USERNAME_NOT_NULL);
         }
 
-        if (request.getPassword() == null || request.getPassword().trim().isEmpty()) {
+        if (password == null) {
             throw new BusinessException(ResultCode.PASSWORD_NOT_NULL);
         }
 
-        username = username.trim();
-
-        Long count = lambdaQuery()
+        Long usernameCount = lambdaQuery()
                 .eq(UserEntity::getUsername, username)
                 .count();
 
-        if (count > 0) {
+        if (usernameCount > 0) {
             throw new BusinessException(ResultCode.USERNAME_EXISTS);
+        }
+
+        if (email != null) {
+            Long emailCount = lambdaQuery()
+                    .eq(UserEntity::getEmail, email)
+                    .count();
+
+            if (emailCount > 0) {
+                throw new BusinessException(ResultCode.EMAIL_EXISTS);
+            }
+        }
+
+        if (phone != null) {
+            Long phoneCount = lambdaQuery()
+                    .eq(UserEntity::getPhone, phone)
+                    .count();
+
+            if (phoneCount > 0) {
+                throw new BusinessException(ResultCode.PHONE_EXISTS);
+            }
         }
 
         UserEntity user = new UserEntity();
         user.setUsername(username);
-
-        if (username.contains("@")) {
-            user.setEmail(username);
-        }
-
-        if (username.matches("^\\+?\\d+$")) {
-            user.setPhone(username);
-        }
-
-        user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+        user.setEmail(email);
+        user.setPhone(phone);
+        user.setPasswordHash(passwordEncoder.encode(password));
         user.setNickname(request.getNickname());
         user.setStatus(1);
         user.setRegisterIp(clientIp);
@@ -146,6 +116,7 @@ public class UserServiceImpl
         account.setStatus(1);
 
         userAccountMapper.insert(account);
+
         goalhubLogService.bizLog(
                 MODULE_NAME,
                 "USER_REGISTER",
@@ -157,34 +128,24 @@ public class UserServiceImpl
         );
     }
 
-    /**
-     * 前端应用用户登录。
-     *
-     * <p>登录时会进行 IP 限流、账号锁定校验、验证码校验、密码校验，并在成功后签发 JWT。</p>
-     *
-     * @param request  用户登录参数
-     * @param clientIp 客户端 IP
-     * @return 登录结果
-     */
     @Override
     public LoginResponse login(LoginRequest request, String clientIp) {
 
         rateLimitService.checkLoginIpLimit(clientIp);
-        if(request.getAccount()==null){
-            throw new BusinessException(ResultCode.USERNAME_NOT_NULL);
 
+        if (request.getAccount() == null) {
+            throw new BusinessException(ResultCode.USERNAME_NOT_NULL);
         }
+
         String account = request.getAccount().trim();
 
-        if ( account.isEmpty()) {
+        if (account.isEmpty()) {
             throw new BusinessException(ResultCode.USERNAME_NOT_NULL);
         }
 
         if (request.getPassword() == null || request.getPassword().trim().isEmpty()) {
             throw new BusinessException(ResultCode.PASSWORD_NOT_NULL);
         }
-
-       // account = account.trim();
 
         rateLimitService.checkLoginAccountLocked(account);
 
@@ -245,10 +206,10 @@ public class UserServiceImpl
         );
         return response;
     }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void changePassword(Long userId, ChangePasswordRequest request) {
-
         UserEntity user = getById(userId);
 
         if (user == null) {
@@ -264,10 +225,7 @@ public class UserServiceImpl
             throw new BusinessException(ResultCode.PASSWORD_ERROR);
         }
 
-        user.setPasswordHash(
-                passwordEncoder.encode(request.getNewPassword())
-        );
-
+        user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
         updateById(user);
 
         goalhubLogService.bizLog(
@@ -278,9 +236,9 @@ public class UserServiceImpl
                 "用户修改密码成功，userId=" + user.getId()
         );
     }
+
     @Override
     public UserProfileResponse getProfile(Long userId) {
-
         UserEntity user = getById(userId);
 
         if (user == null) {
@@ -293,7 +251,6 @@ public class UserServiceImpl
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateProfile(Long userId, UserProfileUpdateRequest request) {
-
         UserEntity user = getById(userId);
 
         if (user == null) {
@@ -346,7 +303,6 @@ public class UserServiceImpl
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void setFundPassword(Long userId, SetFundPasswordRequest request) {
-
         UserEntity user = getById(userId);
 
         if (user == null) {
@@ -364,7 +320,6 @@ public class UserServiceImpl
         }
 
         user.setFundPasswordHash(passwordEncoder.encode(fundPassword));
-
         updateById(user);
 
         goalhubLogService.bizLog(
@@ -379,7 +334,6 @@ public class UserServiceImpl
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void changeFundPassword(Long userId, ChangeFundPasswordRequest request) {
-
         UserEntity user = getById(userId);
 
         if (user == null) {
@@ -407,7 +361,6 @@ public class UserServiceImpl
         }
 
         user.setFundPasswordHash(passwordEncoder.encode(newFundPassword));
-
         updateById(user);
 
         goalhubLogService.bizLog(
@@ -418,9 +371,9 @@ public class UserServiceImpl
                 "用户修改资金密码成功，userId=" + user.getId()
         );
     }
+
     @Override
     public void verifyFundPassword(Long userId, String fundPassword) {
-
         if (userId == null) {
             throw new BusinessException(ResultCode.USER_ID_NOT_NULL);
         }
@@ -448,8 +401,8 @@ public class UserServiceImpl
             throw new BusinessException(ResultCode.FUND_PASSWORD_ERROR);
         }
     }
-    private UserProfileResponse toProfileResponse(UserEntity user) {
 
+    private UserProfileResponse toProfileResponse(UserEntity user) {
         UserProfileResponse response = new UserProfileResponse();
         response.setId(user.getId());
         response.setUsername(user.getUsername());
@@ -468,7 +421,6 @@ public class UserServiceImpl
     }
 
     private String trimToNull(String value) {
-
         if (value == null) {
             return null;
         }

@@ -1,8 +1,6 @@
 package com.eugene.goalhub.order.client;
 
-import dto.DeductDefaultAccountRequest;
-import dto.DeductDefaultAccountResponse;
-import dto.OrderMatchOptionSnapshotResponse;
+import dto.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import response.Result;
@@ -28,6 +26,16 @@ public interface OrderMatchFeignClient {
     Result<OrderMatchOptionSnapshotResponse> getMatchOptionSnapshot(
             @PathVariable("matchMarketOptionId") Long matchMarketOptionId
     );
+
+    /**
+     * 查询下单用冠军赔率快照。
+     *
+     * @param request 冠军赔率快照查询参数
+     * @return 冠军赔率快照结果
+     */
+    @PostMapping("/internal/order/championodds/snapshot")
+    Result<ChampionOddsSnapshotResponse> getChampionOddsSnapshot(
+            @RequestBody ChampionOddsSnapshotRequest request);
 //    @PostMapping("/internal/order/account/deductdefaultusdt")
 //    Result<DeductDefaultAccountResponse> deductDefaultUsdt(
 //            @RequestBody DeductDefaultAccountRequest request);

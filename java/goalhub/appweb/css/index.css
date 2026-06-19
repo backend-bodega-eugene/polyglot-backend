@@ -238,6 +238,35 @@ body.app-home .container {
     flex-direction: column;
 }
 
+.match-league-group {
+    border-bottom: 1px solid #e8e8e8;
+    background: white;
+}
+
+.match-league-title {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 38px;
+    padding: 9px 15px;
+    border-bottom: 1px solid #eeeeee;
+    background: #f8fbff;
+    color: #333;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.match-league-logo {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    object-fit: contain;
+    background: white;
+}
+
 .match-item {
     position: relative;
     padding: 12px 15px;
@@ -616,23 +645,6 @@ body.app-home .container {
     opacity: 0.65;
     cursor: not-allowed;
     box-shadow: none;
-}
-
-.match-icons {
-    display: flex;
-    gap: 8px;
-    font-size: 14px;
-    cursor: pointer;
-}
-
-.match-icons .icon {
-    padding: 4px;
-    border-radius: 3px;
-    transition: background 0.2s ease;
-}
-
-.match-icons .icon:hover {
-    background: #f0f0f0;
 }
 
 /* 赛果列表项 */

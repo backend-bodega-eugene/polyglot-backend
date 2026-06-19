@@ -68,6 +68,26 @@ public class AppBetOrderServiceImpl
     private static final String BIZ_REMARK_PLACE_BET = "用户下注扣款";
 
     /**
+     * 普通赛事投注类型。
+     */
+    private static final String BET_TYPE_MATCH = "MATCH";
+
+    /**
+     * 冠军投注类型。
+     */
+    private static final String BET_TYPE_CHAMPION = "CHAMPION";
+
+    /**
+     * 冠军玩法编码。
+     */
+    private static final String PLAY_CODE_CHAMPION = "CHAMPION";
+
+    /**
+     * 冠军玩法名称。
+     */
+    private static final String PLAY_NAME_CHAMPION = "冠军";
+
+    /**
      * USDT 金额统一保留 4 位小数。
      */
     private static final int MONEY_SCALE = 4;
@@ -103,8 +123,8 @@ public class AppBetOrderServiceImpl
      * @param betOrderMapper                投注订单 Mapper
      * @param betOrderItemMapper            投注订单明细 Mapper
      * @param orderMatchFeignClient         赛事快照 Feign 客户端
-     * @param orderUserAccountFeignClient 用户账户 Feign 客户端
-     * @param goalhubLogService           日志写入服务
+     * @param orderUserAccountFeignClient   用户账户 Feign 客户端
+     * @param goalhubLogService             日志写入服务
      */
     public AppBetOrderServiceImpl(
             BetOrderMapper betOrderMapper,
@@ -181,7 +201,7 @@ public class AppBetOrderServiceImpl
         item.setBetAmount(betAmount);
         item.setExpectedProfit(expectedProfit);
         item.setExpectedReturn(expectedReturn);
-
+        item.setBetType(BET_TYPE_MATCH);
         betOrderItemMapper.insert(item);
 
         DeductDefaultAccountResponse accountResponse =
@@ -222,6 +242,134 @@ public class AppBetOrderServiceImpl
 
         return response;
     }
+
+    /**
+     * 提交冠军投注订单。
+     *
+     * <p>下单流程包括参数校验、冠军赔率快照校验、默认账户扣款、订单主表写入和冠军订单明细写入。</p>
+     *
+     * @param userId  当前登录用户 ID
+     * @param request 冠军投注下单参数
+     * @return 投注下单结果
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public PlaceBetOrderResponse placeChampionOrder(
+            Long userId,
+            PlaceChampionBetOrderRequest request) {
+
+        checkChampionRequest(userId, request);
+
+        ChampionOddsSnapshotResponse snapshot =
+                getChampionOddsSnapshot(request.getChampionOddsId());
+
+        checkChampionSnapshot(snapshot);
+
+        BigDecimal betAmount = normalizeMoney(request.getAmount());
+
+        if (betAmount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BusinessException(ResultCode.BET_AMOUNT_INVALID);
+        }
+
+        BigDecimal expectedReturn = betAmount
+                .multiply(snapshot.getOdds())
+                .setScale(MONEY_SCALE, RoundingMode.DOWN);
+
+        BigDecimal expectedProfit = expectedReturn
+                .subtract(betAmount)
+                .setScale(MONEY_SCALE, RoundingMode.DOWN);
+
+        String orderNo = generateOrderNo();
+
+        BetOrderEntity order = new BetOrderEntity();
+        order.setOrderNo(orderNo);
+        order.setUserId(userId);
+        order.setTotalBetAmount(betAmount);
+        order.setTotalExpectedProfit(expectedProfit);
+        order.setTotalExpectedReturn(expectedReturn);
+        order.setStatus(STATUS_DEDUCTING);
+
+        betOrderMapper.insert(order);
+
+        BetOrderItemEntity item = new BetOrderItemEntity();
+        item.setOrderId(order.getId());
+        item.setOrderNo(orderNo);
+
+        item.setBetType(BET_TYPE_CHAMPION);
+        item.setLeagueId(snapshot.getLeagueId());
+        item.setLeagueName(snapshot.getLeagueName());
+        item.setChampionTeamId(snapshot.getTeamId());
+        item.setChampionTeamName(snapshot.getTeamName());
+
+        item.setMatchId(0L);
+        item.setPlayId(0L);
+        item.setOptionId(snapshot.getChampionOddsId());
+        item.setPlayCode(PLAY_CODE_CHAMPION);
+        item.setPlayName(PLAY_NAME_CHAMPION);
+        item.setOptionCode(String.valueOf(snapshot.getTeamId()));
+        item.setOptionName(snapshot.getTeamName());
+
+        item.setOdds(snapshot.getOdds());
+        item.setBetAmount(betAmount);
+        item.setExpectedProfit(expectedProfit);
+        item.setExpectedReturn(expectedReturn);
+        item.setMatchResultSnapshot(
+                "leagueId=" + snapshot.getLeagueId()
+                        + ", leagueName=" + snapshot.getLeagueName()
+                        + ", teamId=" + snapshot.getTeamId()
+                        + ", teamName=" + snapshot.getTeamName()
+                        + ", odds=" + snapshot.getOdds()
+        );
+
+        betOrderItemMapper.insert(item);
+
+        DeductDefaultAccountResponse accountResponse =
+                deductDefaultUsdt(
+                        userId,
+                        betAmount,
+                        orderNo
+                );
+
+        order.setAccountId(accountResponse.getAccountId());
+        order.setCurrencyCode(accountResponse.getCurrencyCode());
+        order.setBalanceBefore(accountResponse.getBalanceBefore());
+        order.setBalanceAfter(accountResponse.getBalanceAfter());
+        order.setStatus(STATUS_PENDING);
+        updateOrderOrThrow(order);
+
+        goalhubLogService.bizLog(
+                MODULE_NAME,
+                "PLACE_CHAMPION_BET_ORDER",
+                userId,
+                null,
+                "用户提交冠军投注订单成功，orderId=" + order.getId()
+                        + ", orderNo=" + order.getOrderNo()
+                        + ", championOddsId=" + request.getChampionOddsId()
+                        + ", leagueId=" + snapshot.getLeagueId()
+                        + ", teamId=" + snapshot.getTeamId()
+                        + ", amount=" + betAmount
+        );
+
+        PlaceBetOrderResponse response = new PlaceBetOrderResponse();
+        response.setOrderId(order.getId());
+        response.setOrderNo(order.getOrderNo());
+        response.setStatus(order.getStatus());
+        response.setBetAmount(betAmount);
+        response.setOdds(snapshot.getOdds());
+        response.setExpectedProfit(expectedProfit);
+        response.setExpectedReturn(expectedReturn);
+        response.setBalanceAfter(accountResponse.getBalanceAfter());
+
+        return response;
+    }
+
+    /**
+     * 分页查询当前用户未结算投注订单。
+     *
+     * @param userId  当前登录用户 ID
+     * @param request 投注订单分页查询参数
+     * @return 未结算投注订单分页结果
+     */
     @Override
     public PageResponse<AppBetOrderResponse> pageUnsettledOrders(
             Long userId,
@@ -230,6 +378,13 @@ public class AppBetOrderServiceImpl
         return pageOrders(userId, request, false);
     }
 
+    /**
+     * 分页查询当前用户已结算投注订单。
+     *
+     * @param userId  当前登录用户 ID
+     * @param request 投注订单分页查询参数
+     * @return 已结算投注订单分页结果
+     */
     @Override
     public PageResponse<AppBetOrderResponse> pageSettledOrders(
             Long userId,
@@ -237,6 +392,14 @@ public class AppBetOrderServiceImpl
 
         return pageOrders(userId, request, true);
     }
+
+    /**
+     * 分页查询当前用户全部投注订单。
+     *
+     * @param userId  当前登录用户 ID
+     * @param request 投注订单分页查询参数
+     * @return 投注订单分页结果
+     */
     @Override
     public PageResponse<AppBetOrderResponse> pageMyOrders(
             Long userId,
@@ -244,6 +407,107 @@ public class AppBetOrderServiceImpl
 
         return pageOrders(userId, request, null);
     }
+
+    /**
+     * 校验冠军投注下单请求。
+     *
+     * @param userId  当前登录用户 ID
+     * @param request 冠军投注下单参数
+     */
+    private void checkChampionRequest(
+            Long userId,
+            PlaceChampionBetOrderRequest request) {
+
+        if (userId == null) {
+            throw new BusinessException(ResultCode.USER_ID_NOT_NULL);
+        }
+
+        if (request == null) {
+            throw new BusinessException(ResultCode.BET_ORDER_REQUEST_NOT_NULL);
+        }
+
+        if (request.getChampionOddsId() == null) {
+            throw new BusinessException(ResultCode.PARAM_ERROR);
+        }
+
+        if (request.getAmount() == null
+                || request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BusinessException(ResultCode.BET_AMOUNT_INVALID);
+        }
+    }
+
+    /**
+     * 查询冠军赔率快照。
+     *
+     * @param championOddsId 冠军赔率 ID
+     * @return 冠军赔率快照
+     */
+    private ChampionOddsSnapshotResponse getChampionOddsSnapshot(
+            Long championOddsId) {
+
+        ChampionOddsSnapshotRequest request = new ChampionOddsSnapshotRequest();
+        request.setChampionOddsId(championOddsId);
+
+        //request.setLangCode("zh-CN");
+
+        Result<ChampionOddsSnapshotResponse> result =
+                orderMatchFeignClient.getChampionOddsSnapshot(request);
+
+        if (result == null) {
+            throw new BusinessException(ResultCode.ORDER_MATCH_FEIGN_RESULT_NULL);
+        }
+
+        if (result.getCode() != ResultCode.SUCCESS.getCode()) {
+            throw new BusinessException(result.getCode(), result.getMessage());
+        }
+
+        if (result.getData() == null) {
+            throw new BusinessException(ResultCode.ORDER_MATCH_SNAPSHOT_NOT_FOUND);
+        }
+
+        goalhubLogService.sysLog(
+                MODULE_NAME,
+                "GET_CHAMPION_ODDS_SNAPSHOT",
+                "查询冠军赔率快照成功，championOddsId=" + championOddsId
+        );
+
+        return result.getData();
+    }
+
+    /**
+     * 校验冠军赔率快照是否允许投注。
+     *
+     * @param snapshot 冠军赔率快照
+     */
+    private void checkChampionSnapshot(
+            ChampionOddsSnapshotResponse snapshot) {
+
+        if (!Integer.valueOf(1).equals(snapshot.getVisible())) {
+            throw new BusinessException(ResultCode.BET_OPTION_NOT_VISIBLE);
+        }
+
+        if (!BET_STATUS_OPEN.equals(snapshot.getBetStatus())) {
+            throw new BusinessException(ResultCode.BET_OPTION_NOT_OPEN);
+        }
+
+        if (snapshot.getOdds() == null
+                || snapshot.getOdds().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BusinessException(ResultCode.BET_ODDS_INVALID);
+        }
+
+        if (snapshot.getLeagueId() == null || snapshot.getTeamId() == null) {
+            throw new BusinessException(ResultCode.PARAM_ERROR);
+        }
+    }
+
+    /**
+     * 分页查询当前用户投注订单。
+     *
+     * @param userId  当前登录用户 ID
+     * @param request 投注订单分页查询参数
+     * @param settled 是否只查已结算订单，null 表示查询全部
+     * @return 投注订单分页结果
+     */
     private PageResponse<AppBetOrderResponse> pageOrders(
             Long userId,
             AppBetOrderPageRequest request,
@@ -364,6 +628,11 @@ public class AppBetOrderServiceImpl
         return amount.setScale(MONEY_SCALE, RoundingMode.DOWN);
     }
 
+    /**
+     * 规范化 App 订单主表响应金额字段。
+     *
+     * @param response App 订单主表响应
+     */
     private void normalizeOrderResponse(
             AppBetOrderResponse response) {
 
@@ -373,6 +642,11 @@ public class AppBetOrderServiceImpl
         response.setSettleAmount(normalizeNullableMoney(response.getSettleAmount()));
     }
 
+    /**
+     * 规范化 App 订单明细响应金额字段。
+     *
+     * @param response App 订单明细响应
+     */
     private void normalizeOrderItemResponse(
             AppBetOrderItemResponse response) {
 
@@ -381,6 +655,12 @@ public class AppBetOrderServiceImpl
         response.setExpectedReturn(normalizeNullableMoney(response.getExpectedReturn()));
     }
 
+    /**
+     * 规范化可空金额。
+     *
+     * @param amount 原始金额
+     * @return 统一精度后的金额，原值为空时返回空
+     */
     private BigDecimal normalizeNullableMoney(
             BigDecimal amount) {
 

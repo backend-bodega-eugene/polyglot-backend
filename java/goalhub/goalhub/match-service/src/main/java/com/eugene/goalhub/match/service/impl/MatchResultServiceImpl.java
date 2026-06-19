@@ -11,6 +11,7 @@ import com.eugene.goalhub.match.service.support.MatchOperationLogger;
 import dto.*;
 import exception.BusinessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import response.ResultCode;
 
 import java.time.LocalDateTime;
@@ -71,7 +72,9 @@ public class MatchResultServiceImpl implements MatchResultService {
     /**
      * 创建比赛结果管理服务实现。
      *
-     * @param matchResultMapper 比赛结果 Mapper
+     * @param matchResultMapper    比赛结果 Mapper
+     * @param soccerMatchMapper    比赛 Mapper
+     * @param matchOperationLogger 比赛服务操作日志工具
      */
     public MatchResultServiceImpl(
             MatchResultMapper matchResultMapper,
@@ -127,10 +130,17 @@ public class MatchResultServiceImpl implements MatchResultService {
      * @param request 比赛结果保存参数
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void save(
             SaveMatchResultRequest request) {
+
         requireRequest(request);
-        requireMatchExists(request.getMatchId());
+
+        SoccerMatchEntity match =
+                requireMatchExists(request.getMatchId());
+
+        requireMatchStatusAllowApprove(match);
+        requireResultScore(request);
 
         MatchResultEntity entity = matchResultMapper.selectOne(
                 Wrappers.lambdaQuery(MatchResultEntity.class)
@@ -157,10 +167,19 @@ public class MatchResultServiceImpl implements MatchResultService {
         } else {
             matchResultMapper.updateById(entity);
         }
+
+        match.setStatus(MATCH_STATUS_FINISHED);
+        if (request.getMatchEndedAt() != null) {
+            match.setActualEndTimeUtc(request.getMatchEndedAt());
+        } else {
+            match.setActualEndTimeUtc(LocalDateTime.now());
+        }
+        soccerMatchMapper.updateById(match);
+
         matchOperationLogger.adminBizLog(
                 MODULE_NAME,
                 "SAVE_MATCH_RESULT",
-                "保存比赛结果成功，matchResultId=" + entity.getId()
+                "保存比赛结果并结束赛事成功，matchResultId=" + entity.getId()
                         + ", matchId=" + entity.getMatchId()
                         + ", isNew=" + isNew
         );
@@ -294,6 +313,8 @@ public class MatchResultServiceImpl implements MatchResultService {
 
     /**
      * 初始化分页参数。
+     *
+     * @param request 比赛结果分页查询条件
      */
     private void initPage(AdminMatchResultPageRequest request) {
         if (request.getPageIndex() == null || request.getPageIndex() < 1) {
@@ -312,6 +333,8 @@ public class MatchResultServiceImpl implements MatchResultService {
 
     /**
      * 校验请求不能为空。
+     *
+     * @param request 请求对象
      */
     private void requireRequest(Object request) {
         if (request == null) {
@@ -321,6 +344,9 @@ public class MatchResultServiceImpl implements MatchResultService {
 
     /**
      * 校验比赛存在。
+     *
+     * @param matchId 比赛 ID
+     * @return 比赛实体
      */
     private SoccerMatchEntity requireMatchExists(Long matchId) {
         if (matchId == null) {
@@ -336,6 +362,8 @@ public class MatchResultServiceImpl implements MatchResultService {
 
     /**
      * 校验赛果达到审核条件。
+     *
+     * @param entity 比赛结果实体
      */
     private void requireResultReadyToApprove(MatchResultEntity entity) {
         if (entity.getRegularHomeScore() == null || entity.getRegularAwayScore() == null) {
@@ -345,10 +373,26 @@ public class MatchResultServiceImpl implements MatchResultService {
 
     /**
      * 校验比赛状态允许审核赛果。
+     *
+     * @param match 比赛实体
      */
     private void requireMatchStatusAllowApprove(SoccerMatchEntity match) {
         if (MATCH_STATUS_CANCELLED.equals(match.getStatus())) {
             throw new BusinessException(ResultCode.PARAM_ERROR);
+        }
+    }
+    /**
+     * 校验常规时间比分不能为空。
+     *
+     * @param request 保存赛果请求
+     */
+    private void requireResultScore(
+            SaveMatchResultRequest request) {
+
+        if (request.getRegularHomeScore() == null
+                || request.getRegularAwayScore() == null) {
+
+            throw new BusinessException(ResultCode.SCORE_CANT_NOT_NULL);
         }
     }
 }

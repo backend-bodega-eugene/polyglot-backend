@@ -70,6 +70,12 @@ body.app-home .container,
     margin-bottom: 20px;
 }
 
+.register-field-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 12px;
+}
+
 .form-group {
     margin-bottom: 20px;
 }
@@ -84,7 +90,8 @@ body.app-home .container,
 
 .form-group input[type="text"],
 .form-group input[type="email"],
-.form-group input[type="password"] {
+.form-group input[type="password"],
+.form-group input[type="tel"] {
     width: 100%;
     padding: 13px 16px;
     border: 1px solid #ddd;
@@ -97,7 +104,8 @@ body.app-home .container,
 
 .form-group input[type="text"]:focus,
 .form-group input[type="email"]:focus,
-.form-group input[type="password"]:focus {
+.form-group input[type="password"]:focus,
+.form-group input[type="tel"]:focus {
     outline: none;
     border-color: #1e3c72;
     background: #fff;
@@ -106,6 +114,12 @@ body.app-home .container,
 
 .form-group input::placeholder {
     color: #bbb;
+}
+
+.optional-label {
+    color: #999;
+    font-size: 12px;
+    font-weight: 400;
 }
 
 /* 复选框样式 */
@@ -390,7 +404,8 @@ body.app-home .container,
 
     .form-group input[type="text"],
     .form-group input[type="email"],
-    .form-group input[type="password"] {
+    .form-group input[type="password"],
+    .form-group input[type="tel"] {
         padding: 11px 14px;
         font-size: 13px;
     }
@@ -443,8 +458,16 @@ body.app-home .container,
 
     .form-group input[type="text"],
     .form-group input[type="email"],
-    .form-group input[type="password"] {
+    .form-group input[type="password"],
+    .form-group input[type="tel"] {
         font-size: 12px;
+    }
+}
+
+@media (max-width: 520px) {
+    .register-field-grid {
+        grid-template-columns: 1fr;
+        column-gap: 0;
     }
 }
 

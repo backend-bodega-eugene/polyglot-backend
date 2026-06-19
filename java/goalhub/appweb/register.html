@@ -16,52 +16,80 @@
 
         <!-- 注册表单 -->
         <form id="registerForm" class="form">
-            <div class="form-group">
-                <label for="username">用户名</label>
-                <input 
-                    type="text" 
-                    id="username" 
-                    name="username" 
-                    placeholder="请输入用户名"
-                    required
-                >
-                <span class="error-msg" id="usernameError"></span>
+            <div class="register-field-grid">
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="请输入用户名"
+                        required
+                    >
+                    <span class="error-msg" id="usernameError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="nickname">昵称</label>
+                    <input
+                        type="text"
+                        id="nickname"
+                        name="nickname"
+                        placeholder="请输入昵称"
+                        required
+                    >
+                    <span class="error-msg" id="nicknameError"></span>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label for="password">密码</label>
-                <input 
-                    type="password" 
-                    id="password" 
-                    name="password" 
-                    placeholder="请输入密码"
-                    required
-                >
-                <span class="error-msg" id="passwordError"></span>
+            <div class="register-field-grid">
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="请输入密码"
+                        required
+                    >
+                    <span class="error-msg" id="passwordError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">确认密码</label>
+                    <input
+                        type="password"
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        placeholder="请再次输入密码"
+                        required
+                    >
+                    <span class="error-msg" id="confirmPasswordError"></span>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label for="confirmPassword">确认密码</label>
-                <input 
-                    type="password" 
-                    id="confirmPassword" 
-                    name="confirmPassword" 
-                    placeholder="请再次输入密码"
-                    required
-                >
-                <span class="error-msg" id="confirmPasswordError"></span>
-            </div>
+            <div class="register-field-grid">
+                <div class="form-group">
+                    <label for="email">邮箱 <span class="optional-label">选填</span></label>
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="请输入邮箱"
+                    >
+                    <span class="error-msg" id="emailError"></span>
+                </div>
 
-            <div class="form-group">
-                <label for="nickname">昵称</label>
-                <input 
-                    type="text" 
-                    id="nickname" 
-                    name="nickname" 
-                    placeholder="请输入昵称"
-                    required
-                >
-                <span class="error-msg" id="nicknameError"></span>
+                <div class="form-group">
+                    <label for="phone">手机号码 <span class="optional-label">选填</span></label>
+                    <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        placeholder="请输入手机号码"
+                    >
+                    <span class="error-msg" id="phoneError"></span>
+                </div>
             </div>
 
             <!-- 验证码部分 -->

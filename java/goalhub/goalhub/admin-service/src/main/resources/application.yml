@@ -11,16 +11,22 @@ spring:
         # Nacos 服务发现地址。
         server-addr: 127.0.0.1:8848
   datasource:
-    # 后台管理服务数据库连接。
+    # 后台管理服务数据库连接，当前连接 user 域数据库。
     url: jdbc:mysql://127.0.0.1:3306/goalhub_user?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Bangkok
+    # 数据库用户名。
     username: goalhub
+    # 数据库密码。
     password: goalhub123456
+    # MySQL JDBC 驱动类。
     driver-class-name: com.mysql.cj.jdbc.Driver
   data:
     redis:
+      # Redis 主机地址。
       host: localhost
+      # Redis 端口。
       port: 6379
     mongodb:
+      # 后台日志 MongoDB 连接地址。
       uri: mongodb://root:root123456@localhost:27017/goalhub_logs?authSource=admin
 springdoc:
   swagger-ui:

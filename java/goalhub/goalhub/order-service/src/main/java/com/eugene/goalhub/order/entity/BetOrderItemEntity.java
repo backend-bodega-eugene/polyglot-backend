@@ -107,6 +107,31 @@ public class BetOrderItemEntity {
      */
     private LocalDateTime updatedAt;
 
+    /**
+     * 投注类型。
+     */
+    private String betType;
+
+    /**
+     * 冠军投注所属联赛 ID。
+     */
+    private Long leagueId;
+
+    /**
+     * 冠军投注所属联赛名称。
+     */
+    private String leagueName;
+
+    /**
+     * 冠军投注球队 ID。
+     */
+    private Long championTeamId;
+
+    /**
+     * 冠军投注球队名称。
+     */
+    private String championTeamName;
+
     public Long getId() {
         return id;
     }
@@ -251,5 +276,43 @@ public class BetOrderItemEntity {
         this.updatedAt = updatedAt;
     }
 
+    public String getBetType() {
+        return betType;
+    }
 
+    public void setBetType(String betType) {
+        this.betType = betType;
+    }
+
+    public Long getLeagueId() {
+        return leagueId;
+    }
+
+    public void setLeagueId(Long leagueId) {
+        this.leagueId = leagueId;
+    }
+
+    public String getLeagueName() {
+        return leagueName;
+    }
+
+    public void setLeagueName(String leagueName) {
+        this.leagueName = leagueName;
+    }
+
+    public Long getChampionTeamId() {
+        return championTeamId;
+    }
+
+    public void setChampionTeamId(Long championTeamId) {
+        this.championTeamId = championTeamId;
+    }
+
+    public String getChampionTeamName() {
+        return championTeamName;
+    }
+
+    public void setChampionTeamName(String championTeamName) {
+        this.championTeamName = championTeamName;
+    }
 }

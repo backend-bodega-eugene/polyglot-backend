@@ -55,4 +55,5 @@ public class AppMatchMarketOptionResponse {
      */
     @Schema(description = "排序值", example = "1")
     private Integer sortOrder;
+
 }

@@ -4,9 +4,18 @@
 const API_BASE_URL = window.GoalHubConfig?.API_BASE_URL || 'http://localhost:8000';
 const RESULT_API_URL = `${API_BASE_URL}/api/soccer/matches/results/page`;
 const BET_ORDER_API_URL = `${API_BASE_URL}/api/order/bet/orders/place`;
+const CHAMPION_PAGE_API_URL = `${API_BASE_URL}/api/soccer/champion/page`;
+const CHAMPION_BET_ORDER_API_URL = `${API_BASE_URL}/api/order/bet/orders/placechampion`;
+const LEAGUES_API_URL = `${API_BASE_URL}/api/soccer/leagues`;
 const FOLLOW_API_URL = `${API_BASE_URL}/api/soccer/follow`;
-const DEFAULT_LANG_CODE = 'en-US';
-const PAGE_SIZE = 10;
+const MATCH_MARKET_API_URLS = {
+    today: `${API_BASE_URL}/api/soccer/matchmarkets/today`,
+    ball: `${API_BASE_URL}/api/soccer/matchmarkets/live`,
+    early: `${API_BASE_URL}/api/soccer/matchmarkets/early`,
+    combo: `${API_BASE_URL}/api/soccer/matchmarkets/parlay`
+};
+const DEFAULT_LANG_CODE = 'zh-CN';
+const PAGE_SIZE = 100;
 const BET_PRESET_AMOUNTS = [10, 50, 100, 500, 1000];
 const BALANCE_CACHE_KEY = 'defaultBalanceText';
 const { apiFetch, refreshBalance, renderCachedBalance } = window.GoalHubApp;
@@ -18,6 +27,7 @@ const matchesList = document.getElementById('matchesList');
 const statusFilter = document.querySelector('.status-filter');
 const balanceEl = document.querySelector('.balance');
 const sportsNav = document.querySelector('.sports-nav');
+const matchKeywordInput = document.getElementById('matchKeywordInput');
 
 // 当前状态
 let currentTab = 'today';
@@ -26,12 +36,22 @@ let currentLangCode = DEFAULT_LANG_CODE;
 let currentPageIndex = 1;
 let selectedBet = null;
 let showingFollowedMatches = false;
+let matchSearchTimer = null;
+let currentLeagueName = '';
+let championTotalRecords = 0;
+let championActiveRequestId = 0;
+let championLoading = false;
 const followedMatchIds = new Set();
+const availableLeagueOptions = new Map();
 
 /**
  * 兼容分页接口和普通数组接口
  */
 function getRecords(payload) {
+    if (Array.isArray(payload)) {
+        return payload;
+    }
+
     if (Array.isArray(payload?.data?.records)) {
         return payload.data.records;
     }
@@ -51,8 +71,26 @@ function getRecords(payload) {
     return [];
 }
 
+function getCurrentTabLabel() {
+    const labels = {
+        today: '今日',
+        ball: '滚球',
+        early: '早盘',
+        combo: '串关',
+        champion: '冠军',
+        results: '赛果'
+    };
+
+    return labels[currentTab] || '赛事';
+}
+
 function getMatchId(match) {
     return match?.matchId || match?.id || match?.soccerMatchId || match?.footballMatchId || '';
+}
+
+function getTotal(payload, records) {
+    const total = Number(payload?.data?.total ?? payload?.total);
+    return Number.isFinite(total) ? total : records.length;
 }
 
 function normalizeFollowRecord(record) {
@@ -70,6 +108,23 @@ function formatBalance(value) {
     }
 
     return amount.toFixed(2);
+}
+
+function formatOdds(value) {
+    const odds = Number(value);
+    return Number.isFinite(odds) ? odds.toFixed(2).replace(/\.00$/, '') : '-';
+}
+
+function isChampionBetOpen(record) {
+    return !record.betStatus || record.betStatus === 'OPEN';
+}
+
+function buildChampionLogo(url, fallbackText, className) {
+    if (url) {
+        return `<img class="${className}" src="${escapeHtml(url)}" alt="${escapeHtml(fallbackText)}" loading="lazy">`;
+    }
+
+    return `<span class="${className} champion-logo-fallback">${escapeHtml(String(fallbackText || '?').slice(0, 1))}</span>`;
 }
 
 function escapeHtml(value) {
@@ -118,39 +173,6 @@ function checkAuth() {
 }
 
 /**
- * 获取联盟列表
- */
-async function loadLeagues() {
-    try {
-        const url = `${API_BASE_URL}/api/soccer/leagues?langCode=${currentLangCode}`;
-        const data = await apiFetch(url);
-
-        // 清空现有联盟列表
-        leaguesList.innerHTML = '';
-
-        // 添加"全部"选项
-        const allLeagueItem = document.createElement('div');
-        allLeagueItem.className = 'league-item active';
-        allLeagueItem.textContent = '全部';
-        allLeagueItem.dataset.leagueId = '';
-        allLeagueItem.addEventListener('click', () => selectLeague(null, allLeagueItem));
-        leaguesList.appendChild(allLeagueItem);
-
-        // 添加真实联盟数据
-        getRecords(data).forEach(league => {
-            const leagueItem = document.createElement('div');
-            leagueItem.className = 'league-item';
-            leagueItem.textContent = league.name || league.leagueName || '未知';
-            leagueItem.dataset.leagueId = league.id;
-            leagueItem.addEventListener('click', () => selectLeague(league.id, leagueItem));
-            leaguesList.appendChild(leagueItem);
-        });
-    } catch (error) {
-        leaguesList.innerHTML = `<div style="padding: 10px; color: #e74c3c;">加载失败: ${error.message}</div>`;
-    }
-}
-
-/**
  * 选择联盟
  */
 function selectLeague(leagueId, element) {
@@ -163,13 +185,18 @@ function selectLeague(leagueId, element) {
     element.classList.add('active');
 
     // 更新当前联盟ID
-    currentLeagueId = leagueId;
+    currentLeagueId = leagueId || null;
+    currentLeagueName = element?.dataset?.leagueName || element?.textContent?.trim() || '';
     showingFollowedMatches = false;
     document.querySelectorAll('.sports-nav .nav-item').forEach(navItem => navItem.classList.remove('active'));
 
     // 重新加载对应联盟的赛事
     currentPageIndex = 1;
-    loadMatches();
+    if (currentTab === 'champion') {
+        loadChampionOdds();
+    } else {
+        loadMatches();
+    }
 }
 
 function setLoadMoreVisible(visible) {
@@ -183,6 +210,10 @@ async function loadFollowedMatches() {
     try {
         showingFollowedMatches = true;
         currentPageIndex = 1;
+        if (!MATCH_MARKET_API_URLS[currentTab]) {
+            currentTab = 'today';
+            navTabs.forEach(tab => tab.classList.toggle('active', tab.dataset.tab === currentTab));
+        }
         if (statusFilter) {
             statusFilter.textContent = '关注';
         }
@@ -192,8 +223,6 @@ async function loadFollowedMatches() {
         const data = await apiFetch(`${FOLLOW_API_URL}/my`);
         const records = getRecords(data);
         followedMatchIds.clear();
-        matchesList.innerHTML = '';
-
         if (!records.length) {
             matchesList.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">暂无关注赛事</div>';
             return;
@@ -205,11 +234,21 @@ async function loadFollowedMatches() {
             if (matchId) {
                 followedMatchIds.add(String(matchId));
             }
-
-            const matchItem = createMatchElement(match, matchId);
-            matchesList.appendChild(matchItem);
-            loadMatchOdds(match, matchItem);
         });
+
+        const groups = await fetchMatchMarketGroups(1);
+        const followedGroups = groups.map(group => ({
+            ...group,
+            matches: (Array.isArray(group.matches) ? group.matches : []).filter(match => followedMatchIds.has(String(getMatchId(match))))
+        })).filter(group => group.matches.length > 0);
+
+        if (!followedGroups.length) {
+            matchesList.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">当前分类暂无关注赛事</div>';
+            return;
+        }
+
+        renderLeagueFilter(groups);
+        renderMatchMarketGroups(followedGroups);
     } catch (error) {
         matchesList.innerHTML = `<div style="padding: 10px; color: #e74c3c;">加载关注赛事失败: ${error.message}</div>`;
     }
@@ -221,78 +260,319 @@ async function loadFollowedMatches() {
 async function loadMatches() {
     try {
         showingFollowedMatches = false;
+        if (currentTab === 'champion') {
+            await loadChampionView();
+            return;
+        }
+
         if (currentTab === 'results') {
             await loadMatchResults();
             return;
         }
 
-        // 获取当前日期范围（当月）
-        const now = new Date();
-        const startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-        const endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
-
-        const startTimeUtc = startDate.toISOString();
-        const endTimeUtc = endDate.toISOString();
-
-        let url;
-        const baseParams = `pageIndex=${currentPageIndex}&pageSize=${PAGE_SIZE}&langCode=${currentLangCode}&startTimeUtc=${encodeURIComponent(startTimeUtc)}&endTimeUtc=${encodeURIComponent(endTimeUtc)}`;
-
-        // 根据当前tab选择不同的API
-        switch(currentTab) {
-            case 'today':
-                url = `${API_BASE_URL}/api/soccer/matches/today?${baseParams}`;
-                if (currentLeagueId) {
-                    url += `&leagueId=${currentLeagueId}`;
-                }
-                break;
-            case 'early':
-                url = `${API_BASE_URL}/api/soccer/matches/upcoming?${baseParams}`;
-                if (currentLeagueId) {
-                    url += `&leagueId=${currentLeagueId}`;
-                }
-                break;
-            case 'hot':
-                // 热门没有分页和日期限制
-                url = `${API_BASE_URL}/api/soccer/matches/hot?langCode=${currentLangCode}&limit=${PAGE_SIZE}`;
-                break;
-            case 'ball':
-            default:
-                url = `${API_BASE_URL}/api/soccer/matches?${baseParams}`;
-                if (currentLeagueId) {
-                    url += `&leagueId=${currentLeagueId}`;
-                }
-                break;
-        }
-
-        const data = await apiFetch(url);
-        const records = getRecords(data);
-
-        // 清空赛事列表（第一页时）
-        if (currentPageIndex === 1) {
-            matchesList.innerHTML = '';
-        }
-
-        // 渲染赛事数据
-        if (records.length > 0) {
-            records.forEach(match => {
-                const matchItem = createMatchElement(match);
-                matchesList.appendChild(matchItem);
-                loadMatchOdds(match, matchItem);
-            });
-
-            // 显示/隐藏加载更多按钮
-            if (currentTab !== 'hot' && records.length === PAGE_SIZE) {
-                setLoadMoreVisible(true);
-            } else {
-                setLoadMoreVisible(false);
-            }
-        } else {
+        if (!MATCH_MARKET_API_URLS[currentTab]) {
             setLoadMoreVisible(false);
+            matchesList.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">该分类暂未接入聚合赛事接口</div>';
+            return;
+        }
+
+        if (statusFilter) {
+            statusFilter.textContent = getCurrentTabLabel();
+        }
+
+        setLoadMoreVisible(false);
+        matchesList.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">赛事赔率加载中...</div>';
+        const groups = await fetchMatchMarketGroups(currentPageIndex);
+        renderLeagueFilter(groups);
+
+        if (groups.length > 0 && groups.some(group => Array.isArray(group.matches) && group.matches.length > 0)) {
+            renderMatchMarketGroups(groups);
+        } else {
             matchesList.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">暂无赛事</div>';
         }
     } catch (error) {
         matchesList.innerHTML = `<div style="padding: 10px; color: #e74c3c;">加载赛事失败: ${error.message}</div>`;
     }
+}
+
+async function loadChampionView() {
+    if (statusFilter) {
+        statusFilter.textContent = '冠军';
+    }
+
+    setLoadMoreVisible(false);
+    matchesList.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">冠军赔率加载中...</div>';
+    await loadChampionLeagues();
+}
+
+function buildMatchMarketRequest(pageIndex) {
+    const keyword = matchKeywordInput?.value.trim() || '';
+    return {
+        pageIndex,
+        pageSize: PAGE_SIZE,
+        leagueId: currentLeagueId,
+        keyword,
+        langCode: currentLangCode
+    };
+}
+
+async function fetchMatchMarketGroups(pageIndex) {
+    const data = await apiFetch(MATCH_MARKET_API_URLS[currentTab], {
+        method: 'POST',
+        body: JSON.stringify(buildMatchMarketRequest(pageIndex))
+    });
+
+    return getRecords(data);
+}
+
+function renderLeagueFilter(groups) {
+    if (!currentLeagueId) {
+        availableLeagueOptions.clear();
+        groups.forEach(group => {
+            const leagueId = group.leagueId;
+            if (leagueId !== undefined && leagueId !== null && !availableLeagueOptions.has(String(leagueId))) {
+                availableLeagueOptions.set(String(leagueId), {
+                    leagueId,
+                    leagueName: group.leagueName || '未知'
+                });
+            }
+        });
+    } else if (!availableLeagueOptions.size) {
+        groups.forEach(group => {
+            const leagueId = group.leagueId;
+            if (leagueId !== undefined && leagueId !== null && !availableLeagueOptions.has(String(leagueId))) {
+                availableLeagueOptions.set(String(leagueId), {
+                    leagueId,
+                    leagueName: group.leagueName || '未知'
+                });
+            }
+        });
+    }
+
+    leaguesList.innerHTML = '';
+    const allLeagueItem = document.createElement('div');
+    allLeagueItem.className = `league-item${currentLeagueId ? '' : ' active'}`;
+    allLeagueItem.textContent = '全部';
+    allLeagueItem.dataset.leagueId = '';
+    allLeagueItem.addEventListener('click', () => selectLeague(null, allLeagueItem));
+    leaguesList.appendChild(allLeagueItem);
+
+    availableLeagueOptions.forEach(league => {
+        const leagueItem = document.createElement('div');
+        const active = currentLeagueId && String(currentLeagueId) === String(league.leagueId);
+        leagueItem.className = `league-item${active ? ' active' : ''}`;
+        leagueItem.textContent = league.leagueName;
+        leagueItem.dataset.leagueId = league.leagueId;
+        leagueItem.dataset.leagueName = league.leagueName;
+        leagueItem.addEventListener('click', () => selectLeague(league.leagueId, leagueItem));
+        leaguesList.appendChild(leagueItem);
+    });
+}
+
+async function loadChampionLeagues() {
+    leaguesList.innerHTML = '<div class="league-item">加载中...</div>';
+
+    try {
+        const data = await apiFetch(`${LEAGUES_API_URL}?langCode=${encodeURIComponent(currentLangCode)}`);
+        const leagues = getRecords(data);
+
+        if (!leagues.length) {
+            leaguesList.innerHTML = '<div class="league-item">暂无联赛</div>';
+            matchesList.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">暂无冠军赔率</div>';
+            return;
+        }
+
+        leaguesList.innerHTML = '';
+        const allLeagueItem = document.createElement('div');
+        allLeagueItem.className = `league-item${currentLeagueId ? '' : ' active'}`;
+        allLeagueItem.textContent = '全部';
+        allLeagueItem.dataset.leagueId = '';
+        allLeagueItem.dataset.leagueName = '全部';
+        allLeagueItem.addEventListener('click', () => selectLeague(null, allLeagueItem));
+        leaguesList.appendChild(allLeagueItem);
+
+        leagues.forEach(league => {
+            const leagueId = league.id ?? league.leagueId;
+            const leagueName = league.name || league.leagueName || '未知联赛';
+            const leagueItem = document.createElement('div');
+            const active = currentLeagueId && String(currentLeagueId) === String(leagueId);
+            leagueItem.className = `league-item${active ? ' active' : ''}`;
+            leagueItem.textContent = leagueName;
+            leagueItem.dataset.leagueId = leagueId;
+            leagueItem.dataset.leagueName = leagueName;
+            leagueItem.addEventListener('click', () => selectLeague(leagueId, leagueItem));
+            leaguesList.appendChild(leagueItem);
+        });
+
+        await loadChampionOdds();
+    } catch (error) {
+        leaguesList.innerHTML = `<div class="league-item">加载失败</div>`;
+        matchesList.innerHTML = `<div style="padding: 10px; color: #e74c3c;">加载冠军联赛失败: ${error.message}</div>`;
+    }
+}
+
+function buildChampionRequestBody(pageIndex) {
+    const keyword = matchKeywordInput?.value.trim() || '';
+    const body = {
+        pageIndex,
+        pageSize: PAGE_SIZE,
+        leagueId: currentLeagueId,
+        keyword,
+        langCode: currentLangCode
+    };
+    Object.keys(body).forEach(key => {
+        if (body[key] === '' || body[key] == null) {
+            delete body[key];
+        }
+    });
+    return body;
+}
+
+async function loadChampionOdds({ append = false } = {}) {
+    if (championLoading) {
+        return;
+    }
+
+    const requestId = championActiveRequestId + 1;
+    championActiveRequestId = requestId;
+    championLoading = true;
+    const pageIndex = append ? currentPageIndex : 1;
+
+    if (!append) {
+        matchesList.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">冠军赔率加载中...</div>';
+    }
+
+    try {
+        const data = await apiFetch(CHAMPION_PAGE_API_URL, {
+            method: 'POST',
+            body: JSON.stringify(buildChampionRequestBody(pageIndex))
+        });
+
+        if (requestId !== championActiveRequestId) {
+            return;
+        }
+
+        const records = getRecords(data);
+        championTotalRecords = getTotal(data, records);
+        currentPageIndex = pageIndex + 1;
+        renderChampionRecords(records, append);
+    } catch (error) {
+        if (requestId === championActiveRequestId) {
+            matchesList.innerHTML = `<div style="padding: 10px; color: #e74c3c;">查询冠军赔率失败: ${error.message}</div>`;
+            setLoadMoreVisible(false);
+        }
+    } finally {
+        if (requestId === championActiveRequestId) {
+            championLoading = false;
+        }
+    }
+}
+
+function groupChampionByLeague(records) {
+    return records.reduce((groups, record) => {
+        const key = record.leagueId ?? 'unknown';
+        if (!groups.has(key)) {
+            groups.set(key, {
+                leagueName: record.leagueName || currentLeagueName || '冠军玩法赛事',
+                leagueLogoUrl: record.leagueLogoUrl || '',
+                records: []
+            });
+        }
+
+        groups.get(key).records.push(record);
+        return groups;
+    }, new Map());
+}
+
+function renderChampionRecords(records, append = false) {
+    if (!append && !records.length) {
+        matchesList.innerHTML = '<div style="padding: 20px; text-align: center; color: #999;">暂无冠军赔率</div>';
+        setLoadMoreVisible(false);
+        return;
+    }
+
+    const groupedHtml = Array.from(groupChampionByLeague(records).values()).map(createChampionLeagueGroupHtml).join('');
+    if (append) {
+        matchesList.insertAdjacentHTML('beforeend', groupedHtml);
+    } else {
+        matchesList.innerHTML = groupedHtml;
+    }
+
+    const totalPages = Math.ceil(championTotalRecords / PAGE_SIZE);
+    setLoadMoreVisible(records.length === PAGE_SIZE && currentPageIndex <= totalPages);
+}
+
+function createChampionLeagueGroupHtml(group) {
+    return `
+        <article class="champion-group">
+            <div class="champion-group-head">
+                ${buildChampionLogo(group.leagueLogoUrl, group.leagueName, 'champion-league-logo')}
+                <div>
+                    <div class="champion-group-title">${escapeHtml(group.leagueName)}</div>
+                    <div class="champion-group-subtitle">冠军赔率</div>
+                </div>
+            </div>
+            <div class="champion-team-list">${group.records.map(createChampionTeamHtml).join('')}</div>
+        </article>
+    `;
+}
+
+function createChampionTeamHtml(record) {
+    const closed = !isChampionBetOpen(record);
+    const statusText = record.betStatus && record.betStatus !== 'OPEN'
+        ? `<span class="champion-status">${escapeHtml(record.betStatus)}</span>`
+        : '';
+
+    return `
+        <button class="champion-team-row${closed ? ' closed' : ''}" type="button"
+            data-champion-odds-id="${escapeHtml(record.championOddsId)}"
+            data-league-id="${escapeHtml(record.leagueId)}"
+            data-league-name="${escapeHtml(record.leagueName)}"
+            data-team-id="${escapeHtml(record.teamId)}"
+            data-team-name="${escapeHtml(record.teamName)}"
+            data-odds="${escapeHtml(record.odds)}"
+            data-bet-status="${escapeHtml(record.betStatus || '')}">
+            <span class="champion-team-main">
+                ${buildChampionLogo(record.teamLogoUrl, record.teamName || record.teamCode, 'champion-team-logo')}
+                <span class="champion-team-name">${escapeHtml(record.teamName || record.teamCode || '未知队伍')}</span>
+            </span>
+            <span class="champion-odds-box">
+                <span class="champion-odds">${escapeHtml(formatOdds(record.odds))}</span>
+                ${statusText}
+            </span>
+        </button>
+    `;
+}
+
+function renderMatchMarketGroups(groups) {
+    matchesList.innerHTML = '';
+    groups.forEach(group => {
+        const matches = Array.isArray(group.matches) ? group.matches : [];
+        if (!matches.length) {
+            return;
+        }
+
+        const leagueBlock = document.createElement('div');
+        leagueBlock.className = 'match-league-group';
+        leagueBlock.innerHTML = `
+            <div class="match-league-title">
+                ${group.leagueLogoUrl ? `<img class="match-league-logo" src="${escapeHtml(group.leagueLogoUrl)}" alt="${escapeHtml(group.leagueName || '联赛')}" loading="lazy">` : ''}
+                <span>${escapeHtml(group.leagueName || '未知联赛')}</span>
+            </div>
+        `;
+
+        matches.forEach(match => {
+            const matchItem = createMatchElement({
+                ...match,
+                leagueName: match.leagueName || group.leagueName,
+                leagueLogoUrl: match.leagueLogoUrl || group.leagueLogoUrl
+            });
+            renderMatchOdds(matchItem.querySelector('.odds-options'), Array.isArray(match.markets) ? match.markets : []);
+            leagueBlock.appendChild(matchItem);
+        });
+
+        matchesList.appendChild(leagueBlock);
+    });
 }
 
 /**
@@ -353,8 +633,9 @@ function createMatchElement(match, fallbackMatchId = '') {
     // 获取队伍信息
     const homeTeam = match.homeTeam?.name || match.homeTeamName || '主队';
     const awayTeam = match.awayTeam?.name || match.awayTeamName || '客队';
-    const matchName = match.matchName || match.leagueName || '';
-    const score = match.score || (match.status === 'NOT_STARTED' ? 'VS' : '-');
+    const matchStatus = match.matchStatus || match.status || '';
+    const matchContext = match.leagueName || matchStatus || '';
+    const score = match.score || 'VS';
 
     // 格式化时间
     let timeText = '待定';
@@ -379,45 +660,18 @@ function createMatchElement(match, fallbackMatchId = '') {
             <span class="follow-star">${isFollowed ? '★' : '☆'}</span>
             <span class="follow-text">${isFollowed ? '已关注' : '关注'}</span>
         </button>
-        <div class="match-time">${escapeHtml(timeText)}${matchName ? ` · ${escapeHtml(matchName)}` : ''}</div>
+        <div class="match-time">${escapeHtml(timeText)}${matchContext ? ` · ${escapeHtml(matchContext)}` : ''}</div>
         <div class="match-teams">
             <div class="team">${escapeHtml(homeTeam)}</div>
             <div class="score">${escapeHtml(score)}</div>
             <div class="team">${escapeHtml(awayTeam)}</div>
         </div>
         <div class="odds-options" data-odds-for="${matchId || ''}">
-            <div class="odds-empty">赔率加载中...</div>
-        </div>
-        <div class="match-icons">
-            <span class="icon">📊</span>
-            <span class="icon">▶️</span>
-            <span class="icon">🚩</span>
+            <div class="odds-empty">暂无玩法赔率</div>
         </div>
     `;
 
     return matchItem;
-}
-
-/**
- * 加载单场赛事玩法和赔率
- */
-async function loadMatchOdds(match, matchItem) {
-    const matchId = matchItem?.dataset?.matchId || getMatchId(match);
-    const oddsContainer = matchItem.querySelector('.odds-options');
-
-    if (!matchId) {
-        oddsContainer.innerHTML = '<div class="odds-empty">暂无赛事ID</div>';
-        return;
-    }
-
-    try {
-        const url = `${API_BASE_URL}/api/soccer/matches/${matchId}/odds`;
-        const data = await apiFetch(url);
-        const markets = Array.isArray(data?.data?.markets) ? data.data.markets : [];
-        renderMatchOdds(oddsContainer, markets);
-    } catch (error) {
-        oddsContainer.innerHTML = '<div class="odds-empty odds-error">赔率加载失败</div>';
-    }
 }
 
 async function toggleFollowMatch(button) {
@@ -494,9 +748,10 @@ function createOddOptionHtml(option) {
     const isClosed = option.betStatus && option.betStatus !== 'OPEN';
     const statusClass = isClosed ? ' closed' : '';
     const statusText = isClosed ? `<span class="odd-status">${escapeHtml(option.betStatus)}</span>` : '';
+    const optionId = option.id ?? option.matchMarketOptionId ?? '';
 
     return `
-        <div class="odd${statusClass}" data-option-id="${option.id || ''}" data-market-option-id="${option.marketOptionId || ''}" data-option-name="${escapeHtml(optionName)}" data-odds="${escapeHtml(oddsText)}" data-bet-status="${escapeHtml(option.betStatus || '')}">
+        <div class="odd${statusClass}" data-option-id="${escapeHtml(optionId)}" data-market-option-id="${escapeHtml(option.marketOptionId ?? '')}" data-option-name="${escapeHtml(optionName)}" data-odds="${escapeHtml(oddsText)}" data-bet-status="${escapeHtml(option.betStatus || '')}">
             <span class="label">${escapeHtml(optionName)}</span>
             <span class="rate">${escapeHtml(oddsText)}</span>
             ${statusText}
@@ -606,6 +861,37 @@ function openBetModal(oddElement) {
     modal.classList.add('active');
 }
 
+function openChampionBetModal(championElement) {
+    if (championElement.classList.contains('closed') || (championElement.dataset.betStatus && championElement.dataset.betStatus !== 'OPEN')) {
+        return;
+    }
+
+    const odds = Number(championElement.dataset.odds);
+    selectedBet = {
+        betType: 'CHAMPION',
+        championOddsId: Number(championElement.dataset.championOddsId),
+        odds,
+        optionName: championElement.dataset.teamName || '-',
+        marketName: '冠军',
+        matchName: championElement.dataset.leagueName || '冠军玩法',
+        matchTime: ''
+    };
+
+    const modal = document.getElementById('betModal');
+    modal.querySelector('#betOptionName').textContent = selectedBet.optionName;
+    modal.querySelector('#betMarketName').textContent = selectedBet.marketName;
+    modal.querySelector('#betOdds').textContent = `@${Number.isNaN(odds) ? '-' : formatOdds(odds)}`;
+    modal.querySelector('#betMatchName').textContent = selectedBet.matchName;
+    modal.querySelector('#betMatchTime').textContent = '';
+    modal.querySelector('#betAmountInput').value = '';
+    modal.querySelector('#betMessage').textContent = '';
+    modal.querySelector('#betSubmitBtn').disabled = false;
+    modal.querySelector('#betSubmitBtn').textContent = '确认投注';
+
+    updateBetSummary();
+    modal.classList.add('active');
+}
+
 function closeBetModal() {
     const modal = document.getElementById('betModal');
     if (modal) {
@@ -640,8 +926,13 @@ async function submitBetOrder() {
     const submitBtn = document.getElementById('betSubmitBtn');
     const amount = getBetAmount();
 
-    if (!selectedBet || !Number.isFinite(selectedBet.matchMarketOptionId)) {
-        messageEl.textContent = '未选择有效赔率';
+    const isChampionBet = selectedBet?.betType === 'CHAMPION';
+    const hasValidOdds = isChampionBet
+        ? Number.isFinite(selectedBet?.championOddsId) && selectedBet.championOddsId > 0
+        : Number.isFinite(selectedBet?.matchMarketOptionId) && selectedBet.matchMarketOptionId > 0;
+
+    if (!selectedBet || !hasValidOdds) {
+        messageEl.textContent = isChampionBet ? '未选择有效冠军赔率' : '未选择有效赔率';
         messageEl.className = 'bet-message error';
         return;
     }
@@ -657,12 +948,11 @@ async function submitBetOrder() {
         submitBtn.textContent = '提交中...';
         messageEl.textContent = '';
 
-        const data = await apiFetch(BET_ORDER_API_URL, {
+        const data = await apiFetch(isChampionBet ? CHAMPION_BET_ORDER_API_URL : BET_ORDER_API_URL, {
             method: 'POST',
-            body: JSON.stringify({
-                matchMarketOptionId: selectedBet.matchMarketOptionId,
-                amount
-            })
+            body: JSON.stringify(isChampionBet
+                ? { championOddsId: selectedBet.championOddsId, amount }
+                : { matchMarketOptionId: selectedBet.matchMarketOptionId, amount })
         });
         if (data.code !== 0 && data.code !== 200 && data.code !== '0' && data.code !== '200') {
             throw new Error(data.message || '下单失败');
@@ -777,8 +1067,10 @@ navTabs.forEach(tab => {
         
         currentTab = tab.dataset.tab;
         currentPageIndex = 1;
+        currentLeagueId = null;
+        availableLeagueOptions.clear();
         if (statusFilter) {
-            statusFilter.textContent = currentTab === 'results' ? '赛果' : '进行中';
+            statusFilter.textContent = getCurrentTabLabel();
         }
         
         loadMatches();
@@ -805,6 +1097,8 @@ if (sportsNav) {
             item.classList.add('active');
             currentTab = 'hot';
             currentPageIndex = 1;
+            currentLeagueId = null;
+            availableLeagueOptions.clear();
             showingFollowedMatches = false;
             if (statusFilter) {
                 statusFilter.textContent = '热门';
@@ -814,10 +1108,34 @@ if (sportsNav) {
     });
 }
 
+if (matchKeywordInput) {
+    matchKeywordInput.addEventListener('input', () => {
+        window.clearTimeout(matchSearchTimer);
+        matchSearchTimer = window.setTimeout(() => {
+            currentPageIndex = 1;
+            loadMatches();
+        }, 300);
+    });
+
+    matchKeywordInput.addEventListener('keydown', event => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            window.clearTimeout(matchSearchTimer);
+            currentPageIndex = 1;
+            loadMatches();
+        }
+    });
+}
+
 // 加载更多按钮
 const loadMoreBtn = document.getElementById('loadMoreBtn');
 if (loadMoreBtn) {
     loadMoreBtn.addEventListener('click', () => {
+        if (currentTab === 'champion') {
+            loadChampionOdds({ append: true });
+            return;
+        }
+
         currentPageIndex++;
         loadMatches();
     });
@@ -834,11 +1152,15 @@ if (matchesList) {
         }
 
         const oddElement = event.target.closest('.odd');
-        if (!oddElement || !matchesList.contains(oddElement)) {
+        if (oddElement && matchesList.contains(oddElement)) {
+            openBetModal(oddElement);
             return;
         }
 
-        openBetModal(oddElement);
+        const championElement = event.target.closest('.champion-team-row');
+        if (championElement && matchesList.contains(championElement)) {
+            openChampionBetModal(championElement);
+        }
     });
 }
 
@@ -858,9 +1180,6 @@ window.addEventListener('load', () => {
     }
 
     initBetModal();
-
-    // 加载联盟列表
-    loadLeagues();
 
     // 加载赛事列表
     loadMatches();

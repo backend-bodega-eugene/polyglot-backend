@@ -263,6 +263,16 @@
     input.value = str;
   }
 
+  function applyOptionFill(select, loader) {
+    if (!loader?.fillFields || !select) return;
+    const option = select.selectedOptions?.[0];
+    Object.entries(loader.fillFields).forEach(([targetId, sourceKey]) => {
+      const input = $(targetId);
+      if (!input) return;
+      input.value = option?.dataset?.[sourceKey] || '';
+    });
+  }
+
   function readFormBody(isCreate) {
     const body = {};
     if (!isCreate) body.id = Number($entityId.value);
@@ -317,13 +327,22 @@
         state.options[key] = page.list.map((x) => ({
           value: x[loader.valueKey || 'id'],
           label: loader.label ? loader.label(x) : `${x.code || x.name || x.id}`,
+          raw: x,
         }));
         document.querySelectorAll(`select[data-option-key="${key}"]`).forEach((select) => {
           const current = select.value;
           select.innerHTML = `<option value="">${esc(select.dataset.emptyLabel || '请选择')}</option>` + state.options[key]
-            .map((x) => `<option value="${esc(x.value)}">${esc(x.label)}</option>`)
+            .map((x) => {
+              const attrs = loader.fillFields
+                ? Object.values(loader.fillFields)
+                  .map((sourceKey) => ` data-${esc(sourceKey)}="${esc(x.raw?.[sourceKey] ?? '')}"`)
+                  .join('')
+                : '';
+              return `<option value="${esc(x.value)}"${attrs}>${esc(x.label)}</option>`;
+            })
             .join('');
           if (current) setSelectValue(select, current);
+          applyOptionFill(select, loader);
         });
       } catch (error) {
         console.warn(`${key} options load failed`, error);
@@ -343,6 +362,10 @@
         });
         loadOptions();
       });
+    });
+    document.querySelectorAll(`select[data-option-key="${key}"]`).forEach((select) => {
+      if (!loader.fillFields) return;
+      select.addEventListener('change', () => applyOptionFill(select, loader));
     });
   }
 

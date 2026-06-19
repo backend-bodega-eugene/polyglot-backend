@@ -196,17 +196,35 @@ function createOrderHtml(order) {
 }
 
 function createOrderItemHtml(item) {
-    const teams = `${item.homeTeamName || '主队'} VS ${item.awayTeamName || '客队'}`;
-    const option = `${item.playName || item.playCode || '玩法'} / ${item.optionName || item.optionCode || '选项'}`;
+    const view = getOrderItemView(item);
+    const startRow = view.showStartTime
+        ? `<div class="order-item-row"><span>开赛 ${escapeHtml(formatDate(item.matchStartTime))}</span><span>${escapeHtml(getResultText(item.systemResult || item.reviewResult))}</span></div>`
+        : '';
 
     return `
         <div class="order-item">
-            <div class="order-item-title">${escapeHtml(teams)}</div>
-            <div class="order-item-row"><span>${escapeHtml(option)}</span><span>@${escapeHtml(item.odds ?? '-')}</span></div>
+            <div class="order-item-title">${escapeHtml(view.title)}</div>
+            <div class="order-item-row"><span>${escapeHtml(view.subTitle)}</span><span>@${escapeHtml(item.odds ?? '-')}</span></div>
             <div class="order-item-row"><span>投注 ${formatAmount(item.betAmount)}</span><span>预计返还 ${formatAmount(item.expectedReturn)}</span></div>
-            <div class="order-item-row"><span>开赛 ${escapeHtml(formatDate(item.matchStartTime))}</span><span>${escapeHtml(getResultText(item.systemResult || item.reviewResult))}</span></div>
+            ${startRow}
         </div>
     `;
+}
+
+function getOrderItemView(item) {
+    if (item.betType === 'CHAMPION') {
+        return {
+            title: item.leagueName || '冠军玩法赛事',
+            subTitle: `${item.playName || item.playCode || '冠军'} / ${item.championTeamName || item.optionName || item.optionCode || '选项'}`,
+            showStartTime: false
+        };
+    }
+
+    return {
+        title: `${item.homeTeamName || '主队'} VS ${item.awayTeamName || '客队'}`,
+        subTitle: `${item.playName || item.playCode || '玩法'} / ${item.optionName || item.optionCode || '选项'}`,
+        showStartTime: true
+    };
 }
 
 function getStatusText(status) {

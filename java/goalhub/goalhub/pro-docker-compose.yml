@@ -1,4 +1,5 @@
 services:
+  # Nacos 注册中心，生产容器网络内供各后端服务注册和发现。
   nacos:
     image: nacos/nacos-server:v3.0.3
     container_name: goalhub-nacos
@@ -11,16 +12,19 @@ services:
       NACOS_AUTH_IDENTITY_VALUE: "nacos"
       TZ: Asia/Bangkok
     expose:
+      # 仅暴露到 docker 内部网络，不直接映射到宿主机。
       - "8080"
       - "8848"
       - "9848"
       - "9849"
     volumes:
+      # 持久化 Nacos 日志和数据。
       - ./data/nacos/logs:/home/nacos/logs
       - ./data/nacos/data:/home/nacos/data
     networks:
       - goalhub-net
 
+  # MySQL 数据库，保存业务主库数据。
   mysql:
     image: mysql:8.4
     container_name: goalhub-mysql
@@ -32,17 +36,21 @@ services:
       MYSQL_PASSWORD: goalhub123456
       TZ: Asia/Bangkok
     expose:
+      # 仅供同一 docker 网络内服务访问。
       - "3306"
     volumes:
+      # 持久化 MySQL 数据并加载初始化 SQL。
       - ./data/mysql:/var/lib/mysql
       - ./mysql/init:/docker-entrypoint-initdb.d
     command:
+      # 统一字符集、排序规则和 Bangkok 时区。
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
       - --default-time-zone=+07:00
     networks:
       - goalhub-net
 
+  # MongoDB 日志库，用于业务日志、系统日志和错误日志。
   mongodb:
     image: mongo:8.0
     container_name: goalhub-mongodb
@@ -52,30 +60,37 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root123456
     expose:
+      # 仅供同一 docker 网络内服务访问。
       - "27017"
     volumes:
+      # 持久化 MongoDB 数据。
       - ./data/mongo:/data/db
     networks:
       - goalhub-net
 
+  # Redis 缓存与限流存储。
   redis:
     image: redis:7.2
     container_name: goalhub-redis
     restart: unless-stopped
     command: redis-server --appendonly yes
     expose:
+      # 仅供同一 docker 网络内服务访问。
       - "6379"
     volumes:
+      # 持久化 Redis AOF 数据。
       - ./data/redis:/data
     networks:
       - goalhub-net
 
+  # Spring Cloud Gateway，对内转发到各业务服务。
   gateway-service:
     image: eclipse-temurin:21-jre
     container_name: goalhub-gateway
     restart: unless-stopped
     working_dir: /app
     volumes:
+      # 挂载网关可执行 Jar 和外部化配置目录。
       - ./jars/gateway-service.jar:/app/app.jar
       - ./config/gateway-service:/app/config
     environment:
@@ -86,6 +101,7 @@ services:
       SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR: nacos:8848
     command: ["java", "-jar", "app.jar", "--spring.config.additional-location=file:/app/config/"]
     expose:
+      # 网关容器端口，由 nginx 反向代理访问。
       - "8000"
     depends_on:
       - nacos
@@ -93,12 +109,14 @@ services:
     networks:
       - goalhub-net
 
+  # 用户服务，提供用户、账户、登录注册等能力。
   user-service:
     image: eclipse-temurin:21-jre
     container_name: goalhub-user
     restart: unless-stopped
     working_dir: /app
     volumes:
+      # 挂载用户服务可执行 Jar 和外部化配置目录。
       - ./jars/user-service.jar:/app/app.jar
       - ./config/user-service:/app/config
     environment:
@@ -118,12 +136,14 @@ services:
     networks:
       - goalhub-net
 
+  # 比赛服务，提供赛事、球队、赔率和赛果能力。
   match-service:
     image: eclipse-temurin:21-jre
     container_name: goalhub-match
     restart: unless-stopped
     working_dir: /app
     volumes:
+      # 挂载比赛服务可执行 Jar 和外部化配置目录。
       - ./jars/match-service.jar:/app/app.jar
       - ./config/match-service:/app/config
     environment:
@@ -143,12 +163,14 @@ services:
     networks:
       - goalhub-net
 
+  # 后台管理服务，提供后台管理端聚合接口。
   admin-service:
     image: eclipse-temurin:21-jre
     container_name: goalhub-admin
     restart: unless-stopped
     working_dir: /app
     volumes:
+      # 挂载后台服务可执行 Jar 和外部化配置目录。
       - ./jars/admin-service.jar:/app/app.jar
       - ./config/admin-service:/app/config
     environment:
@@ -168,12 +190,14 @@ services:
     networks:
       - goalhub-net
 
+  # 订单服务，提供下单、订单查询、订单预判和结算相关能力。
   order-service:
     image: eclipse-temurin:21-jre
     container_name: goalhub-order
     restart: unless-stopped
     working_dir: /app
     volumes:
+      # 挂载订单服务可执行 Jar 和外部化配置目录。
       - ./jars/order-service.jar:/app/app.jar
       - ./config/order-service:/app/config
     environment:
@@ -193,13 +217,16 @@ services:
     networks:
       - goalhub-net
 
+  # Nginx 入口，负责暴露 HTTP 80 并代理网关及静态页面。
   nginx:
     image: nginx:1.27
     container_name: goalhub-nginx
     restart: unless-stopped
     ports:
+      # 对外暴露 HTTP 服务。
       - "80:80"
     volumes:
+      # 挂载 Nginx 配置和前端静态资源。
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
       - ./nginx/html/h5:/usr/share/nginx/html/h5
       - ./nginx/html/admin:/usr/share/nginx/html/admin
@@ -209,5 +236,6 @@ services:
       - goalhub-net
 
 networks:
+  # 后端服务内部通信网络。
   goalhub-net:
     driver: bridge

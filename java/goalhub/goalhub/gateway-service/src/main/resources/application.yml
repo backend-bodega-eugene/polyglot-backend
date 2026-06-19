@@ -2,6 +2,7 @@ server:
   # 网关服务端口。
   port: ${GATEWAY_PORT:8000}
 
+# 网关自定义配置。
 gateway:
   cors:
     # 局域网测试默认允许 localhost、127.0.0.1 和常见私网网段来源。
@@ -15,10 +16,15 @@ spring:
     name: gateway-service
   data:
     redis:
+      # Redis 主机地址，供验证码限流等网关能力使用。
       host: ${REDIS_HOST:127.0.0.1}
+      # Redis 端口。
       port: ${REDIS_PORT:6379}
+      # Redis 密码，默认空密码。
       password: ${REDIS_PASSWORD:}
+      # Redis 数据库索引。
       database: ${REDIS_DATABASE:0}
+      # Redis 命令超时时间。
       timeout: ${REDIS_TIMEOUT:3000ms}
   cloud:
     nacos:

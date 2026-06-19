@@ -18,6 +18,7 @@
             <artifactId>common</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- 项目启动、通用自动配置和基础组件模块。 -->
         <dependency>
             <groupId>com.eugene</groupId>
             <artifactId>boot</artifactId>
@@ -75,6 +76,7 @@
     </dependencies>
     <build>
         <plugins>
+            <!-- Spring Boot 打包插件，用于生成可执行服务包。 -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

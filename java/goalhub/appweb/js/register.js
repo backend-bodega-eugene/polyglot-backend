@@ -4,6 +4,8 @@ const usernameInput = document.getElementById('username');
 const passwordInput = document.getElementById('password');
 const confirmPasswordInput = document.getElementById('confirmPassword');
 const nicknameInput = document.getElementById('nickname');
+const emailInput = document.getElementById('email');
+const phoneInput = document.getElementById('phone');
 const captchaCodeInput = document.getElementById('captchaCode');
 const captchaImage = document.getElementById('captchaImage');
 const refreshCaptchaBtn = document.getElementById('refreshCaptcha');
@@ -15,6 +17,8 @@ const usernameError = document.getElementById('usernameError');
 const passwordError = document.getElementById('passwordError');
 const confirmPasswordError = document.getElementById('confirmPasswordError');
 const nicknameError = document.getElementById('nicknameError');
+const emailError = document.getElementById('emailError');
+const phoneError = document.getElementById('phoneError');
 const captchaCodeError = document.getElementById('captchaCodeError');
 const formError = document.getElementById('formError');
 
@@ -83,6 +87,32 @@ function validateNickname(nickname) {
     return { valid: true, message: '' };
 }
 
+function validateEmail(email) {
+    if (!email) {
+        return { valid: true, message: '' };
+    }
+    if (email.length > 100) {
+        return { valid: false, message: '邮箱不能超过100个字符' };
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return { valid: false, message: '邮箱格式不正确' };
+    }
+    return { valid: true, message: '' };
+}
+
+function validatePhone(phone) {
+    if (!phone) {
+        return { valid: true, message: '' };
+    }
+    if (phone.length > 30) {
+        return { valid: false, message: '手机号码不能超过30个字符' };
+    }
+    if (!/^[0-9+\-\s()]+$/.test(phone)) {
+        return { valid: false, message: '手机号码格式不正确' };
+    }
+    return { valid: true, message: '' };
+}
+
 function validateCaptchaCode(captchaCode) {
     if (!captchaCode) {
         return { valid: false, message: '验证码不能为空' };
@@ -99,6 +129,8 @@ function clearErrors() {
     passwordError.textContent = '';
     confirmPasswordError.textContent = '';
     nicknameError.textContent = '';
+    emailError.textContent = '';
+    phoneError.textContent = '';
     captchaCodeError.textContent = '';
     formError.textContent = '';
 }
@@ -197,6 +229,16 @@ nicknameInput.addEventListener('blur', () => {
     showError(nicknameError, validation.message);
 });
 
+emailInput.addEventListener('blur', () => {
+    const validation = validateEmail(emailInput.value.trim());
+    showError(emailError, validation.message);
+});
+
+phoneInput.addEventListener('blur', () => {
+    const validation = validatePhone(phoneInput.value.trim());
+    showError(phoneError, validation.message);
+});
+
 // 表单提交
 registerForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -209,6 +251,8 @@ registerForm.addEventListener('submit', async (e) => {
     const password = passwordInput.value;
     const confirmPassword = confirmPasswordInput.value;
     const nickname = nicknameInput.value.trim();
+    const email = emailInput.value.trim();
+    const phone = phoneInput.value.trim();
     const captchaCode = captchaCodeInput.value.trim();
     const agreement = agreementCheckbox.checked;
     
@@ -217,6 +261,8 @@ registerForm.addEventListener('submit', async (e) => {
     const passwordValidation = validatePassword(password);
     const confirmPasswordValidation = validateConfirmPassword(password, confirmPassword);
     const nicknameValidation = validateNickname(nickname);
+    const emailValidation = validateEmail(email);
+    const phoneValidation = validatePhone(phone);
     const captchaValidation = validateCaptchaCode(captchaCode);
     
     // 显示验证错误
@@ -232,6 +278,12 @@ registerForm.addEventListener('submit', async (e) => {
     if (!nicknameValidation.valid) {
         showError(nicknameError, nicknameValidation.message);
     }
+    if (!emailValidation.valid) {
+        showError(emailError, emailValidation.message);
+    }
+    if (!phoneValidation.valid) {
+        showError(phoneError, phoneValidation.message);
+    }
     if (!captchaValidation.valid) {
         showError(captchaCodeError, captchaValidation.message);
     }
@@ -244,16 +296,17 @@ registerForm.addEventListener('submit', async (e) => {
     // 如果有验证错误，返回
     if (!usernameValidation.valid || !passwordValidation.valid || 
         !confirmPasswordValidation.valid || !nicknameValidation.valid || 
+        !emailValidation.valid || !phoneValidation.valid ||
         !captchaValidation.valid || !agreement) {
         return;
     }
     
     // 发送注册请求
-    await submitRegister(username, password, nickname, captchaCode);
+    await submitRegister(username, password, nickname, email, phone, captchaCode);
 });
 
 // 提交注册请求
-async function submitRegister(username, password, nickname, captchaCode) {
+async function submitRegister(username, password, nickname, email, phone, captchaCode) {
     // 禁用提交按钮并显示加载状态
     submitBtn.disabled = true;
     submitBtn.classList.add('loading');
@@ -268,6 +321,8 @@ async function submitRegister(username, password, nickname, captchaCode) {
                 username: username,
                 password: password,
                 nickname: nickname,
+                email: email,
+                phone: phone,
                 captchaKey: captchaKey,
                 captchaCode: captchaCode
             })
@@ -277,19 +332,14 @@ async function submitRegister(username, password, nickname, captchaCode) {
         
         if (response.ok && isSuccessCode(data.code)) {
             // 注册成功
-            showMessage('注册成功！正在跳转...', 'success');
+            showMessage('注册成功，正在跳转登录页...', 'success');
             
             // 清空表单
             registerForm.reset();
             
-            // 重新加载验证码
-            loadCaptcha();
-            
-            // 2秒后跳转到登录页面或首页
             setTimeout(() => {
-                // 这里可以根据需求跳转到登录页或其他页面
                 window.location.href = '/login.html';
-            }, 2000);
+            }, 800);
         } else {
             // 注册失败
             const errorMessage = data.message || data.error || `注册失败 (HTTP ${response.status})`;

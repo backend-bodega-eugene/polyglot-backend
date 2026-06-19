@@ -99,4 +99,22 @@ public class AppBetOrderResponse {
      */
     @Schema(description = "订单明细列表")
     private List<AppBetOrderItemResponse> items;
+
+    /**
+     * 投注类型。
+     */
+    @Schema(description = "投注类型", example = "MATCH")
+    private String betType;
+
+    /**
+     * 冠军投注球队 ID。
+     */
+    @Schema(description = "冠军投注球队ID", example = "1001")
+    private Long championTeamId;
+
+    /**
+     * 冠军投注球队名称。
+     */
+    @Schema(description = "冠军投注球队名称", example = "France")
+    private String championTeamName;
 }

@@ -34,6 +34,7 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- 通过 BOM 统一约束子模块 Spring 生态依赖版本，避免各服务重复声明版本。 -->
             <!-- Spring Boot 依赖版本管理。 -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>

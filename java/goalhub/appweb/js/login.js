@@ -261,7 +261,7 @@ async function submitLogin(account, password, captchaCode, rememberMe) {
             }
 
             // 登录成功
-            showMessage('登录成功！正在跳转...', 'success');
+            showMessage('登录成功，正在跳转...', 'success');
             
             // 如果勾选了"记住我"，保存账号到 localStorage
             if (rememberMe) {
@@ -282,14 +282,10 @@ async function submitLogin(account, password, captchaCode, rememberMe) {
             // 清空表单
             loginForm.reset();
             
-            // 重新加载验证码
-            loadCaptcha();
-            
-            // 2秒后跳转到来源页面或首页
             setTimeout(() => {
                 const next = new URLSearchParams(window.location.search).get('next');
                 window.location.href = next || '/index.html';
-            }, 2000);
+            }, 800);
         } else {
             // 登录失败
             const errorMessage = data.message || data.error || `登录失败 (HTTP ${response.status})`;

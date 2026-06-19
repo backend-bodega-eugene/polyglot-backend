@@ -97,6 +97,10 @@ public enum ResultCode {
     EMAIL_CODE_EXPIRED(10083,"email.code.expired"),
     EMAIL_CODE_ERROR(10084,"email.code.error"),
     EMAIL_CODE_SEND_TOO_FREQUENT(10085,"email.code.too.frequent"),
+    LEAGUE_NOT_EXISTS(10086,"league.not.exists"),
+    TEAM_NOT_EXISTS(10087,"team.not.exists"),
+    UNSUPPORTED_GAMEPALY(10088, "unsupport.gamepaly"),
+    SCORE_CANT_NOT_NULL(10089,"score.can.not.null" ),
     FATHER_NOT_OWN(10100,"father.not.own");
 
     /**

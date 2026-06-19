@@ -52,4 +52,16 @@ public class RegisterRequest {
     @Size(min = 4, max = 6, message = "验证码长度必须在4到6之间")
     @Schema(description = "验证码内容", example = "1234")
     private String captchaCode;
+
+    /**
+     * 邮箱地址。
+     */
+    @Schema(description = "邮箱地址", example = "user@example.com")
+    private String email;
+
+    /**
+     * 手机号码。
+     */
+    @Schema(description = "手机号码", example = "13800138000")
+    private String phone;
 }

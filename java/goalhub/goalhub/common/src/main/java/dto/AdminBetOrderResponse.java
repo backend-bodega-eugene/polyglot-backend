@@ -158,4 +158,34 @@ public class AdminBetOrderResponse {
      */
     @Schema(description = "更新时间")
     private LocalDateTime updatedAt;
+
+    /**
+     * 投注类型。
+     */
+    @Schema(description = "投注类型", example = "MATCH")
+    private String betType;
+
+    /**
+     * 联赛或杯赛 ID。
+     */
+    @Schema(description = "联赛/杯赛ID", example = "1")
+    private Long leagueId;
+
+    /**
+     * 联赛或杯赛名称。
+     */
+    @Schema(description = "联赛/杯赛名称", example = "世界杯")
+    private String leagueName;
+
+    /**
+     * 冠军投注球队 ID。
+     */
+    @Schema(description = "冠军投注球队ID", example = "1001")
+    private Long championTeamId;
+
+    /**
+     * 冠军投注球队名称。
+     */
+    @Schema(description = "冠军投注球队名称", example = "France")
+    private String championTeamName;
 }

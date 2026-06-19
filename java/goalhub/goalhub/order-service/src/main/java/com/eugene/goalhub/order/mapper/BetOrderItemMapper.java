@@ -35,9 +35,11 @@ public interface BetOrderItemMapper
                 i.order_id AS orderId,
                 i.order_no AS orderNo,
                 i.match_id AS matchId,
-
-                m.league_id AS leagueId,
-                li.name AS leagueName,
+                i.bet_type AS betType,
+                i.champion_team_id AS championTeamId,
+                i.champion_team_name AS championTeamName,
+                COALESCE(i.league_id, m.league_id) AS leagueId,
+                COALESCE(i.league_name, li.name) AS leagueName,
 
                 m.home_team_id AS homeTeamId,
                 hti.name AS homeTeamName,
@@ -89,6 +91,14 @@ public interface BetOrderItemMapper
             Page<AdminBetOrderItemResponse> page,
             @Param("req") AdminBetOrderItemPageRequest request
     );
+
+    /**
+     * 根据订单 ID 列表查询 App 端订单明细。
+     *
+     * @param orderIds 订单 ID 列表
+     * @param langCode 语言编码
+     * @return App 端订单明细列表
+     */
     @Select("""
         <script>
         SELECT
@@ -96,9 +106,11 @@ public interface BetOrderItemMapper
             i.order_id AS orderId,
             i.order_no AS orderNo,
             i.match_id AS matchId,
-
-            m.league_id AS leagueId,
-            li.name AS leagueName,
+            i.bet_type AS betType,
+            i.champion_team_id AS championTeamId,
+            i.champion_team_name AS championTeamName,
+            COALESCE(i.league_id, m.league_id) AS leagueId,
+            COALESCE(i.league_name, li.name) AS leagueName,
 
             m.home_team_id AS homeTeamId,
             hti.name AS homeTeamName,

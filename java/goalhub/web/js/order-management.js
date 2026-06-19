@@ -96,6 +96,36 @@
     return esc(value === '' ? '-' : value);
   }
 
+  function isChampionItem(row) {
+    return String(row?.betType || '').trim().toUpperCase() === 'CHAMPION';
+  }
+
+  function getMatchTitle(row) {
+    if (isChampionItem(row)) {
+      return pick(row, ['leagueName'], '-');
+    }
+
+    const homeTeam = pick(row, ['homeTeamName', 'homeTeamId'], '');
+    const awayTeam = pick(row, ['awayTeamName', 'awayTeamId'], '');
+    if (homeTeam || awayTeam) {
+      return `${homeTeam || '-'} VS ${awayTeam || '-'}`;
+    }
+
+    return pick(row, ['matchName', 'matchCode', 'matchId'], '-');
+  }
+
+  function getPlayName(row) {
+    return isChampionItem(row)
+      ? pick(row, ['playName'], '冠军')
+      : pick(row, ['playName', 'playCode', 'marketName', 'marketCode', 'marketId'], '-');
+  }
+
+  function getOptionName(row) {
+    return isChampionItem(row)
+      ? pick(row, ['championTeamName', 'optionName'], '-')
+      : pick(row, ['optionName', 'optionCode', 'marketOptionName', 'marketOptionId'], '-');
+  }
+
   function readFilters() {
     const num = (id) => {
       const value = $(id)?.value.trim();
@@ -214,9 +244,9 @@
       $('items-tbody').innerHTML = page.list.length ? page.list.map((row) => `
         <tr>
           <td>${esc(pick(row, ['id', 'itemId']))}</td>
-          <td>${esc(pick(row, ['matchName', 'matchCode', 'matchId']))}</td>
-          <td>${esc(pick(row, ['marketName', 'marketCode', 'marketId']))}</td>
-          <td>${esc(pick(row, ['marketOptionName', 'optionName', 'marketOptionId']))}</td>
+          <td>${esc(getMatchTitle(row))}</td>
+          <td>${esc(getPlayName(row))}</td>
+          <td>${esc(getOptionName(row))}</td>
           <td>${esc(pick(row, ['odds']))}</td>
           <td>${money(pick(row, ['betAmount', 'stakeAmount', 'amount'], ''))}</td>
           <td>${badge(pick(row, ['result', 'systemResult']))}</td>

@@ -10,6 +10,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
+    <!-- 公共模块，提供 DTO、统一响应、JWT 工具和通用注解依赖。 -->
     <artifactId>common</artifactId>
     <dependencies>
         <!-- Lombok 简化 DTO、响应对象和工具类的样板代码。 -->
