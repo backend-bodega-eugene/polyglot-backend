@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\..\..\..\download\LifePlan-step4\TaskOperationForm.cs" Link="TaskOperationForm.cs" />
+    <Compile Include="..\..\..\..\..\download\LifePlan-step4\TaskOperationForm.Designer.cs" Link="TaskOperationForm.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="a5f587e9-5bd3-4c52-b737-54925b1211ce.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AntdUI" Version="2.4.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Model\Model.csproj" />
+    <ProjectReference Include="..\Service\Service.csproj" />
+  </ItemGroup>
+
+</Project>
