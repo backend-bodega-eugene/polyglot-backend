@@ -1,0 +1,32 @@
+app:
+  environment: development
+
+server:
+  address: ":9527"
+  readHeaderTimeoutSeconds: 5
+  shutdownTimeoutSeconds: 10
+  trustedProxies: []
+
+database:
+  host: 127.0.0.1
+  port: 3306
+  name: ths
+  user: ths_service
+  password: ths_service
+  maxOpenConnections: 20
+  maxIdleConnections: 10
+  connectionMaxLifetimeSeconds: 3600
+
+swagger:
+  enabled: true
+
+log:
+  level: info
+
+jwt:
+  secret: "ths-service-development-secret-change-in-production"
+  accessTokenTTLSeconds: 7200
+
+market:
+  cacheTTLSeconds: 300
+  requestTimeoutSeconds: 8

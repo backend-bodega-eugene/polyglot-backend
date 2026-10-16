@@ -1,0 +1,10 @@
+ALTER TABLE demo_portfolio_positions
+    ADD COLUMN currency VARCHAR(8) NOT NULL DEFAULT 'CNY',
+    ADD COLUMN exchange_rate DECIMAL(12,6) NOT NULL DEFAULT 1,
+    ADD COLUMN holding_days INT NOT NULL DEFAULT 0,
+    ADD COLUMN realized_profit DECIMAL(20,2) NOT NULL DEFAULT 0,
+    ADD COLUMN transaction_fees DECIMAL(20,2) NOT NULL DEFAULT 0,
+    ADD COLUMN daily_profit_percent DECIMAL(12,2) NOT NULL DEFAULT 0;
+ALTER TABLE demo_portfolio_trades
+    ADD COLUMN currency VARCHAR(8) NOT NULL DEFAULT 'CNY',
+    ADD COLUMN fees DECIMAL(20,2) NOT NULL DEFAULT 0;

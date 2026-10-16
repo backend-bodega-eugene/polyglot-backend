@@ -1,0 +1,33 @@
+app:
+  environment: production
+
+server:
+  address: ":9527"
+  readHeaderTimeoutSeconds: 5
+  shutdownTimeoutSeconds: 15
+  trustedProxies:
+    - 172.28.0.0/24
+
+database:
+  host: mysql
+  port: 3306
+  name: ths
+  user: ths_service
+  password: ""
+  maxOpenConnections: 50
+  maxIdleConnections: 10
+  connectionMaxLifetimeSeconds: 3600
+
+swagger:
+  enabled: true
+
+log:
+  level: info
+
+jwt:
+  secret: ""
+  accessTokenTTLSeconds: 7200
+
+market:
+  cacheTTLSeconds: 600
+  requestTimeoutSeconds: 8

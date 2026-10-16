@@ -1,0 +1,28 @@
+name: ths-service
+
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: ths-service-mysql
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-ths}
+      MYSQL_USER: ${MYSQL_USER:-ths_service}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-ths_service}
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - mysqladmin ping -h 127.0.0.1 -uroot -p$${MYSQL_ROOT_PASSWORD} --silent
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+
+volumes:
+  mysql_data:

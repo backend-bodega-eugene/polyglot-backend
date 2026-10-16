@@ -1,0 +1,897 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "thsService 模拟证券服务接口文档",
+        "title": "thsService API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "basePath": "/",
+    "paths": {
+        "/api/app/auth/login": {
+            "post": {
+                "description": "使用已注册的中国大陆手机号或邮箱登录",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "认证"
+                ],
+                "summary": "用户登录",
+                "parameters": [
+                    {
+                        "description": "登录参数",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_auth.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_auth.LoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/app/auth/register": {
+            "post": {
+                "description": "使用中国大陆手机号或邮箱注册，真实姓名必填；同一 IP 一分钟只能请求一次",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "认证"
+                ],
+                "summary": "用户注册",
+                "parameters": [
+                    {
+                        "description": "注册参数",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_auth.RegisterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/internal_auth.RegisterResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/app/market/holdings": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "按用户和分类独立保存，不返回quote行情和零持仓。传totalAssets会物理删除当前分类旧记录并生成全新3-5个持仓，每个15条成交；不传时有记录直接查库，无记录在200000至1000000元间随机生成资产后落库。各分类独立使用各自总资产，不合并计算，不影响其他分类和原portfolio接口。金额不足以买入3个标的最小交易单位时返回400且保留旧记录。资产、市值和盈亏为人民币，成本/现价及成交为原币种；USD按7.10、HKD按0.91演示汇率折算，税费为0。id仅在当前分类generation内唯一。",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "行情"
+                ],
+                "summary": "获取分类的3-5个持仓及每个15条交易记录",
+                "parameters": [
+                    {
+                        "enum": [
+                            "global",
+                            "a_stock",
+                            "hk_stock",
+                            "us_stock",
+                            "etf",
+                            "future",
+                            "gold",
+                            "convertible_bond",
+                            "other"
+                        ],
+                        "type": "string",
+                        "description": "行情分类",
+                        "name": "category",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "按指定总资产重建演示数据（人民币元），10000至1000000000，最多两位小数，如500000.00",
+                        "name": "totalAssets",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_portfolio.HoldingsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/app/market/quotes": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "返回指定分类下配置的行情；数据可能来自公开行情、历史缓存或模拟降级数据",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "行情"
+                ],
+                "summary": "获取分类行情列表",
+                "parameters": [
+                    {
+                        "enum": [
+                            "global",
+                            "a_stock",
+                            "hk_stock",
+                            "us_stock",
+                            "etf",
+                            "future",
+                            "gold",
+                            "convertible_bond",
+                            "other"
+                        ],
+                        "type": "string",
+                        "description": "行情分类",
+                        "name": "category",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_market.QuoteListResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/app/portfolio/trades": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "返回当前这套模拟持仓对应的买入成交，按成交时间倒序；尚未生成持仓时返回空列表；重建持仓后只展示新一套成交，旧记录保留在数据库。成交不含手续费。",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "模拟持仓"
+                ],
+                "summary": "获取当前用户的模拟历史成交",
+                "parameters": [
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 1,
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 20,
+                        "description": "每页数量",
+                        "name": "pageSize",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_portfolio.TradeResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "health.Data": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "example": "ok"
+                }
+            }
+        },
+        "health.SuccessResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "data": {
+                    "$ref": "#/definitions/health.Data"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "ok"
+                },
+                "requestId": {
+                    "type": "string",
+                    "example": "f5e76095d32f49199f5f7f897f5733a2"
+                }
+            }
+        },
+        "index.Data": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "成功访问接口"
+                }
+            }
+        },
+        "index.SuccessResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "data": {
+                    "$ref": "#/definitions/index.Data"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "ok"
+                },
+                "requestId": {
+                    "type": "string",
+                    "example": "f5e76095d32f49199f5f7f897f5733a2"
+                }
+            }
+        },
+        "internal_auth.AuthData": {
+            "type": "object",
+            "properties": {
+                "accessToken": {
+                    "type": "string"
+                },
+                "expiresIn": {
+                    "type": "integer",
+                    "example": 7200
+                },
+                "tokenType": {
+                    "type": "string",
+                    "example": "Bearer"
+                },
+                "user": {
+                    "$ref": "#/definitions/internal_auth.UserResponse"
+                }
+            }
+        },
+        "internal_auth.LoginRequest": {
+            "type": "object",
+            "required": [
+                "account",
+                "password"
+            ],
+            "properties": {
+                "account": {
+                    "type": "string",
+                    "example": "13800138000"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "Example123"
+                }
+            }
+        },
+        "internal_auth.LoginResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "data": {
+                    "$ref": "#/definitions/internal_auth.AuthData"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "ok"
+                },
+                "requestId": {
+                    "type": "string",
+                    "example": "f5e76095d32f49199f5f7f897f5733a2"
+                }
+            }
+        },
+        "internal_auth.RegisterRequest": {
+            "type": "object",
+            "required": [
+                "account",
+                "password",
+                "realName"
+            ],
+            "properties": {
+                "account": {
+                    "type": "string",
+                    "example": "13800138000"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "Example123"
+                },
+                "realName": {
+                    "type": "string",
+                    "example": "张三"
+                }
+            }
+        },
+        "internal_auth.RegisterResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "data": {
+                    "$ref": "#/definitions/internal_auth.AuthData"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "ok"
+                },
+                "requestId": {
+                    "type": "string",
+                    "example": "f5e76095d32f49199f5f7f897f5733a2"
+                }
+            }
+        },
+        "internal_auth.UserResponse": {
+            "type": "object",
+            "properties": {
+                "account": {
+                    "type": "string",
+                    "example": "138****8000"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "realName": {
+                    "type": "string",
+                    "example": "张三"
+                }
+            }
+        },
+        "internal_market.QuoteItem": {
+            "type": "object",
+            "properties": {
+                "changeAmount": {
+                    "type": "string",
+                    "example": "-13.11"
+                },
+                "changePercent": {
+                    "type": "string",
+                    "example": "-1.02"
+                },
+                "currency": {
+                    "type": "string",
+                    "example": "CNY"
+                },
+                "dataStatus": {
+                    "type": "string",
+                    "enum": [
+                        "live",
+                        "stale",
+                        "mock"
+                    ],
+                    "example": "live"
+                },
+                "latestPrice": {
+                    "type": "string",
+                    "example": "1274.89"
+                },
+                "market": {
+                    "type": "string",
+                    "example": "CN"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "贵州茅台"
+                },
+                "quoteTime": {
+                    "type": "string"
+                },
+                "symbol": {
+                    "type": "string",
+                    "example": "600519.SH"
+                }
+            }
+        },
+        "internal_market.QuoteListData": {
+            "type": "object",
+            "properties": {
+                "category": {
+                    "type": "string",
+                    "example": "a_stock"
+                },
+                "categoryName": {
+                    "type": "string",
+                    "example": "A股"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_market.QuoteItem"
+                    }
+                }
+            }
+        },
+        "internal_market.QuoteListResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "data": {
+                    "$ref": "#/definitions/internal_market.QuoteListData"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "ok"
+                },
+                "requestId": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_portfolio.Account": {
+            "type": "object",
+            "properties": {
+                "availableCash": {
+                    "type": "string"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "dailyProfit": {
+                    "type": "string"
+                },
+                "dailyProfitPercent": {
+                    "type": "string"
+                },
+                "floatingProfit": {
+                    "type": "string"
+                },
+                "generatedAt": {
+                    "type": "string"
+                },
+                "generation": {
+                    "type": "string"
+                },
+                "positionRatio": {
+                    "type": "string"
+                },
+                "totalAssets": {
+                    "type": "string"
+                },
+                "totalMarketValue": {
+                    "type": "string"
+                },
+                "withdrawableCash": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_portfolio.Data": {
+            "type": "object",
+            "properties": {
+                "account": {
+                    "$ref": "#/definitions/internal_portfolio.Account"
+                },
+                "positions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_portfolio.Position"
+                    }
+                },
+                "simulated": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "internal_portfolio.HoldingItem": {
+            "type": "object",
+            "properties": {
+                "notice": {
+                    "type": "string"
+                },
+                "position": {
+                    "$ref": "#/definitions/internal_portfolio.Position"
+                },
+                "positionRatio": {
+                    "type": "string"
+                },
+                "trades": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_portfolio.Trade"
+                    }
+                }
+            }
+        },
+        "internal_portfolio.HoldingsData": {
+            "type": "object",
+            "properties": {
+                "account": {
+                    "$ref": "#/definitions/internal_portfolio.Account"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "categoryName": {
+                    "type": "string"
+                },
+                "exchangeRateMode": {
+                    "type": "string",
+                    "example": "demo_fixed"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_portfolio.HoldingItem"
+                    }
+                },
+                "simulated": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "internal_portfolio.HoldingsResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/internal_portfolio.HoldingsData"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_portfolio.Position": {
+            "type": "object",
+            "properties": {
+                "availableQuantity": {
+                    "type": "integer"
+                },
+                "costPrice": {
+                    "type": "string"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "dailyProfit": {
+                    "type": "string"
+                },
+                "dailyProfitPercent": {
+                    "type": "string"
+                },
+                "dataStatus": {
+                    "type": "string"
+                },
+                "exchangeRate": {
+                    "type": "string"
+                },
+                "holdingDays": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "latestPrice": {
+                    "type": "string"
+                },
+                "marketValue": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "profit": {
+                    "type": "string"
+                },
+                "profitPercent": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer"
+                },
+                "quoteTime": {
+                    "type": "string"
+                },
+                "realizedProfit": {
+                    "type": "string"
+                },
+                "symbol": {
+                    "type": "string"
+                },
+                "transactionFees": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_portfolio.PositionResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/internal_portfolio.Data"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_portfolio.Trade": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "string"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "fees": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer"
+                },
+                "side": {
+                    "type": "string"
+                },
+                "symbol": {
+                    "type": "string"
+                },
+                "tradedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_portfolio.TradeList": {
+            "type": "object",
+            "properties": {
+                "generation": {
+                    "type": "string"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_portfolio.Trade"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "simulated": {
+                    "type": "boolean"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "internal_portfolio.TradeResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/internal_portfolio.TradeList"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                }
+            }
+        },
+        "ths-service_internal_response.ErrorEnvelope": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 40001
+                },
+                "data": {
+                    "type": "object"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "请求参数错误"
+                },
+                "requestId": {
+                    "type": "string",
+                    "example": "f5e76095d32f49199f5f7f897f5733a2"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "description": "输入 Bearer 加一个空格，再输入登录返回的 accessToken",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}
