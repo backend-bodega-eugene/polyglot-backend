@@ -1,6 +1,8 @@
 package auth
 
 import (
+	"gorm.io/gorm"
+	"log/slog"
 	"net/http"
 	"strings"
 
@@ -8,6 +10,26 @@ import (
 
 	"ths-service/internal/response"
 )
+
+// RequireActiveMember rejects deleted/disabled users even with an unexpired JWT.
+func RequireActiveMember(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var user User
+		err := db.WithContext(c.Request.Context()).Select("id", "status").First(&user, c.GetUint64(UserIDContextKey)).Error
+		if err != nil && err != gorm.ErrRecordNotFound {
+			slog.Error("check member status", "error", err)
+			response.Error(c, 500, response.CodeInternalError, "服务器内部错误")
+			c.Abort()
+			return
+		}
+		if err != nil || user.Status != UserStatusActive {
+			response.Error(c, 401, response.CodeUnauthorized, "会员已停用或删除，请重新登录")
+			c.Abort()
+			return
+		}
+		c.Next()
+	}
+}
 
 const UserIDContextKey = "userID"
 

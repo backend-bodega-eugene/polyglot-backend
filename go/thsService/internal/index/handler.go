@@ -20,7 +20,7 @@ type SuccessResponse struct {
 // Handler 默认入口
 // @Summary 访问默认接口
 // @Description 验证 API 服务已正常启动
-// @Tags 基础
+// @Tags 后台 · 服务监控
 // @Produce json
 // @Success 200 {object} SuccessResponse
 // 路由已停用。

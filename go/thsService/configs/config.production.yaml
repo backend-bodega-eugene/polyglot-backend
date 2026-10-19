@@ -19,7 +19,7 @@ database:
   connectionMaxLifetimeSeconds: 3600
 
 swagger:
-  enabled: true
+  enabled: false
 
 log:
   level: info

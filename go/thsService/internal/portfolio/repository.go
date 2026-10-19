@@ -26,7 +26,7 @@ func (r *Repository) NeedsHoldingUpgrade(ctx context.Context, userID uint64) (bo
 func (r *Repository) withUser(ctx context.Context, userID uint64, fn func(*gorm.DB) error) error {
 	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		var user struct{ ID uint64 }
-		if err := tx.Table("users").Clauses(clause.Locking{Strength: "UPDATE"}).Select("id").Where("id = ?", userID).Take(&user).Error; err != nil {
+		if err := tx.Table("users").Clauses(clause.Locking{Strength: "UPDATE"}).Select("id").Where("id = ? AND deleted_at IS NULL", userID).Take(&user).Error; err != nil {
 			return err
 		}
 		return fn(tx)

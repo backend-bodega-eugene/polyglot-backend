@@ -1,6 +1,9 @@
 package auth
 
-import "time"
+import (
+	"gorm.io/gorm"
+	"time"
+)
 
 const UserStatusActive uint8 = 1
 
@@ -14,6 +17,7 @@ type User struct {
 	LastLoginAt  *time.Time
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
+	DeletedAt    gorm.DeletedAt `json:"-"`
 }
 
 func (User) TableName() string {

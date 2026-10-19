@@ -7,7 +7,9 @@ type RegisterRequest struct {
 }
 
 type LoginRequest struct {
-	Account  string `json:"account" binding:"required" example:"13800138000"`
+	// 公共会员账号：完整中国大陆手机号或邮箱。
+	Account string `json:"account" binding:"required" example:"13800138000"`
+	// 会员密码，使用后台创建或重置的密码。
 	Password string `json:"password" binding:"required" example:"Example123"`
 }
 
@@ -18,10 +20,14 @@ type UserResponse struct {
 }
 
 type AuthData struct {
-	AccessToken string       `json:"accessToken"`
-	TokenType   string       `json:"tokenType" example:"Bearer"`
-	ExpiresIn   int          `json:"expiresIn" example:"7200"`
-	User        UserResponse `json:"user"`
+	// 公共会员访问Token，后续请求使用Authorization: Bearer <accessToken>。
+	AccessToken string `json:"accessToken"`
+	// 固定Bearer。
+	TokenType string `json:"tokenType" example:"Bearer"`
+	// Token有效期，单位秒。
+	ExpiresIn int `json:"expiresIn" example:"7200"`
+	// 会员基本资料，account为脱敏展示账号。
+	User UserResponse `json:"user"`
 }
 
 type RegisterResponse struct {

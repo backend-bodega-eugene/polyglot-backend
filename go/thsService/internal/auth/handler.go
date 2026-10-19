@@ -21,8 +21,8 @@ func NewHandler(service *Service) *Handler {
 
 // Register 用户注册
 // @Summary 用户注册
-// @Description 使用中国大陆手机号或邮箱注册，真实姓名必填；同一 IP 一分钟只能请求一次
-// @Tags 认证
+// @Description 使用中国大陆手机号或邮箱注册，真实姓名必填；密码至少6个字符且最多72字节，不限制字符类型；同一 IP 一分钟只能请求一次
+// @Tags App端 · 公共登录
 // @Accept json
 // @Produce json
 // @Param request body RegisterRequest true "注册参数"
@@ -31,7 +31,7 @@ func NewHandler(service *Service) *Handler {
 // @Failure 409 {object} response.ErrorEnvelope
 // @Failure 429 {object} response.ErrorEnvelope
 // @Failure 500 {object} response.ErrorEnvelope
-// @Router /api/app/auth/register [post]
+// 已停用路由：POST /api/app/auth/register；会员统一由后台创建。
 func (h *Handler) Register(c *gin.Context) {
 	var request RegisterRequest
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -51,7 +51,7 @@ func (h *Handler) Register(c *gin.Context) {
 	case errors.Is(err, ErrInvalidRealName):
 		response.Error(c, http.StatusBadRequest, response.CodeInvalidRequest, "真实姓名长度必须为 2 到 64 个字符")
 	case errors.Is(err, ErrInvalidPassword):
-		response.Error(c, http.StatusBadRequest, response.CodeInvalidRequest, "密码长度必须为 8 到 72 个字节")
+		response.Error(c, http.StatusBadRequest, response.CodeInvalidRequest, ErrInvalidPassword.Error())
 	case errors.Is(err, ErrAccountExists):
 		response.Error(c, http.StatusConflict, response.CodeAccountExists, "该手机号或邮箱已经注册")
 	default:
@@ -62,8 +62,8 @@ func (h *Handler) Register(c *gin.Context) {
 
 // Login 用户登录
 // @Summary 用户登录
-// @Description 使用已注册的中国大陆手机号或邮箱登录
-// @Tags 认证
+// @Description 所有App共用此会员登录，使用后台创建的手机号或邮箱及密码。成功code=0/message/data，data.accessToken用于Authorization: Bearer <accessToken>。不为南网、所得税、支付宝单独创建登录接口。同IP一分钟最多5次登录请求；停用或删除会员无法访问受保护接口。
+// @Tags App端 · 公共登录
 // @Accept json
 // @Produce json
 // @Param request body LoginRequest true "登录参数"

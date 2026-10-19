@@ -51,6 +51,8 @@ services:
       TZ: Asia/Shanghai
       THS_DATABASE_PASSWORD: ${MYSQL_PASSWORD:?MYSQL_PASSWORD is required}
       THS_JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      THS_APP_ENVIRONMENT: ${THS_APP_ENVIRONMENT:-testing}
+      THS_SWAGGER_ENABLED: ${THS_SWAGGER_ENABLED:-true}
     expose:
       - "9527"
     networks:
@@ -62,7 +64,7 @@ services:
     healthcheck:
       test:
         - CMD-SHELL
-        - wget -qO- http://127.0.0.1:9527/swagger/index.html >/dev/null || exit 1
+        - wget -qO- http://127.0.0.1:9527/health/ready >/dev/null || exit 1
       interval: 10s
       timeout: 5s
       retries: 10

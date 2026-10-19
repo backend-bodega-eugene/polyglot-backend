@@ -20,7 +20,7 @@ import (
 
 // @title thsService API
 // @version 1.0
-// @description thsService 模拟证券服务接口文档
+// @description THS模拟展示服务。Swagger按App端与后台分别展示，默认只加载App文档；顶部切换分组，各业务分类可折叠。所有App共用会员登录，后台使用独立管理员会话。各业务的成功码、字段及日期格式保持各自客户端协议。
 // @BasePath /
 // @securityDefinitions.apikey BearerAuth
 // @in header

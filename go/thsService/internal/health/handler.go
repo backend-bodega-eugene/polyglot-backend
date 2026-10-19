@@ -33,7 +33,7 @@ func NewHandler(db *sql.DB) *Handler {
 // Live 服务存活检查
 // @Summary 服务存活检查
 // @Description 确认 HTTP 服务进程正在运行
-// @Tags 健康检查
+// @Tags 后台 · 服务监控
 // @Produce json
 // @Success 200 {object} SuccessResponse
 // 路由已停用。
@@ -44,11 +44,11 @@ func (h *Handler) Live(c *gin.Context) {
 // Ready 服务就绪检查
 // @Summary 服务就绪检查
 // @Description 确认服务及 MySQL 数据库可以正常访问
-// @Tags 健康检查
+// @Tags 后台 · 服务监控
 // @Produce json
 // @Success 200 {object} SuccessResponse
 // @Failure 503 {object} response.ErrorEnvelope
-// 路由已停用。
+// @Router /health/ready [get]
 func (h *Handler) Ready(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c.Request.Context(), 2*time.Second)
 	defer cancel()

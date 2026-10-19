@@ -41,6 +41,8 @@ if [ ! -f "$ENV_FILE" ]; then
 MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
 MYSQL_PASSWORD=$MYSQL_PASSWORD
 JWT_SECRET=$JWT_SECRET
+THS_APP_ENVIRONMENT=testing
+THS_SWAGGER_ENABLED=true
 EOF
 
     echo "已生成生产密码文件: $ENV_FILE"
@@ -67,7 +69,7 @@ ATTEMPT=1
 while [ "$ATTEMPT" -le 30 ]; do
     if curl --silent --show-error --fail --insecure \
         --resolve eugenecoming.com:443:127.0.0.1 \
-        https://eugenecoming.com/swagger/index.html >/dev/null; then
+        https://eugenecoming.com/health/ready >/dev/null; then
         echo "HTTPS 和 API 健康检查通过"
         docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" ps
         exit 0

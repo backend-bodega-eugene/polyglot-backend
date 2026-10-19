@@ -3,6 +3,8 @@ package config
 import (
 	"fmt"
 	"os"
+	"strconv"
+	"strings"
 
 	"gopkg.in/yaml.v3"
 )
@@ -78,6 +80,20 @@ func Load(path string) (Config, error) {
 	}
 	if secret := os.Getenv("THS_JWT_SECRET"); secret != "" {
 		cfg.JWT.Secret = secret
+	}
+	if environment := os.Getenv("THS_APP_ENVIRONMENT"); environment != "" {
+		environment = strings.ToLower(strings.TrimSpace(environment))
+		if environment != "development" && environment != "testing" && environment != "production" {
+			return Config{}, fmt.Errorf("THS_APP_ENVIRONMENT must be development, testing or production")
+		}
+		cfg.App.Environment = environment
+	}
+	if enabled, exists := os.LookupEnv("THS_SWAGGER_ENABLED"); exists {
+		value, err := strconv.ParseBool(enabled)
+		if err != nil {
+			return Config{}, fmt.Errorf("THS_SWAGGER_ENABLED must be true or false")
+		}
+		cfg.Swagger.Enabled = value
 	}
 	if cfg.Server.Address == "" {
 		return Config{}, fmt.Errorf("server.address is required")

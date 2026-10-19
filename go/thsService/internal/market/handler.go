@@ -17,7 +17,7 @@ func NewHandler(service *Service) *Handler { return &Handler{service: service} }
 // List 行情分类列表
 // @Summary 获取分类行情列表
 // @Description 返回指定分类下配置的行情；数据可能来自公开行情、历史缓存或模拟降级数据
-// @Tags 行情
+// @Tags App端 · 证券行情
 // @Produce json
 // @Param category query string true "行情分类" Enums(global,a_stock,hk_stock,us_stock,etf,future,gold,convertible_bond,other)
 // @Security BearerAuth

@@ -15,7 +15,7 @@ import (
 var (
 	ErrInvalidAccount     = errors.New("account must be a Chinese mobile number or an email address")
 	ErrInvalidRealName    = errors.New("real name length must be between 2 and 64 characters")
-	ErrInvalidPassword    = errors.New("password length must be between 8 and 72 bytes")
+	ErrInvalidPassword    = errors.New("密码至少6个字符且最多72字节，不限制字符类型")
 	ErrInvalidCredentials = errors.New("invalid account or password")
 	ErrUserDisabled       = errors.New("user is disabled")
 )
@@ -50,7 +50,7 @@ func (s *Service) Register(request RegisterRequest) (AuthData, error) {
 	if length := utf8.RuneCountInString(realName); length < 2 || length > 64 {
 		return AuthData{}, ErrInvalidRealName
 	}
-	if length := len([]byte(request.Password)); length < 8 || length > 72 {
+	if err := ValidateMemberPassword(request.Password); err != nil {
 		return AuthData{}, ErrInvalidPassword
 	}
 
@@ -138,6 +138,19 @@ func normalizeAccount(account string) (*string, *string, string, error) {
 		return nil, nil, "", ErrInvalidAccount
 	}
 	return nil, &normalizedEmail, normalizedEmail, nil
+}
+
+// ValidateMemberPassword is shared by registration and administrator actions.
+func ValidateMemberPassword(password string) error {
+	if !utf8.ValidString(password) || utf8.RuneCountInString(password) < 6 || len(password) > 72 {
+		return ErrInvalidPassword
+	}
+	return nil
+}
+
+func NormalizeMemberAccount(account string) (*string, *string, error) {
+	phone, email, _, err := normalizeAccount(strings.TrimSpace(account))
+	return phone, email, err
 }
 
 func maskAccount(account string, phone bool) string {
