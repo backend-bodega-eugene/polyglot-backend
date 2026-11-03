@@ -3,6 +3,7 @@ package portfolio
 import (
 	"encoding/json"
 	"fmt"
+	"sort"
 	"strings"
 	"testing"
 	"time"
@@ -10,10 +11,10 @@ import (
 	"ths-service/internal/market"
 )
 
-func TestCategoryGenerationOnlyFundedPositionsAndFifteenTrades(t *testing.T) {
+func TestCategoryGenerationOnlyFundedPositionsAndExpandedTrades(t *testing.T) {
 	for category, name := range categoryLabels {
 		quotes := market.QuoteListData{Category: category, CategoryName: name}
-		for i := range 10 {
+		for i := range 30 {
 			currency := "CNY"
 			if category == "hk_stock" {
 				currency = "HKD"
@@ -28,17 +29,35 @@ func TestCategoryGenerationOnlyFundedPositionsAndFifteenTrades(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			if len(data.Items) < 3 || len(data.Items) > 5 {
+			if len(data.Items) < 8 || len(data.Items) > 12 {
 				t.Fatalf("%s has %d positions", category, len(data.Items))
 			}
 			mv, profit, day := int64(0), int64(0), int64(0)
 			seen := map[string]bool{}
 			for _, item := range data.Items {
 				p := item.Position
-				if p.Quantity <= 0 || seen[p.Symbol] || len(item.Trades) != 15 {
+				if p.Quantity <= 0 || seen[p.Symbol] || len(item.Trades) < 40 || len(item.Trades) > 50 {
 					t.Fatal("invalid position or trade count")
 				}
 				seen[p.Symbol] = true
+				ordered := append([]Trade(nil), item.Trades...)
+				sort.SliceStable(ordered, func(i, j int) bool {
+					if ordered[i].TradedAt.Equal(ordered[j].TradedAt) {
+						return ordered[i].ID < ordered[j].ID
+					}
+					return ordered[i].TradedAt.Before(ordered[j].TradedAt)
+				})
+				balance := int64(0)
+				for _, trade := range ordered {
+					if trade.Side == "buy" {
+						balance += trade.Quantity
+					} else {
+						balance -= trade.Quantity
+					}
+					if balance < 0 || !trade.TradedAt.Before(data.Account.GeneratedAt) {
+						t.Fatal("invalid generated trade chronology")
+					}
+				}
 				net, cost := int64(0), int64(0)
 				for _, trade := range item.Trades {
 					if trade.Side == "buy" {

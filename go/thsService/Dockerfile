@@ -18,8 +18,11 @@ RUN apk add --no-cache ca-certificates tzdata \
 
 WORKDIR /app
 
+RUN mkdir -p /app/data/apks && chown -R app:app /app/data
+
 COPY --from=builder /out/ths-service /app/ths-service
 COPY configs/config.production.yaml /app/configs/config.production.yaml
+COPY internal/pdfreport/assets/OFL.txt /app/licenses/ReportSans-OFL.txt
 
 USER app
 

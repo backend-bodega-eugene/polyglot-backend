@@ -93,8 +93,8 @@ func (h *Handler) fail(c *gin.Context, err error) {
 }
 
 // Holdings 获取分类模拟持仓
-// @Summary 获取分类的3-5个持仓及每个15条交易记录
-// @Description 按用户和分类独立保存，不返回quote行情和零持仓。传totalAssets会物理删除当前分类旧记录并生成全新3-5个持仓，每个15条成交；不传时有记录直接查库，无记录在200000至1000000元间随机生成资产后落库。各分类独立使用各自总资产，不合并计算，不影响其他分类和原portfolio接口。金额不足以买入3个标的最小交易单位时返回400且保留旧记录。资产、市值和盈亏为人民币，成本/现价及成交为原币种；USD按7.10、HKD按0.91演示汇率折算，税费为0。id仅在当前分类generation内唯一。
+// @Summary 获取分类的8-12个持仓及每个40-50条交易记录
+// @Description 按用户和分类独立保存，不返回quote行情和零持仓。传totalAssets会物理删除当前分类旧记录并生成全新8-12个持仓，每个40-50条成交；不传时有记录直接查库，无记录在200000至1000000元间随机生成资产后落库。各分类独立使用各自总资产，不合并计算，不影响其他分类和原portfolio接口。金额不足以买入8个标的最小交易单位时返回400且保留旧记录。资产、市值和盈亏为人民币，成本/现价及成交为原币种；USD按7.10、HKD按0.91演示汇率折算，税费为0。id仅在当前分类generation内唯一。
 // @Tags App端 · 模拟持仓
 // @Produce json
 // @Param category query string true "行情分类" Enums(global,a_stock,hk_stock,us_stock,etf,future,gold,convertible_bond,other)

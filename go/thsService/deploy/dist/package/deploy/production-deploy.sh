@@ -64,6 +64,10 @@ fi
 
 docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d --no-build
 
+# A running nginx does not reload bind-mounted configuration automatically.
+# Recreate it to also pick up a replaced file inode after unpacking a release.
+docker compose --env-file "$ENV_FILE" -f "$COMPOSE_FILE" up -d --no-deps --force-recreate nginx
+
 echo "等待服务健康检查..."
 ATTEMPT=1
 while [ "$ATTEMPT" -le 30 ]; do

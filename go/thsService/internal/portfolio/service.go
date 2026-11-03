@@ -15,7 +15,7 @@ import (
 )
 
 var ErrInvalidAssets = errors.New("总资产须为 10000 到 1000000000 元之间的数字，最多两位小数")
-var ErrInsufficientQuotes = errors.New("总资产或可用行情不足以生成或保留至少三只股票的整手持仓，请提高总资产后重试")
+var ErrInsufficientQuotes = errors.New("总资产或可用价格不足以生成或保留所需数量的整手持仓，请提高总资产后重试")
 var amountPattern = regexp.MustCompile(`^[0-9]{1,10}(\.[0-9]{1,2})?$`)
 var beijing = time.FixedZone("Asia/Shanghai", 8*60*60)
 

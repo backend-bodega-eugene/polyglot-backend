@@ -53,6 +53,9 @@ services:
       THS_JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
       THS_APP_ENVIRONMENT: ${THS_APP_ENVIRONMENT:-testing}
       THS_SWAGGER_ENABLED: ${THS_SWAGGER_ENABLED:-true}
+      THS_APK_STORAGE_DIR: /app/data/apks
+    volumes:
+      - apk_data:/app/data/apks
     expose:
       - "9527"
     networks:
@@ -106,3 +109,4 @@ networks:
 
 volumes:
   mysql_data:
+  apk_data:

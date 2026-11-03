@@ -113,20 +113,24 @@ func makeHolding(userID uint64, generation string, q market.QuoteItem, category 
 // Add closed round trips before the existing opening buy. Each pair closes at
 // its purchase price, so it changes neither cash, cost basis nor realized profit.
 func detailTrades(p Position, existing []Trade, lot, _ int64) []Trade {
+	return detailTradesCount(p, existing, lot, 15, time.Now().In(beijing))
+}
+
+func detailTradesCount(p Position, existing []Trade, lot int64, target int, now time.Time) []Trade {
 	price, ok := priceUnits(p.CostPrice)
 	if !ok {
 		return nil
 	}
-	if demoRate(p.Currency) == 0 || len(existing) >= 15 {
+	if demoRate(p.Currency) == 0 || len(existing) >= target {
 		return nil
 	}
-	end := time.Now().In(beijing).AddDate(0, 0, -3)
+	end := now.In(beijing).AddDate(0, 0, -3)
 	for _, t := range existing {
 		if t.TradedAt.Before(end) {
 			end = t.TradedAt.In(beijing).AddDate(0, 0, -1)
 		}
 	}
-	result := make([]Trade, 0, 15-len(existing))
+	result := make([]Trade, 0, target-len(existing))
 	appendTrade := func(side string, quantity, price int64, day time.Time) {
 		for day.Weekday() == time.Saturday || day.Weekday() == time.Sunday {
 			day = day.AddDate(0, 0, -1)
@@ -134,7 +138,7 @@ func detailTrades(p Position, existing []Trade, lot, _ int64) []Trade {
 		day = time.Date(day.Year(), day.Month(), day.Day(), 10, 30, 0, 0, beijing)
 		result = append(result, Trade{UserID: p.UserID, Generation: p.Generation, Symbol: p.Symbol, Name: p.Name, Side: side, Quantity: quantity, Price: fixed(price, 4), Amount: money(value(price, quantity)), TradedAt: day, Currency: p.Currency, Fees: "0.00"})
 	}
-	remaining := 15 - len(existing)
+	remaining := target - len(existing)
 	if remaining == 1 {
 		return nil
 	}

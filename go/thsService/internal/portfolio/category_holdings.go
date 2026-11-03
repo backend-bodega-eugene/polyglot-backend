@@ -28,6 +28,13 @@ var categoryLabels = map[string]string{
 	"global": "全球", "a_stock": "A股", "hk_stock": "港股", "us_stock": "美股", "etf": "ETF", "future": "期货", "gold": "黄金", "convertible_bond": "可转债", "other": "其他",
 }
 
+const (
+	minGeneratedHoldings = 8
+	maxGeneratedHoldings = 12
+	minGeneratedTrades   = 40
+	maxGeneratedTrades   = 50
+)
+
 func (s *Service) Holdings(ctx context.Context, userID uint64, category string, totalAssets *string) (HoldingsData, error) {
 	if _, ok := categoryLabels[category]; !ok {
 		return HoldingsData{}, market.ErrInvalidCategory
@@ -53,7 +60,7 @@ func (s *Service) Holdings(ctx context.Context, userID uint64, category string, 
 		if totalAssets == nil {
 			assets = randomAssets()
 		}
-		quotes, err := s.quotes.List(ctx, category)
+		quotes, err := s.generationQuotes(ctx, category, time.Now().In(beijing))
 		if err != nil {
 			return err
 		}
@@ -95,10 +102,10 @@ func generateCategory(userID uint64, assets int64, quotes market.QuoteListData, 
 		seen[q.Symbol] = true
 		candidates = append(candidates, candidate{q, minimum})
 	}
-	if len(candidates) < 3 {
+	if len(candidates) < minGeneratedHoldings {
 		return HoldingsData{}, ErrInsufficientQuotes
 	}
-	count := min(3+randv2.IntN(3), len(candidates))
+	count := min(minGeneratedHoldings+randv2.IntN(maxGeneratedHoldings-minGeneratedHoldings+1), len(candidates))
 	budget := assets * int64(55+randv2.IntN(16)) / 100
 	randv2.Shuffle(len(candidates), func(i, j int) { candidates[i], candidates[j] = candidates[j], candidates[i] })
 	minimum := func(n int) int64 {
@@ -110,7 +117,7 @@ func generateCategory(userID uint64, assets int64, quotes market.QuoteListData, 
 	}
 	if minimum(count) > budget {
 		sort.Slice(candidates, func(i, j int) bool { return candidates[i].minimum < candidates[j].minimum })
-		for count > 3 && minimum(count) > budget {
+		for count > minGeneratedHoldings && minimum(count) > budget {
 			count--
 		}
 		budget = max(budget, minimum(count))
@@ -118,25 +125,61 @@ func generateCategory(userID uint64, assets int64, quotes market.QuoteListData, 
 	if budget > assets {
 		return HoldingsData{}, ErrInsufficientQuotes
 	}
+	// Re-shuffle after affordability calculations instead of always choosing the
+	// cheapest names when a random combination is too expensive.
+	randv2.Shuffle(len(candidates), func(i, j int) { candidates[i], candidates[j] = candidates[j], candidates[i] })
+	selected := make([]candidate, 0, count)
+	reserved := int64(0)
+	for i, c := range candidates {
+		need := count - len(selected) - 1
+		if len(candidates)-i-1 < need {
+			continue
+		}
+		tail := append([]candidate(nil), candidates[i+1:]...)
+		sort.Slice(tail, func(i, j int) bool { return tail[i].minimum < tail[j].minimum })
+		trial := reserved + c.minimum
+		for j := 0; j < need; j++ {
+			trial += tail[j].minimum
+		}
+		if trial <= budget {
+			selected = append(selected, c)
+			reserved += c.minimum
+		}
+		if len(selected) == count {
+			break
+		}
+	}
+	if len(selected) != count {
+		return HoldingsData{}, ErrInsufficientQuotes
+	}
+	candidates = selected
 	extra := budget - minimum(count)
 	account := Account{UserID: userID, Generation: rand.Text(), Currency: "CNY", TotalAssets: money(assets), GeneratedAt: now.In(beijing).Truncate(time.Millisecond)}
 	data := HoldingsData{Simulated: true, Category: quotes.Category, CategoryName: quotes.CategoryName, Account: account, Items: make([]HoldingItem, 0, count), ExchangeRateMode: "demo_fixed"}
 	positions := make([]Position, 0, count)
+	weights := make([]int64, count)
+	remainingWeight := int64(0)
+	for i := range weights {
+		weights[i] = int64(1 + randv2.IntN(5))
+		remainingWeight += weights[i]
+	}
 	for i, c := range candidates[:count] {
-		allocation := c.minimum + extra/int64(count-i)
-		p := makeHolding(userID, account.Generation, c.quote, quotes.Category, allocation)
+		allocation := c.minimum + extra*weights[i]/remainingWeight
+		remainingWeight -= weights[i]
+		p := makeCategoryHolding(userID, account.Generation, c.quote, quotes.Category, allocation)
 		if p.Quantity <= 0 {
 			return HoldingsData{}, ErrInsufficientQuotes
 		}
 		extra -= decimalCents(p.MarketValue) - c.minimum
 		p.ID = uint64(i + 1)
 		p.QuoteTime = p.QuoteTime.In(beijing).Truncate(time.Millisecond)
-		trades := detailTrades(p, nil, lot, assets)
-		if len(trades) != 15 {
+		target := minGeneratedTrades + randv2.IntN(maxGeneratedTrades-minGeneratedTrades+1)
+		trades := detailTradesCount(p, nil, lot, target, now.AddDate(0, 0, -randv2.IntN(22)))
+		if len(trades) != target {
 			return HoldingsData{}, ErrInsufficientQuotes
 		}
 		for j := range trades {
-			trades[j].ID = uint64(i*15 + j + 1)
+			trades[j].ID = uint64(i*maxGeneratedTrades + j + 1)
 			trades[j].TradedAt = trades[j].TradedAt.In(beijing)
 		}
 		p.HoldingDays = holdingDays(trades, now)

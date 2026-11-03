@@ -15,6 +15,74 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/admin/alipay/records/generate": {
+            "post": {
+                "description": "管理员Cookie鉴权。五险逐项按基数乘费率计算并四舍五入到分，再汇总单位和个人金额。所提交规则应用整个区间，历史政策变化请分段提交。基数须按当地年度上下限确认；不含公积金，深户养老地方补充请计入单位费率。同会员已有月份一律跳过，不覆盖任何单位的记录；最多120个月，不生成未来月份。记录和审计同事务保存，App累计信息自动汇总。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台 · 支付宝模拟业务"
+                ],
+                "summary": "按月份范围批量生成会员五险缴费记录",
+                "parameters": [
+                    {
+                        "description": "会员、起止月份、月薪、单位和五险规则",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_alipay.GenerateContributions"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_admin.AlipayGenerationResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/alipay/records/generate-preview": {
+            "post": {
+                "description": "参数与批量生成相同，不写入缴费记录。并发编辑可能使实际生成数量与预览不同。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台 · 支付宝模拟业务"
+                ],
+                "summary": "预览五险逐项金额及待生成、跳过月份数量",
+                "parameters": [
+                    {
+                        "description": "生成参数",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_alipay.GenerateContributions"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_admin.AlipayGenerationResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/admin/alipay/schemas": {
             "get": {
                 "produces": [
@@ -261,6 +329,101 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/admin/app-package": {
+            "get": {
+                "description": "管理员Cookie鉴权。只返回版本、大小、SHA256和口令是否已设置，不回显口令。",
+                "tags": [
+                    "后台 · App安装包"
+                ],
+                "summary": "获取安装包管理信息",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_apkdownload.InfoResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/app-package/passcode": {
+            "put": {
+                "description": "管理员Cookie鉴权。5至64个Unicode字符，最多256个UTF8字节，支持中文和符号，不自动去掉空格。只保存SHA256预哈希后的bcrypt哈希，不回显；新下载请求立即使用新口令。保留审计但不记录口令。",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台 · App安装包"
+                ],
+                "summary": "设置或修改APK下载口令",
+                "parameters": [
+                    {
+                        "description": "新的下载口令",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_apkdownload.PasscodeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_apkdownload.InfoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/app-package/upload": {
+            "post": {
+                "description": "管理员Cookie鉴权，multipart/form-data，小于100MB。releaseKey由服务端按北京时间生成YYYYMMDDHHmmss，不接受客户端修改。默认下载口令eugenecoming，可通过专用接口修改。检查ZIP结构及Android二进制清单，不执行文件，不替代Android签名验证。上传失败保留当前版本，旧文件保留于持久化目录。",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "tags": [
+                    "后台 · App安装包"
+                ],
+                "summary": "上传并替换当前APK",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "APK文件，小于100MB",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_apkdownload.InfoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                        }
+                    },
+                    "413": {
+                        "description": "Request Entity Too Large",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                        }
+                    }
+                }
+            }
+        },
         "/api/admin/auth/login": {
             "post": {
                 "description": "同IP滚动一分钟最多5次登录请求，第6次冻结10分钟；同管理员滚动一分钟3次失败冻结10分钟，跨IP累计且成功后清零。冻结期间不延长冻结，不影响已登录会话。429返回Retry-After秒数。计数落库，重启后保留。成功设置HttpOnly会话Cookie。",
@@ -370,6 +533,89 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/admin/deleted-members": {
+            "get": {
+                "description": "管理员Cookie鉴权。只查询deleted_at不为空的会员，包含删除时间，不返回密码或哈希，不提供物理删除功能。",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台 · 会员管理"
+                ],
+                "summary": "分页查询已逻辑删除的会员",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID、姓名、手机号或邮箱",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "页码",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 20,
+                        "description": "每页条数",
+                        "name": "pageSize",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_admin.DeletedMemberPageResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/deleted-members/{userID}/restore": {
+            "post": {
+                "description": "管理员Cookie与同源校验。仅恢复已删除会员，清空deleted_at并设置status=1；原ID、密码、账号及全部关联数据保持不变。恢复与审计同事务。不存在或已恢复返回404，不重复记录恢复操作。无需请求体。不提供物理删除。",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台 · 会员管理"
+                ],
+                "summary": "恢复已逻辑删除的会员并设为正常状态",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "已删除会员ID",
+                        "name": "userID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_admin.MemberResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                        }
+                    }
+                }
+            }
+        },
         "/api/admin/electricity/bills": {
             "get": {
                 "description": "管理员Cookie鉴权，只查询已有记录。指定userId时返回该会员全部账单的setVersion，供重新生成时防止并发覆盖；无userId时setVersion为空。",
@@ -444,7 +690,7 @@ const docTemplate = `{
         },
         "/api/admin/electricity/bills/{userID}": {
             "post": {
-                "description": "管理员Cookie鉴权，会员一对多，同一账期只能一条，重复409。code为YYYYMM；起止日期YYYY-MM-DD；amount/totalUsage为非负十进制字符串，最多9位整数2位小数；detail可选JSON对象，最多8KB。billMonth由code派生。",
+                "description": "管理员Cookie鉴权，会员一对多，同一账期只能一条，重复409。code为YYYYMM；起止日期YYYY-MM-DD；amount/totalUsage为非负十进制字符串，最多9位整数2位小数；detail可选JSON对象，最多8KB。计费信息写入detail.billing：tiers为三档电量/单价/金额，due_date缴费截止日，late_fee_start_date违约金起始日，late_fee违约金金额；完整字段见响应billing模型。各金额可独立录入，不校验合计或乘积。billMonth由code派生。",
                 "consumes": [
                     "application/json"
                 ],
@@ -503,7 +749,7 @@ const docTemplate = `{
         },
         "/api/admin/electricity/bills/{userID}/generate": {
             "post": {
-                "description": "管理员Cookie鉴权，覆盖该会员全部账单。先按userId查询列表，expectedVersion传列表setVersion；已有数据版本不符409，没有账单传空对象。最近20个已结束月份，金额按0.6200元/kWh生成，所有操作和审计同事务。",
+                "description": "管理员Cookie鉴权，覆盖该会员全部账单。先按userId查询列表，expectedVersion传列表setVersion；已有数据版本不符409，没有账单传空对象。生成最近20个已结束月份，按深圳居民夏季/非夏季三档电价填充计费信息和缴费日期，默认已缴清，违约金为0。模板值可手动修改，所有操作和审计同事务。",
                 "consumes": [
                     "application/json"
                 ],
@@ -607,7 +853,7 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "管理员Cookie鉴权，expectedVersion传该账单version，过期409；修改与审计同事务。不改变会员账号或用电资料。",
+                "description": "管理员Cookie鉴权，expectedVersion传该账单version，过期409；修改与审计同事务。不改变会员账号或用电资料。结构化计费信息写入detail.billing，读接口返回billing对象；不校验各档金额合计、乘积、日期先后或缴费状态关系，仅检查格式及字段范围。",
                 "consumes": [
                     "application/json"
                 ],
@@ -1226,7 +1472,7 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "管理员Cookie鉴权。expectedGeneration必须是详情的generation，过期返回409。items为完整替换；删除股票或交易即从items中移除。手动编辑不限制3至5只、每只15条，仍校验净数量、卖超和总资产。保存及变更前后审计同一事务完成。",
+                "description": "管理员Cookie鉴权。expectedGeneration必须是详情的generation，过期返回409。items为完整替换；删除股票或交易即从items中移除。手动编辑不限制自动生成的8至12只、每只40至50条，仍校验净数量、卖超和总资产。保存及变更前后审计同一事务完成。",
                 "consumes": [
                     "application/json"
                 ],
@@ -1426,7 +1672,7 @@ const docTemplate = `{
         },
         "/api/admin/holdings/{userID}/{category}/generate": {
             "post": {
-                "description": "管理员Cookie鉴权，指定totalAssets，按原规则生成3至5只、每只15条。已有记录需expectedGeneration，替换及审计原子完成。",
+                "description": "管理员Cookie鉴权，指定totalAssets，从扩展的分类候选池随机生成8至12只、每只40至50条。已有记录需expectedGeneration，替换及审计原子完成。",
                 "consumes": [
                     "application/json"
                 ],
@@ -1704,7 +1950,7 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "管理员Cookie鉴权。设置deleted_at并停用；保留会员、持仓与交易数据，不物理删除。已登录会员也不能继续访问App受保护接口。无恢复入口。",
+                "description": "管理员Cookie鉴权。设置deleted_at并停用；保留会员、持仓与交易数据，不物理删除。已登录会员也不能继续访问App受保护接口。恢复请使用独立的已删除会员接口。",
                 "produces": [
                     "application/json"
                 ],
@@ -2037,6 +2283,282 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/ths-service_internal_response.Envelope"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/pdf-assets": {
+            "get": {
+                "description": "管理员Cookie鉴权。无图片的位置为空，不自动导入项目png目录。canReview仅账号eugene且为超级管理员时为true；其他管理员可上传和预览，不可审核。历史已通过版本不一定是当前生效图片，以activeId为准。",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台 · PDF素材"
+                ],
+                "summary": "查询3至7号素材位置、生效图片及最近20个版本",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_admin.PDFAssetListResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/pdf-assets/slots/{slot}/upload": {
+            "post": {
+                "description": "管理员Cookie及同源校验。slot为3至7；单文件最大5MiB，边长最多8192像素且总像素不超过800万。实际解码并转存PNG、保留透明度、移除元数据；不接受SVG/GIF或其他文件。上传仅创建待审核版本，不覆盖生效图片。图片内容需人工审核，不自动保证其真实性或授权。",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台 · PDF素材"
+                ],
+                "summary": "上传固定位置的PNG或JPEG待审核素材",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "素材位置3至7",
+                        "name": "slot",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "PNG/JPEG，最多5MiB",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_admin.PDFAssetResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/pdf-assets/versions/{assetID}/image": {
+            "get": {
+                "description": "管理员Cookie鉴权，包含待审核及历史版本，仅用于后台预览，不代表可用于PDF导出。固定返回PNG并禁止缓存。",
+                "produces": [
+                    "image/png"
+                ],
+                "tags": [
+                    "后台 · PDF素材"
+                ],
+                "summary": "管理员预览指定版本的素材图片",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "素材版本ID",
+                        "name": "assetID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/pdf-assets/versions/{assetID}/review": {
+            "post": {
+                "description": "后端限定账号eugene且为超级管理员，其他管理员返回403。仅待审核版本可审核；approve通过、reject驳回，驳回必填理由。审核与生效指针替换、审计同事务，原生效版本保留。未通过的图片不得用于PDF生成。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台 · PDF素材"
+                ],
+                "summary": "eugene审核待审核图片，通过后替换对应位置的生效图片",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "待审核素材ID",
+                        "name": "assetID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "审核决定及备注，最多500字符",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_admin.PDFAssetReview"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_admin.PDFAssetResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/pdf-reports/bills": {
+            "get": {
+                "description": "只读数据库，缺失不生成，不修改原业务记录。会员只能由管理员选择。",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台 · PDF生成"
+                ],
+                "summary": "查询指定会员最近100条电费账单供PDF选择",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "会员ID",
+                        "name": "userId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_admin.PDFSourceResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/pdf-reports/download": {
+            "post": {
+                "description": "管理员Cookie及同源鉴权。不回写会员、账单、社保等业务数据，只记录导出元数据审计，不存PDF文件、不提供链接。最多600行明细，费用按计费标准重算；填写分险种明细时月合计必须一致。始终保留演示标识。图片仅使用固定位置当前approved生效版本，调用方不能指定素材ID。2个并发名额，繁忙返回429。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/pdf"
+                ],
+                "tags": [
+                    "后台 · PDF生成"
+                ],
+                "summary": "将编辑后的本次草稿生成PDF并直接下载",
+                "parameters": [
+                    {
+                        "description": "本次导出草稿",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_pdfreport.Draft"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/pdf-reports/prepare": {
+            "post": {
+                "description": "不生成缺失业务数据，不回写。电费须选billId且属于会员，社保须填YYYY-MM起止月份（最多120个月），缺失分险种数据留空并提示，不从合计推算。draft仅供浏览器编辑。缺失工作资料可在表单补充。",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台 · PDF生成"
+                ],
+                "summary": "读取会员已有数据作为本次PDF编辑草稿",
+                "parameters": [
+                    {
+                        "description": "类型、会员及数据范围",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_admin.PDFPrepareRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_admin.PDFDraftResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/pdf-reports/schemas": {
+            "get": {
+                "description": "管理员Cookie鉴权。work工作信息、electricity用电账单、social社保记录。输出为明确标识的演示报表，不是单位或机构出具的证明。",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "后台 · PDF生成"
+                ],
+                "summary": "查询PDF报表类型、基本字段及可编辑明细表",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_admin.PDFSchemasResponse"
                         }
                     }
                 }
@@ -3016,6 +3538,85 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/app-download/download": {
+            "post": {
+                "description": "无需会员登录。口令仅通过POST请求体提交，可用JSON或表单passcode字段。成功直接返回APK附件，无文件直链。按IP滚动一分钟错5次冻结10分钟，返回429和Retry-After；成功清空失败次数。限流落库，重启仍生效；修改口令后新请求须使用新口令。",
+                "consumes": [
+                    "application/json",
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/vnd.android.package-archive"
+                ],
+                "tags": [
+                    "App端 · 安装包下载"
+                ],
+                "summary": "输入口令直接下载当前APK",
+                "parameters": [
+                    {
+                        "description": "下载口令",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_apkdownload.PasscodeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "APK附件",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/app-download/info": {
+            "get": {
+                "description": "无需登录。不包含口令、口令哈希或文件路径。available为true时可提交口令下载；不返回文件直链。",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "App端 · 安装包下载"
+                ],
+                "summary": "获取当前APK版本和下载信息",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_apkdownload.InfoResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                        }
+                    }
+                }
+            }
+        },
         "/api/app/auth/login": {
             "post": {
                 "description": "所有App共用此会员登录，使用后台创建的手机号或邮箱及密码。成功code=0/message/data，data.accessToken用于Authorization: Bearer \u003caccessToken\u003e。不为南网、所得税、支付宝单独创建登录接口。同IP一分钟最多5次登录请求；停用或删除会员无法访问受保护接口。",
@@ -3087,7 +3688,7 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "沿用会员Bearer Token，不传用户ID，仅返回本人。没有记录时生成最近20个已结束月份账单并保存，有记录直接返回数据库结果，账期倒序，不补齐。返回下划线字段，code/bill_month为YYYYMM，amount和total_usage为JSON数字，detail为对象。删除全部后下次查询重新生成。不请求外部服务，不涉及缴费。",
+                "description": "沿用会员Bearer Token，不传用户ID，仅返回本人。没有记录时生成最近20个已结束月份账单并保存，有记录直接返回数据库结果，账期倒序，不补齐。code/bill_month为YYYYMM，amount和total_usage为JSON数字，detail为对象。billing包含三档电量、单价、金额和缴费/违约金字段，数字为十进制字符串，日期YYYY-MM-DD；历史缺失日期为空，tiers为空数组，不自动重算历史金额。手动金额按保存值返回，不校验合计。删除全部后下次查询重新生成。不请求外部服务，不涉及缴费。",
                 "produces": [
                     "application/json"
                 ],
@@ -3173,14 +3774,14 @@ const docTemplate = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "按用户和分类独立保存，不返回quote行情和零持仓。传totalAssets会物理删除当前分类旧记录并生成全新3-5个持仓，每个15条成交；不传时有记录直接查库，无记录在200000至1000000元间随机生成资产后落库。各分类独立使用各自总资产，不合并计算，不影响其他分类和原portfolio接口。金额不足以买入3个标的最小交易单位时返回400且保留旧记录。资产、市值和盈亏为人民币，成本/现价及成交为原币种；USD按7.10、HKD按0.91演示汇率折算，税费为0。id仅在当前分类generation内唯一。",
+                "description": "按用户和分类独立保存，不返回quote行情和零持仓。传totalAssets会物理删除当前分类旧记录并生成全新8-12个持仓，每个40-50条成交；不传时有记录直接查库，无记录在200000至1000000元间随机生成资产后落库。各分类独立使用各自总资产，不合并计算，不影响其他分类和原portfolio接口。金额不足以买入8个标的最小交易单位时返回400且保留旧记录。资产、市值和盈亏为人民币，成本/现价及成交为原币种；USD按7.10、HKD按0.91演示汇率折算，税费为0。id仅在当前分类generation内唯一。",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "App端 · 模拟持仓"
                 ],
-                "summary": "获取分类的3-5个持仓及每个15条交易记录",
+                "summary": "获取分类的8-12个持仓及每个40-50条交易记录",
                 "parameters": [
                     {
                         "enum": [
@@ -4848,6 +5449,20 @@ const docTemplate = `{
                 }
             }
         },
+        "internal_admin.AlipayGenerationResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/ths-service_internal_alipay.ContributionPreview"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
         "internal_admin.AlipayListResponse": {
             "type": "object",
             "properties": {
@@ -4889,6 +5504,72 @@ const docTemplate = `{
                     }
                 },
                 "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_admin.DeletedMemberPage": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_admin.DeletedMemberView"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "internal_admin.DeletedMemberPageResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/internal_admin.DeletedMemberPage"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_admin.DeletedMemberView": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "lastLoginAt": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "realName": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "updatedAt": {
                     "type": "string"
                 }
             }
@@ -5183,6 +5864,213 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/ths-service_internal_nanwang.Schema"
+                    }
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_admin.PDFAsset": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "height": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "originalName": {
+                    "type": "string"
+                },
+                "reviewNote": {
+                    "type": "string"
+                },
+                "reviewedAt": {
+                    "type": "string"
+                },
+                "reviewedBy": {
+                    "type": "integer"
+                },
+                "sha256": {
+                    "type": "string"
+                },
+                "slot": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "uploadedBy": {
+                    "type": "integer"
+                },
+                "width": {
+                    "type": "integer"
+                }
+            }
+        },
+        "internal_admin.PDFAssetList": {
+            "type": "object",
+            "properties": {
+                "canReview": {
+                    "type": "boolean"
+                },
+                "slots": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_admin.PDFAssetSlotView"
+                    }
+                }
+            }
+        },
+        "internal_admin.PDFAssetListResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/internal_admin.PDFAssetList"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_admin.PDFAssetResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/internal_admin.PDFAsset"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_admin.PDFAssetReview": {
+            "type": "object",
+            "properties": {
+                "decision": {
+                    "description": "approve or reject",
+                    "type": "string"
+                },
+                "note": {
+                    "description": "Required for rejection, at most 500 characters.",
+                    "type": "string"
+                }
+            }
+        },
+        "internal_admin.PDFAssetSlotView": {
+            "type": "object",
+            "properties": {
+                "active": {
+                    "$ref": "#/definitions/internal_admin.PDFAsset"
+                },
+                "activeId": {
+                    "type": "integer"
+                },
+                "slot": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "versions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_admin.PDFAsset"
+                    }
+                }
+            }
+        },
+        "internal_admin.PDFBillChoice": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "string"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "endDate": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "startDate": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_admin.PDFDraftResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/ths-service_internal_pdfreport.Draft"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_admin.PDFPrepareRequest": {
+            "type": "object",
+            "properties": {
+                "billId": {
+                    "type": "integer"
+                },
+                "endMonth": {
+                    "type": "string"
+                },
+                "kind": {
+                    "type": "string"
+                },
+                "startMonth": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "internal_admin.PDFSchemasResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ths-service_internal_pdfreport.Schema"
+                    }
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_admin.PDFSourceResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_admin.PDFBillChoice"
                     }
                 },
                 "message": {
@@ -5716,6 +6604,9 @@ const docTemplate = `{
                 "bill_month": {
                     "type": "string"
                 },
+                "billing": {
+                    "$ref": "#/definitions/internal_electricity.Billing"
+                },
                 "code": {
                     "type": "string"
                 },
@@ -5817,6 +6708,78 @@ const docTemplate = `{
                     "$ref": "#/definitions/internal_electricity.AppProfile"
                 },
                 "msg": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_electricity.Billing": {
+            "type": "object",
+            "properties": {
+                "arrears_principal": {
+                    "type": "string"
+                },
+                "average_price": {
+                    "type": "string"
+                },
+                "due_date": {
+                    "type": "string"
+                },
+                "electricity_fee": {
+                    "type": "string"
+                },
+                "late_fee": {
+                    "type": "string"
+                },
+                "late_fee_as_of_date": {
+                    "type": "string"
+                },
+                "late_fee_daily_rate": {
+                    "type": "string"
+                },
+                "late_fee_start_date": {
+                    "type": "string"
+                },
+                "payable_amount": {
+                    "type": "string"
+                },
+                "payment_status": {
+                    "description": "paid, unpaid or overdue",
+                    "type": "string"
+                },
+                "pricing_mode": {
+                    "description": "tiered or flat",
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                },
+                "tariff_name": {
+                    "type": "string"
+                },
+                "tiers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_electricity.TariffTier"
+                    }
+                },
+                "usage_type": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_electricity.TariffTier": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "string"
+                },
+                "level": {
+                    "type": "integer"
+                },
+                "unit_price": {
+                    "type": "string"
+                },
+                "usage": {
                     "type": "string"
                 }
             }
@@ -6609,6 +7572,9 @@ const docTemplate = `{
                 "bank_num": {
                     "type": "string"
                 },
+                "bank_type": {
+                    "type": "string"
+                },
                 "birth": {
                     "type": "string"
                 },
@@ -7126,6 +8092,80 @@ const docTemplate = `{
                 }
             }
         },
+        "ths-service_internal_alipay.ContributionCalculation": {
+            "type": "object",
+            "properties": {
+                "base": {
+                    "type": "string"
+                },
+                "companyPay": {
+                    "type": "string"
+                },
+                "companyRate": {
+                    "type": "string"
+                },
+                "kind": {
+                    "type": "string"
+                },
+                "personalPay": {
+                    "type": "string"
+                },
+                "personalRate": {
+                    "type": "string"
+                }
+            }
+        },
+        "ths-service_internal_alipay.ContributionPreview": {
+            "type": "object",
+            "properties": {
+                "breakdown": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ths-service_internal_alipay.ContributionCalculation"
+                    }
+                },
+                "companyPay": {
+                    "description": "Monthly employer total.",
+                    "type": "string"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "months": {
+                    "type": "integer"
+                },
+                "personalPay": {
+                    "description": "Monthly employee total.",
+                    "type": "string"
+                },
+                "skipped": {
+                    "type": "integer"
+                },
+                "total": {
+                    "description": "Monthly five-insurance total, excluding housing fund.",
+                    "type": "string"
+                }
+            }
+        },
+        "ths-service_internal_alipay.ContributionRule": {
+            "type": "object",
+            "properties": {
+                "base": {
+                    "description": "Approved contribution base; empty uses salary.",
+                    "type": "string"
+                },
+                "companyRate": {
+                    "type": "string"
+                },
+                "kind": {
+                    "description": "pension, medical, unemployment, injury, maternity",
+                    "type": "string"
+                },
+                "personalRate": {
+                    "type": "string"
+                }
+            }
+        },
         "ths-service_internal_alipay.Field": {
             "type": "object",
             "properties": {
@@ -7140,6 +8180,34 @@ const docTemplate = `{
                 },
                 "type": {
                     "type": "string"
+                }
+            }
+        },
+        "ths-service_internal_alipay.GenerateContributions": {
+            "type": "object",
+            "properties": {
+                "company": {
+                    "type": "string"
+                },
+                "endMonth": {
+                    "description": "YYYY-MM, inclusive; no future months.",
+                    "type": "string"
+                },
+                "rules": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ths-service_internal_alipay.ContributionRule"
+                    }
+                },
+                "salary": {
+                    "type": "string"
+                },
+                "startMonth": {
+                    "description": "YYYY-MM, inclusive.",
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "integer"
                 }
             }
         },
@@ -7232,6 +8300,65 @@ const docTemplate = `{
                 }
             }
         },
+        "ths-service_internal_apkdownload.Info": {
+            "type": "object",
+            "properties": {
+                "available": {
+                    "description": "Whether an APK and download passcode are configured.",
+                    "type": "boolean"
+                },
+                "passcodeConfigured": {
+                    "description": "Only presence, never the passcode or hash.",
+                    "type": "boolean"
+                },
+                "releaseKey": {
+                    "description": "Immutable server-generated China-time timestamp key, YYYYMMDDHHmmss.",
+                    "type": "string"
+                },
+                "sha256": {
+                    "description": "SHA-256 of the uploaded APK bytes.",
+                    "type": "string"
+                },
+                "sizeBytes": {
+                    "description": "APK size in bytes.",
+                    "type": "integer"
+                },
+                "uploadedAt": {
+                    "description": "Upload time; null before first upload.",
+                    "type": "string"
+                }
+            }
+        },
+        "ths-service_internal_apkdownload.InfoResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "Zero on success.",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "Current published version metadata.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ths-service_internal_apkdownload.Info"
+                        }
+                    ]
+                },
+                "message": {
+                    "description": "Result description.",
+                    "type": "string"
+                }
+            }
+        },
+        "ths-service_internal_apkdownload.PasscodeRequest": {
+            "type": "object",
+            "properties": {
+                "passcode": {
+                    "description": "Exact passcode, including Chinese; 5 to 64 Unicode characters, at most 256 UTF-8 bytes; not whitespace only.",
+                    "type": "string"
+                }
+            }
+        },
         "ths-service_internal_electricity.BillList": {
             "type": "object",
             "properties": {
@@ -7298,6 +8425,9 @@ const docTemplate = `{
                 "billMonth": {
                     "type": "string"
                 },
+                "billing": {
+                    "$ref": "#/definitions/ths-service_internal_electricity.Billing"
+                },
                 "code": {
                     "type": "string"
                 },
@@ -7347,6 +8477,9 @@ const docTemplate = `{
                 },
                 "billMonth": {
                     "type": "string"
+                },
+                "billing": {
+                    "$ref": "#/definitions/ths-service_internal_electricity.Billing"
                 },
                 "code": {
                     "type": "string"
@@ -7405,6 +8538,61 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "totalUsage": {
+                    "type": "string"
+                }
+            }
+        },
+        "ths-service_internal_electricity.Billing": {
+            "type": "object",
+            "properties": {
+                "arrears_principal": {
+                    "type": "string"
+                },
+                "average_price": {
+                    "type": "string"
+                },
+                "due_date": {
+                    "type": "string"
+                },
+                "electricity_fee": {
+                    "type": "string"
+                },
+                "late_fee": {
+                    "type": "string"
+                },
+                "late_fee_as_of_date": {
+                    "type": "string"
+                },
+                "late_fee_daily_rate": {
+                    "type": "string"
+                },
+                "late_fee_start_date": {
+                    "type": "string"
+                },
+                "payable_amount": {
+                    "type": "string"
+                },
+                "payment_status": {
+                    "description": "paid, unpaid or overdue",
+                    "type": "string"
+                },
+                "pricing_mode": {
+                    "description": "tiered or flat",
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                },
+                "tariff_name": {
+                    "type": "string"
+                },
+                "tiers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ths-service_internal_electricity.TariffTier"
+                    }
+                },
+                "usage_type": {
                     "type": "string"
                 }
             }
@@ -7479,6 +8667,23 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "requestId": {
+                    "type": "string"
+                }
+            }
+        },
+        "ths-service_internal_electricity.TariffTier": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "string"
+                },
+                "level": {
+                    "type": "integer"
+                },
+                "unit_price": {
+                    "type": "string"
+                },
+                "usage": {
                     "type": "string"
                 }
             }
@@ -7659,6 +8864,98 @@ const docTemplate = `{
                 },
                 "userId": {
                     "type": "integer"
+                }
+            }
+        },
+        "ths-service_internal_pdfreport.Draft": {
+            "type": "object",
+            "properties": {
+                "fields": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "kind": {
+                    "type": "string"
+                },
+                "tables": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "userId": {
+                    "type": "integer"
+                },
+                "warnings": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "ths-service_internal_pdfreport.Field": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "label": {
+                    "type": "string"
+                },
+                "required": {
+                    "type": "boolean"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "ths-service_internal_pdfreport.Schema": {
+            "type": "object",
+            "properties": {
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ths-service_internal_pdfreport.Field"
+                    }
+                },
+                "kind": {
+                    "type": "string"
+                },
+                "label": {
+                    "type": "string"
+                },
+                "tables": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ths-service_internal_pdfreport.Table"
+                    }
+                }
+            }
+        },
+        "ths-service_internal_pdfreport.Table": {
+            "type": "object",
+            "properties": {
+                "columns": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ths-service_internal_pdfreport.Field"
+                    }
+                },
+                "key": {
+                    "type": "string"
+                },
+                "label": {
+                    "type": "string"
                 }
             }
         },
@@ -8181,6 +9478,9 @@ const docTemplate = `{
                 "bankNum": {
                     "type": "string"
                 },
+                "bankType": {
+                    "type": "string"
+                },
                 "birth": {
                     "type": "string"
                 },
@@ -8264,6 +9564,9 @@ const docTemplate = `{
                 "bankNum": {
                     "type": "string"
                 },
+                "bankType": {
+                    "type": "string"
+                },
                 "birth": {
                     "type": "string"
                 },
@@ -8339,6 +9642,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "bankNum": {
+                    "type": "string"
+                },
+                "bankType": {
                     "type": "string"
                 },
                 "birth": {
