@@ -1,0 +1,30 @@
+/* Forms sit between modal-content and modal-body, so they must constrain
+   their flex children for Bootstrap's scrollable body to work. */
+#editor .modal-content,
+#batch-editor .modal-content {
+  max-height: calc(100vh - 2 * var(--bs-modal-margin, .5rem));
+  max-height: calc(100dvh - 2 * var(--bs-modal-margin, .5rem));
+  overflow: hidden;
+}
+#record-form,
+#batch-form {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: inherit;
+  overflow: hidden;
+}
+#editor .modal-body,
+#batch-editor .modal-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+}
+#editor .modal-header,
+#editor .modal-footer,
+#batch-editor .modal-header,
+#batch-editor .modal-footer {
+  flex-shrink: 0;
+}

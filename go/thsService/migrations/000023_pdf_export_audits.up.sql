@@ -1,0 +1,11 @@
+CREATE TABLE pdf_export_audits (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+ admin_id BIGINT UNSIGNED NOT NULL,
+ user_id BIGINT UNSIGNED NOT NULL,
+ kind VARCHAR(24) NOT NULL,
+ pdf_sha256 CHAR(64) NOT NULL,
+ asset_versions JSON NOT NULL,
+ row_count INT NOT NULL,
+ created_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+ KEY idx_pdf_export_user(user_id,created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

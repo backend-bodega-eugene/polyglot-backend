@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>THS 接口文档</title><link rel="stylesheet" href="./swagger-ui.css"><style>body{margin:0;background:#fafafa}.docs-header{padding:18px max(20px,calc((100% - 1460px)/2));background:#172338;color:#fff;font-family:system-ui,sans-serif}.docs-header h1{font-size:21px;margin:0 0 12px}.docs-header nav{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.docs-header a{color:#e2e8f0;padding:8px 22px;border:1px solid #64748b;border-radius:5px;text-decoration:none}.docs-header a[aria-current=page]{background:#1671d9;border-color:#1671d9;color:#fff}.docs-header p{margin:12px 0 0;color:#cbd5e1;font-size:14px}.swagger-ui .information-container{margin-bottom:15px}.swagger-ui .info{margin:25px 0}.swagger-ui .scheme-container{padding:12px 0}.swagger-ui .opblock-tag{font-size:20px}</style></head>
+<body><header class="docs-header"><h1>THS 接口文档</h1><nav aria-label="文档分组"><a id="app-link" href="?group=app">App 端</a><a id="admin-link" href="?group=admin">后台</a></nav><p id="group-note"></p></header><main id="swagger-ui"></main><script src="./swagger-ui-bundle.js"></script><script>
+'use strict';
+const group=new URLSearchParams(location.search).get('group')==='admin'?'admin':'app';
+document.getElementById(group+'-link').setAttribute('aria-current','page');
+document.title='THS · '+(group==='app'?'App 端':'后台')+'接口文档';
+document.getElementById('group-note').textContent=group==='app'?'仅显示 App 接口。共用会员登录，在 Authorize 中填写 Bearer 加空格及 accessToken。各业务分类默认折叠。':'仅显示后台管理与服务监控接口。先调用管理员登录接口，浏览器会自动携带会话 Cookie；会员 Token 不适用。';
+window.ui=SwaggerUIBundle({url:group+'.json',dom_id:'#swagger-ui',presets:[SwaggerUIBundle.presets.apis],layout:'BaseLayout',docExpansion:'none',defaultModelsExpandDepth:-1,defaultModelExpandDepth:2,filter:true,deepLinking:true,displayRequestDuration:true,validatorUrl:null,persistAuthorization:false,withCredentials:group==='admin'});
+</script></body></html>

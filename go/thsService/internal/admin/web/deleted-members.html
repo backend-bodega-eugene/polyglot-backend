@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-CN"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>THS | 已删除会员</title><link rel="stylesheet" href="css/vendor.css"><link rel="stylesheet" href="css/adminlte.css"><style>body{visibility:hidden}.table th{white-space:nowrap}</style>
+</head><body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
+<div class="app-wrapper">
+ <nav class="app-header navbar navbar-expand bg-body"><div class="container-fluid"><a class="nav-link" data-lte-toggle="sidebar" href="#" role="button" aria-label="展开菜单"><i class="bi bi-list"></i></a><div class="ms-auto d-flex align-items-center gap-3"><span id="admin-name"></span><button id="logout" class="btn btn-outline-secondary btn-sm">退出登录</button></div></div></nav>
+ <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark"><div class="sidebar-brand"><a href="index.html" class="brand-link"><span class="brand-text fw-light"><b>THS</b> 管理后台</span></a></div><div class="sidebar-wrapper"><nav class="mt-2"><ul class="nav nav-pills nav-sidebar flex-column sidebar-menu">
+  <li class="nav-item"><a href="index.html" class="nav-link"><i class="nav-icon bi bi-speedometer"></i><p>首页</p></a></li>
+  <li class="nav-item"><a href="holdings.html" class="nav-link"><i class="nav-icon bi bi-wallet2"></i><p>持仓管理</p></a></li>
+  <li class="nav-item"><a href="members.html" class="nav-link"><i class="nav-icon bi bi-people"></i><p>会员管理</p></a></li>
+<li class="nav-item"><a href="deleted-members.html" class="nav-link active"><i class="nav-icon bi bi-person-check"></i><p>已删除会员</p></a></li>
+<li class="nav-item"><a href="app-package.html" class="nav-link"><i class="nav-icon bi bi-phone"></i><p>App安装包管理</p></a></li>
+<li class="nav-item"><a href="pdf-assets.html" class="nav-link"><i class="nav-icon bi bi-images"></i><p>PDF素材管理</p></a></li>
+<li class="nav-item"><a href="pdf-reports.html" class="nav-link"><i class="nav-icon bi bi-file-earmark-pdf"></i><p>PDF生成</p></a></li>
+  <li class="nav-item"><a href="electricity.html" class="nav-link"><i class="nav-icon bi bi-lightning-charge"></i><p>模拟用电资料</p></a></li>
+  <li class="nav-item"><a href="bills.html" class="nav-link"><i class="nav-icon bi bi-receipt"></i><p>模拟电费账单</p></a></li>
+  <li class="nav-item"><a href="tax-profile.html" class="nav-link"><i class="nav-icon bi bi-file-earmark-text"></i><p>所得税资料</p></a></li>
+  <li class="nav-item"><a href="employment.html" class="nav-link"><i class="nav-icon bi bi-building"></i><p>任职受雇单位</p></a></li>
+<li class="nav-item"><a href="#" class="nav-link" data-lte-toggle="treeview" role="button"><i class="nav-icon bi bi-file-earmark-spreadsheet"></i><p>所得税业务<i class="nav-arrow bi bi-chevron-right"></i></p></a><ul class="nav nav-treeview">
+<li class="nav-item"><a href="tax-business.html?kind=monthly" class="nav-link" data-business-page="tax-business" data-business-kind="monthly"><i class="nav-icon bi bi-circle"></i><p>年度收入纳税明细</p></a></li>
+<li class="nav-item"><a href="tax-business.html?kind=applications" class="nav-link" data-business-page="tax-business" data-business-kind="applications"><i class="nav-icon bi bi-circle"></i><p>年度汇算申报</p></a></li>
+<li class="nav-item"><a href="tax-business.html?kind=openrecords" class="nav-link" data-business-page="tax-business" data-business-kind="openrecords"><i class="nav-icon bi bi-circle"></i><p>纳税记录开具记录</p></a></li>
+<li class="nav-item"><a href="tax-business.html?kind=messages" class="nav-link" data-business-page="tax-business" data-business-kind="messages"><i class="nav-icon bi bi-circle"></i><p>税务消息</p></a></li>
+</ul></li>
+<li class="nav-item"><a href="#" class="nav-link" data-lte-toggle="treeview" role="button"><i class="nav-icon bi bi-grid"></i><p>南网业务<i class="nav-arrow bi bi-chevron-right"></i></p></a><ul class="nav nav-treeview">
+<li class="nav-item"><a href="nanwang.html?kind=news" class="nav-link" data-business-page="nanwang" data-business-kind="news"><i class="nav-icon bi bi-circle"></i><p>资讯管理</p></a></li>
+<li class="nav-item"><a href="nanwang.html?kind=recommended" class="nav-link" data-business-page="nanwang" data-business-kind="recommended"><i class="nav-icon bi bi-circle"></i><p>推荐户号</p></a></li>
+<li class="nav-item"><a href="nanwang.html?kind=bound" class="nav-link" data-business-page="nanwang" data-business-kind="bound"><i class="nav-icon bi bi-circle"></i><p>已绑定户号</p></a></li>
+<li class="nav-item"><a href="nanwang.html?kind=arrears" class="nav-link" data-business-page="nanwang" data-business-kind="arrears"><i class="nav-icon bi bi-circle"></i><p>欠费户号</p></a></li>
+<li class="nav-item"><a href="nanwang.html?kind=points" class="nav-link" data-business-page="nanwang" data-business-kind="points"><i class="nav-icon bi bi-circle"></i><p>计量点</p></a></li>
+<li class="nav-item"><a href="nanwang.html?kind=halls" class="nav-link" data-business-page="nanwang" data-business-kind="halls"><i class="nav-icon bi bi-circle"></i><p>营业厅</p></a></li>
+<li class="nav-item"><a href="nanwang.html?kind=messages" class="nav-link" data-business-page="nanwang" data-business-kind="messages"><i class="nav-icon bi bi-circle"></i><p>未读消息</p></a></li>
+<li class="nav-item"><a href="nanwang.html?kind=charging" class="nav-link" data-business-page="nanwang" data-business-kind="charging"><i class="nav-icon bi bi-circle"></i><p>充电桩状态</p></a></li>
+</ul></li>
+ <li class="nav-item"><a href="#" class="nav-link" data-lte-toggle="treeview" role="button"><i class="nav-icon bi bi-credit-card"></i><p>支付宝模拟业务<i class="nav-arrow bi bi-chevron-right"></i></p></a><ul class="nav nav-treeview">
+<li class="nav-item"><a href="alipay.html?kind=profile" class="nav-link" data-business-page="alipay" data-business-kind="profile"><i class="nav-icon bi bi-circle"></i><p>我的与账户</p></a></li>
+<li class="nav-item"><a href="alipay.html?kind=insurance" class="nav-link" data-business-page="alipay" data-business-kind="insurance"><i class="nav-icon bi bi-circle"></i><p>参保查询</p></a></li>
+<li class="nav-item"><a href="alipay.html?kind=records" class="nav-link" data-business-page="alipay" data-business-kind="records"><i class="nav-icon bi bi-circle"></i><p>社保缴费记录</p></a></li>
+<li class="nav-item"><a href="alipay.html?kind=accounts" class="nav-link" data-business-page="alipay" data-business-kind="accounts"><i class="nav-icon bi bi-circle"></i><p>生活缴费户号</p></a></li>
+<li class="nav-item"><a href="alipay.html?kind=electric" class="nav-link" data-business-page="alipay" data-business-kind="electric"><i class="nav-icon bi bi-circle"></i><p>电费</p></a></li>
+<li class="nav-item"><a href="alipay.html?kind=water" class="nav-link" data-business-page="alipay" data-business-kind="water"><i class="nav-icon bi bi-circle"></i><p>水费账单</p></a></li>
+</ul></li>
+</ul></nav></div></aside>
+ <main class="app-main"><div class="app-content-header"><div class="container-fluid"><h3>已删除会员</h3><p class="text-body-secondary">恢复后会员将设为正常状态，可使用原账号和密码登录；原有业务数据保留。</p></div></div>
+<div class="app-content"><div class="container-fluid"><div id="page-message" class="alert d-none" role="alert"></div>
+<div class="card"><div class="card-body"><form id="filters" class="row g-3 align-items-end"><div class="col-md-8"><label for="query" class="form-label">会员ID、姓名、手机号或邮箱</label><input id="query" class="form-control" maxlength="254"></div><div class="col-md-4 d-flex gap-2"><button class="btn btn-primary">查询</button><button id="reset" type="button" class="btn btn-outline-secondary">重置</button></div></form></div></div>
+<div class="card"><div class="table-responsive"><table class="table table-striped align-middle mb-0"><thead><tr><th>ID</th><th>姓名</th><th>手机号</th><th>邮箱</th><th>删除时间</th><th>操作</th></tr></thead><tbody id="rows"></tbody></table></div><div class="card-footer d-flex justify-content-between"><span id="paging"></span><div><button id="previous" class="btn btn-outline-secondary btn-sm">上一页</button> <button id="next" class="btn btn-outline-secondary btn-sm">下一页</button></div></div></div>
+</div></div></main></div><script src="js/vendor.js"></script><script src="js/adminlte.js"></script><script src="js/deleted-members.js"></script></body></html>

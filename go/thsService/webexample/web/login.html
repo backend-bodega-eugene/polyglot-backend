@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>GoalHub | 登录</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" content="#007bff" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
+  <meta name="title" content="GoalHub | 登录" />
+  <meta name="author" content="GoalHub" />
+  <meta name="description" content="GoalHub 管理后台" />
+  <meta name="keywords" content="goalhub, admin" />
+  <meta name="supported-color-schemes" content="light dark" />
+  <link rel="preload" href="css/adminlte.css" as="style" />
+    <link rel="stylesheet" href="./css/vendor.css?v=20260617-2" />
+  <link rel="stylesheet" href="css/adminlte.css" />
+</head>
+
+<body class="login-page bg-body-secondary">
+  <div class="login-box">
+    <div class="login-logo">
+      <a href="login.html" class="text-decoration-none"><b>Goal</b>Hub</a>
+    </div>
+    <div class="card">
+      <div class="card-body login-card-body">
+        <p class="login-box-msg">登录后台管理系统</p>
+        <div id="login-msg" class="alert alert-danger d-none py-2" role="alert"></div>
+        <form id="loginForm">
+          <div class="input-group mb-3">
+            <input id="username" type="text" class="form-control" placeholder="用户名" autocomplete="username" />
+            <div class="input-group-text"><span class="bi bi-person"></span></div>
+          </div>
+          <div class="input-group mb-3">
+            <input id="password" type="password" class="form-control" placeholder="密码" autocomplete="current-password" />
+            <div class="input-group-text"><span class="bi bi-lock-fill"></span></div>
+          </div>
+          <div class="row">
+            <div class="col-8">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="remember" checked />
+                <label class="form-check-label" for="remember"> 记住登录 </label>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="d-grid gap-2">
+                <button id="login-btn" type="submit" class="btn btn-primary">登录</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+    <script src="./js/vendor.js?v=20260617-2"></script>
+  <script src="js/adminlte.js"></script>
+  <script src="js/config.js"></script>
+  <script>
+    const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';
+    const Default = {
+      scrollbarTheme: 'os-theme-light',
+      scrollbarAutoHide: 'leave',
+      scrollbarClickScroll: true,
+    };
+    document.addEventListener('DOMContentLoaded', function () {
+      const sidebarWrapper = document.querySelector(SELECTOR_SIDEBAR_WRAPPER);
+      if (sidebarWrapper && OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined) {
+        OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
+          scrollbars: {
+            theme: Default.scrollbarTheme,
+            autoHide: Default.scrollbarAutoHide,
+            clickScroll: Default.scrollbarClickScroll,
+          },
+        });
+      }
+    });
+  </script>
+  <script>
+    (function () {
+      const config = window.GoalHubConfig || {};
+      const API_BASE = String(config.apiBase ?? '').replace(/\/+$/, '');
+      const LOGIN_PATH = config.loginPath || '/admin/auth/login';
+      const LOGIN_URL = /^https?:\/\//i.test(LOGIN_PATH) ? LOGIN_PATH : API_BASE + LOGIN_PATH;
+      const NEXT_URL = config.nextUrl || 'index.html';
+
+      const form = document.getElementById('loginForm');
+      const msg = document.getElementById('login-msg');
+
+      function showMsg(text) {
+        if (!msg) return;
+        msg.textContent = text;
+        msg.classList.remove('d-none');
+      }
+
+      function clearMsg() {
+        if (!msg) return;
+        msg.textContent = '';
+        msg.classList.add('d-none');
+      }
+
+      function setLoginData(data, remember, headers = {}) {
+        const storage = remember ? localStorage : sessionStorage;
+        const otherStorage = remember ? sessionStorage : localStorage;
+        const userId = data.id || headers.userId;
+        const username = data.username || headers.username;
+
+        storage.setItem('authToken', data.token);
+        storage.setItem('adminUser', JSON.stringify({
+          id: userId,
+          username: username,
+          nickname: data.nickname,
+          isSuperAdmin: data.isSuperAdmin,
+        }));
+        otherStorage.removeItem('authToken');
+        otherStorage.removeItem('adminUser');
+      }
+
+      async function handleSubmit(e) {
+        e.preventDefault();
+        clearMsg();
+
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value;
+        const remember = document.getElementById('remember')?.checked ?? true;
+        const btn = document.getElementById('login-btn');
+
+        if (!username || !password) { showMsg('用户名或密码不能为空'); return; }
+        if (btn) { btn.disabled = true; btn.innerText = '登录中...'; }
+
+        try {
+          const res = await fetch(LOGIN_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+          });
+          const data = await res.json().catch(() => ({}));
+
+          const ok = res.ok && data.code === 200;
+          const loginData = data.data || {};
+          const token = loginData.token;
+          const message = data.message || data.msg || '';
+          const loginHeaders = {
+            userId: res.headers.get('X-User-Id') || res.headers.get('x-user-id'),
+            username: res.headers.get('X-Username') || res.headers.get('x-username'),
+          };
+
+          if (!ok) throw new Error(message || `登录失败(${res.status})`);
+          if (!token) throw new Error('登录成功但未返回 token 字段');
+
+          setLoginData(loginData, remember, loginHeaders);
+          location.href = NEXT_URL;
+        } catch (err) {
+          showMsg(err.message || '登录异常');
+        } finally {
+          if (btn) { btn.disabled = false; btn.innerText = '登录'; }
+        }
+      }
+
+      form?.addEventListener('submit', handleSubmit);
+    })();
+  </script>
+</body>
+
+</html>
+
+

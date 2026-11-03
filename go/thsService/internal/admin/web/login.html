@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>THS | 管理员登录</title>
+  <link rel="stylesheet" href="css/vendor.css"><link rel="stylesheet" href="css/adminlte.css">
+</head>
+<body class="login-page bg-body-secondary">
+  <div class="login-box">
+    <div class="login-logo"><a href="login.html" class="text-decoration-none"><b>THS</b> 管理后台</a></div>
+    <div class="card"><div class="card-body login-card-body">
+      <p class="login-box-msg">登录后台管理系统</p>
+      <div id="login-msg" class="alert alert-danger d-none py-2" role="alert"></div>
+      <form id="loginForm">
+        <div class="input-group mb-3">
+          <input id="username" type="text" class="form-control" placeholder="用户名" aria-label="用户名" autocomplete="username" required maxlength="64">
+          <div class="input-group-text"><span class="bi bi-person"></span></div>
+        </div>
+        <div class="input-group mb-3">
+          <input id="password" type="password" class="form-control" placeholder="密码" aria-label="密码" autocomplete="current-password" required maxlength="72">
+          <div class="input-group-text"><span class="bi bi-lock-fill"></span></div>
+        </div>
+        <div class="d-grid"><button id="login-btn" type="submit" class="btn btn-primary">登录</button></div>
+      </form>
+    </div></div>
+  </div>
+  <script src="js/login.js"></script>
+</body></html>

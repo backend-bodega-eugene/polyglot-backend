@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>THS | App安装包管理</title>
+  <link rel="stylesheet" href="css/vendor.css"><link rel="stylesheet" href="css/adminlte.css">
+  <style>html,body,.app-wrapper{min-height:100vh}body{visibility:hidden}</style>
+</head>
+<body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
+  <div class="app-wrapper">
+    <nav class="app-header navbar navbar-expand bg-body"><div class="container-fluid">
+      <ul class="navbar-nav"><li class="nav-item"><a class="nav-link" data-lte-toggle="sidebar" href="#" role="button" aria-label="展开菜单"><i class="bi bi-list"></i></a></li></ul>
+      <ul class="navbar-nav ms-auto"><li class="nav-item dropdown user-menu">
+        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><img src="assets/img/default-avatar.jpg" class="user-image rounded-circle shadow" alt="管理员头像"><span id="admin-name" class="d-none d-md-inline">管理员</span></a>
+        <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
+          <li class="user-header text-bg-primary"><img src="assets/img/default-avatar.jpg" class="rounded-circle shadow" alt="管理员头像"><p id="user-title">管理员</p></li>
+          <li class="user-footer"><button id="logout" class="btn btn-default btn-flat float-end">退出登录</button></li>
+        </ul>
+      </li></ul>
+    </div></nav>
+    <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+      <div class="sidebar-brand"><a href="index.html" class="brand-link"><span class="brand-text fw-light"><b>THS</b> 管理后台</span></a></div>
+      <div class="sidebar-wrapper"><nav class="mt-2"><ul class="nav nav-pills nav-sidebar flex-column sidebar-menu">
+        <li class="nav-item"><a href="index.html" class="nav-link"><i class="nav-icon bi bi-speedometer"></i><p>首页</p></a></li>
+        <li class="nav-item"><a href="holdings.html" class="nav-link"><i class="nav-icon bi bi-wallet2"></i><p>持仓管理</p></a></li>
+        <li class="nav-item"><a href="members.html" class="nav-link"><i class="nav-icon bi bi-people"></i><p>会员管理</p></a></li>
+<li class="nav-item"><a href="deleted-members.html" class="nav-link"><i class="nav-icon bi bi-person-check"></i><p>已删除会员</p></a></li>
+<li class="nav-item"><a href="app-package.html" class="nav-link active"><i class="nav-icon bi bi-phone"></i><p>App安装包管理</p></a></li>
+<li class="nav-item"><a href="pdf-assets.html" class="nav-link"><i class="nav-icon bi bi-images"></i><p>PDF素材管理</p></a></li>
+<li class="nav-item"><a href="pdf-reports.html" class="nav-link"><i class="nav-icon bi bi-file-earmark-pdf"></i><p>PDF生成</p></a></li>
+        <li class="nav-item"><a href="electricity.html" class="nav-link"><i class="nav-icon bi bi-lightning-charge"></i><p>模拟用电资料</p></a></li>
+        <li class="nav-item"><a href="bills.html" class="nav-link"><i class="nav-icon bi bi-receipt"></i><p>模拟电费账单</p></a></li>
+        <li class="nav-item"><a href="tax-profile.html" class="nav-link"><i class="nav-icon bi bi-file-earmark-text"></i><p>所得税资料</p></a></li>
+        <li class="nav-item"><a href="employment.html" class="nav-link"><i class="nav-icon bi bi-building"></i><p>任职受雇单位</p></a></li>
+<li class="nav-item"><a href="#" class="nav-link" data-lte-toggle="treeview" role="button"><i class="nav-icon bi bi-file-earmark-spreadsheet"></i><p>所得税业务<i class="nav-arrow bi bi-chevron-right"></i></p></a><ul class="nav nav-treeview">
+<li class="nav-item"><a href="tax-business.html?kind=monthly" class="nav-link" data-business-page="tax-business" data-business-kind="monthly"><i class="nav-icon bi bi-circle"></i><p>年度收入纳税明细</p></a></li>
+<li class="nav-item"><a href="tax-business.html?kind=applications" class="nav-link" data-business-page="tax-business" data-business-kind="applications"><i class="nav-icon bi bi-circle"></i><p>年度汇算申报</p></a></li>
+<li class="nav-item"><a href="tax-business.html?kind=openrecords" class="nav-link" data-business-page="tax-business" data-business-kind="openrecords"><i class="nav-icon bi bi-circle"></i><p>纳税记录开具记录</p></a></li>
+<li class="nav-item"><a href="tax-business.html?kind=messages" class="nav-link" data-business-page="tax-business" data-business-kind="messages"><i class="nav-icon bi bi-circle"></i><p>税务消息</p></a></li>
+</ul></li>
+<li class="nav-item"><a href="#" class="nav-link" data-lte-toggle="treeview" role="button"><i class="nav-icon bi bi-grid"></i><p>南网业务<i class="nav-arrow bi bi-chevron-right"></i></p></a><ul class="nav nav-treeview">
+<li class="nav-item"><a href="nanwang.html?kind=news" class="nav-link" data-business-page="nanwang" data-business-kind="news"><i class="nav-icon bi bi-circle"></i><p>资讯管理</p></a></li>
+<li class="nav-item"><a href="nanwang.html?kind=recommended" class="nav-link" data-business-page="nanwang" data-business-kind="recommended"><i class="nav-icon bi bi-circle"></i><p>推荐户号</p></a></li>
+<li class="nav-item"><a href="nanwang.html?kind=bound" class="nav-link" data-business-page="nanwang" data-business-kind="bound"><i class="nav-icon bi bi-circle"></i><p>已绑定户号</p></a></li>
+<li class="nav-item"><a href="nanwang.html?kind=arrears" class="nav-link" data-business-page="nanwang" data-business-kind="arrears"><i class="nav-icon bi bi-circle"></i><p>欠费户号</p></a></li>
+<li class="nav-item"><a href="nanwang.html?kind=points" class="nav-link" data-business-page="nanwang" data-business-kind="points"><i class="nav-icon bi bi-circle"></i><p>计量点</p></a></li>
+<li class="nav-item"><a href="nanwang.html?kind=halls" class="nav-link" data-business-page="nanwang" data-business-kind="halls"><i class="nav-icon bi bi-circle"></i><p>营业厅</p></a></li>
+<li class="nav-item"><a href="nanwang.html?kind=messages" class="nav-link" data-business-page="nanwang" data-business-kind="messages"><i class="nav-icon bi bi-circle"></i><p>未读消息</p></a></li>
+<li class="nav-item"><a href="nanwang.html?kind=charging" class="nav-link" data-business-page="nanwang" data-business-kind="charging"><i class="nav-icon bi bi-circle"></i><p>充电桩状态</p></a></li>
+</ul></li>
+      <li class="nav-item"><a href="#" class="nav-link" data-lte-toggle="treeview" role="button"><i class="nav-icon bi bi-credit-card"></i><p>支付宝模拟业务<i class="nav-arrow bi bi-chevron-right"></i></p></a><ul class="nav nav-treeview">
+<li class="nav-item"><a href="alipay.html?kind=profile" class="nav-link" data-business-page="alipay" data-business-kind="profile"><i class="nav-icon bi bi-circle"></i><p>我的与账户</p></a></li>
+<li class="nav-item"><a href="alipay.html?kind=insurance" class="nav-link" data-business-page="alipay" data-business-kind="insurance"><i class="nav-icon bi bi-circle"></i><p>参保查询</p></a></li>
+<li class="nav-item"><a href="alipay.html?kind=records" class="nav-link" data-business-page="alipay" data-business-kind="records"><i class="nav-icon bi bi-circle"></i><p>社保缴费记录</p></a></li>
+<li class="nav-item"><a href="alipay.html?kind=accounts" class="nav-link" data-business-page="alipay" data-business-kind="accounts"><i class="nav-icon bi bi-circle"></i><p>生活缴费户号</p></a></li>
+<li class="nav-item"><a href="alipay.html?kind=electric" class="nav-link" data-business-page="alipay" data-business-kind="electric"><i class="nav-icon bi bi-circle"></i><p>电费</p></a></li>
+<li class="nav-item"><a href="alipay.html?kind=water" class="nav-link" data-business-page="alipay" data-business-kind="water"><i class="nav-icon bi bi-circle"></i><p>水费账单</p></a></li>
+</ul></li>
+</ul></nav></div>
+    </aside>
+    <main class="app-main"><div class="app-content-header"><div class="container-fluid"><h3>App安装包管理</h3><p class="text-body-secondary">上传APK、维护下载口令，发布编号由系统自动生成</p></div></div><div class="app-content"><div class="container-fluid"><div id="page-message" class="alert d-none" role="alert"></div>
+<div class="card"><div class="card-header">当前版本</div><div class="card-body"><dl><dt>发布编号（自动生成，不可修改）</dt><dd id="current-version"></dd><dt>大小</dt><dd id="current-size"></dd><dt>上传时间</dt><dd id="current-time"></dd><dt>SHA-256</dt><dd id="current-hash" style="overflow-wrap:anywhere"></dd><dt>口令状态</dt><dd id="passcode-state"></dd><dt>公开下载页面</dt><dd><a id="download-link" target="_blank" rel="noopener"></a></dd></dl></div></div>
+<div class="row"><div class="col-lg-7"><div class="card"><div class="card-header">上传 / 替换APK</div><div class="card-body"><form id="upload-form"><label class="form-label" for="apk-file">APK文件 *</label><input id="apk-file" class="form-control mb-3" type="file" accept=".apk" required><p class="text-body-secondary">小于100MB。上传并通过基本检查后才替换当前版本，失败保留原版本。</p><button class="btn btn-primary" type="submit">上传并发布</button><p id="upload-progress" class="mt-2" role="status"></p></form></div></div></div>
+<div class="col-lg-5"><div class="card"><div class="card-header">设置 / 修改下载口令</div><div class="card-body"><form id="passcode-form"><label class="form-label" for="new-passcode">新口令</label><input id="new-passcode" class="form-control mb-3" type="password" required minlength="5" maxlength="64" autocomplete="new-password"><label class="form-label" for="confirm-passcode">确认口令</label><input id="confirm-passcode" class="form-control mb-3" type="password" required minlength="5" maxlength="64" autocomplete="new-password"><p class="text-body-secondary">5—64个字符，支持中文、数字、字母和符号，不能全为空格。默认口令为 eugenecoming。口令不回显，忘记后重新设置。</p><button class="btn btn-primary" type="submit">保存下载口令</button></form></div></div></div></div>
+</div></div></main>
+  </div>
+  <script src="js/vendor.js"></script><script src="js/adminlte.js"></script><script src="js/app-package.js"></script>
+</body></html>

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>THS | 模拟电费账单</title><link rel="stylesheet" href="css/vendor.css"><link rel="stylesheet" href="css/adminlte.css"><style>body{visibility:hidden}.table th{white-space:nowrap}textarea{font-family:monospace}#bill-modal .modal-content{max-height:calc(100dvh - 3.5rem)}#bill-form{display:flex;flex-direction:column;min-height:0;overflow:hidden}#bill-modal .modal-body{overflow-y:auto;min-height:0}#bill-modal .modal-header,#bill-modal .modal-footer{flex-shrink:0}</style></head>
+<body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary"><div class="app-wrapper">
+<nav class="app-header navbar navbar-expand bg-body"><div class="container-fluid"><a class="nav-link" data-lte-toggle="sidebar" href="#" role="button" aria-label="展开菜单"><i class="bi bi-list"></i></a><div class="ms-auto d-flex align-items-center gap-3"><span id="admin-name"></span><button id="logout" class="btn btn-outline-secondary btn-sm">退出登录</button></div></div></nav>
+<aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark"><div class="sidebar-brand"><a href="index.html" class="brand-link"><span class="brand-text fw-light"><b>THS</b> 管理后台</span></a></div><div class="sidebar-wrapper"><nav class="mt-2"><ul class="nav nav-pills nav-sidebar flex-column sidebar-menu">
+<li class="nav-item"><a href="index.html" class="nav-link"><i class="nav-icon bi bi-speedometer"></i><p>首页</p></a></li>
+<li class="nav-item"><a href="holdings.html" class="nav-link"><i class="nav-icon bi bi-wallet2"></i><p>持仓管理</p></a></li>
+<li class="nav-item"><a href="members.html" class="nav-link"><i class="nav-icon bi bi-people"></i><p>会员管理</p></a></li>
+<li class="nav-item"><a href="deleted-members.html" class="nav-link"><i class="nav-icon bi bi-person-check"></i><p>已删除会员</p></a></li>
+<li class="nav-item"><a href="app-package.html" class="nav-link"><i class="nav-icon bi bi-phone"></i><p>App安装包管理</p></a></li>
+<li class="nav-item"><a href="pdf-assets.html" class="nav-link"><i class="nav-icon bi bi-images"></i><p>PDF素材管理</p></a></li>
+<li class="nav-item"><a href="pdf-reports.html" class="nav-link"><i class="nav-icon bi bi-file-earmark-pdf"></i><p>PDF生成</p></a></li>
+<li class="nav-item"><a href="electricity.html" class="nav-link"><i class="nav-icon bi bi-lightning-charge"></i><p>模拟用电资料</p></a></li>
+<li class="nav-item"><a href="bills.html" class="nav-link active"><i class="nav-icon bi bi-receipt"></i><p>模拟电费账单</p></a></li>
+<li class="nav-item"><a href="tax-profile.html" class="nav-link"><i class="nav-icon bi bi-file-earmark-text"></i><p>所得税资料</p></a></li>
+<li class="nav-item"><a href="employment.html" class="nav-link"><i class="nav-icon bi bi-building"></i><p>任职受雇单位</p></a></li>
+<li class="nav-item"><a href="#" class="nav-link" data-lte-toggle="treeview" role="button"><i class="nav-icon bi bi-file-earmark-spreadsheet"></i><p>所得税业务<i class="nav-arrow bi bi-chevron-right"></i></p></a><ul class="nav nav-treeview">
+<li class="nav-item"><a href="tax-business.html?kind=monthly" class="nav-link" data-business-page="tax-business" data-business-kind="monthly"><i class="nav-icon bi bi-circle"></i><p>年度收入纳税明细</p></a></li>
+<li class="nav-item"><a href="tax-business.html?kind=applications" class="nav-link" data-business-page="tax-business" data-business-kind="applications"><i class="nav-icon bi bi-circle"></i><p>年度汇算申报</p></a></li>
+<li class="nav-item"><a href="tax-business.html?kind=openrecords" class="nav-link" data-business-page="tax-business" data-business-kind="openrecords"><i class="nav-icon bi bi-circle"></i><p>纳税记录开具记录</p></a></li>
+<li class="nav-item"><a href="tax-business.html?kind=messages" class="nav-link" data-business-page="tax-business" data-business-kind="messages"><i class="nav-icon bi bi-circle"></i><p>税务消息</p></a></li>
+</ul></li>
+<li class="nav-item"><a href="#" class="nav-link" data-lte-toggle="treeview" role="button"><i class="nav-icon bi bi-grid"></i><p>南网业务<i class="nav-arrow bi bi-chevron-right"></i></p></a><ul class="nav nav-treeview">
+<li class="nav-item"><a href="nanwang.html?kind=news" class="nav-link" data-business-page="nanwang" data-business-kind="news"><i class="nav-icon bi bi-circle"></i><p>资讯管理</p></a></li>
+<li class="nav-item"><a href="nanwang.html?kind=recommended" class="nav-link" data-business-page="nanwang" data-business-kind="recommended"><i class="nav-icon bi bi-circle"></i><p>推荐户号</p></a></li>
+<li class="nav-item"><a href="nanwang.html?kind=bound" class="nav-link" data-business-page="nanwang" data-business-kind="bound"><i class="nav-icon bi bi-circle"></i><p>已绑定户号</p></a></li>
+<li class="nav-item"><a href="nanwang.html?kind=arrears" class="nav-link" data-business-page="nanwang" data-business-kind="arrears"><i class="nav-icon bi bi-circle"></i><p>欠费户号</p></a></li>
+<li class="nav-item"><a href="nanwang.html?kind=points" class="nav-link" data-business-page="nanwang" data-business-kind="points"><i class="nav-icon bi bi-circle"></i><p>计量点</p></a></li>
+<li class="nav-item"><a href="nanwang.html?kind=halls" class="nav-link" data-business-page="nanwang" data-business-kind="halls"><i class="nav-icon bi bi-circle"></i><p>营业厅</p></a></li>
+<li class="nav-item"><a href="nanwang.html?kind=messages" class="nav-link" data-business-page="nanwang" data-business-kind="messages"><i class="nav-icon bi bi-circle"></i><p>未读消息</p></a></li>
+<li class="nav-item"><a href="nanwang.html?kind=charging" class="nav-link" data-business-page="nanwang" data-business-kind="charging"><i class="nav-icon bi bi-circle"></i><p>充电桩状态</p></a></li>
+</ul></li>
+<li class="nav-item"><a href="#" class="nav-link" data-lte-toggle="treeview" role="button"><i class="nav-icon bi bi-credit-card"></i><p>支付宝模拟业务<i class="nav-arrow bi bi-chevron-right"></i></p></a><ul class="nav nav-treeview">
+<li class="nav-item"><a href="alipay.html?kind=profile" class="nav-link" data-business-page="alipay" data-business-kind="profile"><i class="nav-icon bi bi-circle"></i><p>我的与账户</p></a></li>
+<li class="nav-item"><a href="alipay.html?kind=insurance" class="nav-link" data-business-page="alipay" data-business-kind="insurance"><i class="nav-icon bi bi-circle"></i><p>参保查询</p></a></li>
+<li class="nav-item"><a href="alipay.html?kind=records" class="nav-link" data-business-page="alipay" data-business-kind="records"><i class="nav-icon bi bi-circle"></i><p>社保缴费记录</p></a></li>
+<li class="nav-item"><a href="alipay.html?kind=accounts" class="nav-link" data-business-page="alipay" data-business-kind="accounts"><i class="nav-icon bi bi-circle"></i><p>生活缴费户号</p></a></li>
+<li class="nav-item"><a href="alipay.html?kind=electric" class="nav-link" data-business-page="alipay" data-business-kind="electric"><i class="nav-icon bi bi-circle"></i><p>电费</p></a></li>
+<li class="nav-item"><a href="alipay.html?kind=water" class="nav-link" data-business-page="alipay" data-business-kind="water"><i class="nav-icon bi bi-circle"></i><p>水费账单</p></a></li>
+</ul></li>
+</ul></nav></div></aside>
+<main class="app-main"><div class="app-content-header"><div class="container-fluid d-flex justify-content-between align-items-center gap-3"><div><h3 class="mb-1">模拟电费账单</h3><span class="text-body-secondary">一位会员多条记录，按账期管理；缺失时App自动生成20条</span></div><button id="new" class="btn btn-primary text-nowrap">新增 / 生成账单</button></div></div>
+<div class="app-content"><div class="container-fluid"><div id="page-message" class="alert d-none" role="alert"></div>
+<div class="card"><div class="card-body"><form id="filters" class="row g-3 align-items-end">
+<div class="col-md-2"><label for="user-filter" class="form-label">会员ID</label><input id="user-filter" type="number" min="1" class="form-control"></div>
+<div class="col-md-3"><label for="code-filter" class="form-label">账期</label><input id="code-filter" type="month" class="form-control" min="2000-01" max="2100-12"></div>
+<div class="col-md-4"><label for="query" class="form-label">会员关键词</label><input id="query" class="form-control" placeholder="姓名、手机号或邮箱" maxlength="254"></div>
+<div class="col-md-3 d-flex gap-2"><button class="btn btn-primary" type="submit">查询</button><button id="reset" class="btn btn-outline-secondary" type="button">重置</button></div>
+</form></div></div>
+<div class="card"><div class="card-header"><h3 class="card-title">账单列表</h3></div><div class="table-responsive"><table class="table table-striped table-hover align-middle mb-0"><thead><tr><th>会员</th><th>账期</th><th>计费起止</th><th>金额（元）</th><th>用电量（kWh）</th><th class="text-end">操作</th></tr></thead><tbody id="rows"></tbody></table></div><div class="card-footer d-flex justify-content-between align-items-center"><span id="paging"></span><div class="d-flex gap-2"><button id="previous" class="btn btn-outline-secondary btn-sm">上一页</button><button id="next" class="btn btn-outline-secondary btn-sm">下一页</button></div></div></div>
+</div></div></main></div>
+<div id="bill-modal" class="modal fade" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="bill-title" aria-hidden="true"><div class="modal-dialog modal-lg"><div class="modal-content"><form id="bill-form">
+<div class="modal-header"><h5 id="bill-title" class="modal-title">新增账单</h5><button id="close" type="button" class="btn-close" aria-label="关闭"></button></div>
+<div class="modal-body"><div id="form-message" class="alert d-none" role="alert"></div>
+<div id="member-picker" class="mb-3 p-3 bg-body-tertiary rounded"><label for="member-search" class="form-label">搜索所属会员</label><div class="input-group mb-2"><input id="member-search" class="form-control" maxlength="254" placeholder="ID、姓名、手机号或邮箱"><button id="find-member" type="button" class="btn btn-outline-secondary">搜索</button></div><label for="member" class="form-label">选择会员</label><select id="member" class="form-select" size="4"></select></div>
+<div id="member-summary" class="text-body-secondary mb-3"></div>
+<div class="row g-3">
+<div class="col-md-4"><label for="code" class="form-label">账期 *</label><input id="code" type="month" min="2000-01" max="2100-12" class="form-control" required></div>
+<div class="col-md-4"><label for="startDate" class="form-label">开始日期 *</label><input id="startDate" type="date" class="form-control" required></div>
+<div class="col-md-4"><label for="endDate" class="form-label">结束日期 *</label><input id="endDate" type="date" class="form-control" required></div>
+<div class="col-md-6"><label for="amount" class="form-label">账单金额（人民币元）*</label><input id="amount" type="number" step="0.01" min="0" max="999999999.99" class="form-control" required></div>
+<div class="col-md-6"><label for="totalUsage" class="form-label">用电量（kWh）*</label><input id="totalUsage" type="number" step="0.01" min="0" max="999999999.99" class="form-control" required></div>
+<div class="col-12"><label for="detail" class="form-label">完整账单明细预览（只读）</label><textarea id="detail" rows="12" class="form-control" spellcheck="false" readonly>{}</textarea><small class="text-body-secondary">包含 billing 中第一、二、三档及缴费信息。请在上方表单编辑，预览随表单更新；点击“保存单条账单”成功后才写入数据库。保存后显示服务器返回的数据，其他扩展字段保留。</small></div>
+</div></div><div class="modal-footer justify-content-between"><button id="generate" class="btn btn-outline-primary" type="button">为此会员生成20条</button><div class="d-flex gap-2"><button id="cancel" class="btn btn-outline-secondary" type="button">关闭</button><button id="save" class="btn btn-primary" type="submit">保存单条账单</button></div></div>
+</form></div></div></div>
+<script src="js/vendor.js"></script><script src="js/adminlte.js"></script><script src="js/bills.js"></script></body></html>
