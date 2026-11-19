@@ -106,6 +106,9 @@ func TestAPKPageKeepsSameOriginFormSubmission(t *testing.T) {
 func testAPKDownload(t *testing.T, db *gorm.DB, r *gin.Engine, cookie *http.Cookie) {
 	t.Helper()
 	call := func(method, path string, body io.Reader, contentType string, admin bool) *httptest.ResponseRecorder {
+		if !strings.Contains(path, "?") && (strings.HasPrefix(path, "/api/app-download/") || strings.HasPrefix(path, "/api/admin/app-package")) {
+			path += "?app=nanwang"
+		}
 		req := httptest.NewRequest(method, path, body)
 		req.Header.Set("Content-Type", contentType)
 		if contentType == "application/x-www-form-urlencoded" {
@@ -263,5 +266,46 @@ func testAPKDownload(t *testing.T, db *gorm.DB, r *gin.Engine, cookie *http.Cook
 	db.Model(&apkdownload.Audit{}).Count(&audits)
 	if audits != 3 {
 		t.Fatalf("audit count %d", audits)
+	}
+	// All four slots publish independently, with distinct bytes and passcodes.
+	before := info()
+	for id := uint64(2); id <= 4; id++ {
+		app := apkdownload.Apps[id]
+		pass := "独立口令-" + app
+		check(call("PUT", "/api/admin/app-package/passcode?app="+app, strings.NewReader(`{"passcode":"`+pass+`"}`), "application/json", true), 200)
+		var payload bytes.Buffer
+		writer := multipart.NewWriter(&payload)
+		part, _ := writer.CreateFormFile("file", app+".apk")
+		content := append(append([]byte{}, apk...), byte(id))
+		part.Write(content)
+		writer.Close()
+		check(call("POST", "/api/admin/app-package/upload?app="+app, &payload, writer.FormDataContentType(), true), 200)
+		check(call("POST", "/api/app-download/download?app="+app, strings.NewReader(`{"passcode":"`+newPass+`"}`), "application/json", false), 401)
+		result := call("POST", "/api/app-download/download?app="+app, strings.NewReader(`{"passcode":"`+pass+`"}`), "application/json", false)
+		check(result, 200)
+		var published apkdownload.State
+		db.First(&published, id)
+		if !bytes.Equal(result.Body.Bytes(), content) || result.Header().Get("Content-Disposition") != `attachment; filename="`+apkdownload.Filename(published)+`"` {
+			t.Fatal("wrong app downloaded", app)
+		}
+	}
+	if after := info(); after.ReleaseKey != before.ReleaseKey || after.SHA256 != before.SHA256 || after.SizeBytes != before.SizeBytes || !after.UploadedAt.Equal(*before.UploadedAt) {
+		t.Fatal("another app upload changed nanwang metadata")
+	}
+	check(download(newPass, false), 200)
+	list := call("GET", "/api/app-download/info?list=1", nil, "", false)
+	check(list, 200)
+	var result apkdownload.ListResponse
+	if err := json.Unmarshal(list.Body.Bytes(), &result); err != nil || len(result.Data) != 4 {
+		t.Fatal("expected four apps", list.Body.String())
+	}
+	for i, item := range result.Data {
+		if !item.Available || item.App != apkdownload.Apps[uint64(i+1)] || item.Name != apkdownload.Names[uint64(i+1)] {
+			t.Fatal("invalid app metadata", item)
+		}
+	}
+	for _, app := range []string{"", "unknown", "nanwang&app=tax"} {
+		check(call("PUT", "/api/admin/app-package/passcode?app="+app, strings.NewReader(`{"passcode":"abcde"}`), "application/json", true), 400)
+		check(call("POST", "/api/app-download/download?app="+app, strings.NewReader(`{"passcode":"abcde"}`), "application/json", false), 400)
 	}
 }

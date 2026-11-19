@@ -35,7 +35,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_alipay.GenerateContributions"
+                            "$ref": "#/definitions/alipay.GenerateContributions"
                         }
                     }
                 ],
@@ -43,7 +43,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.AlipayGenerationResponse"
+                            "$ref": "#/definitions/admin.AlipayGenerationResponse"
                         }
                     }
                 }
@@ -69,7 +69,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_alipay.GenerateContributions"
+                            "$ref": "#/definitions/alipay.GenerateContributions"
                         }
                     }
                 ],
@@ -77,7 +77,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.AlipayGenerationResponse"
+                            "$ref": "#/definitions/admin.AlipayGenerationResponse"
                         }
                     }
                 }
@@ -96,7 +96,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.AlipaySchemasResponse"
+                            "$ref": "#/definitions/admin.AlipaySchemasResponse"
                         }
                     }
                 }
@@ -157,7 +157,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.AlipayListResponse"
+                            "$ref": "#/definitions/admin.AlipayListResponse"
                         }
                     }
                 }
@@ -188,7 +188,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_alipay.Write"
+                            "$ref": "#/definitions/alipay.Write"
                         }
                     }
                 ],
@@ -196,7 +196,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.AlipayRecordResponse"
+                            "$ref": "#/definitions/admin.AlipayRecordResponse"
                         }
                     }
                 }
@@ -231,7 +231,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.AlipayRecordResponse"
+                            "$ref": "#/definitions/admin.AlipayRecordResponse"
                         }
                     }
                 }
@@ -269,7 +269,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_alipay.Write"
+                            "$ref": "#/definitions/alipay.Write"
                         }
                     }
                 ],
@@ -277,7 +277,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.AlipayRecordResponse"
+                            "$ref": "#/definitions/admin.AlipayRecordResponse"
                         }
                     }
                 }
@@ -315,7 +315,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_alipay.Write"
+                            "$ref": "#/definitions/alipay.Write"
                         }
                     }
                 ],
@@ -323,7 +323,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.Envelope"
+                            "$ref": "#/definitions/response.Envelope"
                         }
                     }
                 }
@@ -336,11 +336,19 @@ const docTemplate = `{
                     "后台 · App安装包"
                 ],
                 "summary": "获取安装包管理信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "指定单个安装包；不传返回四项列表",
+                        "name": "app",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_apkdownload.InfoResponse"
+                            "$ref": "#/definitions/apkdownload.ListResponse"
                         }
                     }
                 }
@@ -363,21 +371,28 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_apkdownload.PasscodeRequest"
+                            "$ref": "#/definitions/apkdownload.PasscodeRequest"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "安装包：nanwang/alipay/tax/ths",
+                        "name": "app",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_apkdownload.InfoResponse"
+                            "$ref": "#/definitions/apkdownload.InfoResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -400,25 +415,32 @@ const docTemplate = `{
                         "name": "file",
                         "in": "formData",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "安装包：nanwang/alipay/tax/ths",
+                        "name": "app",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_apkdownload.InfoResponse"
+                            "$ref": "#/definitions/apkdownload.InfoResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "413": {
                         "description": "Request Entity Too Large",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -444,7 +466,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.LoginRequest"
+                            "$ref": "#/definitions/admin.LoginRequest"
                         }
                     }
                 ],
@@ -452,31 +474,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.LoginResponse"
+                            "$ref": "#/definitions/admin.LoginResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -495,7 +517,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.Envelope"
+                            "$ref": "#/definitions/response.Envelope"
                         }
                     }
                 }
@@ -515,19 +537,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.MeResponse"
+                            "$ref": "#/definitions/admin.MeResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -569,7 +591,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.DeletedMemberPageResponse"
+                            "$ref": "#/definitions/admin.DeletedMemberPageResponse"
                         }
                     }
                 }
@@ -598,19 +620,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.MemberResponse"
+                            "$ref": "#/definitions/admin.MemberResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -664,25 +686,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_electricity.BillListResponse"
+                            "$ref": "#/definitions/electricity.BillListResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -715,7 +737,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_electricity.BillWrite"
+                            "$ref": "#/definitions/electricity.BillWrite"
                         }
                     }
                 ],
@@ -723,25 +745,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_electricity.BillResponse"
+                            "$ref": "#/definitions/electricity.BillResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -774,7 +796,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_electricity.BillWrite"
+                            "$ref": "#/definitions/electricity.BillWrite"
                         }
                     }
                 ],
@@ -782,25 +804,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_electricity.BillsResponse"
+                            "$ref": "#/definitions/electricity.BillsResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -835,19 +857,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_electricity.BillResponse"
+                            "$ref": "#/definitions/electricity.BillResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -885,7 +907,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_electricity.BillWrite"
+                            "$ref": "#/definitions/electricity.BillWrite"
                         }
                     }
                 ],
@@ -893,31 +915,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_electricity.BillResponse"
+                            "$ref": "#/definitions/electricity.BillResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -955,7 +977,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_electricity.BillWrite"
+                            "$ref": "#/definitions/electricity.BillWrite"
                         }
                     }
                 ],
@@ -963,25 +985,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.Envelope"
+                            "$ref": "#/definitions/response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -1029,19 +1051,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_electricity.ListResponse"
+                            "$ref": "#/definitions/electricity.ListResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -1070,19 +1092,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_electricity.ProfileResponse"
+                            "$ref": "#/definitions/electricity.ProfileResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -1113,7 +1135,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_electricity.WriteRequest"
+                            "$ref": "#/definitions/electricity.WriteRequest"
                         }
                     }
                 ],
@@ -1121,31 +1143,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_electricity.ProfileResponse"
+                            "$ref": "#/definitions/electricity.ProfileResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -1176,7 +1198,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_electricity.WriteRequest"
+                            "$ref": "#/definitions/electricity.WriteRequest"
                         }
                     }
                 ],
@@ -1184,31 +1206,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_electricity.ProfileResponse"
+                            "$ref": "#/definitions/electricity.ProfileResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -1239,7 +1261,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_electricity.WriteRequest"
+                            "$ref": "#/definitions/electricity.WriteRequest"
                         }
                     }
                 ],
@@ -1247,25 +1269,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.Envelope"
+                            "$ref": "#/definitions/response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -1298,7 +1320,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_electricity.WriteRequest"
+                            "$ref": "#/definitions/electricity.WriteRequest"
                         }
                     }
                 ],
@@ -1306,25 +1328,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_electricity.ProfileResponse"
+                            "$ref": "#/definitions/electricity.ProfileResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -1352,13 +1374,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.MembersResponse"
+                            "$ref": "#/definitions/admin.MembersResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -1406,19 +1428,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.HoldingListResponse"
+                            "$ref": "#/definitions/admin.HoldingListResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -1454,19 +1476,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_portfolio.HoldingsResponse"
+                            "$ref": "#/definitions/portfolio.HoldingsResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -1504,7 +1526,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_portfolio.AdminHoldingWrite"
+                            "$ref": "#/definitions/portfolio.AdminHoldingWrite"
                         }
                     }
                 ],
@@ -1512,31 +1534,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_portfolio.HoldingsResponse"
+                            "$ref": "#/definitions/portfolio.HoldingsResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -1574,7 +1596,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_portfolio.AdminHoldingWrite"
+                            "$ref": "#/definitions/portfolio.AdminHoldingWrite"
                         }
                     }
                 ],
@@ -1582,31 +1604,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_portfolio.HoldingsResponse"
+                            "$ref": "#/definitions/portfolio.HoldingsResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -1644,7 +1666,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_portfolio.AdminHoldingWrite"
+                            "$ref": "#/definitions/portfolio.AdminHoldingWrite"
                         }
                     }
                 ],
@@ -1652,19 +1674,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.Envelope"
+                            "$ref": "#/definitions/response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -1672,7 +1694,7 @@ const docTemplate = `{
         },
         "/api/admin/holdings/{userID}/{category}/generate": {
             "post": {
-                "description": "管理员Cookie鉴权，指定totalAssets，从扩展的分类候选池随机生成8至12只、每只40至50条。已有记录需expectedGeneration，替换及审计原子完成。",
+                "description": "管理员Cookie鉴权，指定totalAssets。positionCount可选，默认10，范围1至50；tradesPerPosition可选，默认30，范围3至500。按指定数量从分类候选池生成，不足时失败保留旧数据。App自动生成规则不变。已有记录需expectedGeneration，替换及审计原子完成。",
                 "consumes": [
                     "application/json"
                 ],
@@ -1704,7 +1726,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_portfolio.AdminHoldingWrite"
+                            "$ref": "#/definitions/portfolio.AdminHoldingWrite"
                         }
                     }
                 ],
@@ -1712,25 +1734,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_portfolio.HoldingsResponse"
+                            "$ref": "#/definitions/portfolio.HoldingsResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -1778,19 +1800,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.MemberPageResponse"
+                            "$ref": "#/definitions/admin.MemberPageResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -1814,7 +1836,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.MemberCreate"
+                            "$ref": "#/definitions/admin.MemberCreate"
                         }
                     }
                 ],
@@ -1822,25 +1844,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.MemberResponse"
+                            "$ref": "#/definitions/admin.MemberResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -1869,19 +1891,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.MemberResponse"
+                            "$ref": "#/definitions/admin.MemberResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -1912,7 +1934,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.MemberFields"
+                            "$ref": "#/definitions/admin.MemberFields"
                         }
                     }
                 ],
@@ -1920,31 +1942,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.MemberResponse"
+                            "$ref": "#/definitions/admin.MemberResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -1971,19 +1993,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.Envelope"
+                            "$ref": "#/definitions/response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -2016,7 +2038,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.MemberPassword"
+                            "$ref": "#/definitions/admin.MemberPassword"
                         }
                     }
                 ],
@@ -2024,25 +2046,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.Envelope"
+                            "$ref": "#/definitions/response.Envelope"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -2061,7 +2083,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.NanwangSchemasResponse"
+                            "$ref": "#/definitions/admin.NanwangSchemasResponse"
                         }
                     }
                 }
@@ -2116,7 +2138,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.NanwangListResponse"
+                            "$ref": "#/definitions/admin.NanwangListResponse"
                         }
                     }
                 }
@@ -2147,7 +2169,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_nanwang.Write"
+                            "$ref": "#/definitions/nanwang.Write"
                         }
                     }
                 ],
@@ -2155,7 +2177,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.NanwangRecordResponse"
+                            "$ref": "#/definitions/admin.NanwangRecordResponse"
                         }
                     }
                 }
@@ -2190,7 +2212,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.NanwangRecordResponse"
+                            "$ref": "#/definitions/admin.NanwangRecordResponse"
                         }
                     }
                 }
@@ -2228,7 +2250,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_nanwang.Write"
+                            "$ref": "#/definitions/nanwang.Write"
                         }
                     }
                 ],
@@ -2236,7 +2258,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.NanwangRecordResponse"
+                            "$ref": "#/definitions/admin.NanwangRecordResponse"
                         }
                     }
                 }
@@ -2274,7 +2296,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_nanwang.Write"
+                            "$ref": "#/definitions/nanwang.Write"
                         }
                     }
                 ],
@@ -2282,7 +2304,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.Envelope"
+                            "$ref": "#/definitions/response.Envelope"
                         }
                     }
                 }
@@ -2302,7 +2324,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.PDFAssetListResponse"
+                            "$ref": "#/definitions/admin.PDFAssetListResponse"
                         }
                     }
                 }
@@ -2341,7 +2363,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.PDFAssetResponse"
+                            "$ref": "#/definitions/admin.PDFAssetResponse"
                         }
                     }
                 }
@@ -2403,7 +2425,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.PDFAssetReview"
+                            "$ref": "#/definitions/admin.PDFAssetReview"
                         }
                     }
                 ],
@@ -2411,19 +2433,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.PDFAssetResponse"
+                            "$ref": "#/definitions/admin.PDFAssetResponse"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -2452,7 +2474,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.PDFSourceResponse"
+                            "$ref": "#/definitions/admin.PDFSourceResponse"
                         }
                     }
                 }
@@ -2478,7 +2500,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_pdfreport.Draft"
+                            "$ref": "#/definitions/pdfreport.Draft"
                         }
                     }
                 ],
@@ -2492,19 +2514,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -2530,7 +2552,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.PDFPrepareRequest"
+                            "$ref": "#/definitions/admin.PDFPrepareRequest"
                         }
                     }
                 ],
@@ -2538,7 +2560,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.PDFDraftResponse"
+                            "$ref": "#/definitions/admin.PDFDraftResponse"
                         }
                     }
                 }
@@ -2558,7 +2580,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.PDFSchemasResponse"
+                            "$ref": "#/definitions/admin.PDFSchemasResponse"
                         }
                     }
                 }
@@ -2600,7 +2622,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.Envelope"
+                            "$ref": "#/definitions/response.Envelope"
                         }
                     }
                 }
@@ -2619,7 +2641,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.TaxBusinessSchemasResponse"
+                            "$ref": "#/definitions/admin.TaxBusinessSchemasResponse"
                         }
                     }
                 }
@@ -2680,7 +2702,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.TaxBusinessListResponse"
+                            "$ref": "#/definitions/admin.TaxBusinessListResponse"
                         }
                     }
                 }
@@ -2711,7 +2733,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_taxbusiness.Write"
+                            "$ref": "#/definitions/taxbusiness.Write"
                         }
                     }
                 ],
@@ -2719,7 +2741,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.TaxBusinessRecordResponse"
+                            "$ref": "#/definitions/admin.TaxBusinessRecordResponse"
                         }
                     }
                 }
@@ -2754,7 +2776,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.TaxBusinessRecordResponse"
+                            "$ref": "#/definitions/admin.TaxBusinessRecordResponse"
                         }
                     }
                 }
@@ -2792,7 +2814,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_taxbusiness.Write"
+                            "$ref": "#/definitions/taxbusiness.Write"
                         }
                     }
                 ],
@@ -2800,7 +2822,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_admin.TaxBusinessRecordResponse"
+                            "$ref": "#/definitions/admin.TaxBusinessRecordResponse"
                         }
                     }
                 }
@@ -2838,7 +2860,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_taxbusiness.Write"
+                            "$ref": "#/definitions/taxbusiness.Write"
                         }
                     }
                 ],
@@ -2846,7 +2868,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.Envelope"
+                            "$ref": "#/definitions/response.Envelope"
                         }
                     }
                 }
@@ -2894,19 +2916,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_tax.EmploymentListResponse"
+                            "$ref": "#/definitions/tax.EmploymentListResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -2935,19 +2957,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_tax.EmploymentResponse"
+                            "$ref": "#/definitions/tax.EmploymentResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -2978,7 +3000,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_tax.EmploymentWrite"
+                            "$ref": "#/definitions/tax.EmploymentWrite"
                         }
                     }
                 ],
@@ -2986,31 +3008,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_tax.EmploymentResponse"
+                            "$ref": "#/definitions/tax.EmploymentResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -3041,7 +3063,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_tax.EmploymentWrite"
+                            "$ref": "#/definitions/tax.EmploymentWrite"
                         }
                     }
                 ],
@@ -3049,31 +3071,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_tax.EmploymentResponse"
+                            "$ref": "#/definitions/tax.EmploymentResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -3104,7 +3126,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_tax.EmploymentWrite"
+                            "$ref": "#/definitions/tax.EmploymentWrite"
                         }
                     }
                 ],
@@ -3112,25 +3134,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.Envelope"
+                            "$ref": "#/definitions/response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -3163,7 +3185,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_tax.EmploymentWrite"
+                            "$ref": "#/definitions/tax.EmploymentWrite"
                         }
                     }
                 ],
@@ -3171,25 +3193,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_tax.EmploymentResponse"
+                            "$ref": "#/definitions/tax.EmploymentResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -3237,19 +3259,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_tax.ListResponse"
+                            "$ref": "#/definitions/tax.ListResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -3278,19 +3300,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_tax.ProfileResponse"
+                            "$ref": "#/definitions/tax.ProfileResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -3321,7 +3343,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_tax.WriteRequest"
+                            "$ref": "#/definitions/tax.WriteRequest"
                         }
                     }
                 ],
@@ -3329,31 +3351,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_tax.ProfileResponse"
+                            "$ref": "#/definitions/tax.ProfileResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -3384,7 +3406,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_tax.WriteRequest"
+                            "$ref": "#/definitions/tax.WriteRequest"
                         }
                     }
                 ],
@@ -3392,31 +3414,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_tax.ProfileResponse"
+                            "$ref": "#/definitions/tax.ProfileResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -3447,7 +3469,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_tax.WriteRequest"
+                            "$ref": "#/definitions/tax.WriteRequest"
                         }
                     }
                 ],
@@ -3455,25 +3477,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.Envelope"
+                            "$ref": "#/definitions/response.Envelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -3506,7 +3528,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_tax.WriteRequest"
+                            "$ref": "#/definitions/tax.WriteRequest"
                         }
                     }
                 ],
@@ -3514,25 +3536,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_tax.ProfileResponse"
+                            "$ref": "#/definitions/tax.ProfileResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "409": {
                         "description": "Conflict",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -3559,8 +3581,15 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_apkdownload.PasscodeRequest"
+                            "$ref": "#/definitions/apkdownload.PasscodeRequest"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "安装包：nanwang/alipay/tax/ths",
+                        "name": "app",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -3573,19 +3602,19 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -3601,17 +3630,25 @@ const docTemplate = `{
                     "App端 · 安装包下载"
                 ],
                 "summary": "获取当前APK版本和下载信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "可选，指定单个安装包：nanwang/alipay/tax/ths；不传返回四项列表",
+                        "name": "app",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_apkdownload.InfoResponse"
+                            "$ref": "#/definitions/apkdownload.ListResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -3637,7 +3674,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_auth.LoginRequest"
+                            "$ref": "#/definitions/auth.LoginRequest"
                         }
                     }
                 ],
@@ -3645,37 +3682,37 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_auth.LoginResponse"
+                            "$ref": "#/definitions/auth.LoginResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -3700,25 +3737,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_electricity.AppBillsResponse"
+                            "$ref": "#/definitions/electricity.AppBillsResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -3743,25 +3780,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_electricity.AppProfileResponse"
+                            "$ref": "#/definitions/electricity.AppProfileResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -3812,31 +3849,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_portfolio.HoldingsResponse"
+                            "$ref": "#/definitions/portfolio.HoldingsResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -3881,25 +3918,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_market.QuoteListResponse"
+                            "$ref": "#/definitions/market.QuoteListResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -3943,25 +3980,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_portfolio.TradeResponse"
+                            "$ref": "#/definitions/portfolio.TradeResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -3986,25 +4023,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_tax.AppEmploymentResponse"
+                            "$ref": "#/definitions/tax.AppEmploymentResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -4029,25 +4066,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_tax.AppProfileResponse"
+                            "$ref": "#/definitions/tax.AppProfileResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -4086,25 +4123,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_electricity.AppLookupResponse"
+                            "$ref": "#/definitions/electricity.AppLookupResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -4152,13 +4189,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_alipay.DetailResponse"
+                            "$ref": "#/definitions/alipay.DetailResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/internal_alipay.AppResponse"
+                            "$ref": "#/definitions/alipay.AppResponse"
                         }
                     }
                 }
@@ -4192,13 +4229,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_alipay.RecordsResponse"
+                            "$ref": "#/definitions/alipay.RecordsResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/internal_alipay.AppResponse"
+                            "$ref": "#/definitions/alipay.AppResponse"
                         }
                     }
                 }
@@ -4223,13 +4260,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_alipay.SummaryResponse"
+                            "$ref": "#/definitions/alipay.SummaryResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/internal_alipay.AppResponse"
+                            "$ref": "#/definitions/alipay.AppResponse"
                         }
                     }
                 }
@@ -4254,13 +4291,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_alipay.AccountsResponse"
+                            "$ref": "#/definitions/alipay.AccountsResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/internal_alipay.AppResponse"
+                            "$ref": "#/definitions/alipay.AppResponse"
                         }
                     }
                 }
@@ -4285,13 +4322,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_alipay.ProfileResponse"
+                            "$ref": "#/definitions/alipay.ProfileResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/internal_alipay.AppResponse"
+                            "$ref": "#/definitions/alipay.AppResponse"
                         }
                     }
                 }
@@ -4316,13 +4353,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_alipay.ElectricResponse"
+                            "$ref": "#/definitions/alipay.ElectricResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/internal_alipay.AppResponse"
+                            "$ref": "#/definitions/alipay.AppResponse"
                         }
                     }
                 }
@@ -4347,13 +4384,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_alipay.WaterResponse"
+                            "$ref": "#/definitions/alipay.WaterResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/internal_alipay.AppResponse"
+                            "$ref": "#/definitions/alipay.AppResponse"
                         }
                     }
                 }
@@ -4373,13 +4410,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_health.SuccessResponse"
+                            "$ref": "#/definitions/health.SuccessResponse"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -4410,7 +4447,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.HallRequest"
+                            "$ref": "#/definitions/nanwang.HallRequest"
                         }
                     }
                 ],
@@ -4418,31 +4455,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.HallResponse"
+                            "$ref": "#/definitions/nanwang.HallResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.AppResponse"
+                            "$ref": "#/definitions/nanwang.AppResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.AppResponse"
+                            "$ref": "#/definitions/nanwang.AppResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.AppResponse"
+                            "$ref": "#/definitions/nanwang.AppResponse"
                         }
                     }
                 }
@@ -4473,7 +4510,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.EmptyRequest"
+                            "$ref": "#/definitions/nanwang.EmptyRequest"
                         }
                     }
                 ],
@@ -4481,31 +4518,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.MessagesResponse"
+                            "$ref": "#/definitions/nanwang.MessagesResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.AppResponse"
+                            "$ref": "#/definitions/nanwang.AppResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.AppResponse"
+                            "$ref": "#/definitions/nanwang.AppResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.AppResponse"
+                            "$ref": "#/definitions/nanwang.AppResponse"
                         }
                     }
                 }
@@ -4536,7 +4573,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.HotRequest"
+                            "$ref": "#/definitions/nanwang.HotRequest"
                         }
                     }
                 ],
@@ -4544,31 +4581,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.NewsResponse"
+                            "$ref": "#/definitions/nanwang.NewsResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.AppResponse"
+                            "$ref": "#/definitions/nanwang.AppResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.AppResponse"
+                            "$ref": "#/definitions/nanwang.AppResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.AppResponse"
+                            "$ref": "#/definitions/nanwang.AppResponse"
                         }
                     }
                 }
@@ -4599,7 +4636,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.DetailRequest"
+                            "$ref": "#/definitions/nanwang.DetailRequest"
                         }
                     }
                 ],
@@ -4607,31 +4644,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.NewsDetailResponse"
+                            "$ref": "#/definitions/nanwang.NewsDetailResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.AppResponse"
+                            "$ref": "#/definitions/nanwang.AppResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.AppResponse"
+                            "$ref": "#/definitions/nanwang.AppResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.AppResponse"
+                            "$ref": "#/definitions/nanwang.AppResponse"
                         }
                     }
                 }
@@ -4662,7 +4699,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.ListRequest"
+                            "$ref": "#/definitions/nanwang.ListRequest"
                         }
                     }
                 ],
@@ -4670,31 +4707,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.NewsResponse"
+                            "$ref": "#/definitions/nanwang.NewsResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.AppResponse"
+                            "$ref": "#/definitions/nanwang.AppResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.AppResponse"
+                            "$ref": "#/definitions/nanwang.AppResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.AppResponse"
+                            "$ref": "#/definitions/nanwang.AppResponse"
                         }
                     }
                 }
@@ -4725,7 +4762,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.LatestRequest"
+                            "$ref": "#/definitions/nanwang.LatestRequest"
                         }
                     }
                 ],
@@ -4733,31 +4770,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.NewsResponse"
+                            "$ref": "#/definitions/nanwang.NewsResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.AppResponse"
+                            "$ref": "#/definitions/nanwang.AppResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.AppResponse"
+                            "$ref": "#/definitions/nanwang.AppResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.AppResponse"
+                            "$ref": "#/definitions/nanwang.AppResponse"
                         }
                     }
                 }
@@ -4788,7 +4825,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.EmptyRequest"
+                            "$ref": "#/definitions/nanwang.EmptyRequest"
                         }
                     }
                 ],
@@ -4796,31 +4833,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.ChargingResponse"
+                            "$ref": "#/definitions/nanwang.ChargingResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.AppResponse"
+                            "$ref": "#/definitions/nanwang.AppResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.AppResponse"
+                            "$ref": "#/definitions/nanwang.AppResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.AppResponse"
+                            "$ref": "#/definitions/nanwang.AppResponse"
                         }
                     }
                 }
@@ -4851,7 +4888,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.EmptyRequest"
+                            "$ref": "#/definitions/nanwang.EmptyRequest"
                         }
                     },
                     {
@@ -4865,31 +4902,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.CustomerResponse"
+                            "$ref": "#/definitions/nanwang.CustomerResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.AppResponse"
+                            "$ref": "#/definitions/nanwang.AppResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.AppResponse"
+                            "$ref": "#/definitions/nanwang.AppResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.AppResponse"
+                            "$ref": "#/definitions/nanwang.AppResponse"
                         }
                     }
                 }
@@ -4920,7 +4957,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.PointRequest"
+                            "$ref": "#/definitions/nanwang.PointRequest"
                         }
                     }
                 ],
@@ -4928,31 +4965,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.PointsResponse"
+                            "$ref": "#/definitions/nanwang.PointsResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.AppResponse"
+                            "$ref": "#/definitions/nanwang.AppResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.AppResponse"
+                            "$ref": "#/definitions/nanwang.AppResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.AppResponse"
+                            "$ref": "#/definitions/nanwang.AppResponse"
                         }
                     }
                 }
@@ -4983,7 +5020,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.EmptyRequest"
+                            "$ref": "#/definitions/nanwang.EmptyRequest"
                         }
                     }
                 ],
@@ -4991,31 +5028,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.CustomerResponse"
+                            "$ref": "#/definitions/nanwang.CustomerResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.AppResponse"
+                            "$ref": "#/definitions/nanwang.AppResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.AppResponse"
+                            "$ref": "#/definitions/nanwang.AppResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.AppResponse"
+                            "$ref": "#/definitions/nanwang.AppResponse"
                         }
                     }
                 }
@@ -5046,7 +5083,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.EmptyRequest"
+                            "$ref": "#/definitions/nanwang.EmptyRequest"
                         }
                     }
                 ],
@@ -5054,31 +5091,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.CustomerResponse"
+                            "$ref": "#/definitions/nanwang.CustomerResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.AppResponse"
+                            "$ref": "#/definitions/nanwang.AppResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.AppResponse"
+                            "$ref": "#/definitions/nanwang.AppResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/internal_nanwang.AppResponse"
+                            "$ref": "#/definitions/nanwang.AppResponse"
                         }
                     }
                 }
@@ -5109,7 +5146,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_taxbusiness.ApplyRequest"
+                            "$ref": "#/definitions/taxbusiness.ApplyRequest"
                         }
                     }
                 ],
@@ -5117,7 +5154,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_taxbusiness.ApplicationResponse"
+                            "$ref": "#/definitions/taxbusiness.ApplicationResponse"
                         }
                     }
                 }
@@ -5142,25 +5179,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_tax.AppEmploymentResponse"
+                            "$ref": "#/definitions/tax.AppEmploymentResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -5185,25 +5222,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_tax.AppProfileResponse"
+                            "$ref": "#/definitions/tax.AppProfileResponse"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/ths-service_internal_response.ErrorEnvelope"
+                            "$ref": "#/definitions/response.ErrorEnvelope"
                         }
                     }
                 }
@@ -5234,7 +5271,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_taxbusiness.ScanRequest"
+                            "$ref": "#/definitions/taxbusiness.ScanRequest"
                         }
                     }
                 ],
@@ -5242,7 +5279,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_taxbusiness.ScanResponse"
+                            "$ref": "#/definitions/taxbusiness.ScanResponse"
                         }
                     }
                 }
@@ -5273,7 +5310,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_taxbusiness.EmptyRequest"
+                            "$ref": "#/definitions/taxbusiness.EmptyRequest"
                         }
                     }
                 ],
@@ -5281,7 +5318,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_taxbusiness.OpenRecordsResponse"
+                            "$ref": "#/definitions/taxbusiness.OpenRecordsResponse"
                         }
                     }
                 }
@@ -5312,7 +5349,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_taxbusiness.CalculateRequest"
+                            "$ref": "#/definitions/taxbusiness.CalculateRequest"
                         }
                     }
                 ],
@@ -5320,7 +5357,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_taxbusiness.CalculationResponse"
+                            "$ref": "#/definitions/taxbusiness.CalculationResponse"
                         }
                     }
                 }
@@ -5351,7 +5388,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_taxbusiness.MessageRequest"
+                            "$ref": "#/definitions/taxbusiness.MessageRequest"
                         }
                     }
                 ],
@@ -5359,7 +5396,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_taxbusiness.MessagesContract"
+                            "$ref": "#/definitions/taxbusiness.MessagesContract"
                         }
                     }
                 }
@@ -5390,7 +5427,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_taxbusiness.YearRequest"
+                            "$ref": "#/definitions/taxbusiness.YearRequest"
                         }
                     }
                 ],
@@ -5398,7 +5435,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_taxbusiness.AnnualContract"
+                            "$ref": "#/definitions/taxbusiness.AnnualContract"
                         }
                     }
                 }
@@ -5406,36 +5443,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "index.Data": {
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string",
-                    "example": "成功访问接口"
-                }
-            }
-        },
-        "index.SuccessResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer",
-                    "example": 0
-                },
-                "data": {
-                    "$ref": "#/definitions/index.Data"
-                },
-                "message": {
-                    "type": "string",
-                    "example": "ok"
-                },
-                "requestId": {
-                    "type": "string",
-                    "example": "f5e76095d32f49199f5f7f897f5733a2"
-                }
-            }
-        },
-        "internal_admin.Administrator": {
+        "admin.Administrator": {
             "type": "object",
             "properties": {
                 "id": {
@@ -5449,49 +5457,49 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_admin.AlipayGenerationResponse": {
+        "admin.AlipayGenerationResponse": {
             "type": "object",
             "properties": {
                 "code": {
                     "type": "integer"
                 },
                 "data": {
-                    "$ref": "#/definitions/ths-service_internal_alipay.ContributionPreview"
+                    "$ref": "#/definitions/alipay.ContributionPreview"
                 },
                 "message": {
                     "type": "string"
                 }
             }
         },
-        "internal_admin.AlipayListResponse": {
+        "admin.AlipayListResponse": {
             "type": "object",
             "properties": {
                 "code": {
                     "type": "integer"
                 },
                 "data": {
-                    "$ref": "#/definitions/ths-service_internal_alipay.List"
+                    "$ref": "#/definitions/alipay.List"
                 },
                 "message": {
                     "type": "string"
                 }
             }
         },
-        "internal_admin.AlipayRecordResponse": {
+        "admin.AlipayRecordResponse": {
             "type": "object",
             "properties": {
                 "code": {
                     "type": "integer"
                 },
                 "data": {
-                    "$ref": "#/definitions/ths-service_internal_alipay.Record"
+                    "$ref": "#/definitions/alipay.Record"
                 },
                 "message": {
                     "type": "string"
                 }
             }
         },
-        "internal_admin.AlipaySchemasResponse": {
+        "admin.AlipaySchemasResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -5500,7 +5508,7 @@ const docTemplate = `{
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/ths-service_internal_alipay.Schema"
+                        "$ref": "#/definitions/alipay.Schema"
                     }
                 },
                 "message": {
@@ -5508,13 +5516,13 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_admin.DeletedMemberPage": {
+        "admin.DeletedMemberPage": {
             "type": "object",
             "properties": {
                 "items": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_admin.DeletedMemberView"
+                        "$ref": "#/definitions/admin.DeletedMemberView"
                     }
                 },
                 "page": {
@@ -5528,21 +5536,21 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_admin.DeletedMemberPageResponse": {
+        "admin.DeletedMemberPageResponse": {
             "type": "object",
             "properties": {
                 "code": {
                     "type": "integer"
                 },
                 "data": {
-                    "$ref": "#/definitions/internal_admin.DeletedMemberPage"
+                    "$ref": "#/definitions/admin.DeletedMemberPage"
                 },
                 "message": {
                     "type": "string"
                 }
             }
         },
-        "internal_admin.DeletedMemberView": {
+        "admin.DeletedMemberView": {
             "type": "object",
             "properties": {
                 "createdAt": {
@@ -5574,14 +5582,14 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_admin.HoldingListResponse": {
+        "admin.HoldingListResponse": {
             "type": "object",
             "properties": {
                 "code": {
                     "type": "integer"
                 },
                 "data": {
-                    "$ref": "#/definitions/ths-service_internal_portfolio.AdminHoldingList"
+                    "$ref": "#/definitions/portfolio.AdminHoldingList"
                 },
                 "message": {
                     "type": "string"
@@ -5591,18 +5599,18 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_admin.LoginData": {
+        "admin.LoginData": {
             "type": "object",
             "properties": {
                 "admin": {
-                    "$ref": "#/definitions/internal_admin.Administrator"
+                    "$ref": "#/definitions/admin.Administrator"
                 },
                 "expiresIn": {
                     "type": "integer"
                 }
             }
         },
-        "internal_admin.LoginRequest": {
+        "admin.LoginRequest": {
             "type": "object",
             "required": [
                 "password",
@@ -5619,14 +5627,14 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_admin.LoginResponse": {
+        "admin.LoginResponse": {
             "type": "object",
             "properties": {
                 "code": {
                     "type": "integer"
                 },
                 "data": {
-                    "$ref": "#/definitions/internal_admin.LoginData"
+                    "$ref": "#/definitions/admin.LoginData"
                 },
                 "message": {
                     "type": "string"
@@ -5636,14 +5644,14 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_admin.MeResponse": {
+        "admin.MeResponse": {
             "type": "object",
             "properties": {
                 "code": {
                     "type": "integer"
                 },
                 "data": {
-                    "$ref": "#/definitions/internal_admin.Administrator"
+                    "$ref": "#/definitions/admin.Administrator"
                 },
                 "message": {
                     "type": "string"
@@ -5653,7 +5661,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_admin.MemberChoice": {
+        "admin.MemberChoice": {
             "type": "object",
             "properties": {
                 "email": {
@@ -5670,7 +5678,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_admin.MemberCreate": {
+        "admin.MemberCreate": {
             "type": "object",
             "properties": {
                 "email": {
@@ -5694,7 +5702,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_admin.MemberFields": {
+        "admin.MemberFields": {
             "type": "object",
             "properties": {
                 "email": {
@@ -5715,13 +5723,13 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_admin.MemberPage": {
+        "admin.MemberPage": {
             "type": "object",
             "properties": {
                 "items": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_admin.MemberView"
+                        "$ref": "#/definitions/admin.MemberView"
                     }
                 },
                 "page": {
@@ -5735,14 +5743,14 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_admin.MemberPageResponse": {
+        "admin.MemberPageResponse": {
             "type": "object",
             "properties": {
                 "code": {
                     "type": "integer"
                 },
                 "data": {
-                    "$ref": "#/definitions/internal_admin.MemberPage"
+                    "$ref": "#/definitions/admin.MemberPage"
                 },
                 "message": {
                     "type": "string"
@@ -5752,7 +5760,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_admin.MemberPassword": {
+        "admin.MemberPassword": {
             "type": "object",
             "properties": {
                 "password": {
@@ -5760,14 +5768,14 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_admin.MemberResponse": {
+        "admin.MemberResponse": {
             "type": "object",
             "properties": {
                 "code": {
                     "type": "integer"
                 },
                 "data": {
-                    "$ref": "#/definitions/internal_admin.MemberView"
+                    "$ref": "#/definitions/admin.MemberView"
                 },
                 "message": {
                     "type": "string"
@@ -5777,7 +5785,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_admin.MemberView": {
+        "admin.MemberView": {
             "type": "object",
             "properties": {
                 "createdAt": {
@@ -5806,7 +5814,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_admin.MembersResponse": {
+        "admin.MembersResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -5815,7 +5823,7 @@ const docTemplate = `{
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_admin.MemberChoice"
+                        "$ref": "#/definitions/admin.MemberChoice"
                     }
                 },
                 "message": {
@@ -5826,35 +5834,35 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_admin.NanwangListResponse": {
+        "admin.NanwangListResponse": {
             "type": "object",
             "properties": {
                 "code": {
                     "type": "integer"
                 },
                 "data": {
-                    "$ref": "#/definitions/ths-service_internal_nanwang.List"
+                    "$ref": "#/definitions/nanwang.List"
                 },
                 "message": {
                     "type": "string"
                 }
             }
         },
-        "internal_admin.NanwangRecordResponse": {
+        "admin.NanwangRecordResponse": {
             "type": "object",
             "properties": {
                 "code": {
                     "type": "integer"
                 },
                 "data": {
-                    "$ref": "#/definitions/ths-service_internal_nanwang.Record"
+                    "$ref": "#/definitions/nanwang.Record"
                 },
                 "message": {
                     "type": "string"
                 }
             }
         },
-        "internal_admin.NanwangSchemasResponse": {
+        "admin.NanwangSchemasResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -5863,7 +5871,7 @@ const docTemplate = `{
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/ths-service_internal_nanwang.Schema"
+                        "$ref": "#/definitions/nanwang.Schema"
                     }
                 },
                 "message": {
@@ -5871,7 +5879,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_admin.PDFAsset": {
+        "admin.PDFAsset": {
             "type": "object",
             "properties": {
                 "createdAt": {
@@ -5912,7 +5920,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_admin.PDFAssetList": {
+        "admin.PDFAssetList": {
             "type": "object",
             "properties": {
                 "canReview": {
@@ -5921,40 +5929,40 @@ const docTemplate = `{
                 "slots": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_admin.PDFAssetSlotView"
+                        "$ref": "#/definitions/admin.PDFAssetSlotView"
                     }
                 }
             }
         },
-        "internal_admin.PDFAssetListResponse": {
+        "admin.PDFAssetListResponse": {
             "type": "object",
             "properties": {
                 "code": {
                     "type": "integer"
                 },
                 "data": {
-                    "$ref": "#/definitions/internal_admin.PDFAssetList"
+                    "$ref": "#/definitions/admin.PDFAssetList"
                 },
                 "message": {
                     "type": "string"
                 }
             }
         },
-        "internal_admin.PDFAssetResponse": {
+        "admin.PDFAssetResponse": {
             "type": "object",
             "properties": {
                 "code": {
                     "type": "integer"
                 },
                 "data": {
-                    "$ref": "#/definitions/internal_admin.PDFAsset"
+                    "$ref": "#/definitions/admin.PDFAsset"
                 },
                 "message": {
                     "type": "string"
                 }
             }
         },
-        "internal_admin.PDFAssetReview": {
+        "admin.PDFAssetReview": {
             "type": "object",
             "properties": {
                 "decision": {
@@ -5967,11 +5975,11 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_admin.PDFAssetSlotView": {
+        "admin.PDFAssetSlotView": {
             "type": "object",
             "properties": {
                 "active": {
-                    "$ref": "#/definitions/internal_admin.PDFAsset"
+                    "$ref": "#/definitions/admin.PDFAsset"
                 },
                 "activeId": {
                     "type": "integer"
@@ -5985,12 +5993,12 @@ const docTemplate = `{
                 "versions": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_admin.PDFAsset"
+                        "$ref": "#/definitions/admin.PDFAsset"
                     }
                 }
             }
         },
-        "internal_admin.PDFBillChoice": {
+        "admin.PDFBillChoice": {
             "type": "object",
             "properties": {
                 "amount": {
@@ -6010,21 +6018,21 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_admin.PDFDraftResponse": {
+        "admin.PDFDraftResponse": {
             "type": "object",
             "properties": {
                 "code": {
                     "type": "integer"
                 },
                 "data": {
-                    "$ref": "#/definitions/ths-service_internal_pdfreport.Draft"
+                    "$ref": "#/definitions/pdfreport.Draft"
                 },
                 "message": {
                     "type": "string"
                 }
             }
         },
-        "internal_admin.PDFPrepareRequest": {
+        "admin.PDFPrepareRequest": {
             "type": "object",
             "properties": {
                 "billId": {
@@ -6044,7 +6052,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_admin.PDFSchemasResponse": {
+        "admin.PDFSchemasResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -6053,7 +6061,7 @@ const docTemplate = `{
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/ths-service_internal_pdfreport.Schema"
+                        "$ref": "#/definitions/pdfreport.Schema"
                     }
                 },
                 "message": {
@@ -6061,7 +6069,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_admin.PDFSourceResponse": {
+        "admin.PDFSourceResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -6070,7 +6078,7 @@ const docTemplate = `{
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_admin.PDFBillChoice"
+                        "$ref": "#/definitions/admin.PDFBillChoice"
                     }
                 },
                 "message": {
@@ -6078,35 +6086,35 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_admin.TaxBusinessListResponse": {
+        "admin.TaxBusinessListResponse": {
             "type": "object",
             "properties": {
                 "code": {
                     "type": "integer"
                 },
                 "data": {
-                    "$ref": "#/definitions/ths-service_internal_taxbusiness.List"
+                    "$ref": "#/definitions/taxbusiness.List"
                 },
                 "message": {
                     "type": "string"
                 }
             }
         },
-        "internal_admin.TaxBusinessRecordResponse": {
+        "admin.TaxBusinessRecordResponse": {
             "type": "object",
             "properties": {
                 "code": {
                     "type": "integer"
                 },
                 "data": {
-                    "$ref": "#/definitions/ths-service_internal_taxbusiness.Record"
+                    "$ref": "#/definitions/taxbusiness.Record"
                 },
                 "message": {
                     "type": "string"
                 }
             }
         },
-        "internal_admin.TaxBusinessSchemasResponse": {
+        "admin.TaxBusinessSchemasResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -6115,7 +6123,7 @@ const docTemplate = `{
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/ths-service_internal_taxbusiness.Schema"
+                        "$ref": "#/definitions/taxbusiness.Schema"
                     }
                 },
                 "message": {
@@ -6123,7 +6131,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_alipay.Account": {
+        "alipay.Account": {
             "type": "object",
             "properties": {
                 "accountNo": {
@@ -6134,18 +6142,18 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_alipay.Accounts": {
+        "alipay.Accounts": {
             "type": "object",
             "properties": {
                 "left": {
-                    "$ref": "#/definitions/internal_alipay.Account"
+                    "$ref": "#/definitions/alipay.Account"
                 },
                 "right": {
-                    "$ref": "#/definitions/internal_alipay.Account"
+                    "$ref": "#/definitions/alipay.Account"
                 }
             }
         },
-        "internal_alipay.AccountsResponse": {
+        "alipay.AccountsResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -6153,14 +6161,14 @@ const docTemplate = `{
                     "example": 1
                 },
                 "data": {
-                    "$ref": "#/definitions/internal_alipay.Accounts"
+                    "$ref": "#/definitions/alipay.Accounts"
                 },
                 "msg": {
                     "type": "string"
                 }
             }
         },
-        "internal_alipay.AppResponse": {
+        "alipay.AppResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -6174,7 +6182,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_alipay.Contribution": {
+        "alipay.Contribution": {
             "type": "object",
             "properties": {
                 "amount": {
@@ -6191,7 +6199,81 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_alipay.Detail": {
+        "alipay.ContributionCalculation": {
+            "type": "object",
+            "properties": {
+                "base": {
+                    "type": "string"
+                },
+                "companyPay": {
+                    "type": "string"
+                },
+                "companyRate": {
+                    "type": "string"
+                },
+                "kind": {
+                    "type": "string"
+                },
+                "personalPay": {
+                    "type": "string"
+                },
+                "personalRate": {
+                    "type": "string"
+                }
+            }
+        },
+        "alipay.ContributionPreview": {
+            "type": "object",
+            "properties": {
+                "breakdown": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/alipay.ContributionCalculation"
+                    }
+                },
+                "companyPay": {
+                    "description": "Monthly employer total.",
+                    "type": "string"
+                },
+                "created": {
+                    "type": "integer"
+                },
+                "months": {
+                    "type": "integer"
+                },
+                "personalPay": {
+                    "description": "Monthly employee total.",
+                    "type": "string"
+                },
+                "skipped": {
+                    "type": "integer"
+                },
+                "total": {
+                    "description": "Monthly five-insurance total, excluding housing fund.",
+                    "type": "string"
+                }
+            }
+        },
+        "alipay.ContributionRule": {
+            "type": "object",
+            "properties": {
+                "base": {
+                    "description": "Approved contribution base; empty uses salary.",
+                    "type": "string"
+                },
+                "companyRate": {
+                    "type": "string"
+                },
+                "kind": {
+                    "description": "pension, medical, unemployment, injury, maternity",
+                    "type": "string"
+                },
+                "personalRate": {
+                    "type": "string"
+                }
+            }
+        },
+        "alipay.Detail": {
             "type": "object",
             "properties": {
                 "base": {
@@ -6220,7 +6302,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_alipay.DetailResponse": {
+        "alipay.DetailResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -6228,14 +6310,14 @@ const docTemplate = `{
                     "example": 1
                 },
                 "data": {
-                    "$ref": "#/definitions/internal_alipay.Detail"
+                    "$ref": "#/definitions/alipay.Detail"
                 },
                 "msg": {
                     "type": "string"
                 }
             }
         },
-        "internal_alipay.ElectricData": {
+        "alipay.ElectricData": {
             "type": "object",
             "properties": {
                 "accountName": {
@@ -6258,7 +6340,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_alipay.ElectricResponse": {
+        "alipay.ElectricResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -6266,14 +6348,79 @@ const docTemplate = `{
                     "example": 1
                 },
                 "data": {
-                    "$ref": "#/definitions/internal_alipay.ElectricData"
+                    "$ref": "#/definitions/alipay.ElectricData"
                 },
                 "msg": {
                     "type": "string"
                 }
             }
         },
-        "internal_alipay.ProfileData": {
+        "alipay.Field": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "label": {
+                    "type": "string"
+                },
+                "required": {
+                    "type": "boolean"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "alipay.GenerateContributions": {
+            "type": "object",
+            "properties": {
+                "company": {
+                    "type": "string"
+                },
+                "endMonth": {
+                    "description": "YYYY-MM, inclusive; no future months.",
+                    "type": "string"
+                },
+                "rules": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/alipay.ContributionRule"
+                    }
+                },
+                "salary": {
+                    "type": "string"
+                },
+                "startMonth": {
+                    "description": "YYYY-MM, inclusive.",
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "alipay.List": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/alipay.Record"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "alipay.ProfileData": {
             "type": "object",
             "properties": {
                 "accountName": {
@@ -6290,7 +6437,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_alipay.ProfileResponse": {
+        "alipay.ProfileResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -6298,14 +6445,43 @@ const docTemplate = `{
                     "example": 1
                 },
                 "data": {
-                    "$ref": "#/definitions/internal_alipay.ProfileData"
+                    "$ref": "#/definitions/alipay.ProfileData"
                 },
                 "msg": {
                     "type": "string"
                 }
             }
         },
-        "internal_alipay.Records": {
+        "alipay.Record": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "kind": {
+                    "type": "string"
+                },
+                "payload": {
+                    "type": "object"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "integer"
+                },
+                "version": {
+                    "type": "string"
+                },
+                "year": {
+                    "type": "integer"
+                }
+            }
+        },
+        "alipay.Records": {
             "type": "object",
             "properties": {
                 "cityName": {
@@ -6314,7 +6490,7 @@ const docTemplate = `{
                 "list": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_alipay.Contribution"
+                        "$ref": "#/definitions/alipay.Contribution"
                     }
                 },
                 "manageCode": {
@@ -6325,7 +6501,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_alipay.RecordsResponse": {
+        "alipay.RecordsResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -6333,14 +6509,37 @@ const docTemplate = `{
                     "example": 1
                 },
                 "data": {
-                    "$ref": "#/definitions/internal_alipay.Records"
+                    "$ref": "#/definitions/alipay.Records"
                 },
                 "msg": {
                     "type": "string"
                 }
             }
         },
-        "internal_alipay.Summary": {
+        "alipay.Schema": {
+            "type": "object",
+            "properties": {
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/alipay.Field"
+                    }
+                },
+                "kind": {
+                    "type": "string"
+                },
+                "label": {
+                    "type": "string"
+                },
+                "public": {
+                    "type": "boolean"
+                },
+                "yearly": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "alipay.Summary": {
             "type": "object",
             "properties": {
                 "cityName": {
@@ -6375,7 +6574,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_alipay.SummaryResponse": {
+        "alipay.SummaryResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -6383,14 +6582,14 @@ const docTemplate = `{
                     "example": 1
                 },
                 "data": {
-                    "$ref": "#/definitions/internal_alipay.Summary"
+                    "$ref": "#/definitions/alipay.Summary"
                 },
                 "msg": {
                     "type": "string"
                 }
             }
         },
-        "internal_alipay.WaterData": {
+        "alipay.WaterData": {
             "type": "object",
             "properties": {
                 "accountName": {
@@ -6413,7 +6612,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_alipay.WaterResponse": {
+        "alipay.WaterResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -6421,14 +6620,118 @@ const docTemplate = `{
                     "example": 1
                 },
                 "data": {
-                    "$ref": "#/definitions/internal_alipay.WaterData"
+                    "$ref": "#/definitions/alipay.WaterData"
                 },
                 "msg": {
                     "type": "string"
                 }
             }
         },
-        "internal_auth.AuthData": {
+        "alipay.Write": {
+            "type": "object",
+            "properties": {
+                "expectedVersion": {
+                    "type": "string"
+                },
+                "payload": {
+                    "type": "object"
+                },
+                "userId": {
+                    "type": "integer"
+                },
+                "year": {
+                    "type": "integer"
+                }
+            }
+        },
+        "apkdownload.Info": {
+            "type": "object",
+            "properties": {
+                "app": {
+                    "description": "安装包标识：nanwang/alipay/tax/ths。",
+                    "type": "string"
+                },
+                "available": {
+                    "description": "Whether an APK and download passcode are configured.",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "安装包名称：南网/支付宝/个税/同花顺。",
+                    "type": "string"
+                },
+                "passcodeConfigured": {
+                    "description": "Only presence, never the passcode or hash.",
+                    "type": "boolean"
+                },
+                "releaseKey": {
+                    "description": "Immutable server-generated China-time timestamp key, YYYYMMDDHHmmss.",
+                    "type": "string"
+                },
+                "sha256": {
+                    "description": "SHA-256 of the uploaded APK bytes.",
+                    "type": "string"
+                },
+                "sizeBytes": {
+                    "description": "APK size in bytes.",
+                    "type": "integer"
+                },
+                "uploadedAt": {
+                    "description": "Upload time; null before first upload.",
+                    "type": "string"
+                }
+            }
+        },
+        "apkdownload.InfoResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "Zero on success.",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "Current published version metadata.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/apkdownload.Info"
+                        }
+                    ]
+                },
+                "message": {
+                    "description": "Result description.",
+                    "type": "string"
+                }
+            }
+        },
+        "apkdownload.ListResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "成功为0。",
+                    "type": "integer"
+                },
+                "data": {
+                    "description": "按南网、支付宝、个税、同花顺顺序返回四项安装包信息。",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/apkdownload.Info"
+                    }
+                },
+                "message": {
+                    "description": "结果说明。",
+                    "type": "string"
+                }
+            }
+        },
+        "apkdownload.PasscodeRequest": {
+            "type": "object",
+            "properties": {
+                "passcode": {
+                    "description": "Exact passcode, including Chinese; 5 to 64 Unicode characters, at most 256 UTF-8 bytes; not whitespace only.",
+                    "type": "string"
+                }
+            }
+        },
+        "auth.AuthData": {
             "type": "object",
             "properties": {
                 "accessToken": {
@@ -6449,13 +6752,13 @@ const docTemplate = `{
                     "description": "会员基本资料，account为脱敏展示账号。",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/internal_auth.UserResponse"
+                            "$ref": "#/definitions/auth.UserResponse"
                         }
                     ]
                 }
             }
         },
-        "internal_auth.LoginRequest": {
+        "auth.LoginRequest": {
             "type": "object",
             "required": [
                 "account",
@@ -6474,7 +6777,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_auth.LoginResponse": {
+        "auth.LoginResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -6482,7 +6785,7 @@ const docTemplate = `{
                     "example": 0
                 },
                 "data": {
-                    "$ref": "#/definitions/internal_auth.AuthData"
+                    "$ref": "#/definitions/auth.AuthData"
                 },
                 "message": {
                     "type": "string",
@@ -6494,25 +6797,25 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_auth.LookupData": {
+        "auth.LookupData": {
             "type": "object",
             "properties": {
                 "list": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_auth.LookupUser"
+                        "$ref": "#/definitions/auth.LookupUser"
                     }
                 }
             }
         },
-        "internal_auth.LookupResponse": {
+        "auth.LookupResponse": {
             "type": "object",
             "properties": {
                 "code": {
                     "type": "integer"
                 },
                 "data": {
-                    "$ref": "#/definitions/internal_auth.LookupData"
+                    "$ref": "#/definitions/auth.LookupData"
                 },
                 "message": {
                     "type": "string"
@@ -6522,7 +6825,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_auth.LookupUser": {
+        "auth.LookupUser": {
             "type": "object",
             "properties": {
                 "displayName": {
@@ -6536,7 +6839,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_auth.RegisterRequest": {
+        "auth.RegisterRequest": {
             "type": "object",
             "required": [
                 "account",
@@ -6558,7 +6861,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_auth.RegisterResponse": {
+        "auth.RegisterResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -6566,7 +6869,7 @@ const docTemplate = `{
                     "example": 0
                 },
                 "data": {
-                    "$ref": "#/definitions/internal_auth.AuthData"
+                    "$ref": "#/definitions/auth.AuthData"
                 },
                 "message": {
                     "type": "string",
@@ -6578,7 +6881,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_auth.UserResponse": {
+        "auth.UserResponse": {
             "type": "object",
             "properties": {
                 "account": {
@@ -6595,7 +6898,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_electricity.AppBill": {
+        "electricity.AppBill": {
             "type": "object",
             "properties": {
                 "amount": {
@@ -6605,7 +6908,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "billing": {
-                    "$ref": "#/definitions/internal_electricity.Billing"
+                    "$ref": "#/definitions/electricity.Billing"
                 },
                 "code": {
                     "type": "string"
@@ -6624,7 +6927,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_electricity.AppBillsResponse": {
+        "electricity.AppBillsResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -6633,7 +6936,7 @@ const docTemplate = `{
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_electricity.AppBill"
+                        "$ref": "#/definitions/electricity.AppBill"
                     }
                 },
                 "msg": {
@@ -6641,32 +6944,32 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_electricity.AppLookupData": {
+        "electricity.AppLookupData": {
             "type": "object",
             "properties": {
                 "list": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_electricity.AppProfile"
+                        "$ref": "#/definitions/electricity.AppProfile"
                     }
                 }
             }
         },
-        "internal_electricity.AppLookupResponse": {
+        "electricity.AppLookupResponse": {
             "type": "object",
             "properties": {
                 "code": {
                     "type": "integer"
                 },
                 "data": {
-                    "$ref": "#/definitions/internal_electricity.AppLookupData"
+                    "$ref": "#/definitions/electricity.AppLookupData"
                 },
                 "msg": {
                     "type": "string"
                 }
             }
         },
-        "internal_electricity.AppProfile": {
+        "electricity.AppProfile": {
             "type": "object",
             "properties": {
                 "address": {
@@ -6698,21 +7001,204 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_electricity.AppProfileResponse": {
+        "electricity.AppProfileResponse": {
             "type": "object",
             "properties": {
                 "code": {
                     "type": "integer"
                 },
                 "data": {
-                    "$ref": "#/definitions/internal_electricity.AppProfile"
+                    "$ref": "#/definitions/electricity.AppProfile"
                 },
                 "msg": {
                     "type": "string"
                 }
             }
         },
-        "internal_electricity.Billing": {
+        "electricity.BillList": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/electricity.BillRow"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "setVersion": {
+                    "type": "string"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "electricity.BillListResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/electricity.BillList"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                }
+            }
+        },
+        "electricity.BillResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/electricity.BillView"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                }
+            }
+        },
+        "electricity.BillRow": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "string"
+                },
+                "billMonth": {
+                    "type": "string"
+                },
+                "billing": {
+                    "$ref": "#/definitions/electricity.Billing"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "detail": {
+                    "type": "object"
+                },
+                "endDate": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "realName": {
+                    "type": "string"
+                },
+                "simulated": {
+                    "type": "boolean"
+                },
+                "startDate": {
+                    "type": "string"
+                },
+                "totalUsage": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "electricity.BillView": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "string"
+                },
+                "billMonth": {
+                    "type": "string"
+                },
+                "billing": {
+                    "$ref": "#/definitions/electricity.Billing"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "detail": {
+                    "type": "object"
+                },
+                "endDate": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "simulated": {
+                    "type": "boolean"
+                },
+                "startDate": {
+                    "type": "string"
+                },
+                "totalUsage": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "integer"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "electricity.BillWrite": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "string"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "detail": {
+                    "type": "object"
+                },
+                "endDate": {
+                    "type": "string"
+                },
+                "expectedVersion": {
+                    "type": "string"
+                },
+                "startDate": {
+                    "type": "string"
+                },
+                "totalUsage": {
+                    "type": "string"
+                }
+            }
+        },
+        "electricity.Billing": {
             "type": "object",
             "properties": {
                 "arrears_principal": {
@@ -6759,7 +7245,7 @@ const docTemplate = `{
                 "tiers": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_electricity.TariffTier"
+                        "$ref": "#/definitions/electricity.TariffTier"
                     }
                 },
                 "usage_type": {
@@ -6767,7 +7253,81 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_electricity.TariffTier": {
+        "electricity.BillsResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/electricity.BillView"
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                }
+            }
+        },
+        "electricity.List": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/electricity.View"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "electricity.ListResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/electricity.List"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                }
+            }
+        },
+        "electricity.ProfileResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/electricity.View"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                }
+            }
+        },
+        "electricity.TariffTier": {
             "type": "object",
             "properties": {
                 "amount": {
@@ -6784,7 +7344,86 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_health.Data": {
+        "electricity.View": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "displayName": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "meterNo": {
+                    "type": "string"
+                },
+                "meterReader": {
+                    "type": "string"
+                },
+                "postalCode": {
+                    "type": "string"
+                },
+                "realName": {
+                    "type": "string"
+                },
+                "simulated": {
+                    "type": "boolean"
+                },
+                "supplier": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "integer"
+                },
+                "userIdNumber": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "electricity.WriteRequest": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "displayName": {
+                    "type": "string"
+                },
+                "expectedVersion": {
+                    "type": "string"
+                },
+                "meterNo": {
+                    "type": "string"
+                },
+                "meterReader": {
+                    "type": "string"
+                },
+                "postalCode": {
+                    "type": "string"
+                },
+                "supplier": {
+                    "type": "string"
+                },
+                "userIdNumber": {
+                    "type": "string"
+                }
+            }
+        },
+        "health.Data": {
             "type": "object",
             "properties": {
                 "status": {
@@ -6793,7 +7432,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_health.SuccessResponse": {
+        "health.SuccessResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -6801,7 +7440,7 @@ const docTemplate = `{
                     "example": 0
                 },
                 "data": {
-                    "$ref": "#/definitions/internal_health.Data"
+                    "$ref": "#/definitions/health.Data"
                 },
                 "message": {
                     "type": "string",
@@ -6813,7 +7452,36 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_market.QuoteItem": {
+        "index.Data": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "成功访问接口"
+                }
+            }
+        },
+        "index.SuccessResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "data": {
+                    "$ref": "#/definitions/index.Data"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "ok"
+                },
+                "requestId": {
+                    "type": "string",
+                    "example": "f5e76095d32f49199f5f7f897f5733a2"
+                }
+            }
+        },
+        "market.QuoteItem": {
             "type": "object",
             "properties": {
                 "changeAmount": {
@@ -6858,7 +7526,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_market.QuoteListData": {
+        "market.QuoteListData": {
             "type": "object",
             "properties": {
                 "category": {
@@ -6872,12 +7540,12 @@ const docTemplate = `{
                 "items": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_market.QuoteItem"
+                        "$ref": "#/definitions/market.QuoteItem"
                     }
                 }
             }
         },
-        "internal_market.QuoteListResponse": {
+        "market.QuoteListResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -6885,7 +7553,7 @@ const docTemplate = `{
                     "example": 0
                 },
                 "data": {
-                    "$ref": "#/definitions/internal_market.QuoteListData"
+                    "$ref": "#/definitions/market.QuoteListData"
                 },
                 "message": {
                     "type": "string",
@@ -6896,7 +7564,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_nanwang.AppResponse": {
+        "nanwang.AppResponse": {
             "type": "object",
             "properties": {
                 "data": {},
@@ -6908,7 +7576,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_nanwang.Charging": {
+        "nanwang.Charging": {
             "type": "object",
             "properties": {
                 "hasPile": {
@@ -6919,11 +7587,11 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_nanwang.ChargingResponse": {
+        "nanwang.ChargingResponse": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/internal_nanwang.Charging"
+                    "$ref": "#/definitions/nanwang.Charging"
                 },
                 "message": {
                     "type": "string",
@@ -6935,7 +7603,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_nanwang.Customer": {
+        "nanwang.Customer": {
             "type": "object",
             "properties": {
                 "address": {
@@ -6970,13 +7638,13 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_nanwang.CustomerResponse": {
+        "nanwang.CustomerResponse": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_nanwang.Customer"
+                        "$ref": "#/definitions/nanwang.Customer"
                     }
                 },
                 "message": {
@@ -6989,7 +7657,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_nanwang.DetailRequest": {
+        "nanwang.DetailRequest": {
             "type": "object",
             "properties": {
                 "id": {
@@ -6998,10 +7666,27 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_nanwang.EmptyRequest": {
+        "nanwang.EmptyRequest": {
             "type": "object"
         },
-        "internal_nanwang.Hall": {
+        "nanwang.Field": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "label": {
+                    "type": "string"
+                },
+                "required": {
+                    "type": "boolean"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "nanwang.Hall": {
             "type": "object",
             "properties": {
                 "address": {
@@ -7018,7 +7703,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_nanwang.HallRequest": {
+        "nanwang.HallRequest": {
             "type": "object",
             "properties": {
                 "latitude": {
@@ -7031,13 +7716,13 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_nanwang.HallResponse": {
+        "nanwang.HallResponse": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_nanwang.Hall"
+                        "$ref": "#/definitions/nanwang.Hall"
                     }
                 },
                 "message": {
@@ -7050,7 +7735,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_nanwang.HotRequest": {
+        "nanwang.HotRequest": {
             "type": "object",
             "properties": {
                 "areaCode": {
@@ -7063,7 +7748,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_nanwang.LatestRequest": {
+        "nanwang.LatestRequest": {
             "type": "object",
             "properties": {
                 "areaCode": {
@@ -7076,7 +7761,27 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_nanwang.ListRequest": {
+        "nanwang.List": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/nanwang.Record"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "nanwang.ListRequest": {
             "type": "object",
             "properties": {
                 "areaCode": {
@@ -7097,7 +7802,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_nanwang.Message": {
+        "nanwang.Message": {
             "type": "object",
             "properties": {
                 "id": {
@@ -7108,13 +7813,13 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_nanwang.MessagesResponse": {
+        "nanwang.MessagesResponse": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_nanwang.Message"
+                        "$ref": "#/definitions/nanwang.Message"
                     }
                 },
                 "message": {
@@ -7127,7 +7832,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_nanwang.News": {
+        "nanwang.News": {
             "type": "object",
             "properties": {
                 "areaCode": {
@@ -7171,11 +7876,11 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_nanwang.NewsDetailResponse": {
+        "nanwang.NewsDetailResponse": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/internal_nanwang.News"
+                    "$ref": "#/definitions/nanwang.News"
                 },
                 "message": {
                     "type": "string",
@@ -7187,13 +7892,13 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_nanwang.NewsResponse": {
+        "nanwang.NewsResponse": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_nanwang.News"
+                        "$ref": "#/definitions/nanwang.News"
                     }
                 },
                 "message": {
@@ -7206,7 +7911,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_nanwang.Point": {
+        "nanwang.Point": {
             "type": "object",
             "properties": {
                 "eleCustId": {
@@ -7220,7 +7925,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_nanwang.PointRequest": {
+        "nanwang.PointRequest": {
             "type": "object",
             "properties": {
                 "eleCustId": {
@@ -7229,13 +7934,13 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_nanwang.PointsResponse": {
+        "nanwang.PointsResponse": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_nanwang.Point"
+                        "$ref": "#/definitions/nanwang.Point"
                     }
                 },
                 "message": {
@@ -7248,7 +7953,162 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_portfolio.Account": {
+        "nanwang.Record": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "kind": {
+                    "type": "string"
+                },
+                "payload": {
+                    "type": "object"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "integer"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "nanwang.Schema": {
+            "type": "object",
+            "properties": {
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/nanwang.Field"
+                    }
+                },
+                "kind": {
+                    "type": "string"
+                },
+                "label": {
+                    "type": "string"
+                },
+                "public": {
+                    "type": "boolean"
+                },
+                "singleton": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "nanwang.Write": {
+            "type": "object",
+            "properties": {
+                "expectedVersion": {
+                    "type": "string"
+                },
+                "payload": {
+                    "type": "object"
+                },
+                "userId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pdfreport.Draft": {
+            "type": "object",
+            "properties": {
+                "fields": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "kind": {
+                    "type": "string"
+                },
+                "tables": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "userId": {
+                    "type": "integer"
+                },
+                "warnings": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "pdfreport.Field": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "label": {
+                    "type": "string"
+                },
+                "required": {
+                    "type": "boolean"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "pdfreport.Schema": {
+            "type": "object",
+            "properties": {
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pdfreport.Field"
+                    }
+                },
+                "kind": {
+                    "type": "string"
+                },
+                "label": {
+                    "type": "string"
+                },
+                "tables": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pdfreport.Table"
+                    }
+                }
+            }
+        },
+        "pdfreport.Table": {
+            "type": "object",
+            "properties": {
+                "columns": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/pdfreport.Field"
+                    }
+                },
+                "key": {
+                    "type": "string"
+                },
+                "label": {
+                    "type": "string"
+                }
+            }
+        },
+        "portfolio.Account": {
             "type": "object",
             "properties": {
                 "availableCash": {
@@ -7286,16 +8146,87 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_portfolio.Data": {
+        "portfolio.AdminHoldingList": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/portfolio.AdminHoldingRow"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "portfolio.AdminHoldingRow": {
+            "type": "object",
+            "properties": {
+                "category": {
+                    "type": "string"
+                },
+                "generation": {
+                    "type": "string"
+                },
+                "positionCount": {
+                    "type": "integer"
+                },
+                "realName": {
+                    "type": "string"
+                },
+                "totalAssets": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "portfolio.AdminHoldingWrite": {
+            "type": "object",
+            "properties": {
+                "expectedGeneration": {
+                    "type": "string"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/portfolio.HoldingItem"
+                    }
+                },
+                "positionCount": {
+                    "description": "仅后台生成：股票数量1至50，省略默认10；受分类候选池和资产限制。",
+                    "type": "integer"
+                },
+                "totalAssets": {
+                    "type": "string"
+                },
+                "tradesPerPosition": {
+                    "description": "仅后台生成：每只股票交易记录3至500条，省略默认30。",
+                    "type": "integer"
+                }
+            }
+        },
+        "portfolio.Data": {
             "type": "object",
             "properties": {
                 "account": {
-                    "$ref": "#/definitions/internal_portfolio.Account"
+                    "$ref": "#/definitions/portfolio.Account"
                 },
                 "positions": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_portfolio.Position"
+                        "$ref": "#/definitions/portfolio.Position"
                     }
                 },
                 "simulated": {
@@ -7304,14 +8235,14 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_portfolio.HoldingItem": {
+        "portfolio.HoldingItem": {
             "type": "object",
             "properties": {
                 "notice": {
                     "type": "string"
                 },
                 "position": {
-                    "$ref": "#/definitions/internal_portfolio.Position"
+                    "$ref": "#/definitions/portfolio.Position"
                 },
                 "positionRatio": {
                     "type": "string"
@@ -7319,16 +8250,16 @@ const docTemplate = `{
                 "trades": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_portfolio.Trade"
+                        "$ref": "#/definitions/portfolio.Trade"
                     }
                 }
             }
         },
-        "internal_portfolio.HoldingsData": {
+        "portfolio.HoldingsData": {
             "type": "object",
             "properties": {
                 "account": {
-                    "$ref": "#/definitions/internal_portfolio.Account"
+                    "$ref": "#/definitions/portfolio.Account"
                 },
                 "category": {
                     "type": "string"
@@ -7343,7 +8274,7 @@ const docTemplate = `{
                 "items": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_portfolio.HoldingItem"
+                        "$ref": "#/definitions/portfolio.HoldingItem"
                     }
                 },
                 "simulated": {
@@ -7351,14 +8282,14 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_portfolio.HoldingsResponse": {
+        "portfolio.HoldingsResponse": {
             "type": "object",
             "properties": {
                 "code": {
                     "type": "integer"
                 },
                 "data": {
-                    "$ref": "#/definitions/internal_portfolio.HoldingsData"
+                    "$ref": "#/definitions/portfolio.HoldingsData"
                 },
                 "message": {
                     "type": "string"
@@ -7368,7 +8299,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_portfolio.Position": {
+        "portfolio.Position": {
             "type": "object",
             "properties": {
                 "availableQuantity": {
@@ -7430,14 +8361,14 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_portfolio.PositionResponse": {
+        "portfolio.PositionResponse": {
             "type": "object",
             "properties": {
                 "code": {
                     "type": "integer"
                 },
                 "data": {
-                    "$ref": "#/definitions/internal_portfolio.Data"
+                    "$ref": "#/definitions/portfolio.Data"
                 },
                 "message": {
                     "type": "string"
@@ -7447,7 +8378,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_portfolio.Trade": {
+        "portfolio.Trade": {
             "type": "object",
             "properties": {
                 "amount": {
@@ -7482,7 +8413,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_portfolio.TradeList": {
+        "portfolio.TradeList": {
             "type": "object",
             "properties": {
                 "generation": {
@@ -7491,7 +8422,7 @@ const docTemplate = `{
                 "items": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_portfolio.Trade"
+                        "$ref": "#/definitions/portfolio.Trade"
                     }
                 },
                 "page": {
@@ -7508,14 +8439,14 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_portfolio.TradeResponse": {
+        "portfolio.TradeResponse": {
             "type": "object",
             "properties": {
                 "code": {
                     "type": "integer"
                 },
                 "data": {
-                    "$ref": "#/definitions/internal_portfolio.TradeList"
+                    "$ref": "#/definitions/portfolio.TradeList"
                 },
                 "message": {
                     "type": "string"
@@ -7525,7 +8456,42 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_tax.AppEmployment": {
+        "response.Envelope": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {},
+                "message": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.ErrorEnvelope": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 40001
+                },
+                "data": {
+                    "type": "object"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "请求参数错误"
+                },
+                "requestId": {
+                    "type": "string",
+                    "example": "f5e76095d32f49199f5f7f897f5733a2"
+                }
+            }
+        },
+        "tax.AppEmployment": {
             "type": "object",
             "properties": {
                 "company_name": {
@@ -7548,7 +8514,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_tax.AppEmploymentResponse": {
+        "tax.AppEmploymentResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -7558,7 +8524,7 @@ const docTemplate = `{
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_tax.AppEmployment"
+                        "$ref": "#/definitions/tax.AppEmployment"
                     }
                 },
                 "msg": {
@@ -7566,7 +8532,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_tax.AppProfile": {
+        "tax.AppProfile": {
             "type": "object",
             "properties": {
                 "bank_num": {
@@ -7631,7 +8597,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_tax.AppProfileResponse": {
+        "tax.AppProfileResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -7639,14 +8605,464 @@ const docTemplate = `{
                     "example": 1
                 },
                 "data": {
-                    "$ref": "#/definitions/internal_tax.AppProfile"
+                    "$ref": "#/definitions/tax.AppProfile"
                 },
                 "msg": {
                     "type": "string"
                 }
             }
         },
-        "internal_taxbusiness.AnnualContract": {
+        "tax.EmploymentList": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/tax.EmploymentRow"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "tax.EmploymentListResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/tax.EmploymentList"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                }
+            }
+        },
+        "tax.EmploymentResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/tax.EmploymentView"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                }
+            }
+        },
+        "tax.EmploymentRow": {
+            "type": "object",
+            "properties": {
+                "companyName": {
+                    "type": "string"
+                },
+                "companyNum": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "endDate": {
+                    "type": "string"
+                },
+                "post": {
+                    "type": "string"
+                },
+                "realName": {
+                    "type": "string"
+                },
+                "simulated": {
+                    "type": "boolean"
+                },
+                "startDate": {
+                    "type": "string"
+                },
+                "taxId": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "tax.EmploymentView": {
+            "type": "object",
+            "properties": {
+                "companyName": {
+                    "type": "string"
+                },
+                "companyNum": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "endDate": {
+                    "type": "string"
+                },
+                "post": {
+                    "type": "string"
+                },
+                "simulated": {
+                    "type": "boolean"
+                },
+                "startDate": {
+                    "type": "string"
+                },
+                "taxId": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "integer"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "tax.EmploymentWrite": {
+            "type": "object",
+            "properties": {
+                "companyName": {
+                    "type": "string"
+                },
+                "companyNum": {
+                    "type": "string"
+                },
+                "endDate": {
+                    "type": "string"
+                },
+                "expectedVersion": {
+                    "type": "string"
+                },
+                "post": {
+                    "type": "string"
+                },
+                "startDate": {
+                    "type": "string"
+                },
+                "taxId": {
+                    "type": "string"
+                }
+            }
+        },
+        "tax.List": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/tax.Row"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "tax.ListResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/tax.List"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                }
+            }
+        },
+        "tax.ProfileResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {
+                    "$ref": "#/definitions/tax.View"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "requestId": {
+                    "type": "string"
+                }
+            }
+        },
+        "tax.Row": {
+            "type": "object",
+            "properties": {
+                "bankNum": {
+                    "type": "string"
+                },
+                "bankType": {
+                    "type": "string"
+                },
+                "birth": {
+                    "type": "string"
+                },
+                "cardType": {
+                    "type": "string"
+                },
+                "contactAddress": {
+                    "type": "string"
+                },
+                "contactCity": {
+                    "type": "string"
+                },
+                "country": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "education": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "hujiAddress": {
+                    "type": "string"
+                },
+                "hujiCity": {
+                    "type": "string"
+                },
+                "idCard": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "nation": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "realName": {
+                    "type": "string"
+                },
+                "sex": {
+                    "type": "string"
+                },
+                "simulated": {
+                    "type": "boolean"
+                },
+                "taxBackMoney": {
+                    "type": "string"
+                },
+                "taxNumber": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string"
+                },
+                "usuallyAddress": {
+                    "type": "string"
+                },
+                "usuallyCity": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "tax.View": {
+            "type": "object",
+            "properties": {
+                "bankNum": {
+                    "type": "string"
+                },
+                "bankType": {
+                    "type": "string"
+                },
+                "birth": {
+                    "type": "string"
+                },
+                "cardType": {
+                    "type": "string"
+                },
+                "contactAddress": {
+                    "type": "string"
+                },
+                "contactCity": {
+                    "type": "string"
+                },
+                "country": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "education": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "hujiAddress": {
+                    "type": "string"
+                },
+                "hujiCity": {
+                    "type": "string"
+                },
+                "idCard": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "nation": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "sex": {
+                    "type": "string"
+                },
+                "simulated": {
+                    "type": "boolean"
+                },
+                "taxBackMoney": {
+                    "type": "string"
+                },
+                "taxNumber": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "integer"
+                },
+                "usuallyAddress": {
+                    "type": "string"
+                },
+                "usuallyCity": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "tax.WriteRequest": {
+            "type": "object",
+            "properties": {
+                "bankNum": {
+                    "type": "string"
+                },
+                "bankType": {
+                    "type": "string"
+                },
+                "birth": {
+                    "type": "string"
+                },
+                "cardType": {
+                    "type": "string"
+                },
+                "contactAddress": {
+                    "type": "string"
+                },
+                "contactCity": {
+                    "type": "string"
+                },
+                "country": {
+                    "type": "string"
+                },
+                "education": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "expectedVersion": {
+                    "type": "string"
+                },
+                "hujiAddress": {
+                    "type": "string"
+                },
+                "hujiCity": {
+                    "type": "string"
+                },
+                "idCard": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "nation": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "sex": {
+                    "type": "string"
+                },
+                "taxBackMoney": {
+                    "type": "string"
+                },
+                "taxNumber": {
+                    "type": "string"
+                },
+                "usuallyAddress": {
+                    "type": "string"
+                },
+                "usuallyCity": {
+                    "type": "string"
+                }
+            }
+        },
+        "taxbusiness.AnnualContract": {
             "type": "object",
             "properties": {
                 "code": {
@@ -7654,7 +9070,7 @@ const docTemplate = `{
                     "example": 1
                 },
                 "data": {
-                    "$ref": "#/definitions/internal_taxbusiness.AnnualData"
+                    "$ref": "#/definitions/taxbusiness.AnnualData"
                 },
                 "msg": {
                     "type": "string",
@@ -7662,13 +9078,13 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_taxbusiness.AnnualData": {
+        "taxbusiness.AnnualData": {
             "type": "object",
             "properties": {
                 "list": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_taxbusiness.MonthlyDetail"
+                        "$ref": "#/definitions/taxbusiness.MonthlyDetail"
                     }
                 },
                 "totalIncome": {
@@ -7679,7 +9095,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_taxbusiness.ApplicationData": {
+        "taxbusiness.ApplicationData": {
             "type": "object",
             "properties": {
                 "refund_amount": {
@@ -7699,7 +9115,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_taxbusiness.ApplicationResponse": {
+        "taxbusiness.ApplicationResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -7707,7 +9123,7 @@ const docTemplate = `{
                     "example": 1
                 },
                 "data": {
-                    "$ref": "#/definitions/internal_taxbusiness.ApplicationData"
+                    "$ref": "#/definitions/taxbusiness.ApplicationData"
                 },
                 "msg": {
                     "type": "string",
@@ -7715,7 +9131,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_taxbusiness.ApplyRequest": {
+        "taxbusiness.ApplyRequest": {
             "type": "object",
             "properties": {
                 "date": {
@@ -7724,7 +9140,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_taxbusiness.CalculateRequest": {
+        "taxbusiness.CalculateRequest": {
             "type": "object",
             "properties": {
                 "date": {
@@ -7737,7 +9153,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_taxbusiness.CalculationData": {
+        "taxbusiness.CalculationData": {
             "type": "object",
             "properties": {
                 "bqsbse": {
@@ -7749,7 +9165,7 @@ const docTemplate = `{
                 "detail_list": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_taxbusiness.CalculationDetail"
+                        "$ref": "#/definitions/taxbusiness.CalculationDetail"
                     }
                 },
                 "expect_date": {
@@ -7808,7 +9224,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_taxbusiness.CalculationDetail": {
+        "taxbusiness.CalculationDetail": {
             "type": "object",
             "properties": {
                 "company_name": {
@@ -7831,7 +9247,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_taxbusiness.CalculationResponse": {
+        "taxbusiness.CalculationResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -7839,7 +9255,7 @@ const docTemplate = `{
                     "example": 1
                 },
                 "data": {
-                    "$ref": "#/definitions/internal_taxbusiness.CalculationData"
+                    "$ref": "#/definitions/taxbusiness.CalculationData"
                 },
                 "msg": {
                     "type": "string",
@@ -7847,10 +9263,47 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_taxbusiness.EmptyRequest": {
+        "taxbusiness.EmptyRequest": {
             "type": "object"
         },
-        "internal_taxbusiness.MessageData": {
+        "taxbusiness.Field": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "label": {
+                    "type": "string"
+                },
+                "required": {
+                    "type": "boolean"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "taxbusiness.List": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/taxbusiness.Record"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "pageSize": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "taxbusiness.MessageData": {
             "type": "object",
             "properties": {
                 "content": {
@@ -7867,7 +9320,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_taxbusiness.MessageRequest": {
+        "taxbusiness.MessageRequest": {
             "type": "object",
             "properties": {
                 "limit": {
@@ -7880,7 +9333,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_taxbusiness.MessagesContract": {
+        "taxbusiness.MessagesContract": {
             "type": "object",
             "properties": {
                 "code": {
@@ -7893,7 +9346,7 @@ const docTemplate = `{
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_taxbusiness.MessageData"
+                        "$ref": "#/definitions/taxbusiness.MessageData"
                     }
                 },
                 "msg": {
@@ -7902,7 +9355,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_taxbusiness.MonthlyDetail": {
+        "taxbusiness.MonthlyDetail": {
             "type": "object",
             "properties": {
                 "additional_deduction": {
@@ -8012,7 +9465,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_taxbusiness.OpenRecordData": {
+        "taxbusiness.OpenRecordData": {
             "type": "object",
             "properties": {
                 "create_time": {
@@ -8032,7 +9485,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_taxbusiness.OpenRecordsResponse": {
+        "taxbusiness.OpenRecordsResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -8042,7 +9495,7 @@ const docTemplate = `{
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/internal_taxbusiness.OpenRecordData"
+                        "$ref": "#/definitions/taxbusiness.OpenRecordData"
                     }
                 },
                 "msg": {
@@ -8051,7 +9504,36 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_taxbusiness.ScanData": {
+        "taxbusiness.Record": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "kind": {
+                    "type": "string"
+                },
+                "payload": {
+                    "type": "object"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "integer"
+                },
+                "version": {
+                    "type": "string"
+                },
+                "year": {
+                    "type": "integer"
+                }
+            }
+        },
+        "taxbusiness.ScanData": {
             "type": "object",
             "properties": {
                 "images_data": {
@@ -8059,7 +9541,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_taxbusiness.ScanRequest": {
+        "taxbusiness.ScanRequest": {
             "type": "object",
             "properties": {
                 "yzm": {
@@ -8067,7 +9549,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_taxbusiness.ScanResponse": {
+        "taxbusiness.ScanResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -8075,7 +9557,7 @@ const docTemplate = `{
                     "example": 1
                 },
                 "data": {
-                    "$ref": "#/definitions/internal_taxbusiness.ScanData"
+                    "$ref": "#/definitions/taxbusiness.ScanData"
                 },
                 "msg": {
                     "type": "string",
@@ -8083,1732 +9565,52 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_taxbusiness.YearRequest": {
+        "taxbusiness.Schema": {
+            "type": "object",
+            "properties": {
+                "fields": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/taxbusiness.Field"
+                    }
+                },
+                "kind": {
+                    "type": "string"
+                },
+                "label": {
+                    "type": "string"
+                },
+                "public": {
+                    "type": "boolean"
+                },
+                "yearly": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "taxbusiness.Write": {
+            "type": "object",
+            "properties": {
+                "expectedVersion": {
+                    "type": "string"
+                },
+                "payload": {
+                    "type": "object"
+                },
+                "userId": {
+                    "type": "integer"
+                },
+                "year": {
+                    "type": "integer"
+                }
+            }
+        },
+        "taxbusiness.YearRequest": {
             "type": "object",
             "properties": {
                 "year": {
                     "type": "string",
                     "example": "2024"
-                }
-            }
-        },
-        "ths-service_internal_alipay.ContributionCalculation": {
-            "type": "object",
-            "properties": {
-                "base": {
-                    "type": "string"
-                },
-                "companyPay": {
-                    "type": "string"
-                },
-                "companyRate": {
-                    "type": "string"
-                },
-                "kind": {
-                    "type": "string"
-                },
-                "personalPay": {
-                    "type": "string"
-                },
-                "personalRate": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_alipay.ContributionPreview": {
-            "type": "object",
-            "properties": {
-                "breakdown": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ths-service_internal_alipay.ContributionCalculation"
-                    }
-                },
-                "companyPay": {
-                    "description": "Monthly employer total.",
-                    "type": "string"
-                },
-                "created": {
-                    "type": "integer"
-                },
-                "months": {
-                    "type": "integer"
-                },
-                "personalPay": {
-                    "description": "Monthly employee total.",
-                    "type": "string"
-                },
-                "skipped": {
-                    "type": "integer"
-                },
-                "total": {
-                    "description": "Monthly five-insurance total, excluding housing fund.",
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_alipay.ContributionRule": {
-            "type": "object",
-            "properties": {
-                "base": {
-                    "description": "Approved contribution base; empty uses salary.",
-                    "type": "string"
-                },
-                "companyRate": {
-                    "type": "string"
-                },
-                "kind": {
-                    "description": "pension, medical, unemployment, injury, maternity",
-                    "type": "string"
-                },
-                "personalRate": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_alipay.Field": {
-            "type": "object",
-            "properties": {
-                "key": {
-                    "type": "string"
-                },
-                "label": {
-                    "type": "string"
-                },
-                "required": {
-                    "type": "boolean"
-                },
-                "type": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_alipay.GenerateContributions": {
-            "type": "object",
-            "properties": {
-                "company": {
-                    "type": "string"
-                },
-                "endMonth": {
-                    "description": "YYYY-MM, inclusive; no future months.",
-                    "type": "string"
-                },
-                "rules": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ths-service_internal_alipay.ContributionRule"
-                    }
-                },
-                "salary": {
-                    "type": "string"
-                },
-                "startMonth": {
-                    "description": "YYYY-MM, inclusive.",
-                    "type": "string"
-                },
-                "userId": {
-                    "type": "integer"
-                }
-            }
-        },
-        "ths-service_internal_alipay.List": {
-            "type": "object",
-            "properties": {
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ths-service_internal_alipay.Record"
-                    }
-                },
-                "page": {
-                    "type": "integer"
-                },
-                "pageSize": {
-                    "type": "integer"
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "ths-service_internal_alipay.Record": {
-            "type": "object",
-            "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "kind": {
-                    "type": "string"
-                },
-                "payload": {
-                    "type": "object"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "userId": {
-                    "type": "integer"
-                },
-                "version": {
-                    "type": "string"
-                },
-                "year": {
-                    "type": "integer"
-                }
-            }
-        },
-        "ths-service_internal_alipay.Schema": {
-            "type": "object",
-            "properties": {
-                "fields": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ths-service_internal_alipay.Field"
-                    }
-                },
-                "kind": {
-                    "type": "string"
-                },
-                "label": {
-                    "type": "string"
-                },
-                "public": {
-                    "type": "boolean"
-                },
-                "yearly": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "ths-service_internal_alipay.Write": {
-            "type": "object",
-            "properties": {
-                "expectedVersion": {
-                    "type": "string"
-                },
-                "payload": {
-                    "type": "object"
-                },
-                "userId": {
-                    "type": "integer"
-                },
-                "year": {
-                    "type": "integer"
-                }
-            }
-        },
-        "ths-service_internal_apkdownload.Info": {
-            "type": "object",
-            "properties": {
-                "available": {
-                    "description": "Whether an APK and download passcode are configured.",
-                    "type": "boolean"
-                },
-                "passcodeConfigured": {
-                    "description": "Only presence, never the passcode or hash.",
-                    "type": "boolean"
-                },
-                "releaseKey": {
-                    "description": "Immutable server-generated China-time timestamp key, YYYYMMDDHHmmss.",
-                    "type": "string"
-                },
-                "sha256": {
-                    "description": "SHA-256 of the uploaded APK bytes.",
-                    "type": "string"
-                },
-                "sizeBytes": {
-                    "description": "APK size in bytes.",
-                    "type": "integer"
-                },
-                "uploadedAt": {
-                    "description": "Upload time; null before first upload.",
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_apkdownload.InfoResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "Zero on success.",
-                    "type": "integer"
-                },
-                "data": {
-                    "description": "Current published version metadata.",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/ths-service_internal_apkdownload.Info"
-                        }
-                    ]
-                },
-                "message": {
-                    "description": "Result description.",
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_apkdownload.PasscodeRequest": {
-            "type": "object",
-            "properties": {
-                "passcode": {
-                    "description": "Exact passcode, including Chinese; 5 to 64 Unicode characters, at most 256 UTF-8 bytes; not whitespace only.",
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_electricity.BillList": {
-            "type": "object",
-            "properties": {
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ths-service_internal_electricity.BillRow"
-                    }
-                },
-                "page": {
-                    "type": "integer"
-                },
-                "pageSize": {
-                    "type": "integer"
-                },
-                "setVersion": {
-                    "type": "string"
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "ths-service_internal_electricity.BillListResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "data": {
-                    "$ref": "#/definitions/ths-service_internal_electricity.BillList"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "requestId": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_electricity.BillResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "data": {
-                    "$ref": "#/definitions/ths-service_internal_electricity.BillView"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "requestId": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_electricity.BillRow": {
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "type": "string"
-                },
-                "billMonth": {
-                    "type": "string"
-                },
-                "billing": {
-                    "$ref": "#/definitions/ths-service_internal_electricity.Billing"
-                },
-                "code": {
-                    "type": "string"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "detail": {
-                    "type": "object"
-                },
-                "endDate": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "realName": {
-                    "type": "string"
-                },
-                "simulated": {
-                    "type": "boolean"
-                },
-                "startDate": {
-                    "type": "string"
-                },
-                "totalUsage": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "userId": {
-                    "type": "integer"
-                },
-                "username": {
-                    "type": "string"
-                },
-                "version": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_electricity.BillView": {
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "type": "string"
-                },
-                "billMonth": {
-                    "type": "string"
-                },
-                "billing": {
-                    "$ref": "#/definitions/ths-service_internal_electricity.Billing"
-                },
-                "code": {
-                    "type": "string"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "detail": {
-                    "type": "object"
-                },
-                "endDate": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "simulated": {
-                    "type": "boolean"
-                },
-                "startDate": {
-                    "type": "string"
-                },
-                "totalUsage": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "userId": {
-                    "type": "integer"
-                },
-                "version": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_electricity.BillWrite": {
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "type": "string"
-                },
-                "code": {
-                    "type": "string"
-                },
-                "detail": {
-                    "type": "object"
-                },
-                "endDate": {
-                    "type": "string"
-                },
-                "expectedVersion": {
-                    "type": "string"
-                },
-                "startDate": {
-                    "type": "string"
-                },
-                "totalUsage": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_electricity.Billing": {
-            "type": "object",
-            "properties": {
-                "arrears_principal": {
-                    "type": "string"
-                },
-                "average_price": {
-                    "type": "string"
-                },
-                "due_date": {
-                    "type": "string"
-                },
-                "electricity_fee": {
-                    "type": "string"
-                },
-                "late_fee": {
-                    "type": "string"
-                },
-                "late_fee_as_of_date": {
-                    "type": "string"
-                },
-                "late_fee_daily_rate": {
-                    "type": "string"
-                },
-                "late_fee_start_date": {
-                    "type": "string"
-                },
-                "payable_amount": {
-                    "type": "string"
-                },
-                "payment_status": {
-                    "description": "paid, unpaid or overdue",
-                    "type": "string"
-                },
-                "pricing_mode": {
-                    "description": "tiered or flat",
-                    "type": "string"
-                },
-                "region": {
-                    "type": "string"
-                },
-                "tariff_name": {
-                    "type": "string"
-                },
-                "tiers": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ths-service_internal_electricity.TariffTier"
-                    }
-                },
-                "usage_type": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_electricity.BillsResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ths-service_internal_electricity.BillView"
-                    }
-                },
-                "message": {
-                    "type": "string"
-                },
-                "requestId": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_electricity.List": {
-            "type": "object",
-            "properties": {
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ths-service_internal_electricity.View"
-                    }
-                },
-                "page": {
-                    "type": "integer"
-                },
-                "pageSize": {
-                    "type": "integer"
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "ths-service_internal_electricity.ListResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "data": {
-                    "$ref": "#/definitions/ths-service_internal_electricity.List"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "requestId": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_electricity.ProfileResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "data": {
-                    "$ref": "#/definitions/ths-service_internal_electricity.View"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "requestId": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_electricity.TariffTier": {
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "type": "string"
-                },
-                "level": {
-                    "type": "integer"
-                },
-                "unit_price": {
-                    "type": "string"
-                },
-                "usage": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_electricity.View": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "displayName": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "meterNo": {
-                    "type": "string"
-                },
-                "meterReader": {
-                    "type": "string"
-                },
-                "postalCode": {
-                    "type": "string"
-                },
-                "realName": {
-                    "type": "string"
-                },
-                "simulated": {
-                    "type": "boolean"
-                },
-                "supplier": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "userId": {
-                    "type": "integer"
-                },
-                "userIdNumber": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                },
-                "version": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_electricity.WriteRequest": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "displayName": {
-                    "type": "string"
-                },
-                "expectedVersion": {
-                    "type": "string"
-                },
-                "meterNo": {
-                    "type": "string"
-                },
-                "meterReader": {
-                    "type": "string"
-                },
-                "postalCode": {
-                    "type": "string"
-                },
-                "supplier": {
-                    "type": "string"
-                },
-                "userIdNumber": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_nanwang.Field": {
-            "type": "object",
-            "properties": {
-                "key": {
-                    "type": "string"
-                },
-                "label": {
-                    "type": "string"
-                },
-                "required": {
-                    "type": "boolean"
-                },
-                "type": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_nanwang.List": {
-            "type": "object",
-            "properties": {
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ths-service_internal_nanwang.Record"
-                    }
-                },
-                "page": {
-                    "type": "integer"
-                },
-                "pageSize": {
-                    "type": "integer"
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "ths-service_internal_nanwang.Record": {
-            "type": "object",
-            "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "kind": {
-                    "type": "string"
-                },
-                "payload": {
-                    "type": "object"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "userId": {
-                    "type": "integer"
-                },
-                "version": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_nanwang.Schema": {
-            "type": "object",
-            "properties": {
-                "fields": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ths-service_internal_nanwang.Field"
-                    }
-                },
-                "kind": {
-                    "type": "string"
-                },
-                "label": {
-                    "type": "string"
-                },
-                "public": {
-                    "type": "boolean"
-                },
-                "singleton": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "ths-service_internal_nanwang.Write": {
-            "type": "object",
-            "properties": {
-                "expectedVersion": {
-                    "type": "string"
-                },
-                "payload": {
-                    "type": "object"
-                },
-                "userId": {
-                    "type": "integer"
-                }
-            }
-        },
-        "ths-service_internal_pdfreport.Draft": {
-            "type": "object",
-            "properties": {
-                "fields": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    }
-                },
-                "kind": {
-                    "type": "string"
-                },
-                "tables": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "array",
-                        "items": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                },
-                "userId": {
-                    "type": "integer"
-                },
-                "warnings": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "ths-service_internal_pdfreport.Field": {
-            "type": "object",
-            "properties": {
-                "key": {
-                    "type": "string"
-                },
-                "label": {
-                    "type": "string"
-                },
-                "required": {
-                    "type": "boolean"
-                },
-                "type": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_pdfreport.Schema": {
-            "type": "object",
-            "properties": {
-                "fields": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ths-service_internal_pdfreport.Field"
-                    }
-                },
-                "kind": {
-                    "type": "string"
-                },
-                "label": {
-                    "type": "string"
-                },
-                "tables": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ths-service_internal_pdfreport.Table"
-                    }
-                }
-            }
-        },
-        "ths-service_internal_pdfreport.Table": {
-            "type": "object",
-            "properties": {
-                "columns": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ths-service_internal_pdfreport.Field"
-                    }
-                },
-                "key": {
-                    "type": "string"
-                },
-                "label": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_portfolio.Account": {
-            "type": "object",
-            "properties": {
-                "availableCash": {
-                    "type": "string"
-                },
-                "currency": {
-                    "type": "string"
-                },
-                "dailyProfit": {
-                    "type": "string"
-                },
-                "dailyProfitPercent": {
-                    "type": "string"
-                },
-                "floatingProfit": {
-                    "type": "string"
-                },
-                "generatedAt": {
-                    "type": "string"
-                },
-                "generation": {
-                    "type": "string"
-                },
-                "positionRatio": {
-                    "type": "string"
-                },
-                "totalAssets": {
-                    "type": "string"
-                },
-                "totalMarketValue": {
-                    "type": "string"
-                },
-                "withdrawableCash": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_portfolio.AdminHoldingList": {
-            "type": "object",
-            "properties": {
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ths-service_internal_portfolio.AdminHoldingRow"
-                    }
-                },
-                "page": {
-                    "type": "integer"
-                },
-                "pageSize": {
-                    "type": "integer"
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "ths-service_internal_portfolio.AdminHoldingRow": {
-            "type": "object",
-            "properties": {
-                "category": {
-                    "type": "string"
-                },
-                "generation": {
-                    "type": "string"
-                },
-                "positionCount": {
-                    "type": "integer"
-                },
-                "realName": {
-                    "type": "string"
-                },
-                "totalAssets": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "userId": {
-                    "type": "integer"
-                }
-            }
-        },
-        "ths-service_internal_portfolio.AdminHoldingWrite": {
-            "type": "object",
-            "properties": {
-                "expectedGeneration": {
-                    "type": "string"
-                },
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ths-service_internal_portfolio.HoldingItem"
-                    }
-                },
-                "totalAssets": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_portfolio.HoldingItem": {
-            "type": "object",
-            "properties": {
-                "notice": {
-                    "type": "string"
-                },
-                "position": {
-                    "$ref": "#/definitions/ths-service_internal_portfolio.Position"
-                },
-                "positionRatio": {
-                    "type": "string"
-                },
-                "trades": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ths-service_internal_portfolio.Trade"
-                    }
-                }
-            }
-        },
-        "ths-service_internal_portfolio.HoldingsData": {
-            "type": "object",
-            "properties": {
-                "account": {
-                    "$ref": "#/definitions/ths-service_internal_portfolio.Account"
-                },
-                "category": {
-                    "type": "string"
-                },
-                "categoryName": {
-                    "type": "string"
-                },
-                "exchangeRateMode": {
-                    "type": "string",
-                    "example": "demo_fixed"
-                },
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ths-service_internal_portfolio.HoldingItem"
-                    }
-                },
-                "simulated": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "ths-service_internal_portfolio.HoldingsResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "data": {
-                    "$ref": "#/definitions/ths-service_internal_portfolio.HoldingsData"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "requestId": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_portfolio.Position": {
-            "type": "object",
-            "properties": {
-                "availableQuantity": {
-                    "type": "integer"
-                },
-                "costPrice": {
-                    "type": "string"
-                },
-                "currency": {
-                    "type": "string"
-                },
-                "dailyProfit": {
-                    "type": "string"
-                },
-                "dailyProfitPercent": {
-                    "type": "string"
-                },
-                "dataStatus": {
-                    "type": "string"
-                },
-                "exchangeRate": {
-                    "type": "string"
-                },
-                "holdingDays": {
-                    "type": "integer"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "latestPrice": {
-                    "type": "string"
-                },
-                "marketValue": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "profit": {
-                    "type": "string"
-                },
-                "profitPercent": {
-                    "type": "string"
-                },
-                "quantity": {
-                    "type": "integer"
-                },
-                "quoteTime": {
-                    "type": "string"
-                },
-                "realizedProfit": {
-                    "type": "string"
-                },
-                "symbol": {
-                    "type": "string"
-                },
-                "transactionFees": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_portfolio.Trade": {
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "type": "string"
-                },
-                "currency": {
-                    "type": "string"
-                },
-                "fees": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "price": {
-                    "type": "string"
-                },
-                "quantity": {
-                    "type": "integer"
-                },
-                "side": {
-                    "type": "string"
-                },
-                "symbol": {
-                    "type": "string"
-                },
-                "tradedAt": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_response.Envelope": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "data": {},
-                "message": {
-                    "type": "string"
-                },
-                "requestId": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_response.ErrorEnvelope": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer",
-                    "example": 40001
-                },
-                "data": {
-                    "type": "object"
-                },
-                "message": {
-                    "type": "string",
-                    "example": "请求参数错误"
-                },
-                "requestId": {
-                    "type": "string",
-                    "example": "f5e76095d32f49199f5f7f897f5733a2"
-                }
-            }
-        },
-        "ths-service_internal_tax.EmploymentList": {
-            "type": "object",
-            "properties": {
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ths-service_internal_tax.EmploymentRow"
-                    }
-                },
-                "page": {
-                    "type": "integer"
-                },
-                "pageSize": {
-                    "type": "integer"
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "ths-service_internal_tax.EmploymentListResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "data": {
-                    "$ref": "#/definitions/ths-service_internal_tax.EmploymentList"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "requestId": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_tax.EmploymentResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "data": {
-                    "$ref": "#/definitions/ths-service_internal_tax.EmploymentView"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "requestId": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_tax.EmploymentRow": {
-            "type": "object",
-            "properties": {
-                "companyName": {
-                    "type": "string"
-                },
-                "companyNum": {
-                    "type": "string"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "endDate": {
-                    "type": "string"
-                },
-                "post": {
-                    "type": "string"
-                },
-                "realName": {
-                    "type": "string"
-                },
-                "simulated": {
-                    "type": "boolean"
-                },
-                "startDate": {
-                    "type": "string"
-                },
-                "taxId": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "userId": {
-                    "type": "integer"
-                },
-                "username": {
-                    "type": "string"
-                },
-                "version": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_tax.EmploymentView": {
-            "type": "object",
-            "properties": {
-                "companyName": {
-                    "type": "string"
-                },
-                "companyNum": {
-                    "type": "string"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "endDate": {
-                    "type": "string"
-                },
-                "post": {
-                    "type": "string"
-                },
-                "simulated": {
-                    "type": "boolean"
-                },
-                "startDate": {
-                    "type": "string"
-                },
-                "taxId": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "userId": {
-                    "type": "integer"
-                },
-                "version": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_tax.EmploymentWrite": {
-            "type": "object",
-            "properties": {
-                "companyName": {
-                    "type": "string"
-                },
-                "companyNum": {
-                    "type": "string"
-                },
-                "endDate": {
-                    "type": "string"
-                },
-                "expectedVersion": {
-                    "type": "string"
-                },
-                "post": {
-                    "type": "string"
-                },
-                "startDate": {
-                    "type": "string"
-                },
-                "taxId": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_tax.List": {
-            "type": "object",
-            "properties": {
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ths-service_internal_tax.Row"
-                    }
-                },
-                "page": {
-                    "type": "integer"
-                },
-                "pageSize": {
-                    "type": "integer"
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "ths-service_internal_tax.ListResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "data": {
-                    "$ref": "#/definitions/ths-service_internal_tax.List"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "requestId": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_tax.ProfileResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "data": {
-                    "$ref": "#/definitions/ths-service_internal_tax.View"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "requestId": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_tax.Row": {
-            "type": "object",
-            "properties": {
-                "bankNum": {
-                    "type": "string"
-                },
-                "bankType": {
-                    "type": "string"
-                },
-                "birth": {
-                    "type": "string"
-                },
-                "cardType": {
-                    "type": "string"
-                },
-                "contactAddress": {
-                    "type": "string"
-                },
-                "contactCity": {
-                    "type": "string"
-                },
-                "country": {
-                    "type": "string"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "education": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "hujiAddress": {
-                    "type": "string"
-                },
-                "hujiCity": {
-                    "type": "string"
-                },
-                "idCard": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "nation": {
-                    "type": "string"
-                },
-                "phone": {
-                    "type": "string"
-                },
-                "realName": {
-                    "type": "string"
-                },
-                "sex": {
-                    "type": "string"
-                },
-                "simulated": {
-                    "type": "boolean"
-                },
-                "taxBackMoney": {
-                    "type": "string"
-                },
-                "taxNumber": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "userId": {
-                    "type": "integer"
-                },
-                "username": {
-                    "type": "string"
-                },
-                "usuallyAddress": {
-                    "type": "string"
-                },
-                "usuallyCity": {
-                    "type": "string"
-                },
-                "version": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_tax.View": {
-            "type": "object",
-            "properties": {
-                "bankNum": {
-                    "type": "string"
-                },
-                "bankType": {
-                    "type": "string"
-                },
-                "birth": {
-                    "type": "string"
-                },
-                "cardType": {
-                    "type": "string"
-                },
-                "contactAddress": {
-                    "type": "string"
-                },
-                "contactCity": {
-                    "type": "string"
-                },
-                "country": {
-                    "type": "string"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "education": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "hujiAddress": {
-                    "type": "string"
-                },
-                "hujiCity": {
-                    "type": "string"
-                },
-                "idCard": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "nation": {
-                    "type": "string"
-                },
-                "phone": {
-                    "type": "string"
-                },
-                "sex": {
-                    "type": "string"
-                },
-                "simulated": {
-                    "type": "boolean"
-                },
-                "taxBackMoney": {
-                    "type": "string"
-                },
-                "taxNumber": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "userId": {
-                    "type": "integer"
-                },
-                "usuallyAddress": {
-                    "type": "string"
-                },
-                "usuallyCity": {
-                    "type": "string"
-                },
-                "version": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_tax.WriteRequest": {
-            "type": "object",
-            "properties": {
-                "bankNum": {
-                    "type": "string"
-                },
-                "bankType": {
-                    "type": "string"
-                },
-                "birth": {
-                    "type": "string"
-                },
-                "cardType": {
-                    "type": "string"
-                },
-                "contactAddress": {
-                    "type": "string"
-                },
-                "contactCity": {
-                    "type": "string"
-                },
-                "country": {
-                    "type": "string"
-                },
-                "education": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "expectedVersion": {
-                    "type": "string"
-                },
-                "hujiAddress": {
-                    "type": "string"
-                },
-                "hujiCity": {
-                    "type": "string"
-                },
-                "idCard": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "nation": {
-                    "type": "string"
-                },
-                "phone": {
-                    "type": "string"
-                },
-                "sex": {
-                    "type": "string"
-                },
-                "taxBackMoney": {
-                    "type": "string"
-                },
-                "taxNumber": {
-                    "type": "string"
-                },
-                "usuallyAddress": {
-                    "type": "string"
-                },
-                "usuallyCity": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_taxbusiness.Field": {
-            "type": "object",
-            "properties": {
-                "key": {
-                    "type": "string"
-                },
-                "label": {
-                    "type": "string"
-                },
-                "required": {
-                    "type": "boolean"
-                },
-                "type": {
-                    "type": "string"
-                }
-            }
-        },
-        "ths-service_internal_taxbusiness.List": {
-            "type": "object",
-            "properties": {
-                "items": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ths-service_internal_taxbusiness.Record"
-                    }
-                },
-                "page": {
-                    "type": "integer"
-                },
-                "pageSize": {
-                    "type": "integer"
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "ths-service_internal_taxbusiness.Record": {
-            "type": "object",
-            "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "kind": {
-                    "type": "string"
-                },
-                "payload": {
-                    "type": "object"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "userId": {
-                    "type": "integer"
-                },
-                "version": {
-                    "type": "string"
-                },
-                "year": {
-                    "type": "integer"
-                }
-            }
-        },
-        "ths-service_internal_taxbusiness.Schema": {
-            "type": "object",
-            "properties": {
-                "fields": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ths-service_internal_taxbusiness.Field"
-                    }
-                },
-                "kind": {
-                    "type": "string"
-                },
-                "label": {
-                    "type": "string"
-                },
-                "public": {
-                    "type": "boolean"
-                },
-                "yearly": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "ths-service_internal_taxbusiness.Write": {
-            "type": "object",
-            "properties": {
-                "expectedVersion": {
-                    "type": "string"
-                },
-                "payload": {
-                    "type": "object"
-                },
-                "userId": {
-                    "type": "integer"
-                },
-                "year": {
-                    "type": "integer"
                 }
             }
         }

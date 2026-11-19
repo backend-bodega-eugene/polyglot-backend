@@ -25,7 +25,8 @@ log:
 
 jwt:
   secret: "ths-service-development-secret-change-in-production"
-  accessTokenTTLSeconds: 7200
+  accessTokenTTLSeconds: 28800
+  adminAccessTokenTTLSeconds: 7200
 
 market:
   cacheTTLSeconds: 300

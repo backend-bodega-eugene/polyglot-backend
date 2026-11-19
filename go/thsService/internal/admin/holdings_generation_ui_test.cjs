@@ -1,0 +1,12 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const source=fs.readFileSync(__dirname+'/web/js/holdings.js','utf8');
+const elements=new Map();const $=id=>{if(!elements.has(id))elements.set(id,{value:'',showModal(){this.open=true;},close(){this.open=false;},reportValidity(){return true;}});return elements.get(id);};
+let submitted;
+const context=vm.createContext({$,busy:false,Number,persist:(generate,counts)=>{submitted={generate,counts};}});
+vm.runInContext(source.slice(source.indexOf("$('save').onclick"),source.indexOf("$('rows').addEventListener")),context);
+$('generate').onclick();assert.equal($('generation-positions').value,'10');assert.equal($('generation-trades').value,'30');assert.equal($('generation-dialog').open,true);
+$('generation-form').onsubmit({preventDefault(){}});assert.equal(submitted.counts.positionCount,10);assert.equal(submitted.counts.tradesPerPosition,30);
+$('generate').onclick();$('generation-positions').value='6';$('generation-trades').value='17';$('generation-form').onsubmit({preventDefault(){}});assert.equal(submitted.counts.positionCount,6);assert.equal(submitted.counts.tradesPerPosition,17);
+submitted=null;$('generation-trades').value='';$('generation-form').onsubmit({preventDefault(){}});assert.equal(submitted,null);
+$('generate').onclick();assert.equal($('generation-trades').value,'30');$('generation-cancel').onclick();assert.equal($('generation-dialog').open,false);
+console.log('Holding generation dialog defaults, custom counts, empty input rejection and cancel passed');

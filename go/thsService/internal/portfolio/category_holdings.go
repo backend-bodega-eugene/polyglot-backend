@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"encoding/json"
 	"errors"
+	"fmt"
 	randv2 "math/rand/v2"
 	"sort"
 	"time"
@@ -82,6 +83,11 @@ func (s *Service) Holdings(ctx context.Context, userID uint64, category string, 
 }
 
 func generateCategory(userID uint64, assets int64, quotes market.QuoteListData, now time.Time) (HoldingsData, error) {
+	return generateCategoryCounts(userID, assets, quotes, now, 0, 0)
+}
+
+// Zero counts are reserved for the existing App random generation rules.
+func generateCategoryCounts(userID uint64, assets int64, quotes market.QuoteListData, now time.Time, requestedCount, requestedTrades int) (HoldingsData, error) {
 	type candidate struct {
 		quote   market.QuoteItem
 		minimum int64
@@ -102,10 +108,20 @@ func generateCategory(userID uint64, assets int64, quotes market.QuoteListData, 
 		seen[q.Symbol] = true
 		candidates = append(candidates, candidate{q, minimum})
 	}
-	if len(candidates) < minGeneratedHoldings {
+	minimumCount := minGeneratedHoldings
+	if requestedCount > 0 {
+		minimumCount = requestedCount
+	}
+	if len(candidates) < minimumCount {
+		if requestedCount > 0 {
+			return HoldingsData{}, invalid(fmt.Sprintf("当前分类仅有%d只可用股票，请减少生成数量", len(candidates)))
+		}
 		return HoldingsData{}, ErrInsufficientQuotes
 	}
 	count := min(minGeneratedHoldings+randv2.IntN(maxGeneratedHoldings-minGeneratedHoldings+1), len(candidates))
+	if requestedCount > 0 {
+		count = requestedCount
+	}
 	budget := assets * int64(55+randv2.IntN(16)) / 100
 	randv2.Shuffle(len(candidates), func(i, j int) { candidates[i], candidates[j] = candidates[j], candidates[i] })
 	minimum := func(n int) int64 {
@@ -117,7 +133,7 @@ func generateCategory(userID uint64, assets int64, quotes market.QuoteListData, 
 	}
 	if minimum(count) > budget {
 		sort.Slice(candidates, func(i, j int) bool { return candidates[i].minimum < candidates[j].minimum })
-		for count > minGeneratedHoldings && minimum(count) > budget {
+		for count > minimumCount && minimum(count) > budget {
 			count--
 		}
 		budget = max(budget, minimum(count))
@@ -174,12 +190,15 @@ func generateCategory(userID uint64, assets int64, quotes market.QuoteListData, 
 		p.ID = uint64(i + 1)
 		p.QuoteTime = p.QuoteTime.In(beijing).Truncate(time.Millisecond)
 		target := minGeneratedTrades + randv2.IntN(maxGeneratedTrades-minGeneratedTrades+1)
+		if requestedTrades > 0 {
+			target = requestedTrades
+		}
 		trades := detailTradesCount(p, nil, lot, target, now.AddDate(0, 0, -randv2.IntN(22)))
 		if len(trades) != target {
 			return HoldingsData{}, ErrInsufficientQuotes
 		}
 		for j := range trades {
-			trades[j].ID = uint64(i*maxGeneratedTrades + j + 1)
+			trades[j].ID = uint64(i*max(maxGeneratedTrades, requestedTrades) + j + 1)
 			trades[j].TradedAt = trades[j].TradedAt.In(beijing)
 		}
 		p.HoldingDays = holdingDays(trades, now)

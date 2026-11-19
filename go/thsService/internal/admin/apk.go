@@ -47,11 +47,11 @@ func RegisterAPK(r *gin.Engine, h *Handler) {
 	a := &APKHandler{h, dir, make(chan struct{}, 1)}
 	api := r.Group("/api/admin/app-package", h.RequireLogin, sameOrigin, noAPKCache)
 	api.GET("", a.AdminAPKInfo)
-	api.POST("/upload", a.Upload)
-	api.PUT("/passcode", a.Passcode)
+	api.POST("/upload", selectAPK, a.Upload)
+	api.PUT("/passcode", selectAPK, a.Passcode)
 	public := r.Group("/api/app-download", noAPKCache)
 	public.GET("/info", a.Info)
-	public.POST("/download", sameOrigin, a.Download)
+	public.POST("/download", sameOrigin, selectAPK, a.Download)
 	for route, name := range map[string]string{"/app-download": "app-download.html", "/app-download.js": "app-download.js"} {
 		resource := name
 		r.GET(route, func(c *gin.Context) {
@@ -80,8 +80,23 @@ func noAPKCache(c *gin.Context) {
 }
 func (a *APKHandler) state(c *gin.Context) (apkdownload.State, error) {
 	var s apkdownload.State
-	e := a.auth.db.WithContext(c.Request.Context()).First(&s, 1).Error
+	e := a.auth.db.WithContext(c.Request.Context()).First(&s, c.GetUint64("apkID")).Error
 	return s, e
+}
+
+// selectAPK rejects missing/unknown slots, so a request cannot replace another app accidentally.
+func selectAPK(c *gin.Context) {
+	values := c.Request.URL.Query()["app"]
+	if len(values) == 1 {
+		for id, key := range apkdownload.Apps {
+			if values[0] == key {
+				c.Set("apkID", id)
+				return
+			}
+		}
+	}
+	response.Error(c, 400, response.CodeInvalidRequest, "请选择安装包：nanwang、alipay、tax或ths")
+	c.Abort()
 }
 
 // Info 获取当前安装包公开信息
@@ -89,23 +104,42 @@ func (a *APKHandler) state(c *gin.Context) (apkdownload.State, error) {
 // @Description 无需登录。不包含口令、口令哈希或文件路径。available为true时可提交口令下载；不返回文件直链。
 // @Tags App端 · 安装包下载
 // @Produce json
-// @Success 200 {object} apkdownload.InfoResponse
+// @Success 200 {object} apkdownload.ListResponse
 // @Failure 500 {object} response.ErrorEnvelope
+// @Param app query string false "可选，指定单个安装包：nanwang/alipay/tax/ths；不传返回四项列表"
 // @Router /api/app-download/info [get]
 func (a *APKHandler) Info(c *gin.Context) {
-	s, e := a.state(c)
-	if e != nil {
-		a.auth.fail(c, e)
+	if c.Query("app") != "" {
+		selectAPK(c)
+		if c.IsAborted() {
+			return
+		}
+		state, err := a.state(c)
+		if err != nil {
+			a.auth.fail(c, err)
+			return
+		}
+		response.Success(c, apkdownload.View(state))
 		return
 	}
-	response.Success(c, apkdownload.View(s))
+	var states []apkdownload.State
+	if err := a.auth.db.WithContext(c.Request.Context()).Where("id IN ?", []uint64{1, 2, 3, 4}).Order("id").Find(&states).Error; err != nil {
+		a.auth.fail(c, err)
+		return
+	}
+	result := make([]apkdownload.Info, 0, 4)
+	for _, state := range states {
+		result = append(result, apkdownload.View(state))
+	}
+	response.Success(c, result)
 }
 
 // AdminAPKInfo 获取后台安装包信息
 // @Summary 获取安装包管理信息
 // @Description 管理员Cookie鉴权。只返回版本、大小、SHA256和口令是否已设置，不回显口令。
 // @Tags 后台 · App安装包
-// @Success 200 {object} apkdownload.InfoResponse
+// @Success 200 {object} apkdownload.ListResponse
+// @Param app query string false "指定单个安装包；不传返回四项列表"
 // @Router /api/admin/app-package [get]
 func (a *APKHandler) AdminAPKInfo(c *gin.Context) { a.Info(c) }
 
@@ -142,6 +176,7 @@ func readAPKJSON(c *gin.Context, v any) bool {
 // @Param body body apkdownload.PasscodeRequest true "新的下载口令"
 // @Success 200 {object} apkdownload.InfoResponse
 // @Failure 400 {object} response.ErrorEnvelope
+// @Param app query string true "安装包：nanwang/alipay/tax/ths"
 // @Router /api/admin/app-package/passcode [put]
 func (a *APKHandler) Passcode(c *gin.Context) {
 	var req apkdownload.PasscodeRequest
@@ -156,14 +191,14 @@ func (a *APKHandler) Passcode(c *gin.Context) {
 	}
 	var state apkdownload.State
 	e = a.auth.db.WithContext(c.Request.Context()).Transaction(func(tx *gorm.DB) error {
-		if e := tx.Clauses(clause.Locking{Strength: "UPDATE"}).First(&state, 1).Error; e != nil {
+		if e := tx.Clauses(clause.Locking{Strength: "UPDATE"}).First(&state, c.GetUint64("apkID")).Error; e != nil {
 			return e
 		}
 		if e := tx.Model(&state).Update("passcode_hash", hash).Error; e != nil {
 			return e
 		}
 		admin, _ := c.Get("administrator")
-		return tx.Create(&apkdownload.Audit{AdminID: admin.(Administrator).ID, Action: "passcode_change", VersionName: state.VersionName, SHA256: state.SHA256}).Error
+		return tx.Create(&apkdownload.Audit{AppID: state.ID, AdminID: admin.(Administrator).ID, Action: "passcode_change", VersionName: state.VersionName, SHA256: state.SHA256}).Error
 	})
 	if e != nil {
 		a.auth.fail(c, e)
@@ -223,6 +258,7 @@ func validateAPK(filename string) error {
 // @Success 200 {object} apkdownload.InfoResponse
 // @Failure 400 {object} response.ErrorEnvelope
 // @Failure 413 {object} response.ErrorEnvelope
+// @Param app query string true "安装包：nanwang/alipay/tax/ths"
 // @Router /api/admin/app-package/upload [post]
 func (a *APKHandler) Upload(c *gin.Context) {
 	select {
@@ -304,7 +340,7 @@ func (a *APKHandler) Upload(c *gin.Context) {
 	}()
 	var state apkdownload.State
 	e = a.auth.db.WithContext(c.Request.Context()).Transaction(func(tx *gorm.DB) error {
-		if e := tx.Clauses(clause.Locking{Strength: "UPDATE"}).First(&state, 1).Error; e != nil {
+		if e := tx.Clauses(clause.Locking{Strength: "UPDATE"}).First(&state, c.GetUint64("apkID")).Error; e != nil {
 			return e
 		}
 		if state.PasscodeHash == "" {
@@ -325,7 +361,7 @@ func (a *APKHandler) Upload(c *gin.Context) {
 			return e
 		}
 		admin, _ := c.Get("administrator")
-		return tx.Create(&apkdownload.Audit{AdminID: admin.(Administrator).ID, Action: "upload", VersionName: version, SHA256: state.SHA256}).Error
+		return tx.Create(&apkdownload.Audit{AppID: state.ID, AdminID: admin.(Administrator).ID, Action: "upload", VersionName: version, SHA256: state.SHA256}).Error
 	})
 	if e != nil {
 		if errors.Is(e, errAPKSameSecond) {
@@ -352,6 +388,7 @@ func (a *APKHandler) Upload(c *gin.Context) {
 // @Failure 401 {object} response.ErrorEnvelope
 // @Failure 404 {object} response.ErrorEnvelope
 // @Failure 429 {object} response.ErrorEnvelope
+// @Param app query string true "安装包：nanwang/alipay/tax/ths"
 // @Router /api/app-download/download [post]
 func (a *APKHandler) Download(c *gin.Context) {
 	var req apkdownload.PasscodeRequest
@@ -428,6 +465,7 @@ func (a *APKHandler) Download(c *gin.Context) {
 		a.auth.fail(c, fmt.Errorf("APK file metadata mismatch"))
 		return
 	}
-	c.Header("Content-Disposition", `attachment; filename="app.apk"`)
+	filename := apkdownload.Filename(state)
+	c.Header("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, filename))
 	c.DataFromReader(200, stat.Size(), "application/vnd.android.package-archive", file, nil)
 }

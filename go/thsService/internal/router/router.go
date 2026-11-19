@@ -31,7 +31,7 @@ func New(connection *database.Connection, cfg config.Config) *gin.Engine {
 	}
 	engine.Use(middleware.RequestID(), middleware.Logger(), middleware.Recovery())
 	engine.GET("/health/ready", health.NewHandler(connection.SQL).Ready)
-	admin.Register(engine, connection.GORM, cfg.JWT.Secret, cfg.JWT.AccessTokenTTLSeconds)
+	admin.Register(engine, connection.GORM, cfg.JWT.Secret, cfg.JWT.AdminAccessTokenTTLSeconds)
 
 	if cfg.Swagger.Enabled {
 		apidocs.Register(engine)
@@ -85,7 +85,7 @@ func New(connection *database.Connection, cfg config.Config) *gin.Engine {
 	protected.GET("/market/quotes", marketHandler.List)
 	portfolioService := portfolio.NewService(portfolio.NewRepository(connection.GORM), marketService)
 	portfolioHandler := portfolio.NewHandler(portfolioService)
-	admin.RegisterHoldings(engine, admin.NewHandler(connection.GORM, cfg.JWT.Secret, cfg.JWT.AccessTokenTTLSeconds), portfolioService)
+	admin.RegisterHoldings(engine, admin.NewHandler(connection.GORM, cfg.JWT.Secret, cfg.JWT.AdminAccessTokenTTLSeconds), portfolioService)
 	// 已停用旧持仓入口，分类持仓统一使用 /market/holdings。
 	// protected.GET("/portfolio/positions", portfolioHandler.Positions)
 	protected.GET("/portfolio/trades", portfolioHandler.Trades)

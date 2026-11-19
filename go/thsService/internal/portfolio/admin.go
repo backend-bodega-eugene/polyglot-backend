@@ -34,6 +34,8 @@ type AdminHoldingList struct {
 	PageSize int               `json:"pageSize"`
 }
 type AdminHoldingWrite struct {
+	PositionCount      *int          `json:"positionCount,omitempty"`     // 仅后台生成：股票数量1至50，省略默认10；受分类候选池和资产限制。
+	TradesPerPosition  *int          `json:"tradesPerPosition,omitempty"` // 仅后台生成：每只股票交易记录3至500条，省略默认30。
 	ExpectedGeneration string        `json:"expectedGeneration"`
 	TotalAssets        string        `json:"totalAssets"`
 	Items              []HoldingItem `json:"items"`
@@ -106,6 +108,16 @@ func (s *Service) AdminWrite(ctx context.Context, adminID, userID uint64, catego
 			return tx.Create(&HoldingAudit{AdminID: adminID, UserID: userID, Category: category, Action: action, BeforePayload: &old.Payload}).Error
 		}
 		if action == "generate" {
+			count, trades := 10, 30
+			if req.PositionCount != nil {
+				count = *req.PositionCount
+			}
+			if req.TradesPerPosition != nil {
+				trades = *req.TradesPerPosition
+			}
+			if count < 1 || count > 50 || trades < 3 || trades > 500 {
+				return invalid("股票数量须为1至50，每只交易记录须为3至500条")
+			}
 			assets, err := parseAssets(req.TotalAssets)
 			if err != nil {
 				return err
@@ -114,7 +126,7 @@ func (s *Service) AdminWrite(ctx context.Context, adminID, userID uint64, catego
 			if err != nil {
 				return err
 			}
-			data, err = generateCategory(userID, assets, quotes, time.Now().In(beijing))
+			data, err = generateCategoryCounts(userID, assets, quotes, time.Now().In(beijing), count, trades)
 			if err != nil {
 				return err
 			}

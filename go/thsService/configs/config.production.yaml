@@ -26,7 +26,8 @@ log:
 
 jwt:
   secret: ""
-  accessTokenTTLSeconds: 7200
+  accessTokenTTLSeconds: 28800
+  adminAccessTokenTTLSeconds: 7200
 
 market:
   cacheTTLSeconds: 600

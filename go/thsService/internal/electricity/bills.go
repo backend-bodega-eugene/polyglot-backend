@@ -348,18 +348,39 @@ func generateBills(uid uint64, now time.Time) ([]Bill, error) {
 	month := time.Date(current.Year(), current.Month(), 1, 0, 0, 0, 0, profileZone)
 	rows := make([]Bill, 0, 20)
 	for i := 1; i <= 20; i++ {
-		n, err := rand.Int(rand.Reader, big.NewInt(65001))
+		start := month.AddDate(0, -i, 0)
+		end := start.AddDate(0, 1, -1)
+		low, high := generatedUsageRange(start, end)
+		n, err := rand.Int(rand.Reader, big.NewInt(high-low+1))
 		if err != nil {
 			return nil, err
 		}
-		usage := n.Int64() + 5000 // 50.00–700.00 kWh
+		usage := n.Int64() + low // Hundredths of kWh; calculated bill is 200–450 CNY.
 		totalUsage := fmt.Sprintf("%d.%02d", usage/100, usage%100)
-		start := month.AddDate(0, -i, 0)
-		end := start.AddDate(0, 1, -1)
 		billing := generatedBilling(usage, start, end)
 		amount := billing.ElectricityFee
 		detail, _ := json.Marshal(map[string]any{"billing": billing, "unitPrice": billing.AveragePrice, "electricityFee": amount, "serviceFee": "0.00", "description": "居民用电账单"})
 		rows = append(rows, Bill{UserID: uid, Code: start.Format("200601"), StartDate: start.Format("2006-01-02"), EndDate: end.Format("2006-01-02"), Amount: amount, TotalUsage: totalUsage, Detail: string(detail), Version: rand.Text()})
 	}
 	return rows, nil
+}
+
+// Search the rounded tiered fee so both seasonal thresholds and row rounding
+// are reflected in the usage bounds. The upper bound is inclusive.
+func generatedUsageRange(start, end time.Time) (int64, int64) {
+	firstUsage := func(cents int64) int64 {
+		low, high := int64(1), int64(100000) // Up to 1000 kWh covers the target fees.
+		target := big.NewRat(cents, 100)
+		for low < high {
+			mid := low + (high-low)/2
+			fee, _ := new(big.Rat).SetString(generatedBilling(mid, start, end).ElectricityFee)
+			if fee.Cmp(target) >= 0 {
+				high = mid
+			} else {
+				low = mid + 1
+			}
+		}
+		return low
+	}
+	return firstUsage(20000), firstUsage(45001) - 1
 }

@@ -50,8 +50,9 @@ type Log struct {
 }
 
 type JWT struct {
-	Secret                string `yaml:"secret"`
-	AccessTokenTTLSeconds int    `yaml:"accessTokenTTLSeconds"`
+	Secret                     string `yaml:"secret"`
+	AccessTokenTTLSeconds      int    `yaml:"accessTokenTTLSeconds"`
+	AdminAccessTokenTTLSeconds int    `yaml:"adminAccessTokenTTLSeconds"`
 }
 
 type Market struct {
@@ -118,6 +119,12 @@ func Load(path string) (Config, error) {
 	}
 	if cfg.JWT.AccessTokenTTLSeconds <= 0 {
 		return Config{}, fmt.Errorf("jwt.accessTokenTTLSeconds must be greater than zero")
+	}
+	if cfg.JWT.AdminAccessTokenTTLSeconds == 0 {
+		cfg.JWT.AdminAccessTokenTTLSeconds = cfg.JWT.AccessTokenTTLSeconds
+	}
+	if cfg.JWT.AdminAccessTokenTTLSeconds < 0 {
+		return Config{}, fmt.Errorf("jwt.adminAccessTokenTTLSeconds must be greater than zero")
 	}
 	if cfg.Market.CacheTTLSeconds <= 0 || cfg.Market.RequestTimeoutSeconds <= 0 {
 		return Config{}, fmt.Errorf("market cache and request timeout values must be greater than zero")

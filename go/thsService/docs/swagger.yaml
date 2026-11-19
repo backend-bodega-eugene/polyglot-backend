@@ -1,26 +1,6 @@
 basePath: /
 definitions:
-  index.Data:
-    properties:
-      message:
-        example: 成功访问接口
-        type: string
-    type: object
-  index.SuccessResponse:
-    properties:
-      code:
-        example: 0
-        type: integer
-      data:
-        $ref: '#/definitions/index.Data'
-      message:
-        example: ok
-        type: string
-      requestId:
-        example: f5e76095d32f49199f5f7f897f5733a2
-        type: string
-    type: object
-  internal_admin.Administrator:
+  admin.Administrator:
     properties:
       id:
         type: integer
@@ -29,49 +9,49 @@ definitions:
       username:
         type: string
     type: object
-  internal_admin.AlipayGenerationResponse:
+  admin.AlipayGenerationResponse:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/ths-service_internal_alipay.ContributionPreview'
+        $ref: '#/definitions/alipay.ContributionPreview'
       message:
         type: string
     type: object
-  internal_admin.AlipayListResponse:
+  admin.AlipayListResponse:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/ths-service_internal_alipay.List'
+        $ref: '#/definitions/alipay.List'
       message:
         type: string
     type: object
-  internal_admin.AlipayRecordResponse:
+  admin.AlipayRecordResponse:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/ths-service_internal_alipay.Record'
+        $ref: '#/definitions/alipay.Record'
       message:
         type: string
     type: object
-  internal_admin.AlipaySchemasResponse:
+  admin.AlipaySchemasResponse:
     properties:
       code:
         type: integer
       data:
         items:
-          $ref: '#/definitions/ths-service_internal_alipay.Schema'
+          $ref: '#/definitions/alipay.Schema'
         type: array
       message:
         type: string
     type: object
-  internal_admin.DeletedMemberPage:
+  admin.DeletedMemberPage:
     properties:
       items:
         items:
-          $ref: '#/definitions/internal_admin.DeletedMemberView'
+          $ref: '#/definitions/admin.DeletedMemberView'
         type: array
       page:
         type: integer
@@ -80,16 +60,16 @@ definitions:
       total:
         type: integer
     type: object
-  internal_admin.DeletedMemberPageResponse:
+  admin.DeletedMemberPageResponse:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/internal_admin.DeletedMemberPage'
+        $ref: '#/definitions/admin.DeletedMemberPage'
       message:
         type: string
     type: object
-  internal_admin.DeletedMemberView:
+  admin.DeletedMemberView:
     properties:
       createdAt:
         type: string
@@ -110,25 +90,25 @@ definitions:
       updatedAt:
         type: string
     type: object
-  internal_admin.HoldingListResponse:
+  admin.HoldingListResponse:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/ths-service_internal_portfolio.AdminHoldingList'
+        $ref: '#/definitions/portfolio.AdminHoldingList'
       message:
         type: string
       requestId:
         type: string
     type: object
-  internal_admin.LoginData:
+  admin.LoginData:
     properties:
       admin:
-        $ref: '#/definitions/internal_admin.Administrator'
+        $ref: '#/definitions/admin.Administrator'
       expiresIn:
         type: integer
     type: object
-  internal_admin.LoginRequest:
+  admin.LoginRequest:
     properties:
       password:
         maxLength: 72
@@ -140,29 +120,29 @@ definitions:
     - password
     - username
     type: object
-  internal_admin.LoginResponse:
+  admin.LoginResponse:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/internal_admin.LoginData'
+        $ref: '#/definitions/admin.LoginData'
       message:
         type: string
       requestId:
         type: string
     type: object
-  internal_admin.MeResponse:
+  admin.MeResponse:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/internal_admin.Administrator'
+        $ref: '#/definitions/admin.Administrator'
       message:
         type: string
       requestId:
         type: string
     type: object
-  internal_admin.MemberChoice:
+  admin.MemberChoice:
     properties:
       email:
         type: string
@@ -173,7 +153,7 @@ definitions:
       realName:
         type: string
     type: object
-  internal_admin.MemberCreate:
+  admin.MemberCreate:
     properties:
       email:
         description: 登录邮箱，与手机号至少填写一项。
@@ -190,7 +170,7 @@ definitions:
         description: 会员状态：1正常，2停用。
         type: integer
     type: object
-  internal_admin.MemberFields:
+  admin.MemberFields:
     properties:
       email:
         description: 登录邮箱，与手机号至少填写一项。
@@ -205,11 +185,11 @@ definitions:
         description: 会员状态：1正常，2停用。
         type: integer
     type: object
-  internal_admin.MemberPage:
+  admin.MemberPage:
     properties:
       items:
         items:
-          $ref: '#/definitions/internal_admin.MemberView'
+          $ref: '#/definitions/admin.MemberView'
         type: array
       page:
         type: integer
@@ -218,34 +198,34 @@ definitions:
       total:
         type: integer
     type: object
-  internal_admin.MemberPageResponse:
+  admin.MemberPageResponse:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/internal_admin.MemberPage'
+        $ref: '#/definitions/admin.MemberPage'
       message:
         type: string
       requestId:
         type: string
     type: object
-  internal_admin.MemberPassword:
+  admin.MemberPassword:
     properties:
       password:
         type: string
     type: object
-  internal_admin.MemberResponse:
+  admin.MemberResponse:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/internal_admin.MemberView'
+        $ref: '#/definitions/admin.MemberView'
       message:
         type: string
       requestId:
         type: string
     type: object
-  internal_admin.MemberView:
+  admin.MemberView:
     properties:
       createdAt:
         type: string
@@ -264,49 +244,49 @@ definitions:
       updatedAt:
         type: string
     type: object
-  internal_admin.MembersResponse:
+  admin.MembersResponse:
     properties:
       code:
         type: integer
       data:
         items:
-          $ref: '#/definitions/internal_admin.MemberChoice'
+          $ref: '#/definitions/admin.MemberChoice'
         type: array
       message:
         type: string
       requestId:
         type: string
     type: object
-  internal_admin.NanwangListResponse:
+  admin.NanwangListResponse:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/ths-service_internal_nanwang.List'
+        $ref: '#/definitions/nanwang.List'
       message:
         type: string
     type: object
-  internal_admin.NanwangRecordResponse:
+  admin.NanwangRecordResponse:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/ths-service_internal_nanwang.Record'
+        $ref: '#/definitions/nanwang.Record'
       message:
         type: string
     type: object
-  internal_admin.NanwangSchemasResponse:
+  admin.NanwangSchemasResponse:
     properties:
       code:
         type: integer
       data:
         items:
-          $ref: '#/definitions/ths-service_internal_nanwang.Schema'
+          $ref: '#/definitions/nanwang.Schema'
         type: array
       message:
         type: string
     type: object
-  internal_admin.PDFAsset:
+  admin.PDFAsset:
     properties:
       createdAt:
         type: string
@@ -333,34 +313,34 @@ definitions:
       width:
         type: integer
     type: object
-  internal_admin.PDFAssetList:
+  admin.PDFAssetList:
     properties:
       canReview:
         type: boolean
       slots:
         items:
-          $ref: '#/definitions/internal_admin.PDFAssetSlotView'
+          $ref: '#/definitions/admin.PDFAssetSlotView'
         type: array
     type: object
-  internal_admin.PDFAssetListResponse:
+  admin.PDFAssetListResponse:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/internal_admin.PDFAssetList'
+        $ref: '#/definitions/admin.PDFAssetList'
       message:
         type: string
     type: object
-  internal_admin.PDFAssetResponse:
+  admin.PDFAssetResponse:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/internal_admin.PDFAsset'
+        $ref: '#/definitions/admin.PDFAsset'
       message:
         type: string
     type: object
-  internal_admin.PDFAssetReview:
+  admin.PDFAssetReview:
     properties:
       decision:
         description: approve or reject
@@ -369,10 +349,10 @@ definitions:
         description: Required for rejection, at most 500 characters.
         type: string
     type: object
-  internal_admin.PDFAssetSlotView:
+  admin.PDFAssetSlotView:
     properties:
       active:
-        $ref: '#/definitions/internal_admin.PDFAsset'
+        $ref: '#/definitions/admin.PDFAsset'
       activeId:
         type: integer
       slot:
@@ -381,10 +361,10 @@ definitions:
         type: string
       versions:
         items:
-          $ref: '#/definitions/internal_admin.PDFAsset'
+          $ref: '#/definitions/admin.PDFAsset'
         type: array
     type: object
-  internal_admin.PDFBillChoice:
+  admin.PDFBillChoice:
     properties:
       amount:
         type: string
@@ -397,16 +377,16 @@ definitions:
       startDate:
         type: string
     type: object
-  internal_admin.PDFDraftResponse:
+  admin.PDFDraftResponse:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/ths-service_internal_pdfreport.Draft'
+        $ref: '#/definitions/pdfreport.Draft'
       message:
         type: string
     type: object
-  internal_admin.PDFPrepareRequest:
+  admin.PDFPrepareRequest:
     properties:
       billId:
         type: integer
@@ -419,82 +399,82 @@ definitions:
       userId:
         type: integer
     type: object
-  internal_admin.PDFSchemasResponse:
+  admin.PDFSchemasResponse:
     properties:
       code:
         type: integer
       data:
         items:
-          $ref: '#/definitions/ths-service_internal_pdfreport.Schema'
+          $ref: '#/definitions/pdfreport.Schema'
         type: array
       message:
         type: string
     type: object
-  internal_admin.PDFSourceResponse:
+  admin.PDFSourceResponse:
     properties:
       code:
         type: integer
       data:
         items:
-          $ref: '#/definitions/internal_admin.PDFBillChoice'
+          $ref: '#/definitions/admin.PDFBillChoice'
         type: array
       message:
         type: string
     type: object
-  internal_admin.TaxBusinessListResponse:
+  admin.TaxBusinessListResponse:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/ths-service_internal_taxbusiness.List'
+        $ref: '#/definitions/taxbusiness.List'
       message:
         type: string
     type: object
-  internal_admin.TaxBusinessRecordResponse:
+  admin.TaxBusinessRecordResponse:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/ths-service_internal_taxbusiness.Record'
+        $ref: '#/definitions/taxbusiness.Record'
       message:
         type: string
     type: object
-  internal_admin.TaxBusinessSchemasResponse:
+  admin.TaxBusinessSchemasResponse:
     properties:
       code:
         type: integer
       data:
         items:
-          $ref: '#/definitions/ths-service_internal_taxbusiness.Schema'
+          $ref: '#/definitions/taxbusiness.Schema'
         type: array
       message:
         type: string
     type: object
-  internal_alipay.Account:
+  alipay.Account:
     properties:
       accountNo:
         type: string
       name:
         type: string
     type: object
-  internal_alipay.Accounts:
+  alipay.Accounts:
     properties:
       left:
-        $ref: '#/definitions/internal_alipay.Account'
+        $ref: '#/definitions/alipay.Account'
       right:
-        $ref: '#/definitions/internal_alipay.Account'
+        $ref: '#/definitions/alipay.Account'
     type: object
-  internal_alipay.AccountsResponse:
+  alipay.AccountsResponse:
     properties:
       code:
         example: 1
         type: integer
       data:
-        $ref: '#/definitions/internal_alipay.Accounts'
+        $ref: '#/definitions/alipay.Accounts'
       msg:
         type: string
     type: object
-  internal_alipay.AppResponse:
+  alipay.AppResponse:
     properties:
       code:
         example: 1
@@ -504,7 +484,7 @@ definitions:
         example: success
         type: string
     type: object
-  internal_alipay.Contribution:
+  alipay.Contribution:
     properties:
       amount:
         type: string
@@ -515,7 +495,57 @@ definitions:
       type:
         type: string
     type: object
-  internal_alipay.Detail:
+  alipay.ContributionCalculation:
+    properties:
+      base:
+        type: string
+      companyPay:
+        type: string
+      companyRate:
+        type: string
+      kind:
+        type: string
+      personalPay:
+        type: string
+      personalRate:
+        type: string
+    type: object
+  alipay.ContributionPreview:
+    properties:
+      breakdown:
+        items:
+          $ref: '#/definitions/alipay.ContributionCalculation'
+        type: array
+      companyPay:
+        description: Monthly employer total.
+        type: string
+      created:
+        type: integer
+      months:
+        type: integer
+      personalPay:
+        description: Monthly employee total.
+        type: string
+      skipped:
+        type: integer
+      total:
+        description: Monthly five-insurance total, excluding housing fund.
+        type: string
+    type: object
+  alipay.ContributionRule:
+    properties:
+      base:
+        description: Approved contribution base; empty uses salary.
+        type: string
+      companyRate:
+        type: string
+      kind:
+        description: pension, medical, unemployment, injury, maternity
+        type: string
+      personalRate:
+        type: string
+    type: object
+  alipay.Detail:
     properties:
       base:
         type: string
@@ -534,17 +564,17 @@ definitions:
       year:
         type: string
     type: object
-  internal_alipay.DetailResponse:
+  alipay.DetailResponse:
     properties:
       code:
         example: 1
         type: integer
       data:
-        $ref: '#/definitions/internal_alipay.Detail'
+        $ref: '#/definitions/alipay.Detail'
       msg:
         type: string
     type: object
-  internal_alipay.ElectricData:
+  alipay.ElectricData:
     properties:
       accountName:
         type: string
@@ -559,17 +589,60 @@ definitions:
       supplier:
         type: string
     type: object
-  internal_alipay.ElectricResponse:
+  alipay.ElectricResponse:
     properties:
       code:
         example: 1
         type: integer
       data:
-        $ref: '#/definitions/internal_alipay.ElectricData'
+        $ref: '#/definitions/alipay.ElectricData'
       msg:
         type: string
     type: object
-  internal_alipay.ProfileData:
+  alipay.Field:
+    properties:
+      key:
+        type: string
+      label:
+        type: string
+      required:
+        type: boolean
+      type:
+        type: string
+    type: object
+  alipay.GenerateContributions:
+    properties:
+      company:
+        type: string
+      endMonth:
+        description: YYYY-MM, inclusive; no future months.
+        type: string
+      rules:
+        items:
+          $ref: '#/definitions/alipay.ContributionRule'
+        type: array
+      salary:
+        type: string
+      startMonth:
+        description: YYYY-MM, inclusive.
+        type: string
+      userId:
+        type: integer
+    type: object
+  alipay.List:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/alipay.Record'
+        type: array
+      page:
+        type: integer
+      pageSize:
+        type: integer
+      total:
+        type: integer
+    type: object
+  alipay.ProfileData:
     properties:
       accountName:
         type: string
@@ -580,40 +653,74 @@ definitions:
       phone:
         type: string
     type: object
-  internal_alipay.ProfileResponse:
+  alipay.ProfileResponse:
     properties:
       code:
         example: 1
         type: integer
       data:
-        $ref: '#/definitions/internal_alipay.ProfileData'
+        $ref: '#/definitions/alipay.ProfileData'
       msg:
         type: string
     type: object
-  internal_alipay.Records:
+  alipay.Record:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: integer
+      kind:
+        type: string
+      payload:
+        type: object
+      updatedAt:
+        type: string
+      userId:
+        type: integer
+      version:
+        type: string
+      year:
+        type: integer
+    type: object
+  alipay.Records:
     properties:
       cityName:
         type: string
       list:
         items:
-          $ref: '#/definitions/internal_alipay.Contribution'
+          $ref: '#/definitions/alipay.Contribution'
         type: array
       manageCode:
         type: string
       year:
         type: string
     type: object
-  internal_alipay.RecordsResponse:
+  alipay.RecordsResponse:
     properties:
       code:
         example: 1
         type: integer
       data:
-        $ref: '#/definitions/internal_alipay.Records'
+        $ref: '#/definitions/alipay.Records'
       msg:
         type: string
     type: object
-  internal_alipay.Summary:
+  alipay.Schema:
+    properties:
+      fields:
+        items:
+          $ref: '#/definitions/alipay.Field'
+        type: array
+      kind:
+        type: string
+      label:
+        type: string
+      public:
+        type: boolean
+      yearly:
+        type: boolean
+    type: object
+  alipay.Summary:
     properties:
       cityName:
         type: string
@@ -636,17 +743,17 @@ definitions:
       status:
         type: string
     type: object
-  internal_alipay.SummaryResponse:
+  alipay.SummaryResponse:
     properties:
       code:
         example: 1
         type: integer
       data:
-        $ref: '#/definitions/internal_alipay.Summary'
+        $ref: '#/definitions/alipay.Summary'
       msg:
         type: string
     type: object
-  internal_alipay.WaterData:
+  alipay.WaterData:
     properties:
       accountName:
         type: string
@@ -661,17 +768,89 @@ definitions:
       supplier:
         type: string
     type: object
-  internal_alipay.WaterResponse:
+  alipay.WaterResponse:
     properties:
       code:
         example: 1
         type: integer
       data:
-        $ref: '#/definitions/internal_alipay.WaterData'
+        $ref: '#/definitions/alipay.WaterData'
       msg:
         type: string
     type: object
-  internal_auth.AuthData:
+  alipay.Write:
+    properties:
+      expectedVersion:
+        type: string
+      payload:
+        type: object
+      userId:
+        type: integer
+      year:
+        type: integer
+    type: object
+  apkdownload.Info:
+    properties:
+      app:
+        description: 安装包标识：nanwang/alipay/tax/ths。
+        type: string
+      available:
+        description: Whether an APK and download passcode are configured.
+        type: boolean
+      name:
+        description: 安装包名称：南网/支付宝/个税/同花顺。
+        type: string
+      passcodeConfigured:
+        description: Only presence, never the passcode or hash.
+        type: boolean
+      releaseKey:
+        description: Immutable server-generated China-time timestamp key, YYYYMMDDHHmmss.
+        type: string
+      sha256:
+        description: SHA-256 of the uploaded APK bytes.
+        type: string
+      sizeBytes:
+        description: APK size in bytes.
+        type: integer
+      uploadedAt:
+        description: Upload time; null before first upload.
+        type: string
+    type: object
+  apkdownload.InfoResponse:
+    properties:
+      code:
+        description: Zero on success.
+        type: integer
+      data:
+        allOf:
+        - $ref: '#/definitions/apkdownload.Info'
+        description: Current published version metadata.
+      message:
+        description: Result description.
+        type: string
+    type: object
+  apkdownload.ListResponse:
+    properties:
+      code:
+        description: 成功为0。
+        type: integer
+      data:
+        description: 按南网、支付宝、个税、同花顺顺序返回四项安装包信息。
+        items:
+          $ref: '#/definitions/apkdownload.Info'
+        type: array
+      message:
+        description: 结果说明。
+        type: string
+    type: object
+  apkdownload.PasscodeRequest:
+    properties:
+      passcode:
+        description: Exact passcode, including Chinese; 5 to 64 Unicode characters,
+          at most 256 UTF-8 bytes; not whitespace only.
+        type: string
+    type: object
+  auth.AuthData:
     properties:
       accessToken:
         description: '公共会员访问Token，后续请求使用Authorization: Bearer <accessToken>。'
@@ -686,10 +865,10 @@ definitions:
         type: string
       user:
         allOf:
-        - $ref: '#/definitions/internal_auth.UserResponse'
+        - $ref: '#/definitions/auth.UserResponse'
         description: 会员基本资料，account为脱敏展示账号。
     type: object
-  internal_auth.LoginRequest:
+  auth.LoginRequest:
     properties:
       account:
         description: 公共会员账号：完整中国大陆手机号或邮箱。
@@ -703,13 +882,13 @@ definitions:
     - account
     - password
     type: object
-  internal_auth.LoginResponse:
+  auth.LoginResponse:
     properties:
       code:
         example: 0
         type: integer
       data:
-        $ref: '#/definitions/internal_auth.AuthData'
+        $ref: '#/definitions/auth.AuthData'
       message:
         example: ok
         type: string
@@ -717,25 +896,25 @@ definitions:
         example: f5e76095d32f49199f5f7f897f5733a2
         type: string
     type: object
-  internal_auth.LookupData:
+  auth.LookupData:
     properties:
       list:
         items:
-          $ref: '#/definitions/internal_auth.LookupUser'
+          $ref: '#/definitions/auth.LookupUser'
         type: array
     type: object
-  internal_auth.LookupResponse:
+  auth.LookupResponse:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/internal_auth.LookupData'
+        $ref: '#/definitions/auth.LookupData'
       message:
         type: string
       requestId:
         type: string
     type: object
-  internal_auth.LookupUser:
+  auth.LookupUser:
     properties:
       displayName:
         type: string
@@ -744,7 +923,7 @@ definitions:
       username:
         type: string
     type: object
-  internal_auth.RegisterRequest:
+  auth.RegisterRequest:
     properties:
       account:
         example: "13800138000"
@@ -760,13 +939,13 @@ definitions:
     - password
     - realName
     type: object
-  internal_auth.RegisterResponse:
+  auth.RegisterResponse:
     properties:
       code:
         example: 0
         type: integer
       data:
-        $ref: '#/definitions/internal_auth.AuthData'
+        $ref: '#/definitions/auth.AuthData'
       message:
         example: ok
         type: string
@@ -774,7 +953,7 @@ definitions:
         example: f5e76095d32f49199f5f7f897f5733a2
         type: string
     type: object
-  internal_auth.UserResponse:
+  auth.UserResponse:
     properties:
       account:
         example: 138****8000
@@ -786,14 +965,14 @@ definitions:
         example: 张三
         type: string
     type: object
-  internal_electricity.AppBill:
+  electricity.AppBill:
     properties:
       amount:
         type: number
       bill_month:
         type: string
       billing:
-        $ref: '#/definitions/internal_electricity.Billing'
+        $ref: '#/definitions/electricity.Billing'
       code:
         type: string
       detail:
@@ -805,34 +984,34 @@ definitions:
       total_usage:
         type: number
     type: object
-  internal_electricity.AppBillsResponse:
+  electricity.AppBillsResponse:
     properties:
       code:
         type: integer
       data:
         items:
-          $ref: '#/definitions/internal_electricity.AppBill'
+          $ref: '#/definitions/electricity.AppBill'
         type: array
       msg:
         type: string
     type: object
-  internal_electricity.AppLookupData:
+  electricity.AppLookupData:
     properties:
       list:
         items:
-          $ref: '#/definitions/internal_electricity.AppProfile'
+          $ref: '#/definitions/electricity.AppProfile'
         type: array
     type: object
-  internal_electricity.AppLookupResponse:
+  electricity.AppLookupResponse:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/internal_electricity.AppLookupData'
+        $ref: '#/definitions/electricity.AppLookupData'
       msg:
         type: string
     type: object
-  internal_electricity.AppProfile:
+  electricity.AppProfile:
     properties:
       address:
         type: string
@@ -853,16 +1032,136 @@ definitions:
       username:
         type: string
     type: object
-  internal_electricity.AppProfileResponse:
+  electricity.AppProfileResponse:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/internal_electricity.AppProfile'
+        $ref: '#/definitions/electricity.AppProfile'
       msg:
         type: string
     type: object
-  internal_electricity.Billing:
+  electricity.BillList:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/electricity.BillRow'
+        type: array
+      page:
+        type: integer
+      pageSize:
+        type: integer
+      setVersion:
+        type: string
+      total:
+        type: integer
+    type: object
+  electricity.BillListResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/electricity.BillList'
+      message:
+        type: string
+      requestId:
+        type: string
+    type: object
+  electricity.BillResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/electricity.BillView'
+      message:
+        type: string
+      requestId:
+        type: string
+    type: object
+  electricity.BillRow:
+    properties:
+      amount:
+        type: string
+      billMonth:
+        type: string
+      billing:
+        $ref: '#/definitions/electricity.Billing'
+      code:
+        type: string
+      createdAt:
+        type: string
+      detail:
+        type: object
+      endDate:
+        type: string
+      id:
+        type: integer
+      realName:
+        type: string
+      simulated:
+        type: boolean
+      startDate:
+        type: string
+      totalUsage:
+        type: string
+      updatedAt:
+        type: string
+      userId:
+        type: integer
+      username:
+        type: string
+      version:
+        type: string
+    type: object
+  electricity.BillView:
+    properties:
+      amount:
+        type: string
+      billMonth:
+        type: string
+      billing:
+        $ref: '#/definitions/electricity.Billing'
+      code:
+        type: string
+      createdAt:
+        type: string
+      detail:
+        type: object
+      endDate:
+        type: string
+      id:
+        type: integer
+      simulated:
+        type: boolean
+      startDate:
+        type: string
+      totalUsage:
+        type: string
+      updatedAt:
+        type: string
+      userId:
+        type: integer
+      version:
+        type: string
+    type: object
+  electricity.BillWrite:
+    properties:
+      amount:
+        type: string
+      code:
+        type: string
+      detail:
+        type: object
+      endDate:
+        type: string
+      expectedVersion:
+        type: string
+      startDate:
+        type: string
+      totalUsage:
+        type: string
+    type: object
+  electricity.Billing:
     properties:
       arrears_principal:
         type: string
@@ -894,12 +1193,60 @@ definitions:
         type: string
       tiers:
         items:
-          $ref: '#/definitions/internal_electricity.TariffTier'
+          $ref: '#/definitions/electricity.TariffTier'
         type: array
       usage_type:
         type: string
     type: object
-  internal_electricity.TariffTier:
+  electricity.BillsResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/electricity.BillView'
+        type: array
+      message:
+        type: string
+      requestId:
+        type: string
+    type: object
+  electricity.List:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/electricity.View'
+        type: array
+      page:
+        type: integer
+      pageSize:
+        type: integer
+      total:
+        type: integer
+    type: object
+  electricity.ListResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/electricity.List'
+      message:
+        type: string
+      requestId:
+        type: string
+    type: object
+  electricity.ProfileResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/electricity.View'
+      message:
+        type: string
+      requestId:
+        type: string
+    type: object
+  electricity.TariffTier:
     properties:
       amount:
         type: string
@@ -910,19 +1257,71 @@ definitions:
       usage:
         type: string
     type: object
-  internal_health.Data:
+  electricity.View:
+    properties:
+      address:
+        type: string
+      createdAt:
+        type: string
+      displayName:
+        type: string
+      id:
+        type: integer
+      meterNo:
+        type: string
+      meterReader:
+        type: string
+      postalCode:
+        type: string
+      realName:
+        type: string
+      simulated:
+        type: boolean
+      supplier:
+        type: string
+      updatedAt:
+        type: string
+      userId:
+        type: integer
+      userIdNumber:
+        type: string
+      username:
+        type: string
+      version:
+        type: string
+    type: object
+  electricity.WriteRequest:
+    properties:
+      address:
+        type: string
+      displayName:
+        type: string
+      expectedVersion:
+        type: string
+      meterNo:
+        type: string
+      meterReader:
+        type: string
+      postalCode:
+        type: string
+      supplier:
+        type: string
+      userIdNumber:
+        type: string
+    type: object
+  health.Data:
     properties:
       status:
         example: ok
         type: string
     type: object
-  internal_health.SuccessResponse:
+  health.SuccessResponse:
     properties:
       code:
         example: 0
         type: integer
       data:
-        $ref: '#/definitions/internal_health.Data'
+        $ref: '#/definitions/health.Data'
       message:
         example: ok
         type: string
@@ -930,7 +1329,27 @@ definitions:
         example: f5e76095d32f49199f5f7f897f5733a2
         type: string
     type: object
-  internal_market.QuoteItem:
+  index.Data:
+    properties:
+      message:
+        example: 成功访问接口
+        type: string
+    type: object
+  index.SuccessResponse:
+    properties:
+      code:
+        example: 0
+        type: integer
+      data:
+        $ref: '#/definitions/index.Data'
+      message:
+        example: ok
+        type: string
+      requestId:
+        example: f5e76095d32f49199f5f7f897f5733a2
+        type: string
+    type: object
+  market.QuoteItem:
     properties:
       changeAmount:
         example: "-13.11"
@@ -963,7 +1382,7 @@ definitions:
         example: 600519.SH
         type: string
     type: object
-  internal_market.QuoteListData:
+  market.QuoteListData:
     properties:
       category:
         example: a_stock
@@ -973,23 +1392,23 @@ definitions:
         type: string
       items:
         items:
-          $ref: '#/definitions/internal_market.QuoteItem'
+          $ref: '#/definitions/market.QuoteItem'
         type: array
     type: object
-  internal_market.QuoteListResponse:
+  market.QuoteListResponse:
     properties:
       code:
         example: 0
         type: integer
       data:
-        $ref: '#/definitions/internal_market.QuoteListData'
+        $ref: '#/definitions/market.QuoteListData'
       message:
         example: ok
         type: string
       requestId:
         type: string
     type: object
-  internal_nanwang.AppResponse:
+  nanwang.AppResponse:
     properties:
       data: {}
       message:
@@ -997,17 +1416,17 @@ definitions:
       sta:
         type: string
     type: object
-  internal_nanwang.Charging:
+  nanwang.Charging:
     properties:
       hasPile:
         type: boolean
       id:
         type: string
     type: object
-  internal_nanwang.ChargingResponse:
+  nanwang.ChargingResponse:
     properties:
       data:
-        $ref: '#/definitions/internal_nanwang.Charging'
+        $ref: '#/definitions/nanwang.Charging'
       message:
         example: success
         type: string
@@ -1015,7 +1434,7 @@ definitions:
         example: "00"
         type: string
     type: object
-  internal_nanwang.Customer:
+  nanwang.Customer:
     properties:
       address:
         type: string
@@ -1038,11 +1457,11 @@ definitions:
       userName:
         type: string
     type: object
-  internal_nanwang.CustomerResponse:
+  nanwang.CustomerResponse:
     properties:
       data:
         items:
-          $ref: '#/definitions/internal_nanwang.Customer'
+          $ref: '#/definitions/nanwang.Customer'
         type: array
       message:
         example: success
@@ -1051,15 +1470,26 @@ definitions:
         example: "00"
         type: string
     type: object
-  internal_nanwang.DetailRequest:
+  nanwang.DetailRequest:
     properties:
       id:
         description: 资讯列表中的id，必填
         type: string
     type: object
-  internal_nanwang.EmptyRequest:
+  nanwang.EmptyRequest:
     type: object
-  internal_nanwang.Hall:
+  nanwang.Field:
+    properties:
+      key:
+        type: string
+      label:
+        type: string
+      required:
+        type: boolean
+      type:
+        type: string
+    type: object
+  nanwang.Hall:
     properties:
       address:
         type: string
@@ -1070,7 +1500,7 @@ definitions:
       id:
         type: string
     type: object
-  internal_nanwang.HallRequest:
+  nanwang.HallRequest:
     properties:
       latitude:
         description: 纬度字符串，必填，-90至90
@@ -1079,11 +1509,11 @@ definitions:
         description: 经度字符串，必填，-180至180
         type: string
     type: object
-  internal_nanwang.HallResponse:
+  nanwang.HallResponse:
     properties:
       data:
         items:
-          $ref: '#/definitions/internal_nanwang.Hall'
+          $ref: '#/definitions/nanwang.Hall'
         type: array
       message:
         example: success
@@ -1092,7 +1522,7 @@ definitions:
         example: "00"
         type: string
     type: object
-  internal_nanwang.HotRequest:
+  nanwang.HotRequest:
     properties:
       areaCode:
         description: 地区码，默认050200
@@ -1101,7 +1531,7 @@ definitions:
         description: 条数，默认3，最多100
         type: string
     type: object
-  internal_nanwang.LatestRequest:
+  nanwang.LatestRequest:
     properties:
       areaCode:
         description: 地区码，默认050200
@@ -1110,7 +1540,20 @@ definitions:
         description: 条数，默认10，最多100
         type: string
     type: object
-  internal_nanwang.ListRequest:
+  nanwang.List:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/nanwang.Record'
+        type: array
+      page:
+        type: integer
+      pageSize:
+        type: integer
+      total:
+        type: integer
+    type: object
+  nanwang.ListRequest:
     properties:
       areaCode:
         description: 地区码，默认050200
@@ -1125,18 +1568,18 @@ definitions:
         description: 每页条数，默认10，最多100
         type: string
     type: object
-  internal_nanwang.Message:
+  nanwang.Message:
     properties:
       id:
         type: string
       title:
         type: string
     type: object
-  internal_nanwang.MessagesResponse:
+  nanwang.MessagesResponse:
     properties:
       data:
         items:
-          $ref: '#/definitions/internal_nanwang.Message'
+          $ref: '#/definitions/nanwang.Message'
         type: array
       message:
         example: success
@@ -1145,7 +1588,7 @@ definitions:
         example: "00"
         type: string
     type: object
-  internal_nanwang.News:
+  nanwang.News:
     properties:
       areaCode:
         type: string
@@ -1174,10 +1617,10 @@ definitions:
       title:
         type: string
     type: object
-  internal_nanwang.NewsDetailResponse:
+  nanwang.NewsDetailResponse:
     properties:
       data:
-        $ref: '#/definitions/internal_nanwang.News'
+        $ref: '#/definitions/nanwang.News'
       message:
         example: success
         type: string
@@ -1185,11 +1628,11 @@ definitions:
         example: "00"
         type: string
     type: object
-  internal_nanwang.NewsResponse:
+  nanwang.NewsResponse:
     properties:
       data:
         items:
-          $ref: '#/definitions/internal_nanwang.News'
+          $ref: '#/definitions/nanwang.News'
         type: array
       message:
         example: success
@@ -1198,7 +1641,7 @@ definitions:
         example: "00"
         type: string
     type: object
-  internal_nanwang.Point:
+  nanwang.Point:
     properties:
       eleCustId:
         type: string
@@ -1207,17 +1650,17 @@ definitions:
       pointName:
         type: string
     type: object
-  internal_nanwang.PointRequest:
+  nanwang.PointRequest:
     properties:
       eleCustId:
         description: 可选户号，仅筛选本人计量点
         type: string
     type: object
-  internal_nanwang.PointsResponse:
+  nanwang.PointsResponse:
     properties:
       data:
         items:
-          $ref: '#/definitions/internal_nanwang.Point'
+          $ref: '#/definitions/nanwang.Point'
         type: array
       message:
         example: success
@@ -1226,7 +1669,108 @@ definitions:
         example: "00"
         type: string
     type: object
-  internal_portfolio.Account:
+  nanwang.Record:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: integer
+      kind:
+        type: string
+      payload:
+        type: object
+      updatedAt:
+        type: string
+      userId:
+        type: integer
+      version:
+        type: string
+    type: object
+  nanwang.Schema:
+    properties:
+      fields:
+        items:
+          $ref: '#/definitions/nanwang.Field'
+        type: array
+      kind:
+        type: string
+      label:
+        type: string
+      public:
+        type: boolean
+      singleton:
+        type: boolean
+    type: object
+  nanwang.Write:
+    properties:
+      expectedVersion:
+        type: string
+      payload:
+        type: object
+      userId:
+        type: integer
+    type: object
+  pdfreport.Draft:
+    properties:
+      fields:
+        additionalProperties:
+          type: string
+        type: object
+      kind:
+        type: string
+      tables:
+        additionalProperties:
+          items:
+            additionalProperties:
+              type: string
+            type: object
+          type: array
+        type: object
+      userId:
+        type: integer
+      warnings:
+        items:
+          type: string
+        type: array
+    type: object
+  pdfreport.Field:
+    properties:
+      key:
+        type: string
+      label:
+        type: string
+      required:
+        type: boolean
+      type:
+        type: string
+    type: object
+  pdfreport.Schema:
+    properties:
+      fields:
+        items:
+          $ref: '#/definitions/pdfreport.Field'
+        type: array
+      kind:
+        type: string
+      label:
+        type: string
+      tables:
+        items:
+          $ref: '#/definitions/pdfreport.Table'
+        type: array
+    type: object
+  pdfreport.Table:
+    properties:
+      columns:
+        items:
+          $ref: '#/definitions/pdfreport.Field'
+        type: array
+      key:
+        type: string
+      label:
+        type: string
+    type: object
+  portfolio.Account:
     properties:
       availableCash:
         type: string
@@ -1251,35 +1795,82 @@ definitions:
       withdrawableCash:
         type: string
     type: object
-  internal_portfolio.Data:
+  portfolio.AdminHoldingList:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/portfolio.AdminHoldingRow'
+        type: array
+      page:
+        type: integer
+      pageSize:
+        type: integer
+      total:
+        type: integer
+    type: object
+  portfolio.AdminHoldingRow:
+    properties:
+      category:
+        type: string
+      generation:
+        type: string
+      positionCount:
+        type: integer
+      realName:
+        type: string
+      totalAssets:
+        type: string
+      updatedAt:
+        type: string
+      userId:
+        type: integer
+    type: object
+  portfolio.AdminHoldingWrite:
+    properties:
+      expectedGeneration:
+        type: string
+      items:
+        items:
+          $ref: '#/definitions/portfolio.HoldingItem'
+        type: array
+      positionCount:
+        description: 仅后台生成：股票数量1至50，省略默认10；受分类候选池和资产限制。
+        type: integer
+      totalAssets:
+        type: string
+      tradesPerPosition:
+        description: 仅后台生成：每只股票交易记录3至500条，省略默认30。
+        type: integer
+    type: object
+  portfolio.Data:
     properties:
       account:
-        $ref: '#/definitions/internal_portfolio.Account'
+        $ref: '#/definitions/portfolio.Account'
       positions:
         items:
-          $ref: '#/definitions/internal_portfolio.Position'
+          $ref: '#/definitions/portfolio.Position'
         type: array
       simulated:
         example: true
         type: boolean
     type: object
-  internal_portfolio.HoldingItem:
+  portfolio.HoldingItem:
     properties:
       notice:
         type: string
       position:
-        $ref: '#/definitions/internal_portfolio.Position'
+        $ref: '#/definitions/portfolio.Position'
       positionRatio:
         type: string
       trades:
         items:
-          $ref: '#/definitions/internal_portfolio.Trade'
+          $ref: '#/definitions/portfolio.Trade'
         type: array
     type: object
-  internal_portfolio.HoldingsData:
+  portfolio.HoldingsData:
     properties:
       account:
-        $ref: '#/definitions/internal_portfolio.Account'
+        $ref: '#/definitions/portfolio.Account'
       category:
         type: string
       categoryName:
@@ -1289,23 +1880,23 @@ definitions:
         type: string
       items:
         items:
-          $ref: '#/definitions/internal_portfolio.HoldingItem'
+          $ref: '#/definitions/portfolio.HoldingItem'
         type: array
       simulated:
         type: boolean
     type: object
-  internal_portfolio.HoldingsResponse:
+  portfolio.HoldingsResponse:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/internal_portfolio.HoldingsData'
+        $ref: '#/definitions/portfolio.HoldingsData'
       message:
         type: string
       requestId:
         type: string
     type: object
-  internal_portfolio.Position:
+  portfolio.Position:
     properties:
       availableQuantity:
         type: integer
@@ -1346,18 +1937,18 @@ definitions:
       transactionFees:
         type: string
     type: object
-  internal_portfolio.PositionResponse:
+  portfolio.PositionResponse:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/internal_portfolio.Data'
+        $ref: '#/definitions/portfolio.Data'
       message:
         type: string
       requestId:
         type: string
     type: object
-  internal_portfolio.Trade:
+  portfolio.Trade:
     properties:
       amount:
         type: string
@@ -1380,13 +1971,13 @@ definitions:
       tradedAt:
         type: string
     type: object
-  internal_portfolio.TradeList:
+  portfolio.TradeList:
     properties:
       generation:
         type: string
       items:
         items:
-          $ref: '#/definitions/internal_portfolio.Trade'
+          $ref: '#/definitions/portfolio.Trade'
         type: array
       page:
         type: integer
@@ -1397,18 +1988,42 @@ definitions:
       total:
         type: integer
     type: object
-  internal_portfolio.TradeResponse:
+  portfolio.TradeResponse:
     properties:
       code:
         type: integer
       data:
-        $ref: '#/definitions/internal_portfolio.TradeList'
+        $ref: '#/definitions/portfolio.TradeList'
       message:
         type: string
       requestId:
         type: string
     type: object
-  internal_tax.AppEmployment:
+  response.Envelope:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+      requestId:
+        type: string
+    type: object
+  response.ErrorEnvelope:
+    properties:
+      code:
+        example: 40001
+        type: integer
+      data:
+        type: object
+      message:
+        example: 请求参数错误
+        type: string
+      requestId:
+        example: f5e76095d32f49199f5f7f897f5733a2
+        type: string
+    type: object
+  tax.AppEmployment:
     properties:
       company_name:
         type: string
@@ -1423,19 +2038,19 @@ definitions:
       tax_id:
         type: string
     type: object
-  internal_tax.AppEmploymentResponse:
+  tax.AppEmploymentResponse:
     properties:
       code:
         example: 1
         type: integer
       data:
         items:
-          $ref: '#/definitions/internal_tax.AppEmployment'
+          $ref: '#/definitions/tax.AppEmployment'
         type: array
       msg:
         type: string
     type: object
-  internal_tax.AppProfile:
+  tax.AppProfile:
     properties:
       bank_num:
         type: string
@@ -1478,39 +2093,335 @@ definitions:
       usually_city:
         type: string
     type: object
-  internal_tax.AppProfileResponse:
+  tax.AppProfileResponse:
     properties:
       code:
         example: 1
         type: integer
       data:
-        $ref: '#/definitions/internal_tax.AppProfile'
+        $ref: '#/definitions/tax.AppProfile'
       msg:
         type: string
     type: object
-  internal_taxbusiness.AnnualContract:
+  tax.EmploymentList:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/tax.EmploymentRow'
+        type: array
+      page:
+        type: integer
+      pageSize:
+        type: integer
+      total:
+        type: integer
+    type: object
+  tax.EmploymentListResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/tax.EmploymentList'
+      message:
+        type: string
+      requestId:
+        type: string
+    type: object
+  tax.EmploymentResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/tax.EmploymentView'
+      message:
+        type: string
+      requestId:
+        type: string
+    type: object
+  tax.EmploymentRow:
+    properties:
+      companyName:
+        type: string
+      companyNum:
+        type: string
+      createdAt:
+        type: string
+      endDate:
+        type: string
+      post:
+        type: string
+      realName:
+        type: string
+      simulated:
+        type: boolean
+      startDate:
+        type: string
+      taxId:
+        type: string
+      updatedAt:
+        type: string
+      userId:
+        type: integer
+      username:
+        type: string
+      version:
+        type: string
+    type: object
+  tax.EmploymentView:
+    properties:
+      companyName:
+        type: string
+      companyNum:
+        type: string
+      createdAt:
+        type: string
+      endDate:
+        type: string
+      post:
+        type: string
+      simulated:
+        type: boolean
+      startDate:
+        type: string
+      taxId:
+        type: string
+      updatedAt:
+        type: string
+      userId:
+        type: integer
+      version:
+        type: string
+    type: object
+  tax.EmploymentWrite:
+    properties:
+      companyName:
+        type: string
+      companyNum:
+        type: string
+      endDate:
+        type: string
+      expectedVersion:
+        type: string
+      post:
+        type: string
+      startDate:
+        type: string
+      taxId:
+        type: string
+    type: object
+  tax.List:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/tax.Row'
+        type: array
+      page:
+        type: integer
+      pageSize:
+        type: integer
+      total:
+        type: integer
+    type: object
+  tax.ListResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/tax.List'
+      message:
+        type: string
+      requestId:
+        type: string
+    type: object
+  tax.ProfileResponse:
+    properties:
+      code:
+        type: integer
+      data:
+        $ref: '#/definitions/tax.View'
+      message:
+        type: string
+      requestId:
+        type: string
+    type: object
+  tax.Row:
+    properties:
+      bankNum:
+        type: string
+      bankType:
+        type: string
+      birth:
+        type: string
+      cardType:
+        type: string
+      contactAddress:
+        type: string
+      contactCity:
+        type: string
+      country:
+        type: string
+      createdAt:
+        type: string
+      education:
+        type: string
+      email:
+        type: string
+      hujiAddress:
+        type: string
+      hujiCity:
+        type: string
+      idCard:
+        type: string
+      name:
+        type: string
+      nation:
+        type: string
+      phone:
+        type: string
+      realName:
+        type: string
+      sex:
+        type: string
+      simulated:
+        type: boolean
+      taxBackMoney:
+        type: string
+      taxNumber:
+        type: string
+      updatedAt:
+        type: string
+      userId:
+        type: integer
+      username:
+        type: string
+      usuallyAddress:
+        type: string
+      usuallyCity:
+        type: string
+      version:
+        type: string
+    type: object
+  tax.View:
+    properties:
+      bankNum:
+        type: string
+      bankType:
+        type: string
+      birth:
+        type: string
+      cardType:
+        type: string
+      contactAddress:
+        type: string
+      contactCity:
+        type: string
+      country:
+        type: string
+      createdAt:
+        type: string
+      education:
+        type: string
+      email:
+        type: string
+      hujiAddress:
+        type: string
+      hujiCity:
+        type: string
+      idCard:
+        type: string
+      name:
+        type: string
+      nation:
+        type: string
+      phone:
+        type: string
+      sex:
+        type: string
+      simulated:
+        type: boolean
+      taxBackMoney:
+        type: string
+      taxNumber:
+        type: string
+      updatedAt:
+        type: string
+      userId:
+        type: integer
+      usuallyAddress:
+        type: string
+      usuallyCity:
+        type: string
+      version:
+        type: string
+    type: object
+  tax.WriteRequest:
+    properties:
+      bankNum:
+        type: string
+      bankType:
+        type: string
+      birth:
+        type: string
+      cardType:
+        type: string
+      contactAddress:
+        type: string
+      contactCity:
+        type: string
+      country:
+        type: string
+      education:
+        type: string
+      email:
+        type: string
+      expectedVersion:
+        type: string
+      hujiAddress:
+        type: string
+      hujiCity:
+        type: string
+      idCard:
+        type: string
+      name:
+        type: string
+      nation:
+        type: string
+      phone:
+        type: string
+      sex:
+        type: string
+      taxBackMoney:
+        type: string
+      taxNumber:
+        type: string
+      usuallyAddress:
+        type: string
+      usuallyCity:
+        type: string
+    type: object
+  taxbusiness.AnnualContract:
     properties:
       code:
         example: 1
         type: integer
       data:
-        $ref: '#/definitions/internal_taxbusiness.AnnualData'
+        $ref: '#/definitions/taxbusiness.AnnualData'
       msg:
         example: success
         type: string
     type: object
-  internal_taxbusiness.AnnualData:
+  taxbusiness.AnnualData:
     properties:
       list:
         items:
-          $ref: '#/definitions/internal_taxbusiness.MonthlyDetail'
+          $ref: '#/definitions/taxbusiness.MonthlyDetail'
         type: array
       totalIncome:
         type: string
       totalTax:
         type: string
     type: object
-  internal_taxbusiness.ApplicationData:
+  taxbusiness.ApplicationData:
     properties:
       refund_amount:
         type: number
@@ -1523,24 +2434,24 @@ definitions:
       year:
         type: integer
     type: object
-  internal_taxbusiness.ApplicationResponse:
+  taxbusiness.ApplicationResponse:
     properties:
       code:
         example: 1
         type: integer
       data:
-        $ref: '#/definitions/internal_taxbusiness.ApplicationData'
+        $ref: '#/definitions/taxbusiness.ApplicationData'
       msg:
         example: success
         type: string
     type: object
-  internal_taxbusiness.ApplyRequest:
+  taxbusiness.ApplyRequest:
     properties:
       date:
         example: "2024"
         type: string
     type: object
-  internal_taxbusiness.CalculateRequest:
+  taxbusiness.CalculateRequest:
     properties:
       date:
         example: 2024-08
@@ -1549,7 +2460,7 @@ definitions:
         example: 正常工资薪金
         type: string
     type: object
-  internal_taxbusiness.CalculationData:
+  taxbusiness.CalculationData:
     properties:
       bqsbse:
         type: string
@@ -1557,7 +2468,7 @@ definitions:
         type: string
       detail_list:
         items:
-          $ref: '#/definitions/internal_taxbusiness.CalculationDetail'
+          $ref: '#/definitions/taxbusiness.CalculationDetail'
         type: array
       expect_date:
         type: string
@@ -1596,7 +2507,7 @@ definitions:
       totalZhunJuan:
         type: string
     type: object
-  internal_taxbusiness.CalculationDetail:
+  taxbusiness.CalculationDetail:
     properties:
       company_name:
         type: string
@@ -1611,20 +2522,44 @@ definitions:
       tax:
         type: string
     type: object
-  internal_taxbusiness.CalculationResponse:
+  taxbusiness.CalculationResponse:
     properties:
       code:
         example: 1
         type: integer
       data:
-        $ref: '#/definitions/internal_taxbusiness.CalculationData'
+        $ref: '#/definitions/taxbusiness.CalculationData'
       msg:
         example: success
         type: string
     type: object
-  internal_taxbusiness.EmptyRequest:
+  taxbusiness.EmptyRequest:
     type: object
-  internal_taxbusiness.MessageData:
+  taxbusiness.Field:
+    properties:
+      key:
+        type: string
+      label:
+        type: string
+      required:
+        type: boolean
+      type:
+        type: string
+    type: object
+  taxbusiness.List:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/taxbusiness.Record'
+        type: array
+      page:
+        type: integer
+      pageSize:
+        type: integer
+      total:
+        type: integer
+    type: object
+  taxbusiness.MessageData:
     properties:
       content:
         type: string
@@ -1635,7 +2570,7 @@ definitions:
       title:
         type: string
     type: object
-  internal_taxbusiness.MessageRequest:
+  taxbusiness.MessageRequest:
     properties:
       limit:
         example: 10
@@ -1644,7 +2579,7 @@ definitions:
         example: 1
         type: integer
     type: object
-  internal_taxbusiness.MessagesContract:
+  taxbusiness.MessagesContract:
     properties:
       code:
         example: 1
@@ -1653,13 +2588,13 @@ definitions:
         type: integer
       data:
         items:
-          $ref: '#/definitions/internal_taxbusiness.MessageData'
+          $ref: '#/definitions/taxbusiness.MessageData'
         type: array
       msg:
         example: success
         type: string
     type: object
-  internal_taxbusiness.MonthlyDetail:
+  taxbusiness.MonthlyDetail:
     properties:
       additional_deduction:
         type: string
@@ -1732,7 +2667,7 @@ definitions:
       zhaiyao:
         type: string
     type: object
-  internal_taxbusiness.OpenRecordData:
+  taxbusiness.OpenRecordData:
     properties:
       create_time:
         type: string
@@ -1745,1178 +2680,90 @@ definitions:
       start_date:
         type: string
     type: object
-  internal_taxbusiness.OpenRecordsResponse:
+  taxbusiness.OpenRecordsResponse:
     properties:
       code:
         example: 1
         type: integer
       data:
         items:
-          $ref: '#/definitions/internal_taxbusiness.OpenRecordData'
+          $ref: '#/definitions/taxbusiness.OpenRecordData'
         type: array
       msg:
         example: success
         type: string
     type: object
-  internal_taxbusiness.ScanData:
+  taxbusiness.Record:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: integer
+      kind:
+        type: string
+      payload:
+        type: object
+      updatedAt:
+        type: string
+      userId:
+        type: integer
+      version:
+        type: string
+      year:
+        type: integer
+    type: object
+  taxbusiness.ScanData:
     properties:
       images_data:
         type: string
     type: object
-  internal_taxbusiness.ScanRequest:
+  taxbusiness.ScanRequest:
     properties:
       yzm:
         type: string
     type: object
-  internal_taxbusiness.ScanResponse:
+  taxbusiness.ScanResponse:
     properties:
       code:
         example: 1
         type: integer
       data:
-        $ref: '#/definitions/internal_taxbusiness.ScanData'
+        $ref: '#/definitions/taxbusiness.ScanData'
       msg:
         example: success
         type: string
     type: object
-  internal_taxbusiness.YearRequest:
+  taxbusiness.Schema:
+    properties:
+      fields:
+        items:
+          $ref: '#/definitions/taxbusiness.Field'
+        type: array
+      kind:
+        type: string
+      label:
+        type: string
+      public:
+        type: boolean
+      yearly:
+        type: boolean
+    type: object
+  taxbusiness.Write:
+    properties:
+      expectedVersion:
+        type: string
+      payload:
+        type: object
+      userId:
+        type: integer
+      year:
+        type: integer
+    type: object
+  taxbusiness.YearRequest:
     properties:
       year:
         example: "2024"
         type: string
-    type: object
-  ths-service_internal_alipay.ContributionCalculation:
-    properties:
-      base:
-        type: string
-      companyPay:
-        type: string
-      companyRate:
-        type: string
-      kind:
-        type: string
-      personalPay:
-        type: string
-      personalRate:
-        type: string
-    type: object
-  ths-service_internal_alipay.ContributionPreview:
-    properties:
-      breakdown:
-        items:
-          $ref: '#/definitions/ths-service_internal_alipay.ContributionCalculation'
-        type: array
-      companyPay:
-        description: Monthly employer total.
-        type: string
-      created:
-        type: integer
-      months:
-        type: integer
-      personalPay:
-        description: Monthly employee total.
-        type: string
-      skipped:
-        type: integer
-      total:
-        description: Monthly five-insurance total, excluding housing fund.
-        type: string
-    type: object
-  ths-service_internal_alipay.ContributionRule:
-    properties:
-      base:
-        description: Approved contribution base; empty uses salary.
-        type: string
-      companyRate:
-        type: string
-      kind:
-        description: pension, medical, unemployment, injury, maternity
-        type: string
-      personalRate:
-        type: string
-    type: object
-  ths-service_internal_alipay.Field:
-    properties:
-      key:
-        type: string
-      label:
-        type: string
-      required:
-        type: boolean
-      type:
-        type: string
-    type: object
-  ths-service_internal_alipay.GenerateContributions:
-    properties:
-      company:
-        type: string
-      endMonth:
-        description: YYYY-MM, inclusive; no future months.
-        type: string
-      rules:
-        items:
-          $ref: '#/definitions/ths-service_internal_alipay.ContributionRule'
-        type: array
-      salary:
-        type: string
-      startMonth:
-        description: YYYY-MM, inclusive.
-        type: string
-      userId:
-        type: integer
-    type: object
-  ths-service_internal_alipay.List:
-    properties:
-      items:
-        items:
-          $ref: '#/definitions/ths-service_internal_alipay.Record'
-        type: array
-      page:
-        type: integer
-      pageSize:
-        type: integer
-      total:
-        type: integer
-    type: object
-  ths-service_internal_alipay.Record:
-    properties:
-      createdAt:
-        type: string
-      id:
-        type: integer
-      kind:
-        type: string
-      payload:
-        type: object
-      updatedAt:
-        type: string
-      userId:
-        type: integer
-      version:
-        type: string
-      year:
-        type: integer
-    type: object
-  ths-service_internal_alipay.Schema:
-    properties:
-      fields:
-        items:
-          $ref: '#/definitions/ths-service_internal_alipay.Field'
-        type: array
-      kind:
-        type: string
-      label:
-        type: string
-      public:
-        type: boolean
-      yearly:
-        type: boolean
-    type: object
-  ths-service_internal_alipay.Write:
-    properties:
-      expectedVersion:
-        type: string
-      payload:
-        type: object
-      userId:
-        type: integer
-      year:
-        type: integer
-    type: object
-  ths-service_internal_apkdownload.Info:
-    properties:
-      available:
-        description: Whether an APK and download passcode are configured.
-        type: boolean
-      passcodeConfigured:
-        description: Only presence, never the passcode or hash.
-        type: boolean
-      releaseKey:
-        description: Immutable server-generated China-time timestamp key, YYYYMMDDHHmmss.
-        type: string
-      sha256:
-        description: SHA-256 of the uploaded APK bytes.
-        type: string
-      sizeBytes:
-        description: APK size in bytes.
-        type: integer
-      uploadedAt:
-        description: Upload time; null before first upload.
-        type: string
-    type: object
-  ths-service_internal_apkdownload.InfoResponse:
-    properties:
-      code:
-        description: Zero on success.
-        type: integer
-      data:
-        allOf:
-        - $ref: '#/definitions/ths-service_internal_apkdownload.Info'
-        description: Current published version metadata.
-      message:
-        description: Result description.
-        type: string
-    type: object
-  ths-service_internal_apkdownload.PasscodeRequest:
-    properties:
-      passcode:
-        description: Exact passcode, including Chinese; 5 to 64 Unicode characters,
-          at most 256 UTF-8 bytes; not whitespace only.
-        type: string
-    type: object
-  ths-service_internal_electricity.BillList:
-    properties:
-      items:
-        items:
-          $ref: '#/definitions/ths-service_internal_electricity.BillRow'
-        type: array
-      page:
-        type: integer
-      pageSize:
-        type: integer
-      setVersion:
-        type: string
-      total:
-        type: integer
-    type: object
-  ths-service_internal_electricity.BillListResponse:
-    properties:
-      code:
-        type: integer
-      data:
-        $ref: '#/definitions/ths-service_internal_electricity.BillList'
-      message:
-        type: string
-      requestId:
-        type: string
-    type: object
-  ths-service_internal_electricity.BillResponse:
-    properties:
-      code:
-        type: integer
-      data:
-        $ref: '#/definitions/ths-service_internal_electricity.BillView'
-      message:
-        type: string
-      requestId:
-        type: string
-    type: object
-  ths-service_internal_electricity.BillRow:
-    properties:
-      amount:
-        type: string
-      billMonth:
-        type: string
-      billing:
-        $ref: '#/definitions/ths-service_internal_electricity.Billing'
-      code:
-        type: string
-      createdAt:
-        type: string
-      detail:
-        type: object
-      endDate:
-        type: string
-      id:
-        type: integer
-      realName:
-        type: string
-      simulated:
-        type: boolean
-      startDate:
-        type: string
-      totalUsage:
-        type: string
-      updatedAt:
-        type: string
-      userId:
-        type: integer
-      username:
-        type: string
-      version:
-        type: string
-    type: object
-  ths-service_internal_electricity.BillView:
-    properties:
-      amount:
-        type: string
-      billMonth:
-        type: string
-      billing:
-        $ref: '#/definitions/ths-service_internal_electricity.Billing'
-      code:
-        type: string
-      createdAt:
-        type: string
-      detail:
-        type: object
-      endDate:
-        type: string
-      id:
-        type: integer
-      simulated:
-        type: boolean
-      startDate:
-        type: string
-      totalUsage:
-        type: string
-      updatedAt:
-        type: string
-      userId:
-        type: integer
-      version:
-        type: string
-    type: object
-  ths-service_internal_electricity.BillWrite:
-    properties:
-      amount:
-        type: string
-      code:
-        type: string
-      detail:
-        type: object
-      endDate:
-        type: string
-      expectedVersion:
-        type: string
-      startDate:
-        type: string
-      totalUsage:
-        type: string
-    type: object
-  ths-service_internal_electricity.Billing:
-    properties:
-      arrears_principal:
-        type: string
-      average_price:
-        type: string
-      due_date:
-        type: string
-      electricity_fee:
-        type: string
-      late_fee:
-        type: string
-      late_fee_as_of_date:
-        type: string
-      late_fee_daily_rate:
-        type: string
-      late_fee_start_date:
-        type: string
-      payable_amount:
-        type: string
-      payment_status:
-        description: paid, unpaid or overdue
-        type: string
-      pricing_mode:
-        description: tiered or flat
-        type: string
-      region:
-        type: string
-      tariff_name:
-        type: string
-      tiers:
-        items:
-          $ref: '#/definitions/ths-service_internal_electricity.TariffTier'
-        type: array
-      usage_type:
-        type: string
-    type: object
-  ths-service_internal_electricity.BillsResponse:
-    properties:
-      code:
-        type: integer
-      data:
-        items:
-          $ref: '#/definitions/ths-service_internal_electricity.BillView'
-        type: array
-      message:
-        type: string
-      requestId:
-        type: string
-    type: object
-  ths-service_internal_electricity.List:
-    properties:
-      items:
-        items:
-          $ref: '#/definitions/ths-service_internal_electricity.View'
-        type: array
-      page:
-        type: integer
-      pageSize:
-        type: integer
-      total:
-        type: integer
-    type: object
-  ths-service_internal_electricity.ListResponse:
-    properties:
-      code:
-        type: integer
-      data:
-        $ref: '#/definitions/ths-service_internal_electricity.List'
-      message:
-        type: string
-      requestId:
-        type: string
-    type: object
-  ths-service_internal_electricity.ProfileResponse:
-    properties:
-      code:
-        type: integer
-      data:
-        $ref: '#/definitions/ths-service_internal_electricity.View'
-      message:
-        type: string
-      requestId:
-        type: string
-    type: object
-  ths-service_internal_electricity.TariffTier:
-    properties:
-      amount:
-        type: string
-      level:
-        type: integer
-      unit_price:
-        type: string
-      usage:
-        type: string
-    type: object
-  ths-service_internal_electricity.View:
-    properties:
-      address:
-        type: string
-      createdAt:
-        type: string
-      displayName:
-        type: string
-      id:
-        type: integer
-      meterNo:
-        type: string
-      meterReader:
-        type: string
-      postalCode:
-        type: string
-      realName:
-        type: string
-      simulated:
-        type: boolean
-      supplier:
-        type: string
-      updatedAt:
-        type: string
-      userId:
-        type: integer
-      userIdNumber:
-        type: string
-      username:
-        type: string
-      version:
-        type: string
-    type: object
-  ths-service_internal_electricity.WriteRequest:
-    properties:
-      address:
-        type: string
-      displayName:
-        type: string
-      expectedVersion:
-        type: string
-      meterNo:
-        type: string
-      meterReader:
-        type: string
-      postalCode:
-        type: string
-      supplier:
-        type: string
-      userIdNumber:
-        type: string
-    type: object
-  ths-service_internal_nanwang.Field:
-    properties:
-      key:
-        type: string
-      label:
-        type: string
-      required:
-        type: boolean
-      type:
-        type: string
-    type: object
-  ths-service_internal_nanwang.List:
-    properties:
-      items:
-        items:
-          $ref: '#/definitions/ths-service_internal_nanwang.Record'
-        type: array
-      page:
-        type: integer
-      pageSize:
-        type: integer
-      total:
-        type: integer
-    type: object
-  ths-service_internal_nanwang.Record:
-    properties:
-      createdAt:
-        type: string
-      id:
-        type: integer
-      kind:
-        type: string
-      payload:
-        type: object
-      updatedAt:
-        type: string
-      userId:
-        type: integer
-      version:
-        type: string
-    type: object
-  ths-service_internal_nanwang.Schema:
-    properties:
-      fields:
-        items:
-          $ref: '#/definitions/ths-service_internal_nanwang.Field'
-        type: array
-      kind:
-        type: string
-      label:
-        type: string
-      public:
-        type: boolean
-      singleton:
-        type: boolean
-    type: object
-  ths-service_internal_nanwang.Write:
-    properties:
-      expectedVersion:
-        type: string
-      payload:
-        type: object
-      userId:
-        type: integer
-    type: object
-  ths-service_internal_pdfreport.Draft:
-    properties:
-      fields:
-        additionalProperties:
-          type: string
-        type: object
-      kind:
-        type: string
-      tables:
-        additionalProperties:
-          items:
-            additionalProperties:
-              type: string
-            type: object
-          type: array
-        type: object
-      userId:
-        type: integer
-      warnings:
-        items:
-          type: string
-        type: array
-    type: object
-  ths-service_internal_pdfreport.Field:
-    properties:
-      key:
-        type: string
-      label:
-        type: string
-      required:
-        type: boolean
-      type:
-        type: string
-    type: object
-  ths-service_internal_pdfreport.Schema:
-    properties:
-      fields:
-        items:
-          $ref: '#/definitions/ths-service_internal_pdfreport.Field'
-        type: array
-      kind:
-        type: string
-      label:
-        type: string
-      tables:
-        items:
-          $ref: '#/definitions/ths-service_internal_pdfreport.Table'
-        type: array
-    type: object
-  ths-service_internal_pdfreport.Table:
-    properties:
-      columns:
-        items:
-          $ref: '#/definitions/ths-service_internal_pdfreport.Field'
-        type: array
-      key:
-        type: string
-      label:
-        type: string
-    type: object
-  ths-service_internal_portfolio.Account:
-    properties:
-      availableCash:
-        type: string
-      currency:
-        type: string
-      dailyProfit:
-        type: string
-      dailyProfitPercent:
-        type: string
-      floatingProfit:
-        type: string
-      generatedAt:
-        type: string
-      generation:
-        type: string
-      positionRatio:
-        type: string
-      totalAssets:
-        type: string
-      totalMarketValue:
-        type: string
-      withdrawableCash:
-        type: string
-    type: object
-  ths-service_internal_portfolio.AdminHoldingList:
-    properties:
-      items:
-        items:
-          $ref: '#/definitions/ths-service_internal_portfolio.AdminHoldingRow'
-        type: array
-      page:
-        type: integer
-      pageSize:
-        type: integer
-      total:
-        type: integer
-    type: object
-  ths-service_internal_portfolio.AdminHoldingRow:
-    properties:
-      category:
-        type: string
-      generation:
-        type: string
-      positionCount:
-        type: integer
-      realName:
-        type: string
-      totalAssets:
-        type: string
-      updatedAt:
-        type: string
-      userId:
-        type: integer
-    type: object
-  ths-service_internal_portfolio.AdminHoldingWrite:
-    properties:
-      expectedGeneration:
-        type: string
-      items:
-        items:
-          $ref: '#/definitions/ths-service_internal_portfolio.HoldingItem'
-        type: array
-      totalAssets:
-        type: string
-    type: object
-  ths-service_internal_portfolio.HoldingItem:
-    properties:
-      notice:
-        type: string
-      position:
-        $ref: '#/definitions/ths-service_internal_portfolio.Position'
-      positionRatio:
-        type: string
-      trades:
-        items:
-          $ref: '#/definitions/ths-service_internal_portfolio.Trade'
-        type: array
-    type: object
-  ths-service_internal_portfolio.HoldingsData:
-    properties:
-      account:
-        $ref: '#/definitions/ths-service_internal_portfolio.Account'
-      category:
-        type: string
-      categoryName:
-        type: string
-      exchangeRateMode:
-        example: demo_fixed
-        type: string
-      items:
-        items:
-          $ref: '#/definitions/ths-service_internal_portfolio.HoldingItem'
-        type: array
-      simulated:
-        type: boolean
-    type: object
-  ths-service_internal_portfolio.HoldingsResponse:
-    properties:
-      code:
-        type: integer
-      data:
-        $ref: '#/definitions/ths-service_internal_portfolio.HoldingsData'
-      message:
-        type: string
-      requestId:
-        type: string
-    type: object
-  ths-service_internal_portfolio.Position:
-    properties:
-      availableQuantity:
-        type: integer
-      costPrice:
-        type: string
-      currency:
-        type: string
-      dailyProfit:
-        type: string
-      dailyProfitPercent:
-        type: string
-      dataStatus:
-        type: string
-      exchangeRate:
-        type: string
-      holdingDays:
-        type: integer
-      id:
-        type: integer
-      latestPrice:
-        type: string
-      marketValue:
-        type: string
-      name:
-        type: string
-      profit:
-        type: string
-      profitPercent:
-        type: string
-      quantity:
-        type: integer
-      quoteTime:
-        type: string
-      realizedProfit:
-        type: string
-      symbol:
-        type: string
-      transactionFees:
-        type: string
-    type: object
-  ths-service_internal_portfolio.Trade:
-    properties:
-      amount:
-        type: string
-      currency:
-        type: string
-      fees:
-        type: string
-      id:
-        type: integer
-      name:
-        type: string
-      price:
-        type: string
-      quantity:
-        type: integer
-      side:
-        type: string
-      symbol:
-        type: string
-      tradedAt:
-        type: string
-    type: object
-  ths-service_internal_response.Envelope:
-    properties:
-      code:
-        type: integer
-      data: {}
-      message:
-        type: string
-      requestId:
-        type: string
-    type: object
-  ths-service_internal_response.ErrorEnvelope:
-    properties:
-      code:
-        example: 40001
-        type: integer
-      data:
-        type: object
-      message:
-        example: 请求参数错误
-        type: string
-      requestId:
-        example: f5e76095d32f49199f5f7f897f5733a2
-        type: string
-    type: object
-  ths-service_internal_tax.EmploymentList:
-    properties:
-      items:
-        items:
-          $ref: '#/definitions/ths-service_internal_tax.EmploymentRow'
-        type: array
-      page:
-        type: integer
-      pageSize:
-        type: integer
-      total:
-        type: integer
-    type: object
-  ths-service_internal_tax.EmploymentListResponse:
-    properties:
-      code:
-        type: integer
-      data:
-        $ref: '#/definitions/ths-service_internal_tax.EmploymentList'
-      message:
-        type: string
-      requestId:
-        type: string
-    type: object
-  ths-service_internal_tax.EmploymentResponse:
-    properties:
-      code:
-        type: integer
-      data:
-        $ref: '#/definitions/ths-service_internal_tax.EmploymentView'
-      message:
-        type: string
-      requestId:
-        type: string
-    type: object
-  ths-service_internal_tax.EmploymentRow:
-    properties:
-      companyName:
-        type: string
-      companyNum:
-        type: string
-      createdAt:
-        type: string
-      endDate:
-        type: string
-      post:
-        type: string
-      realName:
-        type: string
-      simulated:
-        type: boolean
-      startDate:
-        type: string
-      taxId:
-        type: string
-      updatedAt:
-        type: string
-      userId:
-        type: integer
-      username:
-        type: string
-      version:
-        type: string
-    type: object
-  ths-service_internal_tax.EmploymentView:
-    properties:
-      companyName:
-        type: string
-      companyNum:
-        type: string
-      createdAt:
-        type: string
-      endDate:
-        type: string
-      post:
-        type: string
-      simulated:
-        type: boolean
-      startDate:
-        type: string
-      taxId:
-        type: string
-      updatedAt:
-        type: string
-      userId:
-        type: integer
-      version:
-        type: string
-    type: object
-  ths-service_internal_tax.EmploymentWrite:
-    properties:
-      companyName:
-        type: string
-      companyNum:
-        type: string
-      endDate:
-        type: string
-      expectedVersion:
-        type: string
-      post:
-        type: string
-      startDate:
-        type: string
-      taxId:
-        type: string
-    type: object
-  ths-service_internal_tax.List:
-    properties:
-      items:
-        items:
-          $ref: '#/definitions/ths-service_internal_tax.Row'
-        type: array
-      page:
-        type: integer
-      pageSize:
-        type: integer
-      total:
-        type: integer
-    type: object
-  ths-service_internal_tax.ListResponse:
-    properties:
-      code:
-        type: integer
-      data:
-        $ref: '#/definitions/ths-service_internal_tax.List'
-      message:
-        type: string
-      requestId:
-        type: string
-    type: object
-  ths-service_internal_tax.ProfileResponse:
-    properties:
-      code:
-        type: integer
-      data:
-        $ref: '#/definitions/ths-service_internal_tax.View'
-      message:
-        type: string
-      requestId:
-        type: string
-    type: object
-  ths-service_internal_tax.Row:
-    properties:
-      bankNum:
-        type: string
-      bankType:
-        type: string
-      birth:
-        type: string
-      cardType:
-        type: string
-      contactAddress:
-        type: string
-      contactCity:
-        type: string
-      country:
-        type: string
-      createdAt:
-        type: string
-      education:
-        type: string
-      email:
-        type: string
-      hujiAddress:
-        type: string
-      hujiCity:
-        type: string
-      idCard:
-        type: string
-      name:
-        type: string
-      nation:
-        type: string
-      phone:
-        type: string
-      realName:
-        type: string
-      sex:
-        type: string
-      simulated:
-        type: boolean
-      taxBackMoney:
-        type: string
-      taxNumber:
-        type: string
-      updatedAt:
-        type: string
-      userId:
-        type: integer
-      username:
-        type: string
-      usuallyAddress:
-        type: string
-      usuallyCity:
-        type: string
-      version:
-        type: string
-    type: object
-  ths-service_internal_tax.View:
-    properties:
-      bankNum:
-        type: string
-      bankType:
-        type: string
-      birth:
-        type: string
-      cardType:
-        type: string
-      contactAddress:
-        type: string
-      contactCity:
-        type: string
-      country:
-        type: string
-      createdAt:
-        type: string
-      education:
-        type: string
-      email:
-        type: string
-      hujiAddress:
-        type: string
-      hujiCity:
-        type: string
-      idCard:
-        type: string
-      name:
-        type: string
-      nation:
-        type: string
-      phone:
-        type: string
-      sex:
-        type: string
-      simulated:
-        type: boolean
-      taxBackMoney:
-        type: string
-      taxNumber:
-        type: string
-      updatedAt:
-        type: string
-      userId:
-        type: integer
-      usuallyAddress:
-        type: string
-      usuallyCity:
-        type: string
-      version:
-        type: string
-    type: object
-  ths-service_internal_tax.WriteRequest:
-    properties:
-      bankNum:
-        type: string
-      bankType:
-        type: string
-      birth:
-        type: string
-      cardType:
-        type: string
-      contactAddress:
-        type: string
-      contactCity:
-        type: string
-      country:
-        type: string
-      education:
-        type: string
-      email:
-        type: string
-      expectedVersion:
-        type: string
-      hujiAddress:
-        type: string
-      hujiCity:
-        type: string
-      idCard:
-        type: string
-      name:
-        type: string
-      nation:
-        type: string
-      phone:
-        type: string
-      sex:
-        type: string
-      taxBackMoney:
-        type: string
-      taxNumber:
-        type: string
-      usuallyAddress:
-        type: string
-      usuallyCity:
-        type: string
-    type: object
-  ths-service_internal_taxbusiness.Field:
-    properties:
-      key:
-        type: string
-      label:
-        type: string
-      required:
-        type: boolean
-      type:
-        type: string
-    type: object
-  ths-service_internal_taxbusiness.List:
-    properties:
-      items:
-        items:
-          $ref: '#/definitions/ths-service_internal_taxbusiness.Record'
-        type: array
-      page:
-        type: integer
-      pageSize:
-        type: integer
-      total:
-        type: integer
-    type: object
-  ths-service_internal_taxbusiness.Record:
-    properties:
-      createdAt:
-        type: string
-      id:
-        type: integer
-      kind:
-        type: string
-      payload:
-        type: object
-      updatedAt:
-        type: string
-      userId:
-        type: integer
-      version:
-        type: string
-      year:
-        type: integer
-    type: object
-  ths-service_internal_taxbusiness.Schema:
-    properties:
-      fields:
-        items:
-          $ref: '#/definitions/ths-service_internal_taxbusiness.Field'
-        type: array
-      kind:
-        type: string
-      label:
-        type: string
-      public:
-        type: boolean
-      yearly:
-        type: boolean
-    type: object
-  ths-service_internal_taxbusiness.Write:
-    properties:
-      expectedVersion:
-        type: string
-      payload:
-        type: object
-      userId:
-        type: integer
-      year:
-        type: integer
     type: object
 info:
   contact: {}
@@ -2961,7 +2808,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_admin.AlipayListResponse'
+            $ref: '#/definitions/admin.AlipayListResponse'
       summary: 分页查询支付宝模拟业务记录，不自动生成
       tags:
       - 后台 · 支付宝模拟业务
@@ -2980,14 +2827,14 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/ths-service_internal_alipay.Write'
+          $ref: '#/definitions/alipay.Write'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_admin.AlipayRecordResponse'
+            $ref: '#/definitions/admin.AlipayRecordResponse'
       summary: 新增模拟支付宝模拟业务记录
       tags:
       - 后台 · 支付宝模拟业务
@@ -3012,14 +2859,14 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/ths-service_internal_alipay.Write'
+          $ref: '#/definitions/alipay.Write'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_response.Envelope'
+            $ref: '#/definitions/response.Envelope'
       summary: 删除模拟支付宝模拟业务记录并保留审计
       tags:
       - 后台 · 支付宝模拟业务
@@ -3041,7 +2888,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_admin.AlipayRecordResponse'
+            $ref: '#/definitions/admin.AlipayRecordResponse'
       summary: 查询支付宝模拟业务记录详情
       tags:
       - 后台 · 支付宝模拟业务
@@ -3065,14 +2912,14 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/ths-service_internal_alipay.Write'
+          $ref: '#/definitions/alipay.Write'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_admin.AlipayRecordResponse'
+            $ref: '#/definitions/admin.AlipayRecordResponse'
       summary: 修改模拟支付宝模拟业务记录
       tags:
       - 后台 · 支付宝模拟业务
@@ -3087,14 +2934,14 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/ths-service_internal_alipay.GenerateContributions'
+          $ref: '#/definitions/alipay.GenerateContributions'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_admin.AlipayGenerationResponse'
+            $ref: '#/definitions/admin.AlipayGenerationResponse'
       summary: 按月份范围批量生成会员五险缴费记录
       tags:
       - 后台 · 支付宝模拟业务
@@ -3109,14 +2956,14 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/ths-service_internal_alipay.GenerateContributions'
+          $ref: '#/definitions/alipay.GenerateContributions'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_admin.AlipayGenerationResponse'
+            $ref: '#/definitions/admin.AlipayGenerationResponse'
       summary: 预览五险逐项金额及待生成、跳过月份数量
       tags:
       - 后台 · 支付宝模拟业务
@@ -3128,18 +2975,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_admin.AlipaySchemasResponse'
+            $ref: '#/definitions/admin.AlipaySchemasResponse'
       summary: 查询支付宝模拟业务类型及表单字段
       tags:
       - 后台 · 支付宝模拟业务
   /api/admin/app-package:
     get:
       description: 管理员Cookie鉴权。只返回版本、大小、SHA256和口令是否已设置，不回显口令。
+      parameters:
+      - description: 指定单个安装包；不传返回四项列表
+        in: query
+        name: app
+        type: string
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_apkdownload.InfoResponse'
+            $ref: '#/definitions/apkdownload.ListResponse'
       summary: 获取安装包管理信息
       tags:
       - 后台 · App安装包
@@ -3154,16 +3006,21 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/ths-service_internal_apkdownload.PasscodeRequest'
+          $ref: '#/definitions/apkdownload.PasscodeRequest'
+      - description: 安装包：nanwang/alipay/tax/ths
+        in: query
+        name: app
+        required: true
+        type: string
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_apkdownload.InfoResponse'
+            $ref: '#/definitions/apkdownload.InfoResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 设置或修改APK下载口令
       tags:
       - 后台 · App安装包
@@ -3178,19 +3035,24 @@ paths:
         name: file
         required: true
         type: file
+      - description: 安装包：nanwang/alipay/tax/ths
+        in: query
+        name: app
+        required: true
+        type: string
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_apkdownload.InfoResponse'
+            $ref: '#/definitions/apkdownload.InfoResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "413":
           description: Request Entity Too Large
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 上传并替换当前APK
       tags:
       - 后台 · App安装包
@@ -3205,30 +3067,30 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/internal_admin.LoginRequest'
+          $ref: '#/definitions/admin.LoginRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_admin.LoginResponse'
+            $ref: '#/definitions/admin.LoginResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "429":
           description: Too Many Requests
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 管理员登录
       tags:
       - 后台 · 管理员认证
@@ -3240,7 +3102,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_response.Envelope'
+            $ref: '#/definitions/response.Envelope'
       summary: 管理员退出登录
       tags:
       - 后台 · 管理员认证
@@ -3253,15 +3115,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_admin.MeResponse'
+            $ref: '#/definitions/admin.MeResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 获取当前管理员
       tags:
       - 后台 · 管理员认证
@@ -3289,7 +3151,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_admin.DeletedMemberPageResponse'
+            $ref: '#/definitions/admin.DeletedMemberPageResponse'
       summary: 分页查询已逻辑删除的会员
       tags:
       - 后台 · 会员管理
@@ -3308,15 +3170,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_admin.MemberResponse'
+            $ref: '#/definitions/admin.MemberResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 恢复已逻辑删除的会员并设为正常状态
       tags:
       - 后台 · 会员管理
@@ -3352,19 +3214,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_electricity.BillListResponse'
+            $ref: '#/definitions/electricity.BillListResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 分页查询模拟电费账单
       tags:
       - 后台 · 南网电费账单
@@ -3384,26 +3246,26 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/ths-service_internal_electricity.BillWrite'
+          $ref: '#/definitions/electricity.BillWrite'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_electricity.BillResponse'
+            $ref: '#/definitions/electricity.BillResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 为会员新增一条模拟电费账单
       tags:
       - 后台 · 南网电费账单
@@ -3428,26 +3290,26 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/ths-service_internal_electricity.BillWrite'
+          $ref: '#/definitions/electricity.BillWrite'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_response.Envelope'
+            $ref: '#/definitions/response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 删除一条模拟电费账单
       tags:
       - 后台 · 南网电费账单
@@ -3469,15 +3331,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_electricity.BillResponse'
+            $ref: '#/definitions/electricity.BillResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 获取会员的单条电费账单
       tags:
       - 后台 · 南网电费账单
@@ -3501,30 +3363,30 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/ths-service_internal_electricity.BillWrite'
+          $ref: '#/definitions/electricity.BillWrite'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_electricity.BillResponse'
+            $ref: '#/definitions/electricity.BillResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 修改一条模拟电费账单
       tags:
       - 后台 · 南网电费账单
@@ -3544,26 +3406,26 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/ths-service_internal_electricity.BillWrite'
+          $ref: '#/definitions/electricity.BillWrite'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_electricity.BillsResponse'
+            $ref: '#/definitions/electricity.BillsResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 为会员生成或重新生成20条模拟电费账单
       tags:
       - 后台 · 南网电费账单
@@ -3595,15 +3457,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_electricity.ListResponse'
+            $ref: '#/definitions/electricity.ListResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 分页查询会员模拟用电资料
       tags:
       - 后台 · 南网用电资料
@@ -3623,26 +3485,26 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/ths-service_internal_electricity.WriteRequest'
+          $ref: '#/definitions/electricity.WriteRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_response.Envelope'
+            $ref: '#/definitions/response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 删除会员的模拟用电资料
       tags:
       - 后台 · 南网用电资料
@@ -3660,15 +3522,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_electricity.ProfileResponse'
+            $ref: '#/definitions/electricity.ProfileResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 获取指定会员的模拟用电资料
       tags:
       - 后台 · 南网用电资料
@@ -3687,30 +3549,30 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/ths-service_internal_electricity.WriteRequest'
+          $ref: '#/definitions/electricity.WriteRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_electricity.ProfileResponse'
+            $ref: '#/definitions/electricity.ProfileResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 为会员手动创建模拟用电资料
       tags:
       - 后台 · 南网用电资料
@@ -3729,30 +3591,30 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/ths-service_internal_electricity.WriteRequest'
+          $ref: '#/definitions/electricity.WriteRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_electricity.ProfileResponse'
+            $ref: '#/definitions/electricity.ProfileResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 修改会员的模拟用电资料
       tags:
       - 后台 · 南网用电资料
@@ -3772,26 +3634,26 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/ths-service_internal_electricity.WriteRequest'
+          $ref: '#/definitions/electricity.WriteRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_electricity.ProfileResponse'
+            $ref: '#/definitions/electricity.ProfileResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 为会员生成或重新生成模拟用电资料
       tags:
       - 后台 · 南网用电资料
@@ -3809,11 +3671,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_admin.MembersResponse'
+            $ref: '#/definitions/admin.MembersResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 查询持仓所属会员
       tags:
       - 后台 · 持仓管理
@@ -3845,15 +3707,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_admin.HoldingListResponse'
+            $ref: '#/definitions/admin.HoldingListResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 分页查询会员分类持仓
       tags:
       - 后台 · 持仓管理
@@ -3878,22 +3740,22 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/ths-service_internal_portfolio.AdminHoldingWrite'
+          $ref: '#/definitions/portfolio.AdminHoldingWrite'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_response.Envelope'
+            $ref: '#/definitions/response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 删除会员当前分类的全部持仓和交易
       tags:
       - 后台 · 持仓管理
@@ -3916,15 +3778,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_portfolio.HoldingsResponse'
+            $ref: '#/definitions/portfolio.HoldingsResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 查询分类持仓及完整交易记录
       tags:
       - 后台 · 持仓管理
@@ -3948,30 +3810,30 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/ths-service_internal_portfolio.AdminHoldingWrite'
+          $ref: '#/definitions/portfolio.AdminHoldingWrite'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_portfolio.HoldingsResponse'
+            $ref: '#/definitions/portfolio.HoldingsResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 手动新建分类持仓
       tags:
       - 后台 · 持仓管理
@@ -3995,30 +3857,30 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/ths-service_internal_portfolio.AdminHoldingWrite'
+          $ref: '#/definitions/portfolio.AdminHoldingWrite'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_portfolio.HoldingsResponse'
+            $ref: '#/definitions/portfolio.HoldingsResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 修改分类持仓、股票及交易记录
       tags:
       - 后台 · 持仓管理
@@ -4026,7 +3888,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: 管理员Cookie鉴权，指定totalAssets，从扩展的分类候选池随机生成8至12只、每只40至50条。已有记录需expectedGeneration，替换及审计原子完成。
+      description: 管理员Cookie鉴权，指定totalAssets。positionCount可选，默认10，范围1至50；tradesPerPosition可选，默认30，范围3至500。按指定数量从分类候选池生成，不足时失败保留旧数据。App自动生成规则不变。已有记录需expectedGeneration，替换及审计原子完成。
       parameters:
       - description: 会员ID
         in: path
@@ -4043,26 +3905,26 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/ths-service_internal_portfolio.AdminHoldingWrite'
+          $ref: '#/definitions/portfolio.AdminHoldingWrite'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_portfolio.HoldingsResponse'
+            $ref: '#/definitions/portfolio.HoldingsResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 自动生成或重新生成分类持仓
       tags:
       - 后台 · 持仓管理
@@ -4094,15 +3956,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_admin.MemberPageResponse'
+            $ref: '#/definitions/admin.MemberPageResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 分页查询会员
       tags:
       - 后台 · 会员管理
@@ -4116,26 +3978,26 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/internal_admin.MemberCreate'
+          $ref: '#/definitions/admin.MemberCreate'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_admin.MemberResponse'
+            $ref: '#/definitions/admin.MemberResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 新增会员
       tags:
       - 后台 · 会员管理
@@ -4154,15 +4016,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_response.Envelope'
+            $ref: '#/definitions/response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 逻辑删除会员
       tags:
       - 后台 · 会员管理
@@ -4180,15 +4042,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_admin.MemberResponse'
+            $ref: '#/definitions/admin.MemberResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 查询会员详情
       tags:
       - 后台 · 会员管理
@@ -4207,30 +4069,30 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/internal_admin.MemberFields'
+          $ref: '#/definitions/admin.MemberFields'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_admin.MemberResponse'
+            $ref: '#/definitions/admin.MemberResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 修改会员资料，不修改密码
       tags:
       - 后台 · 会员管理
@@ -4250,26 +4112,26 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/internal_admin.MemberPassword'
+          $ref: '#/definitions/admin.MemberPassword'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_response.Envelope'
+            $ref: '#/definitions/response.Envelope'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 修改会员密码
       tags:
       - 后台 · 会员管理
@@ -4306,7 +4168,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_admin.NanwangListResponse'
+            $ref: '#/definitions/admin.NanwangListResponse'
       summary: 分页查询南网业务记录，不自动生成
       tags:
       - 后台 · 南网业务
@@ -4325,14 +4187,14 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/ths-service_internal_nanwang.Write'
+          $ref: '#/definitions/nanwang.Write'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_admin.NanwangRecordResponse'
+            $ref: '#/definitions/admin.NanwangRecordResponse'
       summary: 新增模拟南网业务记录
       tags:
       - 后台 · 南网业务
@@ -4357,14 +4219,14 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/ths-service_internal_nanwang.Write'
+          $ref: '#/definitions/nanwang.Write'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_response.Envelope'
+            $ref: '#/definitions/response.Envelope'
       summary: 删除模拟南网业务记录并保留审计
       tags:
       - 后台 · 南网业务
@@ -4386,7 +4248,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_admin.NanwangRecordResponse'
+            $ref: '#/definitions/admin.NanwangRecordResponse'
       summary: 查询南网业务记录详情
       tags:
       - 后台 · 南网业务
@@ -4410,14 +4272,14 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/ths-service_internal_nanwang.Write'
+          $ref: '#/definitions/nanwang.Write'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_admin.NanwangRecordResponse'
+            $ref: '#/definitions/admin.NanwangRecordResponse'
       summary: 修改模拟南网业务记录
       tags:
       - 后台 · 南网业务
@@ -4429,7 +4291,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_admin.NanwangSchemasResponse'
+            $ref: '#/definitions/admin.NanwangSchemasResponse'
       summary: 查询南网业务类型及表单字段
       tags:
       - 后台 · 南网业务
@@ -4442,7 +4304,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_admin.PDFAssetListResponse'
+            $ref: '#/definitions/admin.PDFAssetListResponse'
       summary: 查询3至7号素材位置、生效图片及最近20个版本
       tags:
       - 后台 · PDF素材
@@ -4468,7 +4330,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_admin.PDFAssetResponse'
+            $ref: '#/definitions/admin.PDFAssetResponse'
       summary: 上传固定位置的PNG或JPEG待审核素材
       tags:
       - 后台 · PDF素材
@@ -4507,22 +4369,22 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/internal_admin.PDFAssetReview'
+          $ref: '#/definitions/admin.PDFAssetReview'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_admin.PDFAssetResponse'
+            $ref: '#/definitions/admin.PDFAssetResponse'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: eugene审核待审核图片，通过后替换对应位置的生效图片
       tags:
       - 后台 · PDF素材
@@ -4541,7 +4403,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_admin.PDFSourceResponse'
+            $ref: '#/definitions/admin.PDFSourceResponse'
       summary: 查询指定会员最近100条电费账单供PDF选择
       tags:
       - 后台 · PDF生成
@@ -4556,7 +4418,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/ths-service_internal_pdfreport.Draft'
+          $ref: '#/definitions/pdfreport.Draft'
       produces:
       - application/pdf
       responses:
@@ -4567,15 +4429,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 将编辑后的本次草稿生成PDF并直接下载
       tags:
       - 后台 · PDF生成
@@ -4590,14 +4452,14 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/internal_admin.PDFPrepareRequest'
+          $ref: '#/definitions/admin.PDFPrepareRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_admin.PDFDraftResponse'
+            $ref: '#/definitions/admin.PDFDraftResponse'
       summary: 读取会员已有数据作为本次PDF编辑草稿
       tags:
       - 后台 · PDF生成
@@ -4610,7 +4472,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_admin.PDFSchemasResponse'
+            $ref: '#/definitions/admin.PDFSchemasResponse'
       summary: 查询PDF报表类型、基本字段及可编辑明细表
       tags:
       - 后台 · PDF生成
@@ -4651,7 +4513,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_admin.TaxBusinessListResponse'
+            $ref: '#/definitions/admin.TaxBusinessListResponse'
       summary: 分页查询所得税业务记录，不自动生成
       tags:
       - 后台 · 所得税业务
@@ -4670,14 +4532,14 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/ths-service_internal_taxbusiness.Write'
+          $ref: '#/definitions/taxbusiness.Write'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_admin.TaxBusinessRecordResponse'
+            $ref: '#/definitions/admin.TaxBusinessRecordResponse'
       summary: 新增模拟所得税业务记录
       tags:
       - 后台 · 所得税业务
@@ -4702,14 +4564,14 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/ths-service_internal_taxbusiness.Write'
+          $ref: '#/definitions/taxbusiness.Write'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_response.Envelope'
+            $ref: '#/definitions/response.Envelope'
       summary: 删除模拟所得税业务记录并保留审计
       tags:
       - 后台 · 所得税业务
@@ -4731,7 +4593,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_admin.TaxBusinessRecordResponse'
+            $ref: '#/definitions/admin.TaxBusinessRecordResponse'
       summary: 查询所得税业务记录详情
       tags:
       - 后台 · 所得税业务
@@ -4755,14 +4617,14 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/ths-service_internal_taxbusiness.Write'
+          $ref: '#/definitions/taxbusiness.Write'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_admin.TaxBusinessRecordResponse'
+            $ref: '#/definitions/admin.TaxBusinessRecordResponse'
       summary: 修改模拟所得税业务记录
       tags:
       - 后台 · 所得税业务
@@ -4790,7 +4652,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_response.Envelope'
+            $ref: '#/definitions/response.Envelope'
       summary: 从已保存月度记录预览计算明细，不自动生成
       tags:
       - 后台 · 所得税业务
@@ -4802,7 +4664,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_admin.TaxBusinessSchemasResponse'
+            $ref: '#/definitions/admin.TaxBusinessSchemasResponse'
       summary: 查询所得税业务类型及表单字段
       tags:
       - 后台 · 所得税业务
@@ -4834,15 +4696,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_tax.EmploymentListResponse'
+            $ref: '#/definitions/tax.EmploymentListResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 分页查询任职受雇单位
       tags:
       - 后台 · 所得税任职单位
@@ -4862,26 +4724,26 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/ths-service_internal_tax.EmploymentWrite'
+          $ref: '#/definitions/tax.EmploymentWrite'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_response.Envelope'
+            $ref: '#/definitions/response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 删除会员的任职受雇单位
       tags:
       - 后台 · 所得税任职单位
@@ -4899,15 +4761,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_tax.EmploymentResponse'
+            $ref: '#/definitions/tax.EmploymentResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 查询会员的任职受雇单位
       tags:
       - 后台 · 所得税任职单位
@@ -4926,30 +4788,30 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/ths-service_internal_tax.EmploymentWrite'
+          $ref: '#/definitions/tax.EmploymentWrite'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_tax.EmploymentResponse'
+            $ref: '#/definitions/tax.EmploymentResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 手动新建会员的任职受雇单位
       tags:
       - 后台 · 所得税任职单位
@@ -4968,30 +4830,30 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/ths-service_internal_tax.EmploymentWrite'
+          $ref: '#/definitions/tax.EmploymentWrite'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_tax.EmploymentResponse'
+            $ref: '#/definitions/tax.EmploymentResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 修改会员的任职受雇单位
       tags:
       - 后台 · 所得税任职单位
@@ -5011,26 +4873,26 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/ths-service_internal_tax.EmploymentWrite'
+          $ref: '#/definitions/tax.EmploymentWrite'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_tax.EmploymentResponse'
+            $ref: '#/definitions/tax.EmploymentResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 生成或重新生成一条模拟任职受雇单位
       tags:
       - 后台 · 所得税任职单位
@@ -5062,15 +4924,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_tax.ListResponse'
+            $ref: '#/definitions/tax.ListResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 分页查询模拟所得税资料
       tags:
       - 后台 · 所得税个人资料
@@ -5090,26 +4952,26 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/ths-service_internal_tax.WriteRequest'
+          $ref: '#/definitions/tax.WriteRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_response.Envelope'
+            $ref: '#/definitions/response.Envelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 删除模拟所得税资料
       tags:
       - 后台 · 所得税个人资料
@@ -5127,15 +4989,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_tax.ProfileResponse'
+            $ref: '#/definitions/tax.ProfileResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 查询会员的所得税资料
       tags:
       - 后台 · 所得税个人资料
@@ -5154,30 +5016,30 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/ths-service_internal_tax.WriteRequest'
+          $ref: '#/definitions/tax.WriteRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_tax.ProfileResponse'
+            $ref: '#/definitions/tax.ProfileResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 手动创建模拟所得税资料
       tags:
       - 后台 · 所得税个人资料
@@ -5196,30 +5058,30 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/ths-service_internal_tax.WriteRequest'
+          $ref: '#/definitions/tax.WriteRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_tax.ProfileResponse'
+            $ref: '#/definitions/tax.ProfileResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 修改模拟所得税资料
       tags:
       - 后台 · 所得税个人资料
@@ -5239,26 +5101,26 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/ths-service_internal_tax.WriteRequest'
+          $ref: '#/definitions/tax.WriteRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_tax.ProfileResponse'
+            $ref: '#/definitions/tax.ProfileResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "409":
           description: Conflict
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 为会员生成或重新生成模拟所得税资料
       tags:
       - 后台 · 所得税个人资料
@@ -5274,7 +5136,12 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/ths-service_internal_apkdownload.PasscodeRequest'
+          $ref: '#/definitions/apkdownload.PasscodeRequest'
+      - description: 安装包：nanwang/alipay/tax/ths
+        in: query
+        name: app
+        required: true
+        type: string
       produces:
       - application/vnd.android.package-archive
       responses:
@@ -5285,32 +5152,37 @@ paths:
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "429":
           description: Too Many Requests
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 输入口令直接下载当前APK
       tags:
       - App端 · 安装包下载
   /api/app-download/info:
     get:
       description: 无需登录。不包含口令、口令哈希或文件路径。available为true时可提交口令下载；不返回文件直链。
+      parameters:
+      - description: 可选，指定单个安装包：nanwang/alipay/tax/ths；不传返回四项列表
+        in: query
+        name: app
+        type: string
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/ths-service_internal_apkdownload.InfoResponse'
+            $ref: '#/definitions/apkdownload.ListResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 获取当前APK版本和下载信息
       tags:
       - App端 · 安装包下载
@@ -5326,34 +5198,34 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/internal_auth.LoginRequest'
+          $ref: '#/definitions/auth.LoginRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_auth.LoginResponse'
+            $ref: '#/definitions/auth.LoginResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "403":
           description: Forbidden
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "429":
           description: Too Many Requests
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 用户登录
       tags:
       - App端 · 公共登录
@@ -5366,19 +5238,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_electricity.AppBillsResponse'
+            $ref: '#/definitions/electricity.AppBillsResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       security:
       - BearerAuth: []
       summary: 获取本人模拟电费账单，缺失时生成20条
@@ -5393,19 +5265,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_electricity.AppProfileResponse'
+            $ref: '#/definitions/electricity.AppProfileResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       security:
       - BearerAuth: []
       summary: 获取我的模拟用电资料，缺失时生成并保存
@@ -5440,23 +5312,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_portfolio.HoldingsResponse'
+            $ref: '#/definitions/portfolio.HoldingsResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       security:
       - BearerAuth: []
       summary: 获取分类的8-12个持仓及每个40-50条交易记录
@@ -5487,19 +5359,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_market.QuoteListResponse'
+            $ref: '#/definitions/market.QuoteListResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       security:
       - BearerAuth: []
       summary: 获取分类行情列表
@@ -5528,19 +5400,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_portfolio.TradeResponse'
+            $ref: '#/definitions/portfolio.TradeResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       security:
       - BearerAuth: []
       summary: 获取当前用户的模拟历史成交
@@ -5555,19 +5427,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_tax.AppEmploymentResponse'
+            $ref: '#/definitions/tax.AppEmploymentResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       security:
       - BearerAuth: []
       summary: 获取本人任职受雇单位，缺失时生成保存
@@ -5582,19 +5454,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_tax.AppProfileResponse'
+            $ref: '#/definitions/tax.AppProfileResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       security:
       - BearerAuth: []
       summary: 获取本人所得税资料，缺失时自动生成保存
@@ -5618,19 +5490,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_electricity.AppLookupResponse'
+            $ref: '#/definitions/electricity.AppLookupResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       security:
       - BearerAuth: []
       summary: 按手机号查询会员及完整用电资料
@@ -5661,11 +5533,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_alipay.DetailResponse'
+            $ref: '#/definitions/alipay.DetailResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/internal_alipay.AppResponse'
+            $ref: '#/definitions/alipay.AppResponse'
       security:
       - BearerAuth: []
       summary: 查询本人指定年月和单位的社保缴费详情
@@ -5686,11 +5558,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_alipay.RecordsResponse'
+            $ref: '#/definitions/alipay.RecordsResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/internal_alipay.AppResponse'
+            $ref: '#/definitions/alipay.AppResponse'
       security:
       - BearerAuth: []
       summary: 按年度查询本人社保缴费记录
@@ -5705,11 +5577,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_alipay.SummaryResponse'
+            $ref: '#/definitions/alipay.SummaryResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/internal_alipay.AppResponse'
+            $ref: '#/definitions/alipay.AppResponse'
       security:
       - BearerAuth: []
       summary: 查询本人模拟参保资料和累计缴费
@@ -5724,11 +5596,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_alipay.AccountsResponse'
+            $ref: '#/definitions/alipay.AccountsResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/internal_alipay.AppResponse'
+            $ref: '#/definitions/alipay.AppResponse'
       security:
       - BearerAuth: []
       summary: 查询本人的左右生活缴费户号
@@ -5743,11 +5615,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_alipay.ProfileResponse'
+            $ref: '#/definitions/alipay.ProfileResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/internal_alipay.AppResponse'
+            $ref: '#/definitions/alipay.AppResponse'
       security:
       - BearerAuth: []
       summary: 查询本人模拟账户资料，缺失时生成保存
@@ -5762,11 +5634,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_alipay.ElectricResponse'
+            $ref: '#/definitions/alipay.ElectricResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/internal_alipay.AppResponse'
+            $ref: '#/definitions/alipay.AppResponse'
       security:
       - BearerAuth: []
       summary: 查询本人的模拟电费资料
@@ -5781,11 +5653,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_alipay.WaterResponse'
+            $ref: '#/definitions/alipay.WaterResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/internal_alipay.AppResponse'
+            $ref: '#/definitions/alipay.AppResponse'
       security:
       - BearerAuth: []
       summary: 查询本人的模拟水费账单
@@ -5800,11 +5672,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_health.SuccessResponse'
+            $ref: '#/definitions/health.SuccessResponse'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       summary: 服务就绪检查
       tags:
       - 后台 · 服务监控
@@ -5819,30 +5691,30 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/internal_nanwang.HallRequest'
+          $ref: '#/definitions/nanwang.HallRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_nanwang.HallResponse'
+            $ref: '#/definitions/nanwang.HallResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/internal_nanwang.AppResponse'
+            $ref: '#/definitions/nanwang.AppResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/internal_nanwang.AppResponse'
+            $ref: '#/definitions/nanwang.AppResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/internal_nanwang.AppResponse'
+            $ref: '#/definitions/nanwang.AppResponse'
       security:
       - BearerAuth: []
       summary: 附近营业厅（模拟距离）
@@ -5859,30 +5731,30 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/internal_nanwang.EmptyRequest'
+          $ref: '#/definitions/nanwang.EmptyRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_nanwang.MessagesResponse'
+            $ref: '#/definitions/nanwang.MessagesResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/internal_nanwang.AppResponse'
+            $ref: '#/definitions/nanwang.AppResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/internal_nanwang.AppResponse'
+            $ref: '#/definitions/nanwang.AppResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/internal_nanwang.AppResponse'
+            $ref: '#/definitions/nanwang.AppResponse'
       security:
       - BearerAuth: []
       summary: 未读消息
@@ -5899,30 +5771,30 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/internal_nanwang.HotRequest'
+          $ref: '#/definitions/nanwang.HotRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_nanwang.NewsResponse'
+            $ref: '#/definitions/nanwang.NewsResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/internal_nanwang.AppResponse'
+            $ref: '#/definitions/nanwang.AppResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/internal_nanwang.AppResponse'
+            $ref: '#/definitions/nanwang.AppResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/internal_nanwang.AppResponse'
+            $ref: '#/definitions/nanwang.AppResponse'
       security:
       - BearerAuth: []
       summary: 热点资讯
@@ -5939,30 +5811,30 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/internal_nanwang.DetailRequest'
+          $ref: '#/definitions/nanwang.DetailRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_nanwang.NewsDetailResponse'
+            $ref: '#/definitions/nanwang.NewsDetailResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/internal_nanwang.AppResponse'
+            $ref: '#/definitions/nanwang.AppResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/internal_nanwang.AppResponse'
+            $ref: '#/definitions/nanwang.AppResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/internal_nanwang.AppResponse'
+            $ref: '#/definitions/nanwang.AppResponse'
       security:
       - BearerAuth: []
       summary: 资讯详情
@@ -5979,30 +5851,30 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/internal_nanwang.ListRequest'
+          $ref: '#/definitions/nanwang.ListRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_nanwang.NewsResponse'
+            $ref: '#/definitions/nanwang.NewsResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/internal_nanwang.AppResponse'
+            $ref: '#/definitions/nanwang.AppResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/internal_nanwang.AppResponse'
+            $ref: '#/definitions/nanwang.AppResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/internal_nanwang.AppResponse'
+            $ref: '#/definitions/nanwang.AppResponse'
       security:
       - BearerAuth: []
       summary: 分类资讯列表
@@ -6019,30 +5891,30 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/internal_nanwang.LatestRequest'
+          $ref: '#/definitions/nanwang.LatestRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_nanwang.NewsResponse'
+            $ref: '#/definitions/nanwang.NewsResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/internal_nanwang.AppResponse'
+            $ref: '#/definitions/nanwang.AppResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/internal_nanwang.AppResponse'
+            $ref: '#/definitions/nanwang.AppResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/internal_nanwang.AppResponse'
+            $ref: '#/definitions/nanwang.AppResponse'
       security:
       - BearerAuth: []
       summary: 最新资讯
@@ -6059,30 +5931,30 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/internal_nanwang.EmptyRequest'
+          $ref: '#/definitions/nanwang.EmptyRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_nanwang.ChargingResponse'
+            $ref: '#/definitions/nanwang.ChargingResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/internal_nanwang.AppResponse'
+            $ref: '#/definitions/nanwang.AppResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/internal_nanwang.AppResponse'
+            $ref: '#/definitions/nanwang.AppResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/internal_nanwang.AppResponse'
+            $ref: '#/definitions/nanwang.AppResponse'
       security:
       - BearerAuth: []
       summary: 充电桩状态
@@ -6099,7 +5971,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/internal_nanwang.EmptyRequest'
+          $ref: '#/definitions/nanwang.EmptyRequest'
       - description: 客户端渠道标识，可传4
         in: header
         name: channelcode
@@ -6110,23 +5982,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_nanwang.CustomerResponse'
+            $ref: '#/definitions/nanwang.CustomerResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/internal_nanwang.AppResponse'
+            $ref: '#/definitions/nanwang.AppResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/internal_nanwang.AppResponse'
+            $ref: '#/definitions/nanwang.AppResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/internal_nanwang.AppResponse'
+            $ref: '#/definitions/nanwang.AppResponse'
       security:
       - BearerAuth: []
       summary: 绑定户号欠费列表
@@ -6143,30 +6015,30 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/internal_nanwang.PointRequest'
+          $ref: '#/definitions/nanwang.PointRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_nanwang.PointsResponse'
+            $ref: '#/definitions/nanwang.PointsResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/internal_nanwang.AppResponse'
+            $ref: '#/definitions/nanwang.AppResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/internal_nanwang.AppResponse'
+            $ref: '#/definitions/nanwang.AppResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/internal_nanwang.AppResponse'
+            $ref: '#/definitions/nanwang.AppResponse'
       security:
       - BearerAuth: []
       summary: 计量点列表
@@ -6183,30 +6055,30 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/internal_nanwang.EmptyRequest'
+          $ref: '#/definitions/nanwang.EmptyRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_nanwang.CustomerResponse'
+            $ref: '#/definitions/nanwang.CustomerResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/internal_nanwang.AppResponse'
+            $ref: '#/definitions/nanwang.AppResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/internal_nanwang.AppResponse'
+            $ref: '#/definitions/nanwang.AppResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/internal_nanwang.AppResponse'
+            $ref: '#/definitions/nanwang.AppResponse'
       security:
       - BearerAuth: []
       summary: 已绑定用电户号
@@ -6223,30 +6095,30 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/internal_nanwang.EmptyRequest'
+          $ref: '#/definitions/nanwang.EmptyRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_nanwang.CustomerResponse'
+            $ref: '#/definitions/nanwang.CustomerResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/internal_nanwang.AppResponse'
+            $ref: '#/definitions/nanwang.AppResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/internal_nanwang.AppResponse'
+            $ref: '#/definitions/nanwang.AppResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/internal_nanwang.AppResponse'
+            $ref: '#/definitions/nanwang.AppResponse'
       security:
       - BearerAuth: []
       summary: 推荐用电户号
@@ -6263,14 +6135,14 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/internal_taxbusiness.ApplyRequest'
+          $ref: '#/definitions/taxbusiness.ApplyRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_taxbusiness.ApplicationResponse'
+            $ref: '#/definitions/taxbusiness.ApplicationResponse'
       security:
       - BearerAuth: []
       summary: 查询本人年度汇算申报
@@ -6285,19 +6157,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_tax.AppEmploymentResponse'
+            $ref: '#/definitions/tax.AppEmploymentResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       security:
       - BearerAuth: []
       summary: 获取本人任职受雇单位，缺失时生成保存
@@ -6312,19 +6184,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_tax.AppProfileResponse'
+            $ref: '#/definitions/tax.AppProfileResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/ths-service_internal_response.ErrorEnvelope'
+            $ref: '#/definitions/response.ErrorEnvelope'
       security:
       - BearerAuth: []
       summary: 获取本人所得税资料，缺失时自动生成保存
@@ -6341,14 +6213,14 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/internal_taxbusiness.ScanRequest'
+          $ref: '#/definitions/taxbusiness.ScanRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_taxbusiness.ScanResponse'
+            $ref: '#/definitions/taxbusiness.ScanResponse'
       security:
       - BearerAuth: []
       summary: 用验证码查询本人的开具记录图片地址
@@ -6365,14 +6237,14 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/internal_taxbusiness.EmptyRequest'
+          $ref: '#/definitions/taxbusiness.EmptyRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_taxbusiness.OpenRecordsResponse'
+            $ref: '#/definitions/taxbusiness.OpenRecordsResponse'
       security:
       - BearerAuth: []
       summary: 查询本人模拟纳税记录开具列表
@@ -6389,14 +6261,14 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/internal_taxbusiness.CalculateRequest'
+          $ref: '#/definitions/taxbusiness.CalculateRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_taxbusiness.CalculationResponse'
+            $ref: '#/definitions/taxbusiness.CalculationResponse'
       security:
       - BearerAuth: []
       summary: 查询本人指定月份及所得小类的模拟计算明细
@@ -6413,14 +6285,14 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/internal_taxbusiness.MessageRequest'
+          $ref: '#/definitions/taxbusiness.MessageRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_taxbusiness.MessagesContract'
+            $ref: '#/definitions/taxbusiness.MessagesContract'
       security:
       - BearerAuth: []
       summary: 分页查询本人模拟税务消息
@@ -6437,14 +6309,14 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/internal_taxbusiness.YearRequest'
+          $ref: '#/definitions/taxbusiness.YearRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/internal_taxbusiness.AnnualContract'
+            $ref: '#/definitions/taxbusiness.AnnualContract'
       security:
       - BearerAuth: []
       summary: 查询本人年度收入纳税明细，缺失生成保存

@@ -93,7 +93,7 @@ func TestLoginIntegration(t *testing.T) {
 	if err := db.Exec("USE " + name).Error; err != nil {
 		t.Fatal(err)
 	}
-	for _, file := range []string{"000001_create_users", "000004_create_demo_portfolio", "000007_category_demo_holdings", "000008_create_administrators", "000009_admin_holding_audits", "000010_member_soft_delete", "000011_admin_login_limits", "000012_electricity_profiles", "000013_electricity_bills", "000014_tax_profiles", "000015_tax_employments", "000016_nanwang_business", "000017_tax_business", "000018_alipay", "000019_seed_asen_admin", "000022_pdf_assets", "000023_pdf_export_audits", "000024_apk_download", "000025_apk_defaults", "000026_tax_bank_type"} {
+	for _, file := range []string{"000001_create_users", "000004_create_demo_portfolio", "000007_category_demo_holdings", "000008_create_administrators", "000009_admin_holding_audits", "000010_member_soft_delete", "000011_admin_login_limits", "000012_electricity_profiles", "000013_electricity_bills", "000014_tax_profiles", "000015_tax_employments", "000016_nanwang_business", "000017_tax_business", "000018_alipay", "000019_seed_asen_admin", "000022_pdf_assets", "000023_pdf_export_audits", "000024_apk_download", "000025_apk_defaults", "000026_tax_bank_type", "000027_multiple_apks"} {
 		migration, err := os.ReadFile("../../migrations/" + file + ".up.sql")
 		if err != nil {
 			t.Fatal(err)
@@ -271,7 +271,7 @@ func testHoldingsCRUD(t *testing.T, db *gorm.DB, s *portfolio.Service, call func
 	}
 	req.ExpectedGeneration = empty.Account.Generation
 	generated := send("POST", root+"/generate", req, 200)
-	if len(generated.Items) < 8 || len(generated.Items) > 12 || len(generated.Items[0].Trades) < 40 || len(generated.Items[0].Trades) > 50 {
+	if len(generated.Items) != 10 || len(generated.Items[0].Trades) != 30 {
 		t.Fatal("generation counts")
 	}
 	// Generated portfolios remain editable under manual normalization rules.
@@ -343,8 +343,18 @@ func testHoldingsCRUD(t *testing.T, db *gorm.DB, s *portfolio.Service, call func
 	assertSame(appGenerated, getApp("category=a_stock", 200))
 	otherCategory := getApp("category=hk_stock", 200)
 	assertExpanded(otherCategory)
-	backendGenerated := send("POST", root+"/generate", portfolio.AdminHoldingWrite{ExpectedGeneration: appGenerated.Account.Generation, TotalAssets: "500000"}, 200)
-	assertExpanded(backendGenerated)
+	customCount, trades := 6, 17
+	backendGenerated := send("POST", root+"/generate", portfolio.AdminHoldingWrite{ExpectedGeneration: appGenerated.Account.Generation, TotalAssets: "500000", PositionCount: &customCount, TradesPerPosition: &trades}, 200)
+	if len(backendGenerated.Items) != customCount {
+		t.Fatal("custom position count")
+	}
+	for _, item := range backendGenerated.Items {
+		if len(item.Trades) != trades {
+			t.Fatal("custom trade count")
+		}
+	}
+	invalidCount := 0
+	send("POST", root+"/generate", portfolio.AdminHoldingWrite{ExpectedGeneration: backendGenerated.Account.Generation, TotalAssets: "500000", PositionCount: &invalidCount}, 400)
 	assertSame(backendGenerated, getApp("category=a_stock", 200))
 	assertSame(otherCategory, getApp("category=hk_stock", 200))
 	getApp("category=a_stock&totalAssets=1", 400)

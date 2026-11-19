@@ -205,7 +205,7 @@ func (h *HoldingsHandler) Delete(c *gin.Context) { h.write(c, "delete") }
 
 // Generate 生成分类持仓
 // @Summary 自动生成或重新生成分类持仓
-// @Description 管理员Cookie鉴权，指定totalAssets，从扩展的分类候选池随机生成8至12只、每只40至50条。已有记录需expectedGeneration，替换及审计原子完成。
+// @Description 管理员Cookie鉴权，指定totalAssets。positionCount可选，默认10，范围1至50；tradesPerPosition可选，默认30，范围3至500。按指定数量从分类候选池生成，不足时失败保留旧数据。App自动生成规则不变。已有记录需expectedGeneration，替换及审计原子完成。
 // @Tags 后台 · 持仓管理
 // @Accept json
 // @Produce json

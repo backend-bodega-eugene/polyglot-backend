@@ -73,10 +73,11 @@ $('add-trade').onclick=()=>{const item=selectedStock();if(item.trades.length>=50
 $('sync-quantity').onclick=()=>{const n=netQuantity();selectedStock().position.quantity=n;selectedStock().position.availableQuantity=n;changed();renderStocks();};
 $('assets').oninput=changed;
 $('close-editor').onclick=closeEditor;$('cancel').onclick=closeEditor;
-async function persist(generate){
+async function persist(generate,counts){
  if(busy)return;
  if(!current.isNew&&generate&&!confirm('自动生成将替换此分类全部股票及交易，并丢弃未保存修改，确定继续？'))return;
  const body={expectedGeneration:current.isNew?'':current.account.generation,totalAssets:$('assets').value,items:generate?[]:current.items};
+ if(generate)Object.assign(body,counts);
  lock(true);message('editor-message','');
  try{
   const result=await api(path()+(generate?'/generate':''),{method:generate?'POST':current.isNew?'POST':'PUT',body:JSON.stringify(body)});
@@ -84,7 +85,10 @@ async function persist(generate){
   summary();renderStocks();$('dirty-state').textContent='全部修改已保存';message('editor-message',generate?'已生成并保存新持仓':'保存成功，会员端已同步','success');await load();
  }catch(e){message('editor-message',e.message);}finally{lock(false);}
 }
-$('save').onclick=()=>persist(false);$('generate').onclick=()=>persist(true);
+$('save').onclick=()=>persist(false);
+$('generate').onclick=()=>{if(busy)return;$('generation-positions').value='10';$('generation-trades').value='30';$('generation-dialog').showModal();};
+$('generation-cancel').onclick=()=>$('generation-dialog').close();
+$('generation-form').onsubmit=e=>{e.preventDefault();if(busy||!$('generation-form').reportValidity())return;const positionCount=Number($('generation-positions').value),tradesPerPosition=Number($('generation-trades').value);if(!Number.isInteger(positionCount)||positionCount<1||positionCount>50||!Number.isInteger(tradesPerPosition)||tradesPerPosition<3||tradesPerPosition>500)return;$('generation-dialog').close();persist(true,{positionCount,tradesPerPosition});};
 $('rows').addEventListener('click',async event=>{
  const edit=event.target.closest('[data-edit]'),del=event.target.closest('[data-delete]');if(!edit&&!del)return;const row=rows[Number(edit?.dataset.edit??del.dataset.delete)];
  try{
