@@ -12,6 +12,7 @@ const (
 	CodeInvalidRequest   = 40001
 	CodeUnauthorized     = 40101
 	CodeUserDisabled     = 40301
+	CodeForbidden        = 40302
 	CodeAccountExists    = 40901
 	CodeNotFound         = 40401
 	CodeMethodNotAllowed = 40501

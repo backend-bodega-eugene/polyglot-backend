@@ -189,6 +189,7 @@ func TestLoginIntegration(t *testing.T) {
 	testPDFAssets(t, db, r, cookie)
 	testPDFReports(t, db, r, cookie)
 	testAPKDownload(t, db, r, cookie)
+	testBackup(t, db, r, cookie)
 	testDisplayCleanupSQL(t, db)
 	testLoginGuardIntegration(t, db)
 	if w := call("GET", "/api/admin/auth/me", "", cookie); w.Code != 200 {

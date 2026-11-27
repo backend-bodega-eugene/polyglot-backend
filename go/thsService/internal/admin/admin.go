@@ -83,6 +83,7 @@ var dummyHash = func() []byte {
 func Register(engine *gin.Engine, db *gorm.DB, secret string, ttl int) {
 	h := NewHandler(db, secret, ttl)
 	RegisterAPK(engine, h)
+	registerBackup(engine, h)
 	RegisterMembers(engine, h)
 	RegisterPDFAssets(engine, h)
 	RegisterPDFReports(engine, h)

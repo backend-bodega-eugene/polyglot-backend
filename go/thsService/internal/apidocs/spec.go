@@ -14,6 +14,7 @@ import (
 type category struct{ name, description string }
 
 var categories = []category{
+	{"后台 · 数据备份", "仅eugene超级管理员可下载当前数据库全部结构和数据，含已删除数据及图片素材，不包含APK和环境配置。直接下载SQL，不提供公开链接。"},
 	{"后台 · App安装包", "固定南网(nanwang)、支付宝(alipay)、个税(tax)、同花顺(ths)四个独立安装包和口令。上传/修改口令须通过app参数选定位置。发布编号自动生成不可编辑，口令不回显，上传仅覆盖对应位置。"},
 	{"App端 · 安装包下载", "共用/app-download页面，四个安装包分别输入口令。无需会员登录；下载须用app参数指定位置，口令通过POST请求体提交，直接返回APK附件，不公开文件地址。口令错误按IP共享限流。"},
 	{"后台 · PDF生成", "选择会员已有数据生成本次编辑草稿，确认后直接返回attachment PDF，不回写业务数据，不保存文件或提供公开链接。使用当前已通过素材，保留演示标识及导出审计。"},
@@ -42,6 +43,8 @@ var categories = []category{
 
 func classify(path string) string {
 	switch {
+	case strings.HasPrefix(path, "/api/admin/data-backup"):
+		return "后台 · 数据备份"
 	case strings.HasPrefix(path, "/api/admin/app-package"):
 		return "后台 · App安装包"
 	case strings.HasPrefix(path, "/api/app-download/"):

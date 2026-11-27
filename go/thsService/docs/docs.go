@@ -555,6 +555,50 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/admin/data-backup/download": {
+            "post": {
+                "description": "仅eugene且为超级管理员可操作，管理员Cookie鉴权。导出当前服务连接数据库的全部表结构、数据、触发器、事件及存储程序，包含逻辑删除数据和schema_migrations。使用事务快照，不阻塞日常InnoDB写入；备份期间不要执行表结构变更。成功直接下载SQL，不提供公开链接，不包含APK和.env；临时文件在请求完成后删除。同一时间仅允许一个备份，最长10分钟。",
+                "produces": [
+                    "application/sql"
+                ],
+                "tags": [
+                    "后台 · 数据备份"
+                ],
+                "summary": "下载当前数据库完整SQL备份",
+                "responses": {
+                    "200": {
+                        "description": "数据库SQL备份",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorEnvelope"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorEnvelope"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorEnvelope"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorEnvelope"
+                        }
+                    }
+                }
+            }
+        },
         "/api/admin/deleted-members": {
             "get": {
                 "description": "管理员Cookie鉴权。只查询deleted_at不为空的会员，包含删除时间，不返回密码或哈希，不提供物理删除功能。",
